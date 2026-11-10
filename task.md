@@ -360,4 +360,4 @@ Legenda: `[ ]` belum · `[~]` sedang · `[x]` selesai. Prioritas mengikuti roadm
 - PRD diekstrak ke `docs/PRD.md`.
 - Next.js 16 di-scaffold di `frontend/` (TS, App Router, Tailwind 4 tanpa preflight), tema di-port 1:1 ke `src/styles/theme.css`, landing page dibangun lengkap 13 komponen (checklist 1B). `tsc` & `eslint` lulus. Diverifikasi di browser (desktop & mobile) dan dibandingkan dengan screenshot asli: identik.
 - Jalankan: `cd frontend && npm run dev` → http://localhost:3000
-- Belum: halaman lain (1C), `next build` produksi, backend Laravel (PHP/Composer belum terpasang di mesin ini). Repo: https://github.com/fajar288/PusatPelatihanVMES (commit awal d928834).
+- Belum: halaman lain (1C), `next build` produksi, backend Laravel (PHP/Composer belum terpasang di mesin ini). Repo: https://github.com/fajar288/PusatPelatihanVMES (commit awal 9c4c927).
