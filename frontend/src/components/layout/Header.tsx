@@ -3,7 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { NAV, SITE } from "@/data/site";
+import type { NavItem } from "@/data/site";
+import type { SiteSettings } from "@/lib/cms-types";
 import { waLink } from "@/lib/utils";
 
 /**
@@ -11,7 +12,7 @@ import { waLink } from "@/lib/utils";
  *  - scroll > 24px → class "shr" (tinggi 56px, logo 36px, shadow)
  *  - nav overflow → "ns" (sembunyikan search), masih overflow → "cp" (hamburger + dropdown)
  */
-export default function Header() {
+export default function Header({ site, nav }: { site: SiteSettings; nav: NavItem[] }) {
   const hdRef = useRef<HTMLElement>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
   const [shr, setShr] = useState(false);
@@ -60,14 +61,14 @@ export default function Header() {
     <header className={cls} id="hd" ref={hdRef}>
       <div className="wrap" ref={wrapRef}>
         <Link className="logo" href="/">
-          <Image alt="PPTI - VMES Training Center" className="lg" src={SITE.logo} width={SITE.logoSize.w} height={SITE.logoSize.h} sizes="120px" priority />
-          <span className="lt">{SITE.shortName}</span>
+          <Image alt="PPTI - VMES Training Center" className="lg" src={site.logo} width={site.logoSize.w} height={site.logoSize.h} sizes="120px" priority />
+          <span className="lt">{site.shortName}</span>
         </Link>
         <button aria-label="Menu" className="mb" id="mb" type="button" onClick={() => setOpen((o) => !o)}>
           &#9776;
         </button>
         <nav className={"nav" + (open ? " open" : "")} id="nav">
-          {NAV.map((n) => (
+          {nav.map((n) => (
             <Link key={n.href} href={n.href} onClick={() => setOpen(false)}>
               {n.label}
             </Link>

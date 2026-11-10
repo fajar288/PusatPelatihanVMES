@@ -6,6 +6,7 @@ import Header from "@/components/layout/Header";
 import WaFloat from "@/components/layout/WaFloat";
 import IconSprite from "@/components/ui/IconSprite";
 import { SITE } from "@/data/site";
+import { getMenus, getSiteSettings } from "@/lib/cms";
 import { JsonLd, organizationJsonLd, SITE_URL } from "@/lib/seo";
 import "./globals.css";
 
@@ -27,17 +28,19 @@ export const metadata: Metadata = {
   twitter: { card: "summary", title: SITE.name, description: SITE.description },
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+/** Identitas situs & menu dari CMS (cache "use cache"; fallback src/data/site.ts). */
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const [site, menus] = await Promise.all([getSiteSettings(), getMenus()]);
   return (
     <html lang="id" className={jakarta.variable}>
       {/* class "is-home" diperlukan oleh rule `.is-home #home{display:block}` di theme.css */}
       <body className="home is-home">
         <JsonLd data={organizationJsonLd()} />
         <IconSprite />
-        <Header />
+        <Header site={site} nav={menus.header} />
         <main id="main">{children}</main>
-        <ContactCards />
-        <Footer />
+        <ContactCards site={site} />
+        <Footer site={site} columns={menus.footer} />
         <WaFloat />
       </body>
     </html>

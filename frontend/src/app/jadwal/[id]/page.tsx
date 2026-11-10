@@ -3,31 +3,31 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import WhyBox from "@/components/detail/WhyBox";
 import Icon from "@/components/ui/Icon";
-import { getCourse } from "@/data/courses";
-import { getSchedule, SCHEDULES, scheduleBatchTitle, shortDate } from "@/data/schedules";
+import { type Schedule, scheduleBatchTitle, shortDate } from "@/data/schedules";
 import { SITE } from "@/data/site";
+import { getSchedule, getSchedules } from "@/lib/cms";
 import { abs, JsonLd } from "@/lib/seo";
 import { formatRupiah, waLink, waRegisterText } from "@/lib/utils";
 
-// Route detail: `params` dibaca langsung (bukan di dalam <Suspense>) supaya slug asing menghasilkan status 404
-// yang benar. Konsekuensinya navigasi ke slug yang belum di-prerender tidak "instan" (cacheComponents) — dapat diterima
-// karena slug yang dikenal sudah statis via generateStaticParams.
+// Route detail: `params` dibaca langsung (bukan di dalam <Suspense>) supaya kode asing menghasilkan status 404
+// yang benar. Konsekuensinya navigasi ke kode yang belum di-prerender tidak "instan" (cacheComponents).
 export const instant = false;
 
-export function generateStaticParams() {
-  return SCHEDULES.map((s) => ({ id: s.id }));
+export async function generateStaticParams() {
+  return (await getSchedules()).map((s) => ({ id: s.id }));
 }
 
 export async function generateMetadata({ params }: PageProps<"/jadwal/[id]">): Promise<Metadata> {
   const { id } = await params;
-  const s = getSchedule(id);
-  if (!s) return { title: `Jadwal tidak ditemukan | ${SITE.name}` };
+  const d = await getSchedule(id);
+  if (!d) return { title: `Jadwal tidak ditemukan | ${SITE.name}` };
+  const s = d.schedule;
   const title = scheduleBatchTitle(s);
   const description = `${s.title} ${s.dateLabel}, ${s.city} (${s.mode}), ${s.durationDays} hari. ${s.statusLabel}.`;
   return { title: `${title} | ${SITE.name}`, description, alternates: { canonical: `/jadwal/${s.id}` }, openGraph: { title, description, type: "website", locale: "id_ID" } };
 }
 
-function OtherSchedules({ items, variant }: { items: typeof SCHEDULES; variant: "rt-d" | "rt-m" }) {
+function OtherSchedules({ items, variant }: { items: Schedule[]; variant: "rt-d" | "rt-m" }) {
   if (!items.length) return null;
   return (
     <div className={"rt " + variant}>
@@ -49,15 +49,16 @@ function OtherSchedules({ items, variant }: { items: typeof SCHEDULES; variant: 
   );
 }
 
-/** /jadwal/[id] — detail batch (PRD §5.4): kode kelas, tanggal, jam, lokasi, metode, kuota, trainer, status + tombol Daftar ke form registrasi. */
+/** /jadwal/[id] — detail batch (PRD §5.4). `id` = kode kelas. Data: GET /api/v1/schedules/{code}. */
 export default async function JadwalDetailPage({ params }: PageProps<"/jadwal/[id]">) {
   const { id } = await params;
-  const s = getSchedule(id);
-  if (!s) notFound();
-  const course = getCourse(s.courseSlug);
+  const d = await getSchedule(id);
+  if (!d) notFound();
+  const s = d.schedule;
+  const course = d.package;
   const title = scheduleBatchTitle(s);
   const full = s.status === "no";
-  const others = SCHEDULES.filter((x) => x.id !== s.id).sort((a, b) => (a.courseSlug === s.courseSlug ? -1 : 0) - (b.courseSlug === s.courseSlug ? -1 : 0) || a.startDate.localeCompare(b.startDate)).slice(0, 3);
+  const others = d.related;
   const chipStatus = s.status === "ok" ? "chp a" : "chp o";
 
   const eventLd = {
@@ -84,9 +85,11 @@ export default async function JadwalDetailPage({ params }: PageProps<"/jadwal/[i
             Kembali ke Jadwal
           </Link>
           <div className="chips" id="kd-chips">
-            <Link className="chp a" href={`/jadwal?kategori=${encodeURIComponent(s.category)}`}>
-              {s.category}
-            </Link>
+            {s.category && (
+              <Link className="chp a" href={`/jadwal?kategori=${encodeURIComponent(s.category)}`}>
+                {s.category}
+              </Link>
+            )}
             <span className="chp">{s.mode}</span>
             <span className="chp">Kode {s.code}</span>
             <span className={chipStatus}>{s.statusLabel}</span>
@@ -110,7 +113,7 @@ export default async function JadwalDetailPage({ params }: PageProps<"/jadwal/[i
             <div className="kic1">
               <Icon name="clock" />
               <small>Waktu</small>
-              <b>{s.time}</b>
+              <b>{s.time || "-"}</b>
             </div>
             <div className="kic1">
               <Icon name="pin" />
@@ -147,7 +150,7 @@ export default async function JadwalDetailPage({ params }: PageProps<"/jadwal/[i
                   </li>
                   <li>
                     <span>Jam</span>
-                    <b>{s.time}</b>
+                    <b>{s.time || "-"}</b>
                   </li>
                   <li>
                     <span>Metode</span>
@@ -155,11 +158,11 @@ export default async function JadwalDetailPage({ params }: PageProps<"/jadwal/[i
                   </li>
                   <li>
                     <span>Lokasi</span>
-                    <b>{s.location}</b>
+                    <b>{s.location || s.city}</b>
                   </li>
                   <li>
                     <span>Trainer</span>
-                    <b>{s.trainer}</b>
+                    <b>{s.trainer || "-"}</b>
                   </li>
                   <li>
                     <span>Kuota</span>
@@ -180,23 +183,31 @@ export default async function JadwalDetailPage({ params }: PageProps<"/jadwal/[i
                 <h2>Tentang Program</h2>
                 <div className="kov">
                   <div className="pb">
-                    {course ? (
+                    {course && course.overview.intro.length > 0 ? (
                       <>
                         {course.overview.intro.map((p) => (
                           <p key={p}>{p}</p>
                         ))}
-                        <h3>Yang Akan Dipelajari</h3>
-                        <ul>
-                          {course.overview.learn.map((t) => (
-                            <li key={t}>{t}</li>
-                          ))}
-                        </ul>
-                        <h3>Persyaratan Peserta</h3>
-                        <ul>
-                          {course.overview.requirements.map((t) => (
-                            <li key={t}>{t}</li>
-                          ))}
-                        </ul>
+                        {course.overview.learn.length > 0 && (
+                          <>
+                            <h3>Yang Akan Dipelajari</h3>
+                            <ul>
+                              {course.overview.learn.map((t) => (
+                                <li key={t}>{t}</li>
+                              ))}
+                            </ul>
+                          </>
+                        )}
+                        {course.overview.requirements.length > 0 && (
+                          <>
+                            <h3>Persyaratan Peserta</h3>
+                            <ul>
+                              {course.overview.requirements.map((t) => (
+                                <li key={t}>{t}</li>
+                              ))}
+                            </ul>
+                          </>
+                        )}
                         <p>
                           <Link href={`/kursus/${course.slug}`}>Lihat detail program {course.title}</Link>
                         </p>
@@ -229,7 +240,7 @@ export default async function JadwalDetailPage({ params }: PageProps<"/jadwal/[i
                       <div>
                         <small>Durasi</small>
                         <b>
-                          {s.durationDays} Hari • {s.time}
+                          {s.durationDays} Hari{s.time ? ` • ${s.time}` : ""}
                         </b>
                       </div>
                     </div>
@@ -242,12 +253,12 @@ export default async function JadwalDetailPage({ params }: PageProps<"/jadwal/[i
                         </b>
                       </div>
                     </div>
-                    {course && (
+                    {s.certificate && (
                       <div>
                         <Icon name="award" />
                         <div>
                           <small>Sertifikat</small>
-                          <b>{course.certificate}</b>
+                          <b>{s.certificate}</b>
                         </div>
                       </div>
                     )}

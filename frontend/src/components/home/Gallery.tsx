@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { GALLERY } from "@/data/home";
+import type { GalleryItem } from "@/lib/cms-types";
 
 /** section.gs — mosaic galeri 6 foto + lightbox .lb (Esc / klik untuk tutup). */
-export default function Gallery() {
+export default function Gallery({ items }: { items: GalleryItem[] }) {
   const [lb, setLb] = useState<string | null>(null);
 
   useEffect(() => {
@@ -29,7 +29,7 @@ export default function Gallery() {
             </Link>
           </div>
           <div className="gm" id="h-gal">
-            {GALLERY.map((g) => (
+            {items.map((g) => (
               <button key={g.src} type="button" aria-label={g.alt} onClick={() => setLb(g.src)}>
                 <img referrerPolicy="no-referrer" loading="lazy" alt={g.alt} src={g.src} />
               </button>

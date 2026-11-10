@@ -3,15 +3,13 @@ import Link from "next/link";
 import { Suspense } from "react";
 import ArticleCard from "@/components/cards/ArticleCard";
 import CourseCard from "@/components/cards/CourseCard";
-import { ARTICLES } from "@/data/articles";
-import { COURSES } from "@/data/courses";
-import { SCHEDULES, scheduleBatchTitle, shortDate } from "@/data/schedules";
+import { scheduleBatchTitle, shortDate } from "@/data/schedules";
 import { SITE } from "@/data/site";
+import { search } from "@/lib/cms";
 
 export const metadata: Metadata = { title: `Pencarian | ${SITE.name}`, robots: { index: false } };
 
 const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v) ?? "";
-const norm = (s: string) => s.toLowerCase();
 
 function SearchBox({ q }: { q: string }) {
   return (
@@ -32,15 +30,11 @@ function SearchBox({ q }: { q: string }) {
   );
 }
 
+/** Hasil dari GET /api/v1/search?q= (fallback: pencarian lokal atas data statis). */
 async function Results({ searchParams }: Pick<PageProps<"/search">, "searchParams">) {
   const q = first((await searchParams).q).trim();
-  const t = norm(q);
-  const courses = t ? COURSES.filter((c) => norm(`${c.title} ${c.vendor} ${c.category} ${c.desc} ${c.mode}`).includes(t)) : [];
-  const schedules = t ? SCHEDULES.filter((s) => norm(`${scheduleBatchTitle(s)} ${s.category} ${s.city} ${s.mode} ${s.code}`).includes(t)) : [];
-  const posts = t
-    ? ARTICLES.filter((a) => norm(`${a.title} ${a.category} ${a.excerpt} ${(a.tags ?? []).join(" ")} ${a.body.map((b) => ("text" in b ? b.text : "items" in b ? b.items.join(" ") : "")).join(" ")}`).includes(t))
-    : [];
-  const total = courses.length + schedules.length + posts.length;
+  const r = q ? await search(q) : { q: "", total: 0, courses: [], schedules: [], posts: [] };
+  const { courses, schedules, posts, total } = r;
 
   return (
     <>

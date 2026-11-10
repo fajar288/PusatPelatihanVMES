@@ -1,11 +1,11 @@
 import Link from "next/link";
-import type { Article } from "@/data/articles";
+import type { PostSummary } from "@/data/articles";
 
 /** a.card — kartu artikel (grid beranda "Artikel terbaru" & list kategori). */
-export default function ArticleCard({ article }: { article: Article }) {
+export default function ArticleCard({ article }: { article: PostSummary }) {
   return (
     <Link className="card" href={`/artikel/${article.slug}`}>
-      {article.image ? <img alt={article.title} src={article.image} loading="lazy" /> : <div className="noimg" />}
+      {article.image ? <img alt={article.title} src={article.image} loading="lazy" referrerPolicy="no-referrer" /> : <div className="noimg" />}
       <div className="cb">
         <span className="tag">{article.category}</span>
         <h3>{article.title}</h3>

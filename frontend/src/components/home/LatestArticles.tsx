@@ -1,9 +1,9 @@
 import Link from "next/link";
 import ArticleCard from "@/components/cards/ArticleCard";
-import type { Article } from "@/data/articles";
+import type { PostSummary } from "@/data/articles";
 
 /** section.sec "Artikel terbaru" — grid 3 kartu .card. */
-export default function LatestArticles({ articles }: { articles: Article[] }) {
+export default function LatestArticles({ articles }: { articles: PostSummary[] }) {
   return (
     <section className="sec">
       <div className="wrap">

@@ -1,7 +1,7 @@
 "use client";
 
 import ArticleCard from "@/components/cards/ArticleCard";
-import type { Article } from "@/data/articles";
+import type { PostSummary } from "@/data/articles";
 import { type CatalogItem, useCatalog } from "@/lib/useCatalog";
 import CatalogBar, { type CatalogFilter, type SortKey } from "./CatalogBar";
 
@@ -12,12 +12,12 @@ const SORT_OPTIONS: { value: SortKey; label: string }[] = [
 ];
 
 /** data-q = "{judul} {kategori} {ringkasan}" (lowercase), sama dengan tema asli. */
-const getItem = (a: Article): CatalogItem => ({
+const getItem = (a: PostSummary): CatalogItem => ({
   q: `${a.title} ${a.category} ${a.excerpt}`.toLowerCase(),
   cat: a.category, mode: "", pr: 0, pop: false, t: a.title, d: a.publishedAt,
 });
 
-type Props = { posts: Article[]; categories: string[]; initial?: Partial<CatalogFilter> };
+type Props = { posts: PostSummary[]; categories: string[]; initial?: Partial<CatalogFilter> };
 
 /** div.catb + div.list (g-artikel) — daftar postingan satu kategori dengan cari/urut. */
 export default function PostCatalog({ posts, categories, initial }: Props) {

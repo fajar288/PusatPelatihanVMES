@@ -1,31 +1,31 @@
 import Image from "next/image";
 import Link from "next/link";
 import Icon from "@/components/ui/Icon";
-import { FOOTER_COLUMNS, SITE, SOCIALS } from "@/data/site";
+import type { MenuData, SiteSettings } from "@/lib/cms-types";
 import { waLink } from "@/lib/utils";
 
 /** footer.ft — identik dengan website lama. */
-export default function Footer() {
+export default function Footer({ site, columns }: { site: SiteSettings; columns: MenuData["footer"] }) {
   return (
     <footer className="ft">
       <div className="wrap fg">
         <div>
           <div className="fl">
             <Link className="logo" href="/">
-              <Image alt="PPTI - VMES Training Center" className="lg" src={SITE.logo} width={SITE.logoSize.w} height={SITE.logoSize.h} sizes="120px" loading="lazy" />
-              <span className="lt">{SITE.shortName}</span>
+              <Image alt="PPTI - VMES Training Center" className="lg" src={site.logo} width={site.logoSize.w} height={site.logoSize.h} sizes="120px" loading="lazy" />
+              <span className="lt">{site.shortName}</span>
             </Link>
           </div>
-          <p className="fd">{SITE.footerDescription}</p>
+          <p className="fd">{site.footerDescription}</p>
           <div className="so">
-            {SOCIALS.map((s) => (
+            {site.socials.map((s) => (
               <a key={s.icon} href={s.href} aria-label={s.label} target="_blank" rel="noopener">
                 <Icon name={s.icon} />
               </a>
             ))}
           </div>
         </div>
-        {FOOTER_COLUMNS.map((col) => (
+        {columns.map((col) => (
           <div key={col.title}>
             <h4>{col.title}</h4>
             <ul>
@@ -46,8 +46,8 @@ export default function Footer() {
       </div>
       <div className="fb">
         <div className="wrap">
-          <span>&copy; 2026 {SITE.company}. All rights reserved.</span>
-          <span>{SITE.tagline}</span>
+          <span>&copy; 2026 {site.company}. All rights reserved.</span>
+          <span>{site.tagline}</span>
         </div>
       </div>
     </footer>

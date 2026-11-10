@@ -21,24 +21,8 @@ const testimonials = await load("src/data/testimonials.ts");
 
 const slugify = (s) =>
   s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/&/g, " dan ").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
-const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
-/** PostBlock[] → HTML (disimpan di kolom body; frontend merender ke dalam div.pb). */
-function blocksToHtml(blocks) {
-  return blocks
-    .map((b) => {
-      switch (b.type) {
-        case "h2": return `<h2>${esc(b.text)}</h2>`;
-        case "h3": return `<h3>${esc(b.text)}</h3>`;
-        case "ul": return `<ul>${b.items.map((i) => `<li>${esc(i)}</li>`).join("")}</ul>`;
-        case "ol": return `<ol>${b.items.map((i) => `<li>${esc(i)}</li>`).join("")}</ol>`;
-        case "pre": return `<pre><code>${esc(b.code)}</code></pre>`;
-        case "img": return `<figure><img src="${esc(b.src)}" alt="${esc(b.alt)}" loading="lazy" referrerpolicy="no-referrer">${b.caption ? `<figcaption>${esc(b.caption)}</figcaption>` : ""}</figure>`;
-        default: return `<p>${esc(b.text)}</p>`;
-      }
-    })
-    .join("\n");
-}
+const { blocksToHtml } = await load("src/lib/blocks.ts"); // implementasi bersama dengan fallback frontend
 
 const iso = (unix) => new Date(unix * 1000).toISOString();
 const modeOf = (m) => (m === "online / offline" ? "online_offline" : m);

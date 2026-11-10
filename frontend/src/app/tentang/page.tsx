@@ -6,8 +6,8 @@ import About from "@/components/home/About";
 import CtaBanner from "@/components/home/CtaBanner";
 import Partners from "@/components/home/Partners";
 import Icon from "@/components/ui/Icon";
-import { FACILITIES, MISSIONS, PARTNERSHIP_POINTS, SERVICES, TRAINERS, VISION } from "@/data/about";
 import { SITE } from "@/data/site";
+import { getCompanyProfile, getHome } from "@/lib/cms";
 import { waLink } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -20,7 +20,8 @@ export const metadata: Metadata = {
  * /tentang — PRD §5.1: profil, visi-misi, fasilitas, trainer, layanan, kerja sama.
  * Website lama tidak punya halaman ini; dibangun dari section beranda (.tk, .wg/.wc, .ps, .cs) + gaya .kbx.
  */
-export default function TentangPage() {
+export default async function TentangPage() {
+  const [h, co] = await Promise.all([getHome(), getCompanyProfile()]);
   return (
     <div>
       <CatalogHero
@@ -33,7 +34,7 @@ export default function TentangPage() {
         desc={SITE.tagline}
       />
 
-      <About />
+      <About about={h.about} youtubeId={h.site.youtubeProfileId} />
 
       <section className="sec alt" id="visi-misi">
         <div className="wrap">
@@ -44,12 +45,12 @@ export default function TentangPage() {
           <div className="vm">
             <div className="kbx">
               <h3>Visi</h3>
-              <p>{VISION}</p>
+              <p>{co.vision}</p>
             </div>
             <div className="kbx">
               <h3>Misi</h3>
               <ol>
-                {MISSIONS.map((m) => (
+                {co.missions.map((m) => (
                   <li key={m}>{m}</li>
                 ))}
               </ol>
@@ -66,7 +67,7 @@ export default function TentangPage() {
             <p className="sbt">Seluruh program dirancang hands-on, sehingga fasilitas lab menjadi inti pengalaman belajar di PPTI - VMES.</p>
           </div>
           <div className="wg">
-            {FACILITIES.map((f, i) => (
+            {co.facilities.map((f, i) => (
               <WhyCard key={f.title} {...f} index={i + 1} />
             ))}
           </div>
@@ -81,7 +82,7 @@ export default function TentangPage() {
             <p className="sbt">Instruktur kami adalah praktisi aktif di industri yang memegang sertifikasi vendor dan pengalaman mengajar bertahun-tahun.</p>
           </div>
           <div className="trg">
-            {TRAINERS.map((t) => (
+            {co.trainers.map((t) => (
               <div className="trc" key={t.name}>
                 <span className="av" aria-hidden="true">
                   {t.initials}
@@ -104,7 +105,7 @@ export default function TentangPage() {
             <h2 className="tt">Pilihan Program Sesuai Kebutuhan Anda</h2>
           </div>
           <div className="wg">
-            {SERVICES.map((s) => (
+            {co.services.map((s) => (
               <div className="wc" key={s.title}>
                 <div className="wi">
                   <Icon name={s.icon} />
@@ -122,7 +123,7 @@ export default function TentangPage() {
         </div>
       </section>
 
-      <Partners />
+      <Partners partners={h.partners} />
 
       <section className="sec alt" id="kerja-sama">
         <div className="wrap">
@@ -134,7 +135,7 @@ export default function TentangPage() {
           <div className="kbx" style={{ maxWidth: 820, margin: "36px auto 0" }}>
             <h2 style={{ fontSize: 22 }}>Bentuk kerja sama</h2>
             <div className="kbl">
-              {PARTNERSHIP_POINTS.map((p) => (
+              {co.partnership_points.map((p) => (
                 <div key={p}>
                   <span className="ib">
                     <Icon name="check" />
@@ -155,7 +156,7 @@ export default function TentangPage() {
         </div>
       </section>
 
-      <CtaBanner />
+      <CtaBanner cta={h.cta} />
     </div>
   );
 }

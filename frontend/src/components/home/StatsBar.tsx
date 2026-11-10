@@ -2,13 +2,13 @@
 
 import { useEffect, useRef } from "react";
 import Icon from "@/components/ui/Icon";
-import { STATS } from "@/data/home";
+import type { StatItem } from "@/lib/cms-types";
 
 /**
  * div.sb > div.sg — bar statistik dengan counter animasi (port "Counter statistik" theme.main.js):
  * 1800ms ease-out-cubic, mulai saat 40% elemen terlihat, format angka id-ID.
  */
-export default function StatsBar() {
+export default function StatsBar({ stats }: { stats: StatItem[] }) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -54,7 +54,7 @@ export default function StatsBar() {
   return (
     <div className="sb">
       <div className="sg" ref={ref}>
-        {STATS.map((s) => (
+        {stats.map((s) => (
           <div key={s.label}>
             <span className="ib">
               <Icon name={s.icon} />
