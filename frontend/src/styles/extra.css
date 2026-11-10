@@ -97,3 +97,11 @@
 .pnotif time{font-size:12px;font-weight:700;color:var(--mut)}.pnotif p{font-size:14.5px}
 @media(max-width:900px){.pgrid{grid-template-columns:1fr}.pnav{position:static}.pnav nav{grid-template-columns:repeat(2,1fr)}.psteps{grid-template-columns:repeat(5,1fr);font-size:11px}}
 @media(max-width:640px){.prow{grid-template-columns:1fr 1fr}.psteps li{font-size:10px}}
+
+/* ---- Portal trainer: tabel kehadiran ---- */
+.att{width:100%;border-collapse:collapse;font-size:14px}
+.att th{text-align:left;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);padding:8px 10px;border-bottom:1px solid var(--ln)}
+.att td{padding:10px;border-bottom:1px solid var(--ln);vertical-align:middle}
+.att td b{display:block;font-weight:800}.att td small{display:block;color:var(--mut);font-size:12px}
+.att select,.att input{width:100%;border:1px solid var(--ln);border-radius:10px;padding:8px 10px;font:600 13px inherit;font-family:inherit;background:#fff}
+@media(max-width:640px){.att thead{display:none}.att tr{display:grid;gap:6px;padding:10px 0}.att td{border:0;padding:0}}

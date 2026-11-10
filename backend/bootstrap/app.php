@@ -15,6 +15,8 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         // Sanctum SPA: request dari FRONTEND_URL (SANCTUM_STATEFUL_DOMAINS) memakai cookie session
         $middleware->statefulApi();
+        // Route web non-panel (mis. ekspor laporan) → tamu diarahkan ke login panel admin
+        $middleware->redirectGuestsTo('/admin/login');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

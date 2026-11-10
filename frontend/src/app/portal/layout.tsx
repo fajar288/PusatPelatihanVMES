@@ -23,7 +23,7 @@ export default async function PortalLayout({ children }: LayoutProps<"/portal">)
         </div>
       </section>
       <div className="wrap pgrid">
-        <PortalNav name={user.name} memberNumber={user.member?.memberNumber} />
+        <PortalNav name={user.name} memberNumber={user.member?.memberNumber} isTrainer={user.roles.some((r) => r === "trainer" || r === "assessor")} />
         <section className="pmain">{children}</section>
       </div>
       <div style={{ height: 60 }} />

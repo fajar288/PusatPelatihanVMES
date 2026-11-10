@@ -17,7 +17,7 @@ const ITEMS: { href: string; label: string; icon: IconName }[] = [
 ];
 
 /** Navigasi samping portal member (PRD §5.6) dengan tautan aktif + tombol keluar. */
-export default function PortalNav({ name, memberNumber }: { name: string; memberNumber?: string | null }) {
+export default function PortalNav({ name, memberNumber, isTrainer }: { name: string; memberNumber?: string | null; isTrainer?: boolean }) {
   const path = usePathname();
   return (
     <aside className="pnav">
@@ -31,7 +31,7 @@ export default function PortalNav({ name, memberNumber }: { name: string; member
         </div>
       </div>
       <nav>
-        {ITEMS.map((it) => {
+        {[...ITEMS, ...(isTrainer ? [{ href: "/trainer", label: "Portal Trainer", icon: "grad" as IconName }] : [])].map((it) => {
           const active = it.href === "/portal" ? path === "/portal" : path.startsWith(it.href);
           return (
             <Link key={it.href} href={it.href} className={active ? "on" : undefined} aria-current={active ? "page" : undefined}>
