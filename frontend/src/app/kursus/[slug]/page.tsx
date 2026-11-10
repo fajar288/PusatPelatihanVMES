@@ -5,9 +5,8 @@ import CourseSchedules from "@/components/detail/CourseSchedules";
 import CourseSidebar from "@/components/detail/CourseSidebar";
 import RelatedCourses from "@/components/detail/RelatedCourses";
 import Icon from "@/components/ui/Icon";
-import { COURSES, getCourse, getRelatedCourses } from "@/data/courses";
-import { SCHEDULES } from "@/data/schedules";
 import { SITE } from "@/data/site";
+import { getPackage, getPackages } from "@/lib/cms";
 import { abs, JsonLd } from "@/lib/seo";
 
 // Route detail: `params` dibaca langsung (bukan di dalam <Suspense>) supaya slug asing menghasilkan status 404
@@ -15,13 +14,14 @@ import { abs, JsonLd } from "@/lib/seo";
 // karena slug yang dikenal sudah statis via generateStaticParams.
 export const instant = false;
 
-export function generateStaticParams() {
-  return COURSES.map((c) => ({ slug: c.slug }));
+export async function generateStaticParams() {
+  const { items } = await getPackages();
+  return items.map((c) => ({ slug: c.slug }));
 }
 
 export async function generateMetadata({ params }: PageProps<"/kursus/[slug]">): Promise<Metadata> {
   const { slug } = await params;
-  const course = getCourse(slug);
+  const course = await getPackage(slug);
   if (!course) return { title: `Training tidak ditemukan | ${SITE.name}` };
   return {
     title: `${course.title} | ${SITE.name}`,
@@ -33,16 +33,15 @@ export async function generateMetadata({ params }: PageProps<"/kursus/[slug]">):
 
 /**
  * /kursus/[slug] — detail training. Website lama belum punya halaman ini (semua "Lihat Detail" → #),
- * tetapi CSS-nya sudah ada (.kd .kic .kjl .kov .ksd .pcd .rcg). Layout mengikuti single post:
- * back link → chips → h1 → ringkasan → info chips → grid [konten | sidebar sticky].
+ * tetapi CSS-nya sudah ada (.kd .kic .kjl .kov .ksd .pcd .rcg). Data: GET /api/v1/packages/{slug}.
  */
 export default async function KursusDetailPage({ params }: PageProps<"/kursus/[slug]">) {
   const { slug } = await params;
-  const course = getCourse(slug);
+  const course = await getPackage(slug);
   if (!course) notFound();
 
-  const schedules = SCHEDULES.filter((s) => s.courseSlug === course.slug);
-  const related = getRelatedCourses(course);
+  const schedules = course.schedules ?? [];
+  const related = course.related ?? [];
   const ov = course.overview;
   const courseLd = {
     "@context": "https://schema.org",
@@ -69,7 +68,7 @@ export default async function KursusDetailPage({ params }: PageProps<"/kursus/[s
             <Link className="chp a" href={`/kursus?kategori=${encodeURIComponent(course.category)}`}>
               {course.category}
             </Link>
-            <span className="chp">{course.vendor}</span>
+            {course.vendor && <span className="chp">{course.vendor}</span>}
             {course.popular && <span className="chp o">Populer</span>}
           </div>
           <h1>{course.title}</h1>
@@ -93,12 +92,12 @@ export default async function KursusDetailPage({ params }: PageProps<"/kursus/[s
             <div className="kic1">
               <Icon name="chart" />
               <small>Level</small>
-              <b>{course.level}</b>
+              <b>{course.level ?? "-"}</b>
             </div>
             <div className="kic1">
               <Icon name="award" />
               <small>Sertifikat</small>
-              <b>{course.certificate}</b>
+              <b>{course.certificate ?? "Sertifikat Keikutsertaan"}</b>
             </div>
           </div>
 
@@ -113,24 +112,36 @@ export default async function KursusDetailPage({ params }: PageProps<"/kursus/[s
                     {ov.intro.map((p) => (
                       <p key={p}>{p}</p>
                     ))}
-                    <h3>Yang Akan Dipelajari</h3>
-                    <ul>
-                      {ov.learn.map((t) => (
-                        <li key={t}>{t}</li>
-                      ))}
-                    </ul>
-                    <h3>Untuk Siapa Training Ini</h3>
-                    <ul>
-                      {ov.audience.map((t) => (
-                        <li key={t}>{t}</li>
-                      ))}
-                    </ul>
-                    <h3>Persyaratan Peserta</h3>
-                    <ul>
-                      {ov.requirements.map((t) => (
-                        <li key={t}>{t}</li>
-                      ))}
-                    </ul>
+                    {ov.learn.length > 0 && (
+                      <>
+                        <h3>Yang Akan Dipelajari</h3>
+                        <ul>
+                          {ov.learn.map((t) => (
+                            <li key={t}>{t}</li>
+                          ))}
+                        </ul>
+                      </>
+                    )}
+                    {ov.audience.length > 0 && (
+                      <>
+                        <h3>Untuk Siapa Training Ini</h3>
+                        <ul>
+                          {ov.audience.map((t) => (
+                            <li key={t}>{t}</li>
+                          ))}
+                        </ul>
+                      </>
+                    )}
+                    {ov.requirements.length > 0 && (
+                      <>
+                        <h3>Persyaratan Peserta</h3>
+                        <ul>
+                          {ov.requirements.map((t) => (
+                            <li key={t}>{t}</li>
+                          ))}
+                        </ul>
+                      </>
+                    )}
                   </div>
                 </div>
               </section>

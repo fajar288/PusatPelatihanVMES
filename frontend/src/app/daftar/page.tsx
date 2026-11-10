@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import RegisterForm from "@/components/forms/RegisterForm";
-import { getUpcomingSchedules } from "@/data/schedules";
 import { SITE } from "@/data/site";
+import { getSchedules } from "@/lib/cms";
 
 export const metadata: Metadata = {
   title: `Formulir Pendaftaran | ${SITE.name}`,
@@ -15,8 +15,12 @@ export const metadata: Metadata = {
 const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v) ?? "";
 
 async function FormFromParams({ searchParams }: Pick<PageProps<"/daftar">, "searchParams">) {
-  const sp = await searchParams;
-  return <RegisterForm schedules={getUpcomingSchedules()} selectedId={first(sp.jadwal)} />;
+  const [sp, schedules] = await Promise.all([searchParams, getSchedules()]);
+  return <RegisterForm schedules={schedules} selectedId={first(sp.jadwal)} />;
+}
+
+async function FormStatic() {
+  return <RegisterForm schedules={await getSchedules()} />;
 }
 
 /** /daftar?jadwal= — formulir pendaftaran (Phase 1E). Versi awal mengirim data ke WhatsApp admin; API Laravel menyusul. */
@@ -35,7 +39,7 @@ export default function DaftarPage({ searchParams }: PageProps<"/daftar">) {
         <div className="wrap">
           <div className="in" style={{ maxWidth: 820 }}>
             <div className="kbx" style={{ marginTop: 0 }}>
-              <Suspense fallback={<RegisterForm schedules={getUpcomingSchedules()} />}>
+              <Suspense fallback={<FormStatic />}>
                 <FormFromParams searchParams={searchParams} />
               </Suspense>
             </div>

@@ -1,12 +1,12 @@
 import Link from "next/link";
 import CategoryCard from "@/components/cards/CategoryCard";
 import Icon from "@/components/ui/Icon";
-import { CATEGORIES } from "@/data/home";
 import type { Schedule } from "@/data/schedules";
+import type { CategoryItem } from "@/lib/cms-types";
 import SchedulePanel from "./SchedulePanel";
 
 /** section.sec.alt > .jk — kiri kategori kompetensi (8 kartu), kanan jadwal terdekat. */
-export default function CategoriesSchedules({ schedules }: { schedules: Schedule[] }) {
+export default function CategoriesSchedules({ categories, schedules }: { categories: CategoryItem[]; schedules: Schedule[] }) {
   return (
     <section className="sec alt">
       <div className="wrap jk">
@@ -14,8 +14,8 @@ export default function CategoriesSchedules({ schedules }: { schedules: Schedule
           <span className="eb">Kategori</span>
           <h2 className="tt">Pilih Jalur Kompetensi Sesuai Kebutuhan Anda</h2>
           <div className="cg">
-            {CATEGORIES.map((c) => (
-              <CategoryCard key={c.title} {...c} />
+            {categories.map((c) => (
+              <CategoryCard key={c.title} icon={c.icon ?? "spark"} title={c.title} desc={c.desc ?? ""} href={c.href} />
             ))}
           </div>
         </div>

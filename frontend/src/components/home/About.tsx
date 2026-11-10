@@ -1,8 +1,7 @@
-import { ABOUT } from "@/data/home";
-import { SITE } from "@/data/site";
+import type { AboutData } from "@/lib/cms-types";
 
 /** section.tk#tentang-kami — video profil YouTube + teks tentang. */
-export default function About() {
+export default function About({ about, youtubeId }: { about: AboutData; youtubeId: string }) {
   return (
     <section className="tk" id="tentang-kami">
       <div className="wrap tkg">
@@ -12,23 +11,23 @@ export default function About() {
             allowFullScreen
             loading="lazy"
             referrerPolicy="strict-origin-when-cross-origin"
-            src={`https://www.youtube.com/embed/${SITE.youtubeProfileId}`}
+            src={`https://www.youtube.com/embed/${youtubeId}`}
             title="Profil PPTI - VMES Training Center"
           />
         </div>
         <div className="tkt">
           <span className="eb">
             <i />
-            {ABOUT.eyebrow}
+            {about.eyebrow}
           </span>
           <h2>
-            {ABOUT.titlePrefix}
-            <em>{ABOUT.titleEm}</em>
+            {about.titlePrefix}
+            <em>{about.titleEm}</em>
           </h2>
-          {ABOUT.paragraphs.map((p) => (
-            <p key={p.slice(0, 24)}>{p}</p>
+          {about.paragraphs.map((p, i) => (
+            <p key={i}>{p}</p>
           ))}
-          <div className="tg">{ABOUT.tagline}</div>
+          <div className="tg">{about.tagline}</div>
         </div>
       </div>
     </section>

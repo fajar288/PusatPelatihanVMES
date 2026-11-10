@@ -3,8 +3,8 @@ import { Suspense } from "react";
 import CatalogHero from "@/components/catalog/CatalogHero";
 import CourseCatalog from "@/components/catalog/CourseCatalog";
 import type { SortKey } from "@/components/catalog/CatalogBar";
-import { COURSE_CATEGORIES, COURSE_MODES, COURSES } from "@/data/courses";
 import { SITE } from "@/data/site";
+import { getPackages } from "@/lib/cms";
 
 export const metadata: Metadata = {
   title: `Katalog Training | ${SITE.name}`,
@@ -17,21 +17,26 @@ const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v
 
 /** Membaca query string (?q=, ?kategori=, ?mode=, ?urut=) — harus di dalam <Suspense> karena cacheComponents aktif. */
 async function CatalogFromParams({ searchParams }: Pick<PageProps<"/kursus">, "searchParams">) {
-  const sp = await searchParams;
+  const [sp, pk] = await Promise.all([searchParams, getPackages()]);
   return (
     <CourseCatalog
-      courses={COURSES}
-      categories={COURSE_CATEGORIES}
-      modes={COURSE_MODES}
+      courses={pk.items}
+      categories={pk.categories}
+      modes={pk.modes}
       initial={{ q: first(sp.q), category: first(sp.kategori), mode: first(sp.mode), sort: first(sp.urut) as SortKey }}
     />
   );
 }
 
+async function CatalogStatic() {
+  const pk = await getPackages();
+  return <CourseCatalog courses={pk.items} categories={pk.categories} modes={pk.modes} />;
+}
+
 /**
  * /kursus — katalog training (clone `/category/kursus/` website lama, body class g-kursus):
  * hero `.cath` → bar `.catb` (cari, kategori, mode, urutan) → grid `.list` kartu `.cc`.
- * Shell statis di-prerender; fallback Suspense = katalog tanpa filter (markup sama) agar tidak ada loncatan layout.
+ * Data dari GET /api/v1/packages (cache); fallback Suspense = katalog tanpa filter (markup sama).
  */
 export default function KursusPage({ searchParams }: PageProps<"/kursus">) {
   return (
@@ -46,7 +51,7 @@ export default function KursusPage({ searchParams }: PageProps<"/kursus">) {
         desc="Temukan program pelatihan bersertifikasi untuk teknologi industri, IT, otomasi, dan pengembangan SDM digital di PPTI - VMES Training Center."
       />
       <div className="wrap">
-        <Suspense fallback={<CourseCatalog courses={COURSES} categories={COURSE_CATEGORIES} modes={COURSE_MODES} />}>
+        <Suspense fallback={<CatalogStatic />}>
           <CatalogFromParams searchParams={searchParams} />
         </Suspense>
         <div style={{ height: 60 }} />

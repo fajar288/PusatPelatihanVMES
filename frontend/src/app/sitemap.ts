@@ -1,11 +1,11 @@
 import type { MetadataRoute } from "next";
-import { ARTICLES, POST_CATEGORIES } from "@/data/articles";
-import { COURSES } from "@/data/courses";
+import { POST_CATEGORIES } from "@/data/articles";
 import { STATIC_PAGES } from "@/data/pages";
-import { SCHEDULES } from "@/data/schedules";
+import { getPackages, getPosts, getSchedules } from "@/lib/cms";
 import { abs } from "@/lib/seo";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const [pk, schedules, postLists] = await Promise.all([getPackages(), getSchedules(), Promise.all(POST_CATEGORIES.map((c) => getPosts(c.slug)))]);
   const now = new Date();
   const fixed: MetadataRoute.Sitemap = [
     { url: abs("/"), lastModified: now, changeFrequency: "weekly", priority: 1 },
@@ -16,8 +16,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...POST_CATEGORIES.map((c) => ({ url: abs(`/${c.slug}`), lastModified: now, changeFrequency: "weekly" as const, priority: 0.7 })),
     ...STATIC_PAGES.map((p) => ({ url: abs(`/${p.slug}`), lastModified: now, changeFrequency: "yearly" as const, priority: 0.3 })),
   ];
-  const courses = COURSES.map((c) => ({ url: abs(`/kursus/${c.slug}`), lastModified: new Date(c.publishedAt * 1000), changeFrequency: "monthly" as const, priority: 0.8 }));
-  const schedules = SCHEDULES.map((s) => ({ url: abs(`/jadwal/${s.id}`), lastModified: new Date(s.publishedAt * 1000), changeFrequency: "weekly" as const, priority: 0.7 }));
-  const posts = ARTICLES.map((a) => ({ url: abs(`/artikel/${a.slug}`), lastModified: new Date(a.publishedAt * 1000), changeFrequency: "monthly" as const, priority: 0.5 }));
-  return [...fixed, ...courses, ...schedules, ...posts];
+  const ts = (unix?: number | null) => (unix ? new Date(unix * 1000) : now);
+  const courses = pk.items.map((c) => ({ url: abs(`/kursus/${c.slug}`), lastModified: ts(c.publishedAt), changeFrequency: "monthly" as const, priority: 0.8 }));
+  const batches = schedules.map((s) => ({ url: abs(`/jadwal/${s.id}`), lastModified: ts(s.publishedAt), changeFrequency: "weekly" as const, priority: 0.7 }));
+  const posts = postLists.flat().map((a) => ({ url: abs(`/artikel/${a.slug}`), lastModified: ts(a.publishedAt), changeFrequency: "monthly" as const, priority: 0.5 }));
+  return [...fixed, ...courses, ...batches, ...posts];
 }

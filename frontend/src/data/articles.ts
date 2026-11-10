@@ -26,6 +26,9 @@ export type Article = {
   body: PostBlock[];
 };
 
+/** Ringkasan post untuk kartu/list — bentuk sama antara data statis dan API. */
+export type PostSummary = Pick<Article, "slug" | "title" | "excerpt" | "category" | "dateLabel" | "publishedAt" | "image">;
+
 export const POST_CATEGORIES: { slug: string; category: PostCategory; title: string; desc: string }[] = [
   { slug: "tutorial", category: "Tutorial", title: "Tutorial", desc: "Artikel, tutorial, berita, dan kegiatan terbaru." },
   { slug: "berita", category: "Berita", title: "Berita", desc: "Artikel, tutorial, berita, dan kegiatan terbaru." },

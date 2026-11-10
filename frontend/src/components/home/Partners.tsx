@@ -2,10 +2,10 @@
 
 import Image from "next/image";
 import { useRef } from "react";
-import { PARTNERS } from "@/data/home";
+import type { PartnerLogo } from "@/lib/cms-types";
 
 /** section.ps — logo partner grid 2 baris scroll horizontal, panah geser 80% lebar (fungsi slide() theme.main.js). */
-export default function Partners() {
+export default function Partners({ partners }: { partners: PartnerLogo[] }) {
   const pt = useRef<HTMLDivElement>(null);
   const go = (d: number) => pt.current?.scrollBy({ left: d * pt.current.clientWidth * 0.8, behavior: "smooth" });
 
@@ -22,9 +22,13 @@ export default function Partners() {
           </button>
           <div className="pt" ref={pt}>
             <div className="pgr" id="h-partner">
-              {PARTNERS.map((p) => (
+              {partners.map((p) => (
                 <div className="lc" key={p.name}>
-                  <Image alt={p.name} src={p.logo} width={p.w} height={p.h} sizes="172px" style={{ width: "auto", height: "auto" }} />
+                  {p.w && p.h ? (
+                    <Image alt={p.name} src={p.logo} width={p.w} height={p.h} sizes="172px" style={{ width: "auto", height: "auto" }} />
+                  ) : (
+                    <img alt={p.name} src={p.logo} loading="lazy" />
+                  )}
                 </div>
               ))}
             </div>

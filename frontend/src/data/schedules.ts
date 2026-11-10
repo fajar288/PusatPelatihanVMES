@@ -23,6 +23,7 @@ export type Schedule = {
   statusLabel: string;
   price: number;
   publishedAt: number; // unix, urutan "Terbaru" di /jadwal
+  certificate?: string | null; // dari paket (API); data statis mengambilnya lewat getCourse()
 };
 
 export const SCHEDULES: Schedule[] = [

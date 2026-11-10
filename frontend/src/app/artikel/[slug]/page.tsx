@@ -5,23 +5,21 @@ import RelatedPosts from "@/components/detail/RelatedPosts";
 import TopicCta from "@/components/detail/TopicCta";
 import WhyBox from "@/components/detail/WhyBox";
 import Icon from "@/components/ui/Icon";
-import PostBody from "@/components/ui/PostBody";
-import { ARTICLES, getCategorySlug, getPost, getRelatedPosts } from "@/data/articles";
+import { getCategorySlug, POST_CATEGORIES } from "@/data/articles";
 import { SITE } from "@/data/site";
+import { getPost, getPosts } from "@/lib/cms";
 import { abs, JsonLd } from "@/lib/seo";
 
-// Route detail: `params` dibaca langsung (bukan di dalam <Suspense>) supaya slug asing menghasilkan status 404
-// yang benar. Konsekuensinya navigasi ke slug yang belum di-prerender tidak "instan" (cacheComponents) — dapat diterima
-// karena slug yang dikenal sudah statis via generateStaticParams.
 export const instant = false;
 
-export function generateStaticParams() {
-  return ARTICLES.map((a) => ({ slug: a.slug }));
+export async function generateStaticParams() {
+  const lists = await Promise.all(POST_CATEGORIES.map((c) => getPosts(c.slug)));
+  return lists.flat().map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({ params }: PageProps<"/artikel/[slug]">): Promise<Metadata> {
   const { slug } = await params;
-  const post = getPost(slug);
+  const post = await getPost(slug);
   if (!post) return { title: `Artikel tidak ditemukan | ${SITE.name}` };
   return {
     title: `${post.title} | ${SITE.name}`,
@@ -31,13 +29,13 @@ export async function generateMetadata({ params }: PageProps<"/artikel/[slug]">)
   };
 }
 
-/** /artikel/[slug] — clone single post website lama (g-artikel .kd): back link, chips, h1, tanggal, grid konten + sidebar sticky. */
+/** /artikel/[slug] — clone single post website lama (g-artikel .kd). Data: GET /api/v1/posts/{slug} (body HTML). */
 export default async function ArtikelPage({ params }: PageProps<"/artikel/[slug]">) {
   const { slug } = await params;
-  const post = getPost(slug);
+  const post = await getPost(slug);
   if (!post) notFound();
-  const catSlug = getCategorySlug(post.category);
-  const related = getRelatedPosts(post);
+  const catSlug = post.categorySlug ?? getCategorySlug(post.category);
+  const related = post.related ?? [];
 
   const articleLd = {
     "@context": "https://schema.org",
@@ -81,7 +79,8 @@ export default async function ArtikelPage({ params }: PageProps<"/artikel/[slug]
               <section className="kbx">
                 <h2 id="kd-oh">Detail</h2>
                 <div className="kov" id="kd-ov">
-                  <PostBody blocks={post.body} />
+                  {/* HTML dari CMS — dirender ke .pb persis seperti konten WordPress di website lama */}
+                  <div className="pb" dangerouslySetInnerHTML={{ __html: post.body ?? "" }} />
                 </div>
               </section>
               <RelatedPosts posts={related} variant="rt-d" />
