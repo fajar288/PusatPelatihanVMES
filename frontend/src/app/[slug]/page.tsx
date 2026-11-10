@@ -14,6 +14,11 @@ import { SITE } from "@/data/site";
  *  - kategori postingan: /tutorial, /berita, /kegiatan, /dokumentasi (body g-artikel: hero + bar + list kartu horizontal)
  *  - halaman statis: /kebijakan-privasi, /syarat-ketentuan, /faq, /cara-pendaftaran (.ph0 + .single .in .pb)
  */
+// Route detail: `params` dibaca langsung (bukan di dalam <Suspense>) supaya slug asing menghasilkan status 404
+// yang benar. Konsekuensinya navigasi ke slug yang belum di-prerender tidak "instan" (cacheComponents) — dapat diterima
+// karena slug yang dikenal sudah statis via generateStaticParams.
+export const instant = false;
+
 export function generateStaticParams() {
   return [...POST_CATEGORIES.map((c) => ({ slug: c.slug })), ...STATIC_PAGES.map((p) => ({ slug: p.slug }))];
 }
