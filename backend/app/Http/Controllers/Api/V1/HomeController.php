@@ -19,6 +19,7 @@ use App\Models\Testimonial;
 use App\Models\TrainingCategory;
 use App\Models\TrainingPackage;
 use App\Models\TrainingSchedule;
+use App\Support\Media;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -33,7 +34,7 @@ class HomeController extends Controller
         $data = Cache::remember(self::CACHE_KEY, 300, fn () => [
             'site' => SiteSetting::get('site'),
             'hero' => (SiteSetting::get('hero') ?? []) + [
-                'slides' => Banner::query()->live('hero')->get()->map(fn ($b) => ['src' => $b->image, 'alt' => $b->alt, 'link' => $b->link])->values(),
+                'slides' => Banner::query()->live('hero')->get()->map(fn ($b) => ['src' => Media::url($b->image), 'alt' => $b->alt, 'link' => $b->link])->values(),
                 'officialPartners' => PartnerResource::collection(Partner::query()->official()->get())->resolve($request),
             ],
             'stats' => SiteSetting::get('stats', []),

@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use App\Models\Post;
 use App\Support\IdDate;
+use App\Support\Media;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -23,7 +24,7 @@ class PostResource extends JsonResource
             'categorySlug' => $this->typeSlug(),
             'dateLabel' => IdDate::short($this->published_at),
             'publishedAt' => $this->published_at?->timestamp,
-            'image' => $this->thumbnail,
+            'image' => Media::url($this->thumbnail),
             'author' => $this->author_name ?? $this->author?->name,
             'tags' => $this->tags ?? [],
             'body' => $this->when($full, $this->body),

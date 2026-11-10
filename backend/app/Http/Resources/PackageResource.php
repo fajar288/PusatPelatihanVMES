@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\TrainingPackage;
+use App\Support\Media;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -28,7 +29,7 @@ class PackageResource extends JsonResource
             'statusLabel' => $label,
             'price' => $this->price !== null ? (float) $this->price : null,
             'popular' => $this->is_popular,
-            'image' => $this->image,
+            'image' => Media::url($this->image),
             'publishedAt' => $this->published_at?->timestamp,
             'level' => $this->level,
             'certificate' => $this->certificate,
