@@ -90,6 +90,32 @@ export type AuditEvent = {
   at: string;
 };
 
+export type EnrollmentInfo = {
+  id: number;
+  status: "enrolled" | "attending" | "completed" | "failed" | "dropped";
+  participantName: string;
+  registration: string | null;
+  enrolledAt: string | null;
+  completedAt: string | null;
+  finalScore: number | null;
+  attendancePercent: number | null;
+  schedule: {
+    code: string;
+    title: string;
+    packageSlug: string | null;
+    startDate: string;
+    endDate: string;
+    dateLabel: string;
+    city: string | null;
+    location: string | null;
+    mode: string;
+    time: string | null;
+    classStatus: string;
+    trainers: { name: string; role: string }[];
+  } | null;
+  sessions: { no: number; date: string; dateLabel: string; topic: string | null; time: string | null; attendance: string | null; attendanceLabel: string | null }[];
+};
+
 /** Label & warna pill status (dipetakan ke .jst ok|wn|no tema). */
 export const STATUS_PILL: Record<RegistrationStatus, { label: string; cls: "ok" | "wn" | "no" }> = {
   pending: { label: "Menunggu diproses", cls: "wn" },

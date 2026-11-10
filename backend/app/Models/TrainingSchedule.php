@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class TrainingSchedule extends Model
@@ -21,6 +23,9 @@ class TrainingSchedule extends Model
 
     protected $guarded = [];
 
+    /** Alasan perubahan (diisi form admin, tidak disimpan di tabel ini; dicatat TrainingScheduleObserver). */
+    public ?string $changeReason = null;
+
     protected function casts(): array
     {
         return [
@@ -35,6 +40,36 @@ class TrainingSchedule extends Model
     public function package(): BelongsTo
     {
         return $this->belongsTo(TrainingPackage::class, 'package_id');
+    }
+
+    public function trainers(): BelongsToMany
+    {
+        return $this->belongsToMany(Trainer::class, 'class_trainers', 'schedule_id', 'trainer_id')->withPivot('role')->withTimestamps();
+    }
+
+    public function sessions(): HasMany
+    {
+        return $this->hasMany(ClassSession::class, 'schedule_id')->orderBy('session_no');
+    }
+
+    public function enrollments(): HasMany
+    {
+        return $this->hasMany(Enrollment::class, 'schedule_id');
+    }
+
+    public function registrations(): HasMany
+    {
+        return $this->hasMany(Registration::class, 'schedule_id');
+    }
+
+    public function waitlists(): HasMany
+    {
+        return $this->hasMany(Waitlist::class, 'schedule_id')->where('status', 'waiting');
+    }
+
+    public function changes(): HasMany
+    {
+        return $this->hasMany(ScheduleChange::class, 'schedule_id')->latest();
     }
 
     public function scopePublished(Builder $q): Builder

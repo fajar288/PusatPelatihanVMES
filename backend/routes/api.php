@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\V1\PostController;
 use App\Http\Controllers\Api\V1\RegistrationController;
 use App\Http\Controllers\Api\V1\ScheduleController;
 use App\Http\Controllers\Api\V1\SearchController;
+use App\Http\Controllers\Api\V1\WaitlistController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -42,6 +43,7 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
 
     Route::get('/schedules', [ScheduleController::class, 'index'])->name('schedules.index');
     Route::get('/schedules/{schedule}', [ScheduleController::class, 'show'])->name('schedules.show');
+    Route::post('/schedules/{schedule}/waitlist', [WaitlistController::class, 'store'])->middleware('throttle:10,1')->name('schedules.waitlist');
 
     Route::get('/posts', [PostController::class, 'index'])->name('posts.index');
     Route::get('/posts/{slug}', [PostController::class, 'show'])->name('posts.show');
@@ -75,5 +77,6 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
         Route::post('/me/registrations/{registration}/payment-proof', [MeController::class, 'paymentProof'])->name('me.registration.proof');
         Route::get('/me/payments', [MeController::class, 'payments'])->name('me.payments');
         Route::get('/me/notifications', [MeController::class, 'notifications'])->name('me.notifications');
+        Route::get('/me/enrollments', [MeController::class, 'enrollments'])->name('me.enrollments');
     });
 });

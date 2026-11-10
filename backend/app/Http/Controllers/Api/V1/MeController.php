@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Api\V1;
 use App\Enums\RegistrationStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\AuditLogResource;
+use App\Http\Resources\EnrollmentResource;
 use App\Http\Resources\PaymentResource;
 use App\Http\Resources\RegistrationResource;
 use App\Http\Resources\UserResource;
 use App\Models\AuditLog;
+use App\Models\Enrollment;
 use App\Models\Member;
 use App\Models\Payment;
 use App\Models\Registration;
@@ -112,6 +114,20 @@ class MeController extends Controller
         $ids = Registration::query()->ownedBy($request->user())->pluck('id');
 
         return PaymentResource::collection(Payment::query()->whereIn('registration_id', $ids)->with('registration')->latest()->get());
+    }
+
+    /** GET /me/enrollments — "Pelatihan Saya": kelas, trainer, sesi, kehadiran */
+    public function enrollments(Request $request): AnonymousResourceCollection
+    {
+        $user = $request->user();
+        $regIds = Registration::query()->ownedBy($user)->pluck('id');
+        $q = Enrollment::query()->with(['schedule.package', 'schedule.trainers', 'schedule.sessions', 'attendances', 'registration'])
+            ->where(fn ($w) => $w->whereIn('registration_id', $regIds)
+                ->orWhere('member_id', $user->member?->id ?? 0)
+                ->orWhere('participant_email', $user->email))
+            ->latest('enrolled_at');
+
+        return EnrollmentResource::collection($q->get());
     }
 
     /** GET /me/notifications — riwayat peristiwa akun (audit) sebagai notifikasi aplikasi sederhana. */

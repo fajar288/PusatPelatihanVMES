@@ -33,6 +33,10 @@ class PackageResource extends JsonResource
             'publishedAt' => $this->published_at?->timestamp,
             'level' => $this->level,
             'certificate' => $this->certificate,
+            'programType' => $this->program_type,
+            'programTypeLabel' => TrainingPackage::PROGRAM_TYPES[$this->program_type] ?? $this->program_type,
+            'certificateType' => $this->certificate_type,
+            'completionRule' => $this->completionRule(),
             'overview' => [
                 'intro' => $this->overview_intro ?? [],
                 'learn' => $this->learning_outcomes ?? [],
