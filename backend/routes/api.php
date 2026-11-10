@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\ContentController;
 use App\Http\Controllers\Api\V1\HomeController;
+use App\Http\Controllers\Api\V1\LearningController;
 use App\Http\Controllers\Api\V1\MeController;
 use App\Http\Controllers\Api\V1\PackageController;
 use App\Http\Controllers\Api\V1\PostController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\Api\V1\RegistrationController;
 use App\Http\Controllers\Api\V1\ScheduleController;
 use App\Http\Controllers\Api\V1\SearchController;
 use App\Http\Controllers\Api\V1\TrainerController;
+use App\Http\Controllers\Api\V1\TrainerLmsController;
 use App\Http\Controllers\Api\V1\WaitlistController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -80,6 +82,23 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
         Route::get('/me/notifications', [MeController::class, 'notifications'])->name('me.notifications');
         Route::get('/me/enrollments', [MeController::class, 'enrollments'])->name('me.enrollments');
 
+        // LMS peserta (PRD §5.8) — My Learning, Assignments, Results, forum, berkas materi
+        Route::prefix('me/learning')->name('me.learning.')->group(function (): void {
+            Route::get('/', [LearningController::class, 'index'])->name('index');
+            Route::get('/assignments', [LearningController::class, 'assignments'])->name('assignments');
+            Route::get('/results', [LearningController::class, 'results'])->name('results');
+            Route::get('/resources/{resource}', [LearningController::class, 'resource'])->name('resource');
+            Route::get('/submissions/{submission}/file', [LearningController::class, 'submissionFile'])->name('submission.file');
+            Route::get('/{course}', [LearningController::class, 'show'])->name('show');
+            Route::get('/{course}/discussions', [LearningController::class, 'discussions'])->name('discussions');
+            Route::post('/{course}/discussions', [LearningController::class, 'storeDiscussion'])->middleware('throttle:30,1')->name('discussions.store');
+            Route::get('/{course}/lessons/{lesson}', [LearningController::class, 'lesson'])->name('lesson');
+            Route::post('/{course}/lessons/{lesson}/progress', [LearningController::class, 'progress'])->name('lesson.progress');
+            Route::post('/{course}/lessons/{lesson}/quiz/start', [LearningController::class, 'startQuiz'])->name('lesson.quiz.start');
+            Route::post('/{course}/lessons/{lesson}/quiz/submit', [LearningController::class, 'submitQuiz'])->name('lesson.quiz.submit');
+            Route::post('/{course}/lessons/{lesson}/assignment', [LearningController::class, 'submitAssignment'])->name('lesson.assignment');
+        });
+
         // Portal trainer (PRD §5.7) — akun dengan profil trainer aktif
         Route::prefix('trainer')->name('trainer.')->group(function (): void {
             Route::get('/profile', [TrainerController::class, 'profile'])->name('profile');
@@ -87,6 +106,12 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
             Route::get('/classes', [TrainerController::class, 'classes'])->name('classes');
             Route::get('/classes/{code}', [TrainerController::class, 'show'])->name('classes.show');
             Route::post('/classes/{code}/sessions/{no}/attendance', [TrainerController::class, 'attendance'])->name('classes.attendance');
+            // LMS trainer: materi, progres peserta, penilaian tugas, hasil kuis
+            Route::get('/classes/{code}/learning', [TrainerLmsController::class, 'learning'])->name('classes.learning');
+            Route::get('/classes/{code}/submissions', [TrainerLmsController::class, 'submissions'])->name('classes.submissions');
+            Route::get('/classes/{code}/quiz-results', [TrainerLmsController::class, 'quizResults'])->name('classes.quiz_results');
+            Route::post('/submissions/{id}/grade', [TrainerLmsController::class, 'grade'])->name('submissions.grade');
+            Route::get('/submissions/{id}/file', [TrainerLmsController::class, 'submissionFile'])->name('submissions.file');
         });
     });
 });

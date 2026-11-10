@@ -16,7 +16,7 @@ class TrainersTable
         return $table
             ->defaultSort('sort_order')
             ->columns([
-                TextColumn::make('name')->label('Nama')->searchable()->sortable()->description(fn ($r) => $r->title),
+                TextColumn::make('name')->label('Nama')->searchable()->sortable()->description(fn ($record) => $record->title),
                 TextColumn::make('expertise')->label('Keahlian')->badge()->limitList(3),
                 TextColumn::make('email')->searchable(),
                 IconColumn::make('is_assessor')->label('Assessor')->boolean(),

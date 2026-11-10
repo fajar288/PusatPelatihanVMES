@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -36,6 +37,37 @@ class Enrollment extends Model
     public function attendances(): HasMany
     {
         return $this->hasMany(Attendance::class);
+    }
+
+    public function lessonProgress(): HasMany
+    {
+        return $this->hasMany(LessonProgress::class);
+    }
+
+    public function quizAttempts(): HasMany
+    {
+        return $this->hasMany(QuizAttempt::class);
+    }
+
+    public function submissions(): HasMany
+    {
+        return $this->hasMany(AssignmentSubmission::class);
+    }
+
+    /** Enrollment milik akun: lewat pendaftarannya, member-nya, atau email peserta (kolektif). */
+    public function scopeOwnedBy(Builder $q, User $user): Builder
+    {
+        $regIds = Registration::query()->ownedBy($user)->select('id');
+
+        return $q->where(fn (Builder $w) => $w->whereIn('registration_id', $regIds)
+            ->orWhere('member_id', $user->member?->id ?? 0)
+            ->orWhere('participant_email', $user->email));
+    }
+
+    /** Status yang masih boleh mengakses LMS. */
+    public function canLearn(): bool
+    {
+        return in_array($this->status, ['enrolled', 'attending', 'completed'], true);
     }
 
     /** Persentase kehadiran (hadir/terlambat dihitung hadir) terhadap sesi yang sudah lewat. */

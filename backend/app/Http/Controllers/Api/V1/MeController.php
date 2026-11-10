@@ -119,12 +119,8 @@ class MeController extends Controller
     /** GET /me/enrollments — "Pelatihan Saya": kelas, trainer, sesi, kehadiran */
     public function enrollments(Request $request): AnonymousResourceCollection
     {
-        $user = $request->user();
-        $regIds = Registration::query()->ownedBy($user)->pluck('id');
-        $q = Enrollment::query()->with(['schedule.package', 'schedule.trainers', 'schedule.sessions', 'attendances', 'registration'])
-            ->where(fn ($w) => $w->whereIn('registration_id', $regIds)
-                ->orWhere('member_id', $user->member?->id ?? 0)
-                ->orWhere('participant_email', $user->email))
+        $q = Enrollment::query()->ownedBy($request->user())
+            ->with(['schedule.package', 'schedule.trainers', 'schedule.sessions', 'attendances', 'registration'])
             ->latest('enrolled_at');
 
         return EnrollmentResource::collection($q->get());
