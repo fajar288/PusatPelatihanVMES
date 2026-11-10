@@ -249,7 +249,8 @@ Legenda: `[ ]` belum · `[~]` sedang · `[x]` selesai. Prioritas mengikuti roadm
 - [x] Data dummy `src/data/{site,courses,schedules,categories,partners,testimonials,gallery,articles}.ts`
 - [ ] Scaffold Laravel 11 di `backend/` (install PHP 8.2+, Composer; `composer create-project laravel/laravel backend`), Sanctum, PostgreSQL, CORS untuk `localhost:3000`
 - [ ] Docker compose (postgres, backend, frontend), `.env.example` kedua app
-- [ ] Git init, `.gitignore`, CI lint+build
+- [x] Git init di root + push ke https://github.com/fajar288/PusatPelatihanVMES (branch `main`)
+- [ ] CI lint+build (GitHub Actions)
 
 #### 1B. Landing page (clone plek ketiplek) — **TARGET HARI INI**
 - [x] `layout/Header` (sticky, shrink, fitNav overflow, hamburger, search form)
@@ -359,4 +360,4 @@ Legenda: `[ ]` belum · `[~]` sedang · `[x]` selesai. Prioritas mengikuti roadm
 - PRD diekstrak ke `docs/PRD.md`.
 - Next.js 16 di-scaffold di `frontend/` (TS, App Router, Tailwind 4 tanpa preflight), tema di-port 1:1 ke `src/styles/theme.css`, landing page dibangun lengkap 13 komponen (checklist 1B). `tsc` & `eslint` lulus. Diverifikasi di browser (desktop & mobile) dan dibandingkan dengan screenshot asli: identik.
 - Jalankan: `cd frontend && npm run dev` → http://localhost:3000
-- Belum: halaman lain (1C), `next build` produksi, backend Laravel (PHP/Composer belum terpasang di mesin ini), git init di root `D:\PPTI` (nested `.git` bawaan create-next-app sudah dihapus).
+- Belum: halaman lain (1C), `next build` produksi, backend Laravel (PHP/Composer belum terpasang di mesin ini). Repo: https://github.com/fajar288/PusatPelatihanVMES (commit awal d928834).
