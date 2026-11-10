@@ -1,0 +1,66 @@
+# Lingkungan pengembangan PPTI VMES ITMS: PostgreSQL + backend Laravel + frontend Next.js.
+# Jalankan: docker compose up -d postgres   (cukup DB; backend/frontend dijalankan lokal)
+#           docker compose up --build       (semua service)
+name: ppti
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: ppti-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-ppti}
+      POSTGRES_USER: ${DB_USERNAME:-ppti}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-secret}
+      TZ: Asia/Jakarta
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-ppti} -d ${DB_DATABASE:-ppti}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ppti-backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file: ./backend/.env
+    environment:
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      APP_URL: http://localhost:8000
+      FRONTEND_URL: http://localhost:3000
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/var/www/html
+      - backend_vendor:/var/www/html/vendor
+    command: sh -c "php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8000"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: ppti-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000/api/v1
+      API_URL_INTERNAL: http://backend:8000/api/v1
+      NEXT_PUBLIC_SITE_URL: http://localhost:3000
+    ports:
+      - "3000:3000"
+
+volumes:
+  pgdata:
+  backend_vendor:

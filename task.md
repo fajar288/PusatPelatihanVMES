@@ -224,7 +224,7 @@ D:\PPTI
 │     ├─ data/              ← dummy seed (diganti API)
 │     ├─ lib/               ← api client, helpers (formatRupiah, waLink)
 │     └─ styles/theme.css   ← port 1:1 theme.style.css
-└─ backend/                 ← Laravel 11 API (modular monolith) — BELUM dibuat (butuh PHP 8.2+ & Composer di mesin ini)
+└─ backend/                 ← Laravel 13 API (modular monolith), PHP 8.3 — scaffold selesai 2026-11-10
 ```
 
 Keputusan:
@@ -247,8 +247,8 @@ Legenda: `[ ]` belum · `[~]` sedang · `[x]` selesai. Prioritas mengikuti roadm
 - [x] Icon sprite komponen + `<Icon name="...">`
 - [x] Salin aset (logo, favicon, partner, avatar) ke `public/images`
 - [x] Data dummy `src/data/{site,courses,schedules,categories,partners,testimonials,gallery,articles}.ts`
-- [ ] Scaffold Laravel 11 di `backend/` (install PHP 8.2+, Composer; `composer create-project laravel/laravel backend`), Sanctum, PostgreSQL, CORS untuk `localhost:3000`
-- [ ] Docker compose (postgres, backend, frontend), `.env.example` kedua app
+- [x] Scaffold **Laravel 13.40** (PHP 8.3.36 via winget, Composer 2.11) di `backend/`; Sanctum (`install:api`, `HasApiTokens`, `statefulApi()`), `.env.example` PostgreSQL, CORS `config/cors.php` origin dari `FRONTEND_URL` + credentials, `GET /api/v1/health`, tes `tests/Feature/Api/HealthTest.php`
+- [x] Docker compose (postgres 16, backend, frontend) di root + `backend/Dockerfile`, `frontend/Dockerfile` (standalone), `.env.example` kedua app. Belum diuji: Docker daemon tidak aktif saat dikerjakan
 - [x] Git init di root + push ke https://github.com/fajar288/PusatPelatihanVMES (branch `main`)
 - [x] CI lint+build (GitHub Actions) — `.github/workflows/ci.yml`: frontend typegen+tsc+eslint+build di tiap push/PR ke `main`; job backend aktif otomatis saat `backend/composer.json` ada
 
@@ -365,3 +365,4 @@ Legenda: `[ ]` belum · `[~]` sedang · `[x]` selesai. Prioritas mengikuti roadm
 - Catatan teknis: `cacheComponents` aktif → `searchParams` harus dibaca di dalam `<Suspense>` (lihat `app/kursus/page.tsx`).
 - Seluruh checklist 1C selesai: `/jadwal` (+kalender), `/jadwal/[id]`, `/daftar` (form awal), list kategori `/tutorial` `/berita` `/kegiatan` `/dokumentasi`, `/artikel/[slug]`, `/tentang`, `/kontak`, 4 halaman statis, `/search`, WA melayang, SEO (sitemap/robots/JSON-LD). Form kontak & daftar sementara mengirim ke WhatsApp sampai API Laravel (1D/1E) ada. Konten `data/about.ts`, `data/pages.ts`, artikel non-tutorial, dan detail batch adalah DRAF yang harus direview PPTI. Diverifikasi 1320/375px via Edge headless; `tsc`, `eslint`, `next build` lulus.
 - Pola Next 16 (cacheComponents): `searchParams` dibaca di komponen anak dalam `<Suspense>`; `new Date()` di client component dibungkus `useSyncExternalStore` (lihat `ScheduleCalendar`).
+- Backend: PHP 8.3.36 (winget `PHP.PHP.8.3`, php.ini dibuat dari php.ini-production dengan ekstensi curl/fileinfo/gd/intl/mbstring/openssl/pdo_pgsql/pgsql/sqlite/zip/sodium) + Composer 2.11.1 (`%LOCALAPPDATA%\Composerin`, di PATH user). `composer create-project laravel/laravel backend` → Laravel 13.40. Sanctum, CORS, `.env.example` pgsql, health endpoint, Pint + 5 tes lulus. `docker-compose.yml` + Dockerfile keduanya ditulis (belum diuji, Docker daemon mati).

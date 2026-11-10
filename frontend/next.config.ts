@@ -2,6 +2,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
+  // Build standalone untuk image Docker (frontend/Dockerfile)
+  output: "standalone",
   cacheComponents: true,
   images: {
     // Logo & partner: sumber PNG/JPEG besar dioptimalkan on-demand (AVIF → WebP → asli)
