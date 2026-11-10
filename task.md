@@ -272,8 +272,8 @@ Legenda: `[ ]` belum · `[~]` sedang · `[x]` selesai. Prioritas mengikuti roadm
 - [ ] Lighthouse: LCP gambar hero pakai `priority`, `next/image` untuk logo & partner
 
 #### 1C. Halaman publik lain (clone)
-- [ ] `/kursus` katalog: `CatalogHero` + `CatalogBar` (cari/filter kategori/mode/urut) + grid `CourseCard`
-- [ ] `/kursus/[slug]` detail kursus: `.kd` + chips + `.kic` (durasi, mode, level, sertifikat) + jadwal `.kjl` + overview `.kov` + sidebar harga/CTA WA/`why` + related
+- [x] `/kursus` katalog: `CatalogHero` + `CatalogBar` (cari/filter kategori/mode/urut) + grid `CourseCard` (+ query string `?q=&kategori=&mode=&urut=`)
+- [x] `/kursus/[slug]` detail kursus: `.kd` + chips + `.kic` (durasi, mode, level, sertifikat) + jadwal `.kjl` + overview `.kov` + sidebar harga/CTA WA/`why` + related (`detail/*`, data overview di `data/courses.ts`)
 - [ ] `/jadwal` list jadwal (baris `.card` border-left lime, tanggal pill, tombol "Lihat detail") + kalender bulanan (PRD §5.4)
 - [ ] `/jadwal/[id]` detail batch + tombol Daftar (ke form registrasi, bukan hanya WA)
 - [ ] `/tutorial`, `/berita`, `/kegiatan`, `/dokumentasi` list artikel/galeri (`g-artikel` layout)
@@ -282,7 +282,7 @@ Legenda: `[ ]` belum · `[~]` sedang · `[x]` selesai. Prioritas mengikuti roadm
 - [ ] `/kontak` (form konsultasi + kartu kontak + peta)
 - [ ] `/kebijakan-privasi`, `/syarat-ketentuan`, `/faq`, `/cara-pendaftaran` (`.ph0` + `.pb`)
 - [ ] `/search?q=` hasil pencarian
-- [ ] 404 page gaya `.nores`
+- [x] 404 page gaya `.nores` (`app/not-found.tsx`)
 - [ ] Tombol WhatsApp floating (opsional, konsisten warna `#25a244`)
 - [ ] SEO: metadata per halaman, OpenGraph, sitemap.xml, robots.txt, JSON-LD Course/Event/Organization
 
@@ -361,3 +361,5 @@ Legenda: `[ ]` belum · `[~]` sedang · `[x]` selesai. Prioritas mengikuti roadm
 - Next.js 16 di-scaffold di `frontend/` (TS, App Router, Tailwind 4 tanpa preflight), tema di-port 1:1 ke `src/styles/theme.css`, landing page dibangun lengkap 13 komponen (checklist 1B). `tsc` & `eslint` lulus. Diverifikasi di browser (desktop & mobile) dan dibandingkan dengan screenshot asli: identik.
 - Jalankan: `cd frontend && npm run dev` → http://localhost:3000
 - Belum: halaman lain (1C), `next build` produksi, backend Laravel (PHP/Composer belum terpasang di mesin ini). Repo: https://github.com/fajar288/PusatPelatihanVMES (commit awal 9c4c927).
+- Halaman `/kursus` (katalog: hero `.cath`, bar `.catb` cari/kategori/mode/urut dengan logika identik `draw()` main.js, grid `.cc`) dan `/kursus/[slug]` (detail: chips, `.kic`, jadwal `.kjl`, overview `.kov`, sidebar `.pcd` + `why`, related `.rcg`) selesai. Data detail (level, sertifikat, overview) ditambahkan ke `src/data/courses.ts`. 404 `.nores`. Diverifikasi 1320/900/375px via Edge headless; `tsc`, `eslint`, `next build` lulus.
+- Catatan teknis: `cacheComponents` aktif → `searchParams` harus dibaca di dalam `<Suspense>` (lihat `app/kursus/page.tsx`).
