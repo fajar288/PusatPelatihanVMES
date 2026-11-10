@@ -23,10 +23,10 @@ export const HERO = {
   ] as { icon: IconName; label: string }[],
   glassStat: { icon: "grad" as IconName, title: "12.000+ Lulusan", sub: "Tersebar seluruh Indonesia" },
   officialPartners: [
-    { name: "Cisco", logo: "/images/partners/cisco.png" },
-    { name: "MikroTik", logo: "/images/partners/mikrotik.png" },
-    { name: "Pearson VUE", logo: "/images/partners/pearson-vue.png" },
-    { name: "Certiport", logo: "/images/partners/certiport.png" },
+    { name: "Cisco", logo: "/images/partners/cisco.png", w: 1280, h: 676 },
+    { name: "MikroTik", logo: "/images/partners/mikrotik.png", w: 609, h: 156 },
+    { name: "Pearson VUE", logo: "/images/partners/pearson-vue.png", w: 246, h: 205 },
+    { name: "Certiport", logo: "/images/partners/certiport.png", w: 300, h: 139 },
   ],
 };
 
@@ -80,23 +80,24 @@ export const WHY = {
 };
 
 // ===== PARTNER & CLIENT (urutan sama dengan website lama) =====
-export const PARTNERS: { name: string; logo: string }[] = [
-  { name: "telkomsel", logo: "/images/partners/telkomsel.png" },
-  { name: "Telkom Indonesia", logo: "/images/partners/telkom-indonesia.png" },
-  { name: "Axis", logo: "/images/partners/axis.png" },
-  { name: "ericsson", logo: "/images/partners/ericsson.png" },
-  { name: "huawei", logo: "/images/partners/huawei.png" },
-  { name: "indosat", logo: "/images/partners/indosat.png" },
-  { name: "lapan", logo: "/images/partners/lapan.png" },
-  { name: "bmkg", logo: "/images/partners/bmkg.png" },
-  { name: "lp3i", logo: "/images/partners/lp3i.png" },
-  { name: "mandiri", logo: "/images/partners/mandiri.png" },
-  { name: "nec", logo: "/images/partners/nec.png" },
-  { name: "zte", logo: "/images/partners/zte.png" },
-  { name: "moratelindo", logo: "/images/partners/moratelindo.png" },
-  { name: "Smartfren", logo: "/images/partners/smartfren.png" },
-  { name: "xl axiata", logo: "/images/partners/xl-axiata.png" },
-  { name: "PLN", logo: "/images/partners/pln.png" },
+// w/h = dimensi asli file (dipakai next/image untuk srcset; tampilan diatur CSS .lc img / .lg img)
+export const PARTNERS: { name: string; logo: string; w: number; h: number }[] = [
+  { name: "telkomsel", logo: "/images/partners/telkomsel.png", w: 877, h: 284 },
+  { name: "Telkom Indonesia", logo: "/images/partners/telkom-indonesia.png", w: 3508, h: 2480 },
+  { name: "Axis", logo: "/images/partners/axis.png", w: 3840, h: 2156 },
+  { name: "ericsson", logo: "/images/partners/ericsson.png", w: 1280, h: 1121 },
+  { name: "huawei", logo: "/images/partners/huawei.png", w: 3840, h: 3905 },
+  { name: "indosat", logo: "/images/partners/indosat.png", w: 1280, h: 682 },
+  { name: "lapan", logo: "/images/partners/lapan.png", w: 1280, h: 921 },
+  { name: "bmkg", logo: "/images/partners/bmkg.png", w: 242, h: 300 },
+  { name: "lp3i", logo: "/images/partners/lp3i.png", w: 303, h: 337 },
+  { name: "mandiri", logo: "/images/partners/mandiri.png", w: 3840, h: 1121 },
+  { name: "nec", logo: "/images/partners/nec.png", w: 960, h: 261 },
+  { name: "zte", logo: "/images/partners/zte.png", w: 1280, h: 619 },
+  { name: "moratelindo", logo: "/images/partners/moratelindo.png", w: 972, h: 257 },
+  { name: "Smartfren", logo: "/images/partners/smartfren.png", w: 1220, h: 204 },
+  { name: "xl axiata", logo: "/images/partners/xl-axiata.png", w: 1000, h: 248 },
+  { name: "PLN", logo: "/images/partners/pln.png", w: 2480, h: 3397 },
 ];
 
 // ===== GALERI (hotlink pihak ketiga — ganti dengan foto PPTI) =====

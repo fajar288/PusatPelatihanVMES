@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import Icon from "@/components/ui/Icon";
 import { FOOTER_COLUMNS, SITE, SOCIALS } from "@/data/site";
@@ -11,7 +12,7 @@ export default function Footer() {
         <div>
           <div className="fl">
             <Link className="logo" href="/">
-              <img alt="PPTI - VMES Training Center" className="lg" src={SITE.logo} />
+              <Image alt="PPTI - VMES Training Center" className="lg" src={SITE.logo} width={SITE.logoSize.w} height={SITE.logoSize.h} sizes="120px" loading="lazy" />
               <span className="lt">{SITE.shortName}</span>
             </Link>
           </div>

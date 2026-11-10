@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Icon from "@/components/ui/Icon";
@@ -71,7 +72,8 @@ export default function Hero() {
                   alt="Training PPTI"
                   className={i === cur ? "on" : ""}
                   src={src}
-                  fetchPriority={i === 0 ? "high" : undefined}
+                  fetchPriority={i === 0 ? "high" : "low"}
+                  decoding="async"
                 />
               ))}
             </div>
@@ -104,7 +106,7 @@ export default function Hero() {
             <div className="lg">
               {HERO.officialPartners.map((p) => (
                 <div key={p.name}>
-                  <img alt={p.name} loading="lazy" src={p.logo} />
+                  <Image alt={p.name} src={p.logo} width={p.w} height={p.h} sizes="130px" style={{ width: "100%", height: "auto" }} />
                 </div>
               ))}
             </div>

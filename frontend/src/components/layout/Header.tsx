@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { NAV, SITE } from "@/data/site";
@@ -59,7 +60,7 @@ export default function Header() {
     <header className={cls} id="hd" ref={hdRef}>
       <div className="wrap" ref={wrapRef}>
         <Link className="logo" href="/">
-          <img alt="PPTI - VMES Training Center" className="lg" src={SITE.logo} />
+          <Image alt="PPTI - VMES Training Center" className="lg" src={SITE.logo} width={SITE.logoSize.w} height={SITE.logoSize.h} sizes="120px" priority />
           <span className="lt">{SITE.shortName}</span>
         </Link>
         <button aria-label="Menu" className="mb" id="mb" type="button" onClick={() => setOpen((o) => !o)}>

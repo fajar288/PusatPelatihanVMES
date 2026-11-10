@@ -269,7 +269,7 @@ Legenda: `[ ]` belum · `[~]` sedang · `[x]` selesai. Prioritas mengikuti roadm
 - [x] Metadata: title "PPTI – VMES Training Center", favicon, lang `id`
 - [x] Verifikasi side-by-side dengan screenshot (desktop 800px & mobile 375px: hero, stats, tentang, kursus, kategori+jadwal, partner, mengapa, testimoni, galeri, artikel, CTA, kontak, footer, menu hamburger) — identik
 - [x] Verifikasi tambahan di 1320px & 900px + `npm run build` produksi (lulus, 57 halaman)
-- [ ] Lighthouse: LCP gambar hero pakai `priority`, `next/image` untuk logo & partner
+- [x] Lighthouse: preload LCP hero (`<link rel=preload fetchpriority=high>` di `app/page.tsx`), `next/image` untuk logo & 20 partner (AVIF/WebP, srcset). Desktop beranda: performa 78→87, LCP 3,2→2,0 s, gambar tidak responsif 3,3 MB→0,86 MB (sisa = 4 foto hero hotlink yang akan diganti). A11y 91 (kontras `.cta-n`/`.b2`/`.btn`, `h4` footer, dot slider kecil — tidak diubah demi clone 1:1, keputusan stakeholder)
 
 #### 1C. Halaman publik lain (clone)
 - [x] `/kursus` katalog: `CatalogHero` + `CatalogBar` (cari/filter kategori/mode/urut) + grid `CourseCard` (+ query string `?q=&kategori=&mode=&urut=`)
