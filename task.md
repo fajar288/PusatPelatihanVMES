@@ -250,7 +250,7 @@ Legenda: `[ ]` belum · `[~]` sedang · `[x]` selesai. Prioritas mengikuti roadm
 - [ ] Scaffold Laravel 11 di `backend/` (install PHP 8.2+, Composer; `composer create-project laravel/laravel backend`), Sanctum, PostgreSQL, CORS untuk `localhost:3000`
 - [ ] Docker compose (postgres, backend, frontend), `.env.example` kedua app
 - [x] Git init di root + push ke https://github.com/fajar288/PusatPelatihanVMES (branch `main`)
-- [ ] CI lint+build (GitHub Actions)
+- [x] CI lint+build (GitHub Actions) — `.github/workflows/ci.yml`: frontend typegen+tsc+eslint+build di tiap push/PR ke `main`; job backend aktif otomatis saat `backend/composer.json` ada
 
 #### 1B. Landing page (clone plek ketiplek) — **TARGET HARI INI**
 - [x] `layout/Header` (sticky, shrink, fitNav overflow, hamburger, search form)
