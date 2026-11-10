@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useRef } from "react";
 import { PARTNERS } from "@/data/home";
 
@@ -23,7 +24,7 @@ export default function Partners() {
             <div className="pgr" id="h-partner">
               {PARTNERS.map((p) => (
                 <div className="lc" key={p.name}>
-                  <img loading="lazy" alt={p.name} src={p.logo} />
+                  <Image alt={p.name} src={p.logo} width={p.w} height={p.h} sizes="172px" style={{ width: "auto", height: "auto" }} />
                 </div>
               ))}
             </div>

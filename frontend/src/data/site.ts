@@ -6,6 +6,7 @@ export const SITE = {
   description:
     "Pelatihan teknologi industri, otomasi, digitalisasi, dan pengembangan SDM yang dirancang untuk membantu individu, profesional, perusahaan, dan institusi meningkatkan kompetensi sesuai kebutuhan dunia kerja.",
   logo: "/images/logo.jpeg",
+  logoSize: { w: 1600, h: 769 }, // dimensi asli; tampil 48px tinggi (CSS .logo .lg)
   waNumber: "6285121251285",
   waDisplay: "0851-2125-1285",
   waDefaultText: "Halo, saya ingin info training di PPTI - VMES",

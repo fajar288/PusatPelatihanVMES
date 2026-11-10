@@ -10,6 +10,7 @@ import Testimonials from "@/components/home/Testimonials";
 import WhyUs from "@/components/home/WhyUs";
 import { LATEST_ARTICLES } from "@/data/articles";
 import { COURSES } from "@/data/courses";
+import { HERO_SLIDES } from "@/data/home";
 import { SCHEDULES } from "@/data/schedules";
 import { TESTIMONIALS } from "@/data/testimonials";
 
@@ -21,6 +22,8 @@ import { TESTIMONIALS } from "@/data/testimonials";
 export default function HomePage() {
   return (
     <div id="home">
+      {/* LCP: slide hero pertama di-preload prioritas tinggi (React 19 meng-hoist <link> ini ke <head>) */}
+      <link rel="preload" as="image" href={HERO_SLIDES[0]} fetchPriority="high" />
       <Hero />
       <About />
       <CourseSlider courses={COURSES} />
