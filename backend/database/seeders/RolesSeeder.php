@@ -31,6 +31,7 @@ class RolesSeeder extends Seeder
         'training.manage' => ['Kelola paket & jadwal', 'training', ['administrator', 'management', 'training_coordinator']],
         'users.manage' => ['Kelola pengguna & peran', 'users', ['administrator']],
         'reports.view' => ['Lihat laporan', 'reports', ['administrator', 'management', 'finance']],
+        'lms.manage' => ['Kelola materi LMS (course, modul, lesson, kuis, tugas)', 'lms', ['administrator', 'management', 'training_coordinator']],
         'portal.access' => ['Akses portal member', 'portal', ['student', 'alumni']],
         'trainer.portal' => ['Akses portal trainer', 'portal', ['trainer', 'assessor']],
     ];
