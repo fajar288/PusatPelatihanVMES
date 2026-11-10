@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\V1\PostController;
 use App\Http\Controllers\Api\V1\RegistrationController;
 use App\Http\Controllers\Api\V1\ScheduleController;
 use App\Http\Controllers\Api\V1\SearchController;
+use App\Http\Controllers\Api\V1\TrainerController;
 use App\Http\Controllers\Api\V1\WaitlistController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -78,5 +79,14 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
         Route::get('/me/payments', [MeController::class, 'payments'])->name('me.payments');
         Route::get('/me/notifications', [MeController::class, 'notifications'])->name('me.notifications');
         Route::get('/me/enrollments', [MeController::class, 'enrollments'])->name('me.enrollments');
+
+        // Portal trainer (PRD §5.7) — akun dengan profil trainer aktif
+        Route::prefix('trainer')->name('trainer.')->group(function (): void {
+            Route::get('/profile', [TrainerController::class, 'profile'])->name('profile');
+            Route::patch('/profile', [TrainerController::class, 'updateProfile'])->name('profile.update');
+            Route::get('/classes', [TrainerController::class, 'classes'])->name('classes');
+            Route::get('/classes/{code}', [TrainerController::class, 'show'])->name('classes.show');
+            Route::post('/classes/{code}/sessions/{no}/attendance', [TrainerController::class, 'attendance'])->name('classes.attendance');
+        });
     });
 });
