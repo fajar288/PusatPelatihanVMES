@@ -108,10 +108,18 @@
   {
     "location": "footer_3",
     "group_title": "Bantuan",
+    "label": "Portal Member",
+    "url": "/portal",
+    "is_external": false,
+    "sort_order": 1
+  },
+  {
+    "location": "footer_3",
+    "group_title": "Bantuan",
     "label": "FAQ",
     "url": "/faq",
     "is_external": false,
-    "sort_order": 1
+    "sort_order": 2
   },
   {
     "location": "footer_3",
@@ -119,7 +127,7 @@
     "label": "Cara Pendaftaran",
     "url": "/cara-pendaftaran",
     "is_external": false,
-    "sort_order": 2
+    "sort_order": 3
   },
   {
     "location": "footer_3",
@@ -127,7 +135,7 @@
     "label": "Kebijakan Privasi",
     "url": "/kebijakan-privasi",
     "is_external": false,
-    "sort_order": 3
+    "sort_order": 4
   },
   {
     "location": "footer_3",
@@ -135,6 +143,6 @@
     "label": "Syarat & Ketentuan",
     "url": "/syarat-ketentuan",
     "is_external": false,
-    "sort_order": 4
+    "sort_order": 5
   }
 ]

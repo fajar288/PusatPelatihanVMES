@@ -54,6 +54,7 @@ export const FOOTER_COLUMNS: { title: string; links: NavItem[] }[] = [
   {
     title: "Bantuan",
     links: [
+      { label: "Portal Member", href: "/portal" },
       { label: "FAQ", href: "/faq" },
       { label: "Cara Pendaftaran", href: "/cara-pendaftaran" },
       { label: "Kebijakan Privasi", href: "/kebijakan-privasi" },
