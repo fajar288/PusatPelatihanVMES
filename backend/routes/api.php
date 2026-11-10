@@ -1,9 +1,12 @@
 <?php
 
+use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\ContentController;
 use App\Http\Controllers\Api\V1\HomeController;
+use App\Http\Controllers\Api\V1\MeController;
 use App\Http\Controllers\Api\V1\PackageController;
 use App\Http\Controllers\Api\V1\PostController;
+use App\Http\Controllers\Api\V1\RegistrationController;
 use App\Http\Controllers\Api\V1\ScheduleController;
 use App\Http\Controllers\Api\V1\SearchController;
 use Illuminate\Http\Request;
@@ -51,8 +54,26 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
     Route::get('/settings', [ContentController::class, 'settings'])->name('settings');
     Route::get('/pages/{slug}', [ContentController::class, 'page'])->name('pages.show');
 
-    // ---- Terautentikasi ----
+    // ---- Pendaftaran publik (tamu atau member) & autentikasi (Phase 1E) ----
+    Route::post('/registrations', [RegistrationController::class, 'store'])->middleware('throttle:10,1')->name('registrations.store');
+    Route::prefix('auth')->name('auth.')->middleware('throttle:20,1')->group(function (): void {
+        Route::post('/register', [AuthController::class, 'register'])->name('register');
+        Route::post('/login', [AuthController::class, 'login'])->name('login');
+        Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->name('forgot');
+        Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('reset');
+    });
+
+    // ---- Terautentikasi (portal member) ----
     Route::middleware('auth:sanctum')->group(function (): void {
+        Route::post('/auth/logout', [AuthController::class, 'logout'])->name('auth.logout');
         Route::get('/user', fn (Request $request) => $request->user())->name('user');
+        Route::get('/me', [MeController::class, 'show'])->name('me.show');
+        Route::patch('/me', [MeController::class, 'update'])->name('me.update');
+        Route::get('/me/registrations', [MeController::class, 'registrations'])->name('me.registrations');
+        Route::get('/me/registrations/{registration}', [MeController::class, 'registration'])->name('me.registration');
+        Route::post('/me/registrations/{registration}/cancel', [MeController::class, 'cancel'])->name('me.registration.cancel');
+        Route::post('/me/registrations/{registration}/payment-proof', [MeController::class, 'paymentProof'])->name('me.registration.proof');
+        Route::get('/me/payments', [MeController::class, 'payments'])->name('me.payments');
+        Route::get('/me/notifications', [MeController::class, 'notifications'])->name('me.notifications');
     });
 });

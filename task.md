@@ -295,12 +295,12 @@ Legenda: `[ ]` belum · `[~]` sedang · `[x]` selesai. Prioritas mengikuti roadm
 
 #### 1E. Registrasi online & akun member (PRD §5.5, §5.6)
 - [ ] Form pendaftaran individu `/daftar?jadwal=` (identitas, instansi, jabatan, kontak, dokumen) + pendaftaran kolektif perusahaan
-- [ ] Nomor registrasi otomatis, status: pending → under review → waiting for payment → payment verification → confirmed / rejected / cancelled
-- [ ] Auth: register/login/forgot (Sanctum), satu akun = satu member (`members`, nomor member)
+- [x] Nomor registrasi otomatis (`REG-YYYYMM-0001`), enum `RegistrationStatus` dengan transisi tervalidasi (`RegistrationService::transition`), invoice otomatis saat menunggu pembayaran, unggah bukti transfer → verifikasi, konfirmasi menambah `registered_count` & mengaktifkan member. Admin: Filament `Registrations` (aksi Ubah status) + `Payments` (verifikasi/tolak)
+- [x] Auth API token Sanctum: `POST /auth/register|login|logout|forgot-password|reset-password` (tautan reset ke frontend), `GET/PATCH /me`; `members` (`MBR-YYYY-000001`), pendaftaran tamu dengan email sama otomatis terkait saat akun dibuat
 - [ ] Portal member `/portal`: Dashboard, Profile, My Training, Registration History, Payment History, Notifications, Support
-- [ ] Role dasar: super_admin, administrator, management, marketing, finance, training_coordinator, trainer, assessor, student, alumni (`roles`, `permissions`, `user_roles`) + policy
-- [ ] Audit log tabel `audit_logs` (actor, action, model, before/after)
-- [ ] Notifikasi email (pendaftaran diterima, status berubah) + template
+- [x] Role dasar: `roles`, `permissions`, `role_permission`, `user_roles` (`RolesSeeder`), `User::hasRole/hasPermission`, `RegistrationPolicy`
+- [x] Audit log `audit_logs` (`AuditLog::record` + `AuditObserver` untuk Registration/Payment/Member/Schedule), resource Filament hanya-baca, `GET /me/notifications`
+- [x] Notifikasi email `RegistrationReceived`, `RegistrationStatusChanged` (template MailMessage bahasa Indonesia, MAIL_MAILER=log lokal), reset sandi
 
 ### PHASE 2 — Operasional TMS (PRD §5.3, §5.4, §5.7, §5.11)
 - [ ] Training Program Mgmt: CRUD paket (kode, kategori, tujuan, kompetensi, persyaratan, durasi, JP, level, metode, harga, kuota, gambar, status draft/published/archived), kurikulum per paket, jenis program (reguler/in-house/private/online/blended/custom/bundling), jenis sertifikat & completion rule
@@ -369,3 +369,4 @@ Legenda: `[ ]` belum · `[~]` sedang · `[x]` selesai. Prioritas mengikuti roadm
 - 1D tahap 1 (branch `feat/cms-schema-api`): skema training + CMS (2 migrasi, 12 model), seeder dari JSON ekspor frontend, 15 endpoint publik `/api/v1/*` dengan resource yang meniru bentuk data frontend, 12 tes lulus. Tersisa 1D: admin CRUD (Filament — cek dukungan Laravel 13), upload S3, dan penggantian `src/data/*` di frontend dengan fetch API.
 - 1D tahap 2 (branch `feat/frontend-api`, di atas `feat/cms-schema-api`): semua halaman publik membaca API lewat `lib/cms.ts` dengan cache Next 16 + fallback statis; body post/halaman kini HTML dari CMS (`dangerouslySetInnerHTML` ke `.pb`, sama seperti WordPress lama). Diverifikasi end-to-end dengan `artisan serve` (semua halaman, sitemap 47 URL) dan build tanpa backend (fallback). Tersisa 1D: admin CRUD + upload S3.
 - 1D tahap 3 (branch `feat/admin-filament`, di atas `feat/cms-schema-api`): panel admin Filament 5 (11 resource), peran dasar `users.role`, observer invalidasi cache + webhook revalidasi frontend (diuji end-to-end: `Page::touch()` → POST /api/revalidate 200), upload gambar ke disk public/S3. 16 tes / 150 asersi lulus. Seluruh checklist 1D selesai.
+- 1E tahap 1 (branch `feat/registration-auth`): backend registrasi (individu/kolektif), status & invoice, auth token Sanctum, member, roles/permissions, audit log, email, Filament Pendaftaran/Pembayaran/Audit log. 28 tes lulus. Tersisa 1E: form `/daftar` ke API + halaman auth + portal member `/portal` di frontend (PR berikutnya).

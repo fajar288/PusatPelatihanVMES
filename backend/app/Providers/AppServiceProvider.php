@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Observers\AuditObserver;
 use App\Observers\CmsObserver;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
@@ -25,6 +26,10 @@ class AppServiceProvider extends ServiceProvider
         /** @var class-string<Model> $model */
         foreach (CmsObserver::MODELS as $model) {
             $model::observe(CmsObserver::class);
+        }
+        // Jejak audit otomatis untuk model operasional
+        foreach (AuditObserver::MODELS as $model) {
+            $model::observe(AuditObserver::class);
         }
     }
 }
