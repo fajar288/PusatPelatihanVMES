@@ -1,0 +1,119 @@
+[
+  {
+    "slug": "industrial-automation-dan-control",
+    "name": "Industrial Automation & Control",
+    "description": "PLC, HMI, SCADA, sensor, instrumentasi, dan sistem kendali industri.",
+    "icon": "cpu",
+    "sort_order": 1,
+    "show_on_home": true,
+    "parent_slug": null
+  },
+  {
+    "slug": "robotics-dan-mechatronics",
+    "name": "Robotics & Mechatronics",
+    "description": "Robotika industri, mekatronika, pneumatik, hidraulik, dan sistem mekanis-elektrik.",
+    "icon": "bot",
+    "sort_order": 2,
+    "show_on_home": true,
+    "parent_slug": null
+  },
+  {
+    "slug": "smart-manufacturing-dan-industrial-iot",
+    "name": "Smart Manufacturing & Industrial IoT",
+    "description": "Konektivitas mesin, pengumpulan data, pemantauan proses, dan digitalisasi manufaktur.",
+    "icon": "factory",
+    "sort_order": 3,
+    "show_on_home": true,
+    "parent_slug": null
+  },
+  {
+    "slug": "it-ai-dan-data-analytics",
+    "name": "IT, AI & Data Analytics",
+    "description": "Pemrograman, database, kecerdasan buatan, analisis data, dan infrastruktur IT.",
+    "icon": "chart",
+    "sort_order": 4,
+    "show_on_home": true,
+    "parent_slug": null
+  },
+  {
+    "slug": "maintenance-dan-operational-excellence",
+    "name": "Maintenance & Operational Excellence",
+    "description": "Pemeliharaan, troubleshooting, Lean Manufacturing, Kaizen, dan produktivitas.",
+    "icon": "wrench",
+    "sort_order": 5,
+    "show_on_home": true,
+    "parent_slug": null
+  },
+  {
+    "slug": "human-capital-dan-management",
+    "name": "Human Capital & Management",
+    "description": "MSDM, leadership, KPI, manajemen proyek, komunikasi, dan manajemen perubahan.",
+    "icon": "users",
+    "sort_order": 6,
+    "show_on_home": true,
+    "parent_slug": null
+  },
+  {
+    "slug": "electrical-instrumentation-dan-process-control",
+    "name": "Electrical, Instrumentation & Process Control",
+    "description": "Kelistrikan industri, pengukuran, instrumentasi, dan pengendalian proses.",
+    "icon": "zap",
+    "sort_order": 7,
+    "show_on_home": true,
+    "parent_slug": null
+  },
+  {
+    "slug": "digital-transformation-dan-project-management",
+    "name": "Digital Transformation & Project Management",
+    "description": "Strategi transformasi digital, otomasi proses bisnis, dan manajemen proyek teknologi.",
+    "icon": "rocket",
+    "sort_order": 8,
+    "show_on_home": true,
+    "parent_slug": null
+  },
+  {
+    "slug": "cloud-computing",
+    "name": "Cloud Computing",
+    "description": null,
+    "icon": null,
+    "sort_order": 100,
+    "show_on_home": false,
+    "parent_slug": "it-ai-dan-data-analytics"
+  },
+  {
+    "slug": "cyber-security",
+    "name": "Cyber Security",
+    "description": null,
+    "icon": null,
+    "sort_order": 101,
+    "show_on_home": false,
+    "parent_slug": "it-ai-dan-data-analytics"
+  },
+  {
+    "slug": "devops",
+    "name": "DevOps",
+    "description": null,
+    "icon": null,
+    "sort_order": 102,
+    "show_on_home": false,
+    "parent_slug": "it-ai-dan-data-analytics"
+  },
+  {
+    "slug": "networking",
+    "name": "Networking",
+    "description": null,
+    "icon": null,
+    "sort_order": 103,
+    "show_on_home": false,
+    "parent_slug": "it-ai-dan-data-analytics"
+  },
+  {
+    "slug": "programming",
+    "name": "Programming",
+    "description": null,
+    "icon": null,
+    "sort_order": 104,
+    "show_on_home": false,
+    "parent_slug": "it-ai-dan-data-analytics"
+  }
+]

@@ -1,0 +1,140 @@
+[
+  {
+    "location": "header",
+    "label": "Beranda",
+    "url": "/",
+    "is_external": false,
+    "sort_order": 1
+  },
+  {
+    "location": "header",
+    "label": "Kursus",
+    "url": "/kursus",
+    "is_external": false,
+    "sort_order": 2
+  },
+  {
+    "location": "header",
+    "label": "Jadwal",
+    "url": "/jadwal",
+    "is_external": false,
+    "sort_order": 3
+  },
+  {
+    "location": "header",
+    "label": "Tutorial",
+    "url": "/tutorial",
+    "is_external": false,
+    "sort_order": 4
+  },
+  {
+    "location": "header",
+    "label": "Berita",
+    "url": "/berita",
+    "is_external": false,
+    "sort_order": 5
+  },
+  {
+    "location": "header",
+    "label": "Kegiatan",
+    "url": "/kegiatan",
+    "is_external": false,
+    "sort_order": 6
+  },
+  {
+    "location": "footer_1",
+    "group_title": "Layanan",
+    "label": "Public Training",
+    "url": "/kursus",
+    "is_external": false,
+    "sort_order": 1
+  },
+  {
+    "location": "footer_1",
+    "group_title": "Layanan",
+    "label": "Corporate Training",
+    "url": "/kontak",
+    "is_external": false,
+    "sort_order": 2
+  },
+  {
+    "location": "footer_1",
+    "group_title": "Layanan",
+    "label": "Online Class",
+    "url": "/kursus",
+    "is_external": false,
+    "sort_order": 3
+  },
+  {
+    "location": "footer_1",
+    "group_title": "Layanan",
+    "label": "Sertifikasi Internasional",
+    "url": "/kursus",
+    "is_external": false,
+    "sort_order": 4
+  },
+  {
+    "location": "footer_2",
+    "group_title": "Perusahaan",
+    "label": "Tentang Kami",
+    "url": "/tentang",
+    "is_external": false,
+    "sort_order": 1
+  },
+  {
+    "location": "footer_2",
+    "group_title": "Perusahaan",
+    "label": "Tutorial",
+    "url": "/tutorial",
+    "is_external": false,
+    "sort_order": 2
+  },
+  {
+    "location": "footer_2",
+    "group_title": "Perusahaan",
+    "label": "Jadwal Training",
+    "url": "/jadwal",
+    "is_external": false,
+    "sort_order": 3
+  },
+  {
+    "location": "footer_2",
+    "group_title": "Perusahaan",
+    "label": "Kontak",
+    "url": "/kontak",
+    "is_external": false,
+    "sort_order": 4
+  },
+  {
+    "location": "footer_3",
+    "group_title": "Bantuan",
+    "label": "FAQ",
+    "url": "/faq",
+    "is_external": false,
+    "sort_order": 1
+  },
+  {
+    "location": "footer_3",
+    "group_title": "Bantuan",
+    "label": "Cara Pendaftaran",
+    "url": "/cara-pendaftaran",
+    "is_external": false,
+    "sort_order": 2
+  },
+  {
+    "location": "footer_3",
+    "group_title": "Bantuan",
+    "label": "Kebijakan Privasi",
+    "url": "/kebijakan-privasi",
+    "is_external": false,
+    "sort_order": 3
+  },
+  {
+    "location": "footer_3",
+    "group_title": "Bantuan",
+    "label": "Syarat & Ketentuan",
+    "url": "/syarat-ketentuan",
+    "is_external": false,
+    "sort_order": 4
+  }
+]

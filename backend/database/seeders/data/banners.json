@@ -1,0 +1,26 @@
+[
+  {
+    "position": "hero",
+    "image": "https://the-european.eu/wp-content/uploads/GrayMatter_Robotics_new_headquarters-1536x1152.webp",
+    "alt": "Training PPTI",
+    "sort_order": 1
+  },
+  {
+    "position": "hero",
+    "image": "https://tudonghoa.caothang.edu.vn/images/images/Gioi%20thieu%20nganh/z7413330109909_f56c3a86bd125764f96b7acda2d0c33a.jpg",
+    "alt": "Training PPTI",
+    "sort_order": 2
+  },
+  {
+    "position": "hero",
+    "image": "https://www.tmic-ai.com/solutions/images/AI-smart-factory-solutions/tmic-smart-factory-implementation.webp",
+    "alt": "Training PPTI",
+    "sort_order": 3
+  },
+  {
+    "position": "hero",
+    "image": "https://asfanco.com/assets/img/engineering-labs-realistic/industrial-robotics-lab.webp",
+    "alt": "Training PPTI",
+    "sort_order": 4
+  }
+]

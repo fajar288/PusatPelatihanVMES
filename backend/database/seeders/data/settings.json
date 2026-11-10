@@ -1,0 +1,292 @@
+{
+  "site": {
+    "name": "PPTI – VMES Training Center",
+    "shortName": "VMES Training Center",
+    "company": "PT. PPTI - VMES Training Center",
+    "description": "Pelatihan teknologi industri, otomasi, digitalisasi, dan pengembangan SDM yang dirancang untuk membantu individu, profesional, perusahaan, dan institusi meningkatkan kompetensi sesuai kebutuhan dunia kerja.",
+    "logo": "/images/logo.jpeg",
+    "logoSize": {
+      "w": 1600,
+      "h": 769
+    },
+    "waNumber": "6285121251285",
+    "waDisplay": "0851-2125-1285",
+    "waDefaultText": "Halo, saya ingin info training di PPTI - VMES",
+    "address": "Batam Centre, Kawasan Industri Tunas Bizpark Blok D No 15 Lantai 2, Belian, Kec. Batam Kota, Kota Batam, Kepulauan Riau 29464",
+    "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Kawasan+Industri+Tunas+Bizpark+Blok+D+No+15+Batam+Centre+Batam",
+    "youtubeProfileId": "IClaATbg--A",
+    "footerDescription": "PT. PPTI - VMES Training Center adalah penyedia pelatihan teknologi industri, IT, dan SDM digital. Kami membantu individu, profesional, perusahaan, dan instansi meningkatkan kompetensi untuk menghadapi tantangan dunia kerja dan industri modern.",
+    "tagline": "Dibangun untuk meningkatkan kompetensi teknologi, industri, dan SDM digital Indonesia.",
+    "socials": []
+  },
+  "hero": {
+    "pill": "Pusat Pelatihan Teknologi Industri (VMES Training Center)",
+    "titleLine1": "Upgrade Your Skills.",
+    "titleLine2": "Shape the Future.",
+    "lead": "Pelatihan teknologi industri, otomasi, digitalisasi, dan pengembangan SDM yang dirancang untuk membantu individu, profesional, perusahaan, dan institusi meningkatkan kompetensi sesuai kebutuhan dunia kerja.",
+    "features": [
+      {
+        "icon": "users",
+        "label": "Instruktur Praktisi Berpengalaman"
+      },
+      {
+        "icon": "shield",
+        "label": "Sertifikasi Internasional"
+      },
+      {
+        "icon": "cloud",
+        "label": "Online & Offline Fleksibel"
+      },
+      {
+        "icon": "laptop",
+        "label": "Lab Praktik Hands-on 24/7"
+      }
+    ],
+    "glassStat": {
+      "icon": "grad",
+      "title": "12.000+ Lulusan",
+      "sub": "Tersebar seluruh Indonesia"
+    }
+  },
+  "stats": [
+    {
+      "icon": "grad",
+      "n": 12000,
+      "suffix": "+",
+      "label": "Lulusan"
+    },
+    {
+      "icon": "users",
+      "n": 20,
+      "suffix": "+",
+      "label": "Instruktur Ahli"
+    },
+    {
+      "icon": "award",
+      "n": 10,
+      "suffix": "+ Tahun",
+      "label": "Pengalaman"
+    },
+    {
+      "icon": "trophy",
+      "n": 100,
+      "suffix": "+",
+      "label": "Jenis Training"
+    },
+    {
+      "icon": "shield",
+      "n": 300,
+      "suffix": "+",
+      "label": "Corporate Client"
+    }
+  ],
+  "about": {
+    "eyebrow": "Profil Singkat",
+    "titlePrefix": "Tentang ",
+    "titleEm": "PPTI VMES Training Center",
+    "paragraphs": [
+      "PPTI VMES Training Center adalah Pusat Pelatihan Teknologi Industri yang berfokus pada pengembangan kompetensi sumber daya manusia untuk menghadapi kebutuhan dunia kerja dan perkembangan teknologi. Program pelatihan mencakup teknologi informasi, otomasi industri, sistem kendali, robotika, teknologi manufaktur, digitalisasi bisnis, manajemen, dan pengembangan sumber daya manusia.",
+      "Melalui pembelajaran yang terarah dan berorientasi pada penerapan, PPTI VMES Training Center mendukung individu, profesional, dan perusahaan dalam meningkatkan keterampilan teknis maupun manajerial. Materi pelatihan dirancang agar relevan dengan kebutuhan peserta, perkembangan industri, serta tantangan transformasi digital.",
+      "PPTI VMES Training Center berkomitmen menjadi mitra pengembangan kompetensi yang mendorong pembelajaran berkelanjutan, peningkatan produktivitas, dan kesiapan tenaga kerja menghadapi perubahan industri."
+    ],
+    "tagline": "Mengembangkan Kompetensi, Mendorong Inovasi, Mendukung Kemajuan Industri."
+  },
+  "why": {
+    "eyebrow": "Mengapa PPTI",
+    "title": "Kami Mengembangkan Kompetensi yang Relevan dengan Kebutuhan Industri",
+    "sub": "PPTI (VMES Training Center) menghubungkan teknologi industri, keterampilan digital, dan pengembangan manusia melalui program yang dirancang untuk mendukung penerapan kompetensi di lingkungan kerja.",
+    "items": [
+      {
+        "icon": "factory",
+        "title": "Fokus pada Teknologi Industri",
+        "desc": "Pelatihan diarahkan pada otomasi, sistem kendali, robotika, instrumentasi, dan teknologi manufaktur sesuai program serta fasilitas yang tersedia."
+      },
+      {
+        "icon": "wrench",
+        "title": "Pembelajaran Berbasis Praktik",
+        "desc": "Peserta diarahkan untuk memahami penerapan materi melalui latihan teknis, demonstrasi, simulasi, atau proyek sesuai karakteristik pelatihan."
+      },
+      {
+        "icon": "network",
+        "title": "Integrasi Teknologi dan Digitalisasi",
+        "desc": "Program tertentu menghubungkan sistem otomasi, pengumpulan data, Industrial IoT, dan analisis operasional agar peserta memahami hubungan antara teknologi dan proses kerja."
+      },
+      {
+        "icon": "users",
+        "title": "Pengembangan Kompetensi",
+        "desc": "Pelatihan juga mencakup kepemimpinan, komunikasi, kolaborasi, pemecahan masalah, produktivitas, dan manajemen perubahan."
+      },
+      {
+        "icon": "brief",
+        "title": "Pelatihan Korporasi yang Adaptif",
+        "desc": "Program dapat disesuaikan dengan kebutuhan kompetensi, teknologi, tantangan operasional, dan target pengembangan SDM perusahaan."
+      },
+      {
+        "icon": "award",
+        "title": "Hasil Belajar yang Terukur",
+        "desc": "Keberhasilan pelatihan dinilai berdasarkan tujuan pembelajaran melalui asesmen, praktik, proyek, dan tindak lanjut yang sesuai dengan jenis program."
+      }
+    ]
+  },
+  "cta": {
+    "eyebrow": "Konsultasi Training",
+    "title": "Siap Mengembangkan Kompetensi untuk Industri Masa Depan?",
+    "desc": "Tingkatkan kemampuan teknis, digital, dan manajerial bersama VMES Training Center. Konsultasikan kebutuhan Anda untuk memilih program pelatihan, merancang pengembangan kompetensi karyawan, atau menyusun pelatihan khusus sesuai tantangan perusahaan.",
+    "points": [
+      "Konsultasi gratis & tanpa komitmen",
+      "Materi & jadwal sesuai kebutuhan tim",
+      "Instruktur praktisi bersertifikasi",
+      "Respon cepat via WhatsApp"
+    ]
+  },
+  "company": {
+    "vision": "Menjadi pusat pelatihan teknologi industri dan pengembangan SDM digital terdepan di Indonesia yang menghasilkan tenaga kerja kompeten, adaptif, dan siap menghadapi transformasi industri.",
+    "missions": [
+      "Menyelenggarakan pelatihan teknologi industri, otomasi, IT, dan manajemen yang relevan dengan kebutuhan dunia kerja.",
+      "Mengutamakan pembelajaran berbasis praktik dengan fasilitas lab dan instruktur praktisi berpengalaman.",
+      "Menjalin kemitraan dengan industri, principal teknologi, lembaga sertifikasi, dan institusi pendidikan.",
+      "Menyediakan jalur sertifikasi internasional dan nasional yang diakui industri.",
+      "Mendukung perusahaan dalam merancang program pengembangan kompetensi yang terukur."
+    ],
+    "facilities": [
+      {
+        "icon": "network",
+        "title": "Lab Networking",
+        "desc": "Router dan switch Cisco serta MikroTik RouterBoard untuk setiap peserta, lengkap dengan rak dan patch panel."
+      },
+      {
+        "icon": "cpu",
+        "title": "Lab Otomasi Industri",
+        "desc": "Trainer kit PLC, HMI, SCADA, sensor, pneumatik, dan panel kendali motor untuk praktik sistem kendali."
+      },
+      {
+        "icon": "bot",
+        "title": "Lab Robotika & Mekatronika",
+        "desc": "Robot lengan industri, konveyor, dan stasiun mekatronika modular untuk simulasi lini produksi."
+      },
+      {
+        "icon": "laptop",
+        "title": "Ruang Kelas & Workstation",
+        "desc": "Ruang kelas ber-AC berkapasitas 12 sampai 20 peserta dengan workstation, proyektor, dan akses internet dedicated."
+      },
+      {
+        "icon": "shield",
+        "title": "Ruang Ujian Sertifikasi",
+        "desc": "Ruang ujian berstandar vendor dengan pengawasan untuk sertifikasi internasional."
+      },
+      {
+        "icon": "monitor",
+        "title": "Platform Belajar Daring",
+        "desc": "Portal peserta berisi materi, video rekaman, kuis, tugas, dan sertifikat digital yang dapat diverifikasi."
+      }
+    ],
+    "trainers": [
+      {
+        "name": "Andi Pratama",
+        "role": "Lead Trainer Networking",
+        "certs": "CCNP Enterprise, CCNA, MTCNA",
+        "initials": "AP"
+      },
+      {
+        "name": "Budi Santoso",
+        "role": "Trainer MikroTik",
+        "certs": "MTCINE, MTCRE, MTCNA Certified Trainer",
+        "initials": "BS"
+      },
+      {
+        "name": "Rina Kusuma",
+        "role": "Trainer Cloud Computing",
+        "certs": "AWS Solutions Architect Associate, AWS Cloud Practitioner",
+        "initials": "RK"
+      },
+      {
+        "name": "Dimas Wijaya",
+        "role": "Trainer DevOps & Linux",
+        "certs": "CKA, RHCSA, GitLab Certified CI/CD Associate",
+        "initials": "DW"
+      },
+      {
+        "name": "Fajar Nugroho",
+        "role": "Trainer Cyber Security",
+        "certs": "CEH, CompTIA Security+",
+        "initials": "FN"
+      },
+      {
+        "name": "Sari Dewi, M.Kom",
+        "role": "Trainer Programming & Data",
+        "certs": "Python Institute PCAP, Microsoft Data Analyst",
+        "initials": "SD"
+      }
+    ],
+    "services": [
+      {
+        "icon": "users",
+        "title": "Public Training",
+        "desc": "Kelas reguler terjadwal yang terbuka untuk umum, individu, maupun utusan perusahaan.",
+        "href": "/jadwal"
+      },
+      {
+        "icon": "brief",
+        "title": "Corporate / In-House Training",
+        "desc": "Program disesuaikan dengan kebutuhan kompetensi perusahaan, dilaksanakan di lokasi Anda atau di lab kami.",
+        "href": "/kontak"
+      },
+      {
+        "icon": "cloud",
+        "title": "Online Class",
+        "desc": "Kelas daring interaktif melalui Zoom dengan lab virtual dan rekaman sesi.",
+        "href": "/kursus?mode=online"
+      },
+      {
+        "icon": "award",
+        "title": "Sertifikasi Internasional",
+        "desc": "Persiapan dan pelaksanaan ujian sertifikasi Cisco, MikroTik, AWS, dan vendor lainnya.",
+        "href": "/kursus"
+      },
+      {
+        "icon": "wrench",
+        "title": "Konsultasi & Assessment Kompetensi",
+        "desc": "Pemetaan kompetensi karyawan dan penyusunan roadmap pengembangan SDM.",
+        "href": "/kontak"
+      },
+      {
+        "icon": "grad",
+        "title": "Program Kampus & Sekolah",
+        "desc": "Magang bersertifikat, kunjungan industri, dan training for trainers untuk institusi pendidikan.",
+        "href": "/kontak"
+      }
+    ],
+    "partnership_points": [
+      "Principal & vendor teknologi: Cisco, MikroTik, AWS, Pearson VUE, Certiport",
+      "Perusahaan & BUMN: telekomunikasi, energi, manufaktur, dan perbankan",
+      "Institusi pendidikan: politeknik, universitas, dan SMK teknik",
+      "Instansi pemerintah: dinas, lembaga, dan BLK"
+    ]
+  },
+  "post_categories": [
+    {
+      "slug": "tutorial",
+      "category": "Tutorial",
+      "title": "Tutorial",
+      "desc": "Artikel, tutorial, berita, dan kegiatan terbaru."
+    },
+    {
+      "slug": "berita",
+      "category": "Berita",
+      "title": "Berita",
+      "desc": "Artikel, tutorial, berita, dan kegiatan terbaru."
+    },
+    {
+      "slug": "kegiatan",
+      "category": "Kegiatan",
+      "title": "Kegiatan",
+      "desc": "Artikel, tutorial, berita, dan kegiatan terbaru."
+    },
+    {
+      "slug": "dokumentasi",
+      "category": "Dokumentasi",
+      "title": "Dokumentasi",
+      "desc": "Dokumentasi kelas, sesi praktik lab, dan training korporat PPTI - VMES Training Center."
+    }
+  ]
+}

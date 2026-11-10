@@ -1,0 +1,202 @@
+[
+  {
+    "name": "Cisco",
+    "slug": "cisco",
+    "logo": "/images/partners/cisco.png",
+    "width": 1280,
+    "height": 676,
+    "type": "principal",
+    "is_official": true,
+    "sort_order": 1
+  },
+  {
+    "name": "MikroTik",
+    "slug": "mikrotik",
+    "logo": "/images/partners/mikrotik.png",
+    "width": 609,
+    "height": 156,
+    "type": "principal",
+    "is_official": true,
+    "sort_order": 2
+  },
+  {
+    "name": "Pearson VUE",
+    "slug": "pearson-vue",
+    "logo": "/images/partners/pearson-vue.png",
+    "width": 246,
+    "height": 205,
+    "type": "principal",
+    "is_official": true,
+    "sort_order": 3
+  },
+  {
+    "name": "Certiport",
+    "slug": "certiport",
+    "logo": "/images/partners/certiport.png",
+    "width": 300,
+    "height": 139,
+    "type": "principal",
+    "is_official": true,
+    "sort_order": 4
+  },
+  {
+    "name": "telkomsel",
+    "slug": "telkomsel",
+    "logo": "/images/partners/telkomsel.png",
+    "width": 877,
+    "height": 284,
+    "type": "client",
+    "is_official": false,
+    "sort_order": 10
+  },
+  {
+    "name": "Telkom Indonesia",
+    "slug": "telkom-indonesia",
+    "logo": "/images/partners/telkom-indonesia.png",
+    "width": 3508,
+    "height": 2480,
+    "type": "client",
+    "is_official": false,
+    "sort_order": 11
+  },
+  {
+    "name": "Axis",
+    "slug": "axis",
+    "logo": "/images/partners/axis.png",
+    "width": 3840,
+    "height": 2156,
+    "type": "client",
+    "is_official": false,
+    "sort_order": 12
+  },
+  {
+    "name": "ericsson",
+    "slug": "ericsson",
+    "logo": "/images/partners/ericsson.png",
+    "width": 1280,
+    "height": 1121,
+    "type": "client",
+    "is_official": false,
+    "sort_order": 13
+  },
+  {
+    "name": "huawei",
+    "slug": "huawei",
+    "logo": "/images/partners/huawei.png",
+    "width": 3840,
+    "height": 3905,
+    "type": "client",
+    "is_official": false,
+    "sort_order": 14
+  },
+  {
+    "name": "indosat",
+    "slug": "indosat",
+    "logo": "/images/partners/indosat.png",
+    "width": 1280,
+    "height": 682,
+    "type": "client",
+    "is_official": false,
+    "sort_order": 15
+  },
+  {
+    "name": "lapan",
+    "slug": "lapan",
+    "logo": "/images/partners/lapan.png",
+    "width": 1280,
+    "height": 921,
+    "type": "client",
+    "is_official": false,
+    "sort_order": 16
+  },
+  {
+    "name": "bmkg",
+    "slug": "bmkg",
+    "logo": "/images/partners/bmkg.png",
+    "width": 242,
+    "height": 300,
+    "type": "client",
+    "is_official": false,
+    "sort_order": 17
+  },
+  {
+    "name": "lp3i",
+    "slug": "lp3i",
+    "logo": "/images/partners/lp3i.png",
+    "width": 303,
+    "height": 337,
+    "type": "client",
+    "is_official": false,
+    "sort_order": 18
+  },
+  {
+    "name": "mandiri",
+    "slug": "mandiri",
+    "logo": "/images/partners/mandiri.png",
+    "width": 3840,
+    "height": 1121,
+    "type": "client",
+    "is_official": false,
+    "sort_order": 19
+  },
+  {
+    "name": "nec",
+    "slug": "nec",
+    "logo": "/images/partners/nec.png",
+    "width": 960,
+    "height": 261,
+    "type": "client",
+    "is_official": false,
+    "sort_order": 20
+  },
+  {
+    "name": "zte",
+    "slug": "zte",
+    "logo": "/images/partners/zte.png",
+    "width": 1280,
+    "height": 619,
+    "type": "client",
+    "is_official": false,
+    "sort_order": 21
+  },
+  {
+    "name": "moratelindo",
+    "slug": "moratelindo",
+    "logo": "/images/partners/moratelindo.png",
+    "width": 972,
+    "height": 257,
+    "type": "client",
+    "is_official": false,
+    "sort_order": 22
+  },
+  {
+    "name": "Smartfren",
+    "slug": "smartfren",
+    "logo": "/images/partners/smartfren.png",
+    "width": 1220,
+    "height": 204,
+    "type": "client",
+    "is_official": false,
+    "sort_order": 23
+  },
+  {
+    "name": "xl axiata",
+    "slug": "xl-axiata",
+    "logo": "/images/partners/xl-axiata.png",
+    "width": 1000,
+    "height": 248,
+    "type": "client",
+    "is_official": false,
+    "sort_order": 24
+  },
+  {
+    "name": "PLN",
+    "slug": "pln",
+    "logo": "/images/partners/pln.png",
+    "width": 2480,
+    "height": 3397,
+    "type": "client",
+    "is_official": false,
+    "sort_order": 25
+  }
+]
