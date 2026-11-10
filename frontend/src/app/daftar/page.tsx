@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import RegisterForm from "@/components/forms/RegisterForm";
 import { SITE } from "@/data/site";
+import { getCurrentUser } from "@/lib/auth";
 import { getSchedules } from "@/lib/cms";
 
 export const metadata: Metadata = {
@@ -15,15 +16,16 @@ export const metadata: Metadata = {
 const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v) ?? "";
 
 async function FormFromParams({ searchParams }: Pick<PageProps<"/daftar">, "searchParams">) {
-  const [sp, schedules] = await Promise.all([searchParams, getSchedules()]);
-  return <RegisterForm schedules={schedules} selectedId={first(sp.jadwal)} />;
+  const [sp, schedules, user] = await Promise.all([searchParams, getSchedules(), getCurrentUser()]);
+  const prefill = user ? { name: user.name, email: user.email, phone: user.member?.phone, company: user.member?.company, position: user.member?.position } : null;
+  return <RegisterForm schedules={schedules} selectedId={first(sp.jadwal)} prefill={prefill} />;
 }
 
 async function FormStatic() {
   return <RegisterForm schedules={await getSchedules()} />;
 }
 
-/** /daftar?jadwal= — formulir pendaftaran (Phase 1E). Versi awal mengirim data ke WhatsApp admin; API Laravel menyusul. */
+/** /daftar?jadwal= — formulir pendaftaran online (PRD §5.5) → POST /api/v1/registrations. */
 export default function DaftarPage({ searchParams }: PageProps<"/daftar">) {
   return (
     <>
