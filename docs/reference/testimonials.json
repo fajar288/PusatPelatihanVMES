@@ -1,0 +1,42 @@
+[
+  {
+    "n": "Rizky Pratama",
+    "r": "Automation Technician • PT. Batam Industrial Automation • Batam",
+    "q": "Saya sebelumnya hanya memahami dasar-dasar kelistrikan industri. Setelah mengikuti pelatihan PLC di PPTI VMES Training Center, saya mulai memahami pemrograman PLC, logika kontrol, dan cara melakukan pengujian sistem secara langsung. Praktik yang diberikan membantu saya meningkatkan keterampilan teknis dan lebih percaya diri dalam menangani sistem otomasi di lingkungan kerja.",
+    "i": "https://az-icons.com/images/users/icon.svg",
+    "p": "Pelatihan PLC",
+    "s": 5
+  },
+  {
+    "n": "Andika Saputra",
+    "r": "Automation Engineer • PT. Prima Teknik Industri • Batam",
+    "q": "Saya mengikuti pelatihan otomasi industri untuk memperdalam pemahaman tentang PLC, HMI, dan sistem kontrol mesin. Selama pelatihan, saya mendapatkan pengalaman praktik yang membantu saya memahami hubungan antara perangkat kontrol dan proses produksi. Materinya aplikatif dan relevan dengan kebutuhan industri manufaktur.",
+    "i": "https://az-icons.com/images/users/icon.svg",
+    "p": "Pelatihan Otomasi Industri",
+    "s": 5
+  },
+  {
+    "n": "Nadia Putri Amelia",
+    "r": "Data Analyst • PT. Digital Solusi Nusantara • Jakarta",
+    "q": "Dalam pekerjaan sehari-hari, saya membutuhkan kemampuan mengolah data dengan lebih efektif. Melalui pelatihan IT di PPTI VMES Training Center, saya belajar menggunakan perangkat analisis data untuk menyusun laporan dan menyajikan informasi secara lebih terstruktur. Pelatihan ini membantu saya memahami bagaimana teknologi dapat mendukung pekerjaan dan pengambilan keputusan.",
+    "i": "https://az-icons.com/images/users/icon.svg",
+    "p": "Pelatihan IT dan Data Analytics",
+    "s": 5
+  },
+  {
+    "n": "Dewi Anggraini",
+    "r": "Human Resources Officer • PT. Mitra Karya Digital • Batam",
+    "q": "Saya ingin memahami bagaimana AI dapat dimanfaatkan untuk mendukung pekerjaan di bidang sumber daya manusia. Melalui pelatihan SDM Digital di PPTI VMES Training Center, saya mempelajari penggunaan teknologi AI untuk membantu penyusunan dokumen, pengolahan informasi, dan peningkatan produktivitas. Pengetahuan ini menjadi bekal untuk beradaptasi dengan perkembangan teknologi di lingkungan kerja.",
+    "i": "https://az-icons.com/images/users/icon.svg",
+    "p": "Pelatihan AI dan SDM Digital",
+    "s": 5
+  },
+  {
+    "n": "Muhammad Farhan",
+    "r": "IT Support Specialist • PT. Inovasi Teknologi Mandiri • Tanjung Pinang",
+    "q": "Saya mengikuti pelatihan pemrograman dan database untuk memperkuat kemampuan teknis di bidang teknologi informasi. Materi yang disampaikan secara bertahap membantu saya memahami dasar pengembangan aplikasi dan pengelolaan database. Dengan latihan yang terarah, saya memperoleh pemahaman yang lebih baik tentang penerapan IT untuk mendukung kebutuhan operasional perusahaan.",
+    "i": "https://az-icons.com/images/users/icon.svg",
+    "p": "Pelatihan Pemrograman dan Database",
+    "s": 5
+  }
+]

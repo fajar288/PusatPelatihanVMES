@@ -1,0 +1,23 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+*.log
+
+# Claude Code local settings (launch.json tetap di-commit)
+.claude/settings.local.json
+
+# Frontend (Next.js) — detail ada di frontend/.gitignore
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/*.tsbuildinfo
+frontend/next-env.d.ts
+frontend/.env*
+!frontend/.env.example
+
+# Backend (Laravel) — nanti
+backend/vendor/
+backend/node_modules/
+backend/.env
+backend/storage/*.key
+backend/public/storage
