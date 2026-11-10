@@ -19,7 +19,7 @@ export default async function PortalLayout({ children }: LayoutProps<"/portal">)
       <section className="ph0">
         <div className="wrap">
           <h1>Portal Member</h1>
-          <p>Pendaftaran, pembayaran, riwayat pelatihan, dan profil Anda dalam satu akun.</p>
+          <p>Pendaftaran, pembayaran, pelatihan, materi belajar, tugas, hasil, dan profil Anda dalam satu akun.</p>
         </div>
       </section>
       <div className="wrap pgrid">

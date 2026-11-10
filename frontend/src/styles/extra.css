@@ -105,3 +105,51 @@
 .att td b{display:block;font-weight:800}.att td small{display:block;color:var(--mut);font-size:12px}
 .att select,.att input{width:100%;border:1px solid var(--ln);border-radius:10px;padding:8px 10px;font:600 13px inherit;font-family:inherit;background:#fff}
 @media(max-width:640px){.att thead{display:none}.att tr{display:grid;gap:6px;padding:10px 0}.att td{border:0;padding:0}}
+
+/* ---- LMS (portal /portal/belajar, /trainer/materi) ---- */
+.lpb{height:10px;border-radius:99px;background:var(--bg);overflow:hidden;margin-top:14px;border:1px solid var(--ln)}
+.lpb span{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--p),var(--l));transition:width .4s}
+.lcourse{display:grid;grid-template-columns:160px minmax(0,1fr);gap:18px;padding:20px;margin-top:18px}
+.lcourse h3{font-size:18px}
+.lthumb{width:160px;height:110px;object-fit:cover;border-radius:16px;background:var(--bg)}
+.lthumb-ph{display:grid;place-items:center;font-size:40px}
+.lcourse-f{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:12px}
+.lles-l{list-style:none;margin-top:12px;display:grid;gap:8px}
+.lles>a,.lles>span{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--ln);border-radius:14px;color:var(--ink)}
+.lles>a:hover{border-color:var(--l);background:#f7fbf3}
+.lles.on>a{border-color:var(--p);background:rgba(0,75,35,.06)}
+.lles.off>span{opacity:.6}
+.lles-ic{font-size:20px;flex:none;width:28px;text-align:center}
+.lles-t{flex:1;min-width:0}.lles-t b{display:block;font-size:14.5px}.lles-t small{display:block;color:var(--mut);font-size:12.5px}
+.lvideo{margin-top:16px}.lvideo video,.lvideo iframe{width:100%;aspect-ratio:16/9;border:0;border-radius:16px;background:#000}
+.lbody{margin-top:16px;font-size:16px}
+.lnav{display:flex;justify-content:space-between;gap:12px;margin-top:20px;flex-wrap:wrap}
+.lres-l{list-style:none;display:grid;gap:12px;margin-top:4px}
+.lres-l li{border:1px solid var(--ln);border-radius:14px;padding:12px 14px}
+.lres-h{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.lres-h b{flex:1 1 200px}.lres-h span{display:flex;gap:10px}.lres-h .lk{margin-top:0}
+.lres-v{width:100%;height:600px;border:1px solid var(--ln);border-radius:12px;margin-top:10px;background:#fff}
+.lres-img{max-width:100%;border-radius:12px;margin-top:10px}.lres-vid{width:100%;border-radius:12px;margin-top:10px;background:#000}
+.lquiz{margin-top:8px}
+.lq{list-style:none;display:grid;gap:16px;margin:16px 0}
+.lq>li{border:1px solid var(--ln);border-radius:14px;padding:14px 16px}
+.lq>li>p{font-weight:700;font-size:15px}
+.lq-opts{display:grid;gap:8px;margin-top:10px}
+.lq-opts label{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border:1px solid var(--ln);border-radius:10px;cursor:pointer;font-size:14.5px}
+.lq-opts label:hover{background:var(--bg)}.lq-opts input{margin-top:3px}
+.lq-in{width:100%;margin-top:10px;border:1px solid var(--ln);border-radius:10px;padding:10px 12px;font:600 14px inherit;font-family:inherit}
+.lq-review li.ok{border-color:#bfe3a8;background:#f6fcf1}.lq-review li.no{border-color:#ffd2ab;background:#fff8f2}
+.lq-review small{display:block;margin-top:6px;font-size:13px}
+.lres{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 16px;border-radius:14px;margin-top:4px;font-size:15px}
+.lres.ok{background:#eef8e6;color:var(--p)}.lres.no{background:#fff3e8;color:#b34200}.lres b{font-size:18px}
+.ldisc{margin-top:8px}
+.ldisc-p{border:1px solid var(--ln);border-radius:14px;padding:14px 16px;margin-top:12px}
+.ldisc-p header,.ldisc-r header{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px}
+.ldisc-p header time,.ldisc-r header time{color:var(--mut);margin-left:auto}
+.ldisc-p>p,.ldisc-r>p{margin-top:6px;font-size:14.5px;white-space:pre-wrap}
+.ldisc-r{margin:12px 0 0 20px;padding:10px 12px;border-left:3px solid var(--l);background:var(--bg);border-radius:0 12px 12px 0}
+.ldisc .lk{background:none;border:0;cursor:pointer;font-family:inherit;padding:0}
+.ldisc-f{margin-top:14px}
+.lsub{padding:20px;margin-top:16px}
+.lsub-t{margin-top:10px;padding:10px 14px;border-left:3px solid var(--ln);background:var(--bg);border-radius:0 10px 10px 0;font-size:14.5px;white-space:pre-wrap}
+.lqm td small{display:block}
+@media(max-width:640px){.lcourse{grid-template-columns:1fr}.lthumb{width:100%;height:150px}.lres-v{height:420px}}

@@ -9,6 +9,9 @@ import { logoutAction } from "@/lib/actions/auth";
 const ITEMS: { href: string; label: string; icon: IconName }[] = [
   { href: "/trainer", label: "Dashboard", icon: "chart" },
   { href: "/trainer/kelas", label: "Kelas Saya", icon: "grad" },
+  { href: "/trainer/materi", label: "Materi & Progres", icon: "laptop" },
+  { href: "/trainer/tugas", label: "Penilaian Tugas", icon: "code" },
+  { href: "/trainer/kuis", label: "Hasil Kuis", icon: "trophy" },
   { href: "/trainer/profil", label: "Profil", icon: "users" },
   { href: "/portal", label: "Portal Member", icon: "arr" },
 ];

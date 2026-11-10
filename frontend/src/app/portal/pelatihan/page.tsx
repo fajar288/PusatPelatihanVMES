@@ -74,7 +74,7 @@ export default async function PortalTrainingPage() {
         ))}
       </PortalCard>
       <p className="fh" style={{ marginTop: 18 }}>
-        Materi belajar, tugas, dan sertifikat akan tersedia setelah modul LMS (Phase 3) aktif.
+        Materi belajar, kuis, dan tugas kelas ada di menu <Link href="/portal/belajar">Belajar</Link>. Sertifikat menyusul setelah kelas selesai.
       </p>
     </>
   );
