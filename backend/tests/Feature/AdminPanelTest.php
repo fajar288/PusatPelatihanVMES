@@ -34,5 +34,8 @@ class AdminPanelTest extends TestCase
             $this->actingAs($admin)->get("/admin/$slug")->assertOk();
             $this->actingAs($admin)->get("/admin/$slug/create")->assertOk();
         }
+        foreach (['registrations', 'payments', 'audit-logs'] as $slug) {
+            $this->actingAs($admin)->get("/admin/$slug")->assertOk();
+        }
     }
 }
