@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\TrainingSchedule;
 use App\Observers\AuditObserver;
 use App\Observers\CmsObserver;
+use App\Observers\TrainingScheduleObserver;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
 
@@ -27,6 +29,7 @@ class AppServiceProvider extends ServiceProvider
         foreach (CmsObserver::MODELS as $model) {
             $model::observe(CmsObserver::class);
         }
+        TrainingSchedule::observe(TrainingScheduleObserver::class); // riwayat perubahan + notifikasi peserta
         // Jejak audit otomatis untuk model operasional
         foreach (AuditObserver::MODELS as $model) {
             $model::observe(AuditObserver::class);

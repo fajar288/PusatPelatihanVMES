@@ -28,7 +28,8 @@ class TrainingScheduleForm
                     Select::make('package_id')->label('Paket training')->relationship('package', 'title')->searchable()->preload()->required(),
                     TextInput::make('code')->label('Kode kelas')->required()->maxLength(40)->unique('training_schedules', 'code', ignoreRecord: true)->placeholder('CCNA-2611'),
                     TextInput::make('title')->label('Judul (override, opsional)')->maxLength(255),
-                    TextInput::make('trainer_name')->label('Trainer')->maxLength(255),
+                    Select::make('trainers')->label('Trainer / assessor')->relationship('trainers', 'name')->multiple()->searchable()->preload()->helperText('Peran lead/assistant/assessor diatur di tab Trainer di bawah.'),
+                    TextInput::make('trainer_name')->label('Nama trainer (tampil di web)')->maxLength(255),
                     DatePicker::make('start_date')->label('Tanggal mulai')->required()->native(false),
                     DatePicker::make('end_date')->label('Tanggal selesai')->required()->native(false)->afterOrEqual('start_date'),
                     TimePicker::make('start_time')->label('Jam mulai')->seconds(false),
@@ -44,7 +45,8 @@ class TrainingScheduleForm
                     Select::make('status')->options(array_intersect_key($statusLabels, array_flip(TrainingSchedule::STATUSES)))->default('draft')->required()->native(false),
                     DatePicker::make('registration_deadline')->label('Batas pendaftaran')->native(false),
                     DateTimePicker::make('published_at')->label('Tanggal terbit')->seconds(false)->native(false),
-                    Textarea::make('notes')->label('Catatan / alasan perubahan')->rows(3)->columnSpanFull(),
+                    Textarea::make('notes')->label('Catatan internal')->rows(2)->columnSpanFull(),
+                    Textarea::make('change_reason')->label('Alasan perubahan (wajib bila tanggal/jam/lokasi/metode/status berubah — dikirim ke peserta)')->rows(2)->columnSpanFull()->dehydrated(false)->visibleOn('edit'),
                 ]),
             ]);
     }

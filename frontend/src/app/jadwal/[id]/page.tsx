@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import WhyBox from "@/components/detail/WhyBox";
+import WaitlistForm from "@/components/forms/WaitlistForm";
 import Icon from "@/components/ui/Icon";
 import { type Schedule, scheduleBatchTitle, shortDate } from "@/data/schedules";
 import { SITE } from "@/data/site";
@@ -265,9 +266,12 @@ export default async function JadwalDetailPage({ params }: PageProps<"/jadwal/[i
                   </div>
                   <div className="kbt">
                     {full ? (
-                      <a className="kb1 wa" href={waLink(`Halo, saya ingin masuk daftar tunggu training ${s.title} (${s.dateLabel})`)} target="_blank" rel="noopener">
-                        Masuk Daftar Tunggu
-                      </a>
+                      <details className="kbx" style={{ marginTop: 0, padding: 18 }}>
+                        <summary style={{ cursor: "pointer", fontWeight: 800, color: "var(--p)" }}>Masuk Daftar Tunggu</summary>
+                        <div style={{ marginTop: 14 }}>
+                          <WaitlistForm code={s.code} />
+                        </div>
+                      </details>
                     ) : (
                       <Link className="kb1" href={`/daftar?jadwal=${s.id}`}>
                         Daftar Sekarang

@@ -5,6 +5,7 @@ namespace App\Filament\Resources\TrainingPackages;
 use App\Filament\Resources\TrainingPackages\Pages\CreateTrainingPackage;
 use App\Filament\Resources\TrainingPackages\Pages\EditTrainingPackage;
 use App\Filament\Resources\TrainingPackages\Pages\ListTrainingPackages;
+use App\Filament\Resources\TrainingPackages\RelationManagers\CurriculaRelationManager;
 use App\Filament\Resources\TrainingPackages\Schemas\TrainingPackageForm;
 use App\Filament\Resources\TrainingPackages\Tables\TrainingPackagesTable;
 use App\Models\TrainingPackage;
@@ -35,7 +36,7 @@ class TrainingPackageResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            CurriculaRelationManager::class,
         ];
     }
 

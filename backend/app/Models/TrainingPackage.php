@@ -45,8 +45,21 @@ class TrainingPackage extends Model
             'requirements' => 'array',
             'price' => 'decimal:2',
             'is_popular' => 'boolean',
+            'completion_rule' => 'array',
             'published_at' => 'datetime',
         ];
+    }
+
+    public const PROGRAM_TYPES = ['regular' => 'Reguler', 'in_house' => 'In-house', 'private' => 'Private', 'online' => 'Online', 'blended' => 'Blended', 'custom' => 'Custom perusahaan', 'bundling' => 'Bundling'];
+
+    public const CERTIFICATE_TYPES = ['participation' => 'Sertifikat keikutsertaan', 'competency' => 'Sertifikat kompetensi', 'vendor' => 'Sertifikasi vendor'];
+
+    public const COMPLETION_DEFAULT = ['min_attendance_pct' => 80, 'min_score' => null, 'require_assignment' => false, 'require_posttest' => false];
+
+    /** Aturan kelulusan efektif (default + override paket). @return array<string, mixed> */
+    public function completionRule(): array
+    {
+        return array_merge(self::COMPLETION_DEFAULT, array_filter($this->completion_rule ?? [], fn ($v) => $v !== null && $v !== ''));
     }
 
     public function category(): BelongsTo

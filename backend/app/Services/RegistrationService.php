@@ -17,7 +17,7 @@ use Illuminate\Validation\ValidationException;
 /** Alur pendaftaran (PRD §5.5): buat pendaftaran, ubah status dengan validasi transisi, catat audit, kirim notifikasi. */
 class RegistrationService
 {
-    public function __construct(private readonly MemberService $members) {}
+    public function __construct(private readonly MemberService $members, private readonly EnrollmentService $enrollments) {}
 
     /**
      * @param  array<string, mixed>  $data  hasil StoreRegistrationRequest
@@ -99,6 +99,7 @@ class RegistrationService
             if ($to === RegistrationStatus::Confirmed) {
                 $registration->schedule()->increment('registered_count', $registration->participants_count);
                 $this->activateMember($registration);
+                $this->enrollments->fromRegistration($registration, $actor);
             }
 
             AuditLog::record('registration.status_changed', $registration, ['status' => $from->value], ['status' => $to->value, 'note' => $note], $actor);
