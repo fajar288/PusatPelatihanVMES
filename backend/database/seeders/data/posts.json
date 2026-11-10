@@ -1,0 +1,274 @@
+[
+  {
+    "type": "tutorial",
+    "slug": "konfigurasi-eigrp",
+    "title": "Konfigurasi Enhanced Interior Gateway Routing Protocol (EIGRP)",
+    "excerpt": "Contoh konten. Tulis postingan berlabel Tutorial untuk menggantikan tampilan contoh ini.",
+    "body": "<p>EIGRP (Enhanced Interior Gateway Routing Protocol) adalah protokol routing dinamis milik Cisco yang menggabungkan keunggulan distance-vector dan link-state. EIGRP cepat konvergen, hemat bandwidth, dan mudah dikonfigurasi sehingga banyak dipakai di jaringan enterprise.</p>\n<h2>Topologi Lab</h2>\n<p>Gunakan dua router (R1 dan R2) yang terhubung lewat link serial atau GigabitEthernet. Masing-masing router memiliki satu jaringan LAN di belakangnya.</p>\n<h2>Langkah Konfigurasi</h2>\n<ol><li>Masuk ke mode konfigurasi global dengan perintah configure terminal.</li><li>Aktifkan proses EIGRP dengan router eigrp 100 (nomor AS harus sama di semua router).</li><li>Umumkan jaringan yang terhubung dengan perintah network beserta wildcard mask.</li><li>Matikan auto-summary agar subnet tidak diringkas otomatis.</li><li>Verifikasi dengan show ip eigrp neighbors dan show ip route eigrp.</li></ol>\n<pre><code>R1(config)# router eigrp 100\nR1(config-router)# network 192.168.1.0 0.0.0.255\nR1(config-router)# network 10.0.0.0 0.0.0.3\nR1(config-router)# no auto-summary</code></pre>\n<h2>Verifikasi</h2>\n<p>Jika neighbor adjacency terbentuk, tabel routing akan menampilkan rute dengan kode D (EIGRP). Lakukan ping antar LAN untuk memastikan konektivitas end-to-end.</p>\n<p>Materi ini merupakan bagian dari training Cisco CCNA di PPTI - VMES Training Center.</p>",
+    "thumbnail": null,
+    "tags": [
+      "Cisco",
+      "Routing",
+      "CCNA"
+    ],
+    "author_name": "Tim Instruktur PPTI",
+    "status": "published",
+    "published_at": "2026-11-10T00:00:00.000Z"
+  },
+  {
+    "type": "tutorial",
+    "slug": "konfigurasi-vlan-trunking",
+    "title": "Konfigurasi VLAN dan Trunking pada Switch",
+    "excerpt": "Contoh konten. Tulis postingan berlabel Tutorial untuk menggantikan tampilan contoh ini.",
+    "body": "<p>VLAN (Virtual LAN) memisahkan satu switch fisik menjadi beberapa jaringan logis, sedangkan trunking memungkinkan beberapa VLAN melewati satu link antar switch menggunakan tagging IEEE 802.1Q.</p>\n<h2>Membuat VLAN</h2>\n<pre><code>SW1(config)# vlan 10\nSW1(config-vlan)# name STAFF\nSW1(config)# vlan 20\nSW1(config-vlan)# name GUEST</code></pre>\n<h2>Menetapkan Port Akses</h2>\n<pre><code>SW1(config)# interface range fa0/1 - 12\nSW1(config-if-range)# switchport mode access\nSW1(config-if-range)# switchport access vlan 10</code></pre>\n<h2>Mengaktifkan Trunk</h2>\n<pre><code>SW1(config)# interface gi0/1\nSW1(config-if)# switchport mode trunk\nSW1(config-if)# switchport trunk allowed vlan 10,20</code></pre>\n<p>Verifikasi dengan show vlan brief dan show interfaces trunk. Pastikan native VLAN sama di kedua ujung trunk untuk menghindari peringatan CDP.</p>",
+    "thumbnail": null,
+    "tags": [
+      "Cisco",
+      "Switching",
+      "VLAN"
+    ],
+    "author_name": "Tim Instruktur PPTI",
+    "status": "published",
+    "published_at": "2026-11-07T00:00:00.000Z"
+  },
+  {
+    "type": "tutorial",
+    "slug": "dasar-docker-pemula",
+    "title": "Dasar Docker untuk Pemula",
+    "excerpt": "Contoh konten. Tulis postingan berlabel Tutorial untuk menggantikan tampilan contoh ini.",
+    "body": "<p>Docker mengemas aplikasi beserta seluruh dependensinya ke dalam container yang ringan dan portabel. Dengan Docker, aplikasi berjalan sama persis di laptop developer, server staging, maupun produksi.</p>\n<h2>Konsep Utama</h2>\n<ul><li>Image: template read-only berisi aplikasi dan dependensinya.</li><li>Container: instance image yang sedang berjalan.</li><li>Dockerfile: resep untuk membangun image.</li><li>Registry: tempat menyimpan dan membagikan image (Docker Hub, GitLab Registry).</li></ul>\n<h2>Perintah Dasar</h2>\n<pre><code>docker pull nginx:alpine\ndocker run -d -p 8080:80 --name web nginx:alpine\ndocker ps\ndocker logs web\ndocker stop web &amp;&amp; docker rm web</code></pre>\n<h2>Dockerfile Sederhana</h2>\n<pre><code>FROM python:3.12-slim\nWORKDIR /app\nCOPY requirements.txt .\nRUN pip install -r requirements.txt\nCOPY . .\nCMD [\"python\", \"app.py\"]</code></pre>\n<p>Pelajari lebih dalam tentang container, Compose, dan Kubernetes di training DevOps Engineering.</p>",
+    "thumbnail": null,
+    "tags": [
+      "DevOps",
+      "Docker"
+    ],
+    "author_name": "Tim Instruktur PPTI",
+    "status": "published",
+    "published_at": "2026-11-04T00:00:00.000Z"
+  },
+  {
+    "type": "tutorial",
+    "slug": "firewall-rule-mikrotik",
+    "title": "Membuat Firewall Rule di MikroTik",
+    "excerpt": "Contoh konten. Tulis postingan berlabel Tutorial untuk menggantikan tampilan contoh ini.",
+    "body": "<p>Firewall di RouterOS bekerja berdasarkan chain (input, forward, output) dan dieksekusi berurutan dari atas ke bawah. Rule yang paling spesifik dan paling sering cocok sebaiknya diletakkan di atas.</p>\n<h2>Rule Dasar Melindungi Router</h2>\n<pre><code>/ip firewall filter\nadd chain=input connection-state=established,related action=accept\nadd chain=input connection-state=invalid action=drop\nadd chain=input in-interface=ether1-WAN protocol=icmp action=accept\nadd chain=input in-interface=ether1-WAN action=drop</code></pre>\n<h2>Membatasi Akses dari LAN</h2>\n<pre><code>add chain=forward src-address=192.168.88.0/24 dst-port=23 protocol=tcp action=drop comment=\"Blok telnet keluar\"</code></pre>\n<p>Selalu uji rule dari jaringan lain sebelum mengaktifkan drop di chain input agar tidak terkunci dari router sendiri. Gunakan Safe Mode di Winbox saat bereksperimen.</p>",
+    "thumbnail": null,
+    "tags": [
+      "MikroTik",
+      "Firewall"
+    ],
+    "author_name": "Tim Instruktur PPTI",
+    "status": "published",
+    "published_at": "2026-11-01T00:00:00.000Z"
+  },
+  {
+    "type": "tutorial",
+    "slug": "pengenalan-cicd-pipeline",
+    "title": "Pengenalan CI/CD Pipeline",
+    "excerpt": "Contoh konten. Tulis postingan berlabel Tutorial untuk menggantikan tampilan contoh ini.",
+    "body": "<p>Continuous Integration (CI) memastikan setiap perubahan kode diuji otomatis, sedangkan Continuous Delivery/Deployment (CD) mengantarkan perubahan tersebut ke lingkungan staging atau produksi tanpa langkah manual yang rawan kesalahan.</p>\n<h2>Tahapan Pipeline Umum</h2>\n<ol><li>Build: kompilasi kode dan instalasi dependensi.</li><li>Test: unit test, integration test, dan analisis statis.</li><li>Package: membangun artefak atau image Docker.</li><li>Deploy: merilis ke staging, lalu produksi setelah approval.</li></ol>\n<h2>Contoh GitHub Actions</h2>\n<pre><code>name: ci\non: [push]\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: npm ci\n      - run: npm test</code></pre>\n<p>Pipeline yang baik bersifat cepat, deterministik, dan memberikan umpan balik jelas ke developer.</p>",
+    "thumbnail": null,
+    "tags": [
+      "DevOps",
+      "CI/CD"
+    ],
+    "author_name": "Tim Instruktur PPTI",
+    "status": "published",
+    "published_at": "2026-10-29T00:00:00.000Z"
+  },
+  {
+    "type": "tutorial",
+    "slug": "subnetting-ipv4",
+    "title": "Subnetting IPv4 Langkah demi Langkah",
+    "excerpt": "Contoh konten. Tulis postingan berlabel Tutorial untuk menggantikan tampilan contoh ini.",
+    "body": "<p>Subnetting membagi satu blok alamat IP menjadi beberapa jaringan yang lebih kecil agar penggunaan alamat efisien dan trafik broadcast terkendali.</p>\n<h2>Contoh: 192.168.10.0/24 dibagi menjadi 4 subnet</h2>\n<ol><li>Butuh 4 subnet → pinjam 2 bit host (2^2 = 4). Prefix baru /26, mask 255.255.255.192.</li><li>Ukuran blok = 256 - 192 = 64. Subnet: .0, .64, .128, .192.</li><li>Setiap subnet punya 62 host yang bisa dipakai (64 - 2).</li><li>Alamat broadcast subnet pertama: 192.168.10.63; host valid .1 sampai .62.</li></ol>\n<h2>Tips Cepat</h2>\n<ul><li>Hafalkan kelipatan 2: 128, 64, 32, 16, 8, 4, 2.</li><li>Ukuran blok selalu 256 dikurangi oktet mask yang 'menarik'.</li><li>VLSM: urutkan kebutuhan host dari terbesar ke terkecil.</li></ul>",
+    "thumbnail": null,
+    "tags": [
+      "Networking",
+      "IPv4"
+    ],
+    "author_name": "Tim Instruktur PPTI",
+    "status": "published",
+    "published_at": "2026-10-26T00:00:00.000Z"
+  },
+  {
+    "type": "news",
+    "slug": "ppti-mitra-resmi-pearson-vue",
+    "title": "PPTI - VMES Resmi Menjadi Authorized Test Center Pearson VUE",
+    "excerpt": "Peserta kini dapat mengikuti ujian sertifikasi internasional Cisco, AWS, dan CompTIA langsung di lab PPTI - VMES Training Center Batam.",
+    "body": "<p>Batam — PPTI - VMES Training Center resmi ditunjuk sebagai Pearson VUE Authorized Test Center. Dengan status ini, peserta training tidak perlu lagi menempuh perjalanan ke kota lain untuk mengikuti ujian sertifikasi internasional.</p>\n<p>Ujian yang tersedia mencakup Cisco (CCNA, CCNP), AWS Certified, CompTIA, dan vendor lain yang bermitra dengan Pearson VUE. Pendaftaran ujian dapat dilakukan melalui tim admin PPTI atau langsung di portal Pearson VUE dengan memilih lokasi Batam.</p>\n<h2>Fasilitas Ruang Ujian</h2>\n<ul><li>8 workstation dengan pengawasan CCTV sesuai standar Pearson VUE</li><li>Ruang tunggu dan loker peserta</li><li>Jadwal ujian Senin sampai Sabtu</li></ul>\n<p>Informasi jadwal ujian dan voucher dapat ditanyakan melalui WhatsApp resmi PPTI - VMES.</p>",
+    "thumbnail": null,
+    "tags": [
+      "Sertifikasi",
+      "Pearson VUE"
+    ],
+    "author_name": "Humas PPTI",
+    "status": "published",
+    "published_at": "2026-11-08T00:00:00.000Z"
+  },
+  {
+    "type": "news",
+    "slug": "jadwal-training-semester-1-2027",
+    "title": "Jadwal Training Semester I 2027 Telah Dibuka",
+    "excerpt": "Kelas reguler Cisco CCNA, MikroTik MTCNA, AWS, DevOps, Cyber Security, dan Python dibuka untuk periode Januari sampai Juni 2027.",
+    "body": "<p>PPTI - VMES Training Center membuka pendaftaran kelas reguler semester I 2027. Kuota tiap kelas dibatasi 12 sampai 16 peserta agar sesi praktik berjalan optimal.</p>\n<h2>Promo Pendaftaran Awal</h2>\n<ul><li>Diskon 10% untuk pendaftaran sebelum 31 Desember 2026</li><li>Diskon tambahan 5% untuk pendaftaran kolektif minimal 3 orang dari instansi yang sama</li><li>Gratis voucher ujian untuk kelas MikroTik MTCNA</li></ul>\n<p>Lihat jadwal lengkap di halaman Jadwal Training dan klik Daftar pada batch yang diinginkan.</p>",
+    "thumbnail": null,
+    "tags": [
+      "Jadwal",
+      "Pendaftaran"
+    ],
+    "author_name": "Humas PPTI",
+    "status": "published",
+    "published_at": "2026-11-03T00:00:00.000Z"
+  },
+  {
+    "type": "news",
+    "slug": "kerja-sama-politeknik-batam",
+    "title": "Kerja Sama PPTI - VMES dengan Politeknik Negeri Batam untuk Program Magang Bersertifikat",
+    "excerpt": "Mahasiswa semester akhir dapat mengikuti program magang sekaligus memperoleh sertifikasi industri di lab PPTI - VMES.",
+    "body": "<p>Penandatanganan nota kesepahaman dilakukan di kampus Politeknik Negeri Batam. Program ini memadukan magang di industri mitra PPTI dengan pelatihan intensif Industrial Automation dan Networking.</p>\n<p>Setiap angkatan akan menerima 20 mahasiswa. Lulusan program memperoleh sertifikat keikutsertaan PPTI dan kesempatan mengikuti ujian sertifikasi vendor dengan subsidi biaya.</p>",
+    "thumbnail": null,
+    "tags": [
+      "Kerja Sama",
+      "Kampus"
+    ],
+    "author_name": "Humas PPTI",
+    "status": "published",
+    "published_at": "2026-10-20T00:00:00.000Z"
+  },
+  {
+    "type": "activity",
+    "slug": "inhouse-training-plc-pln-batam",
+    "title": "In-House Training PLC & SCADA untuk Tim Teknik PLN Batam",
+    "excerpt": "Tiga hari pelatihan intensif pemrograman PLC, HMI, dan integrasi SCADA bagi 16 teknisi PLN Batam.",
+    "body": "<p>PPTI - VMES Training Center melaksanakan in-house training Industrial Automation untuk tim teknik PLN Batam selama tiga hari. Materi mencakup dasar PLC, pemrograman ladder, konfigurasi HMI, dan integrasi SCADA.</p>\n<p>Sesi praktik menggunakan trainer kit PLC dan simulasi proses industri sehingga peserta langsung dapat menerapkan materi pada kasus nyata di lapangan.</p>\n<h2>Hasil Pelatihan</h2>\n<ul><li>16 peserta menyelesaikan seluruh modul dan asesmen praktik</li><li>Rata-rata nilai post-test naik 38% dibanding pre-test</li><li>Seluruh peserta memperoleh sertifikat keikutsertaan</li></ul>",
+    "thumbnail": null,
+    "tags": [
+      "In-House",
+      "PLC",
+      "SCADA"
+    ],
+    "author_name": "Tim Training PPTI",
+    "status": "published",
+    "published_at": "2026-11-06T00:00:00.000Z"
+  },
+  {
+    "type": "activity",
+    "slug": "workshop-cyber-security-awareness",
+    "title": "Workshop Cyber Security Awareness untuk UMKM Kota Batam",
+    "excerpt": "Kolaborasi dengan Dinas Kominfo Kota Batam: 60 pelaku UMKM belajar mengamankan akun, data pelanggan, dan transaksi digital.",
+    "body": "<p>Workshop setengah hari ini membahas ancaman siber yang paling sering menimpa usaha kecil: phishing, pembajakan akun media sosial, dan penipuan transaksi.</p>\n<p>Peserta mempraktikkan pengaktifan autentikasi dua faktor, pengelolaan kata sandi, dan pencadangan data. Materi presentasi dibagikan gratis kepada seluruh peserta.</p>",
+    "thumbnail": null,
+    "tags": [
+      "Workshop",
+      "Cyber Security"
+    ],
+    "author_name": "Tim Training PPTI",
+    "status": "published",
+    "published_at": "2026-10-25T00:00:00.000Z"
+  },
+  {
+    "type": "activity",
+    "slug": "kunjungan-industri-smk-teknik",
+    "title": "Kunjungan Industri SMK Teknik ke Lab Robotika PPTI - VMES",
+    "excerpt": "120 siswa SMK jurusan mekatronika mengenal robot industri, pneumatik, dan sistem kendali di lab PPTI.",
+    "body": "<p>Kunjungan industri ini menjadi bagian program link and match SMK dengan dunia industri. Siswa dibagi ke dalam kelompok kecil untuk mencoba langsung pemrograman robot lengan, rangkaian pneumatik, dan panel kendali motor.</p>\n<p>PPTI - VMES membuka kesempatan kunjungan serupa bagi sekolah dan kampus lain. Hubungi tim kami untuk penjadwalan.</p>",
+    "thumbnail": null,
+    "tags": [
+      "Kunjungan",
+      "Robotika"
+    ],
+    "author_name": "Tim Training PPTI",
+    "status": "published",
+    "published_at": "2026-10-15T00:00:00.000Z"
+  },
+  {
+    "type": "documentation",
+    "slug": "dokumentasi-training-within-industry",
+    "title": "Dokumentasi Training Within Industry Batch Oktober 2026",
+    "excerpt": "Suasana kelas Training Within Industry (TWI) untuk supervisor produksi.",
+    "body": "<figure><img src=\"https://merca.team/wp-content/uploads/2026/02/training-within-industry-1024x683.webp\" alt=\"Dokumentasi training PPTI\" loading=\"lazy\" referrerpolicy=\"no-referrer\"><figcaption>Sesi diskusi kelompok Training Within Industry.</figcaption></figure>\n<p>Dokumentasi kelas Training Within Industry (TWI) yang diikuti 14 supervisor dan leader produksi dari kawasan industri Batamindo dan Tunas.</p>",
+    "thumbnail": "https://merca.team/wp-content/uploads/2026/02/training-within-industry-1024x683.webp",
+    "tags": [
+      "TWI",
+      "Supervisor"
+    ],
+    "author_name": null,
+    "status": "published",
+    "published_at": "2026-11-09T00:00:00.000Z"
+  },
+  {
+    "type": "documentation",
+    "slug": "dokumentasi-plc-scada-batch-oktober",
+    "title": "Dokumentasi Kelas PLC & SCADA Batch Oktober 2026",
+    "excerpt": "Praktik pemrograman PLC dan integrasi SCADA di lab otomasi PPTI - VMES.",
+    "body": "<figure><img src=\"https://livewireindia.com/blog/wp-content/uploads/2019/03/plc-scada-training-740x414.jpeg\" alt=\"Dokumentasi training PPTI\" loading=\"lazy\" referrerpolicy=\"no-referrer\"><figcaption>Peserta mengonfigurasi HMI dan SCADA.</figcaption></figure>\n<p>Peserta menyelesaikan proyek akhir berupa simulasi lini pengisian botol otomatis yang dikendalikan PLC dan dipantau lewat SCADA.</p>",
+    "thumbnail": "https://livewireindia.com/blog/wp-content/uploads/2019/03/plc-scada-training-740x414.jpeg",
+    "tags": [
+      "PLC",
+      "SCADA"
+    ],
+    "author_name": null,
+    "status": "published",
+    "published_at": "2026-11-02T00:00:00.000Z"
+  },
+  {
+    "type": "documentation",
+    "slug": "dokumentasi-agile-project-management",
+    "title": "Dokumentasi Workshop Agile Project Management",
+    "excerpt": "Workshop dua hari manajemen proyek agile untuk tim IT perusahaan manufaktur.",
+    "body": "<figure><img src=\"https://agile4training.com/assets/images/courses/course_2283_1757248573.webp\" alt=\"Dokumentasi training PPTI\" loading=\"lazy\" referrerpolicy=\"no-referrer\"></figure>\n<p>Workshop menggunakan simulasi sprint dengan papan kanban fisik, retrospektif, dan perencanaan rilis.</p>",
+    "thumbnail": "https://agile4training.com/assets/images/courses/course_2283_1757248573.webp",
+    "tags": [
+      "Agile",
+      "Manajemen Proyek"
+    ],
+    "author_name": null,
+    "status": "published",
+    "published_at": "2026-10-28T00:00:00.000Z"
+  },
+  {
+    "type": "documentation",
+    "slug": "dokumentasi-hr-analytics",
+    "title": "Dokumentasi Training HR Analytics & KPI",
+    "excerpt": "Pelatihan pengukuran kinerja dan analitik SDM untuk tim HR.",
+    "body": "<figure><img src=\"https://www.arghajata.com/wp-content/uploads/2024/11/human-resources-management-software-computer-screen-helping-employee-to-manage-recruitment-payroll-staff-searching-kpi-319722581.webp\" alt=\"Dokumentasi training PPTI\" loading=\"lazy\" referrerpolicy=\"no-referrer\"></figure>\n<p>Peserta membangun dashboard KPI dan menganalisis data turnover karyawan menggunakan spreadsheet dan alat BI.</p>",
+    "thumbnail": "https://www.arghajata.com/wp-content/uploads/2024/11/human-resources-management-software-computer-screen-helping-employee-to-manage-recruitment-payroll-staff-searching-kpi-319722581.webp",
+    "tags": [
+      "HR",
+      "KPI"
+    ],
+    "author_name": null,
+    "status": "published",
+    "published_at": "2026-10-21T00:00:00.000Z"
+  },
+  {
+    "type": "documentation",
+    "slug": "dokumentasi-lean-manufacturing",
+    "title": "Dokumentasi Training Lean Manufacturing & Kaizen",
+    "excerpt": "Pelatihan perbaikan berkelanjutan untuk tim produksi.",
+    "body": "<figure><img src=\"https://agile4training.com/assets/images/courses/course_2016_1743934487.webp\" alt=\"Dokumentasi training PPTI\" loading=\"lazy\" referrerpolicy=\"no-referrer\"></figure>\n<p>Materi 5S, value stream mapping, dan kaizen event dipraktikkan langsung dengan studi kasus lini produksi peserta.</p>",
+    "thumbnail": "https://agile4training.com/assets/images/courses/course_2016_1743934487.webp",
+    "tags": [
+      "Lean",
+      "Kaizen"
+    ],
+    "author_name": null,
+    "status": "published",
+    "published_at": "2026-10-14T00:00:00.000Z"
+  },
+  {
+    "type": "documentation",
+    "slug": "dokumentasi-leadership",
+    "title": "Dokumentasi Training Leadership for Supervisor",
+    "excerpt": "Pengembangan kepemimpinan bagi supervisor dan team leader.",
+    "body": "<figure><img src=\"https://agile4training.com/assets/images/courses/course_1905_1744202959.webp\" alt=\"Dokumentasi training PPTI\" loading=\"lazy\" referrerpolicy=\"no-referrer\"></figure>\n<p>Sesi role-play coaching dan pemberian umpan balik menjadi bagian paling diminati peserta.</p>",
+    "thumbnail": "https://agile4training.com/assets/images/courses/course_1905_1744202959.webp",
+    "tags": [
+      "Leadership"
+    ],
+    "author_name": null,
+    "status": "published",
+    "published_at": "2026-10-07T00:00:00.000Z"
+  }
+]

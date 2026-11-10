@@ -1,0 +1,67 @@
+[
+  {
+    "name": "Rizky Pratama",
+    "position": "Automation Technician",
+    "company": "PT. Batam Industrial Automation",
+    "city": "Batam",
+    "photo": null,
+    "program": "Pelatihan PLC",
+    "content": "Saya sebelumnya hanya memahami dasar-dasar kelistrikan industri. Setelah mengikuti pelatihan PLC di PPTI VMES Training Center, saya mulai memahami pemrograman PLC, logika kontrol, dan cara melakukan pengujian sistem secara langsung. Praktik yang diberikan membantu saya meningkatkan keterampilan teknis dan lebih percaya diri dalam menangani sistem otomasi di lingkungan kerja.",
+    "rating": 5,
+    "is_approved": true,
+    "is_featured": true,
+    "sort_order": 1
+  },
+  {
+    "name": "Andika Saputra",
+    "position": "Automation Engineer",
+    "company": "PT. Prima Teknik Industri",
+    "city": "Batam",
+    "photo": null,
+    "program": "Pelatihan Otomasi Industri",
+    "content": "Saya mengikuti pelatihan otomasi industri untuk memperdalam pemahaman tentang PLC, HMI, dan sistem kontrol mesin. Selama pelatihan, saya mendapatkan pengalaman praktik yang membantu saya memahami hubungan antara perangkat kontrol dan proses produksi. Materinya aplikatif dan relevan dengan kebutuhan industri manufaktur.",
+    "rating": 5,
+    "is_approved": true,
+    "is_featured": false,
+    "sort_order": 2
+  },
+  {
+    "name": "Nadia Putri Amelia",
+    "position": "Data Analyst",
+    "company": "PT. Digital Solusi Nusantara",
+    "city": "Jakarta",
+    "photo": null,
+    "program": "Pelatihan IT dan Data Analytics",
+    "content": "Dalam pekerjaan sehari-hari, saya membutuhkan kemampuan mengolah data dengan lebih efektif. Melalui pelatihan IT di PPTI VMES Training Center, saya belajar menggunakan perangkat analisis data untuk menyusun laporan dan menyajikan informasi secara lebih terstruktur. Pelatihan ini membantu saya memahami bagaimana teknologi dapat mendukung pekerjaan dan pengambilan keputusan.",
+    "rating": 5,
+    "is_approved": true,
+    "is_featured": false,
+    "sort_order": 3
+  },
+  {
+    "name": "Dewi Anggraini",
+    "position": "Human Resources Officer",
+    "company": "PT. Mitra Karya Digital",
+    "city": "Batam",
+    "photo": null,
+    "program": "Pelatihan AI dan SDM Digital",
+    "content": "Saya ingin memahami bagaimana AI dapat dimanfaatkan untuk mendukung pekerjaan di bidang sumber daya manusia. Melalui pelatihan SDM Digital di PPTI VMES Training Center, saya mempelajari penggunaan teknologi AI untuk membantu penyusunan dokumen, pengolahan informasi, dan peningkatan produktivitas. Pengetahuan ini menjadi bekal untuk beradaptasi dengan perkembangan teknologi di lingkungan kerja.",
+    "rating": 5,
+    "is_approved": true,
+    "is_featured": false,
+    "sort_order": 4
+  },
+  {
+    "name": "Muhammad Farhan",
+    "position": "IT Support Specialist",
+    "company": "PT. Inovasi Teknologi Mandiri",
+    "city": "Tanjung Pinang",
+    "photo": null,
+    "program": "Pelatihan Pemrograman dan Database",
+    "content": "Saya mengikuti pelatihan pemrograman dan database untuk memperkuat kemampuan teknis di bidang teknologi informasi. Materi yang disampaikan secara bertahap membantu saya memahami dasar pengembangan aplikasi dan pengelolaan database. Dengan latihan yang terarah, saya memperoleh pemahaman yang lebih baik tentang penerapan IT untuk mendukung kebutuhan operasional perusahaan.",
+    "rating": 5,
+    "is_approved": true,
+    "is_featured": false,
+    "sort_order": 5
+  }
+]

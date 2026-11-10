@@ -1,0 +1,309 @@
+[
+  {
+    "slug": "cisco-ccna",
+    "code": null,
+    "title": "Cisco CCNA",
+    "category_slug": "networking",
+    "vendor": "Cisco",
+    "excerpt": "Training fundamental networking dan persiapan sertifikasi CCNA.",
+    "overview_intro": [
+      "Cisco Certified Network Associate (CCNA) adalah sertifikasi networking paling diakui di industri. Training ini membekali peserta dengan pemahaman menyeluruh tentang dasar jaringan, IP connectivity, IP services, keamanan dasar, dan otomasi jaringan sesuai silabus ujian 200-301.",
+      "Seluruh sesi dilaksanakan dengan pendekatan hands-on menggunakan perangkat Cisco dan Packet Tracer, sehingga peserta tidak hanya memahami teori tetapi juga terbiasa mengonfigurasi dan melakukan troubleshooting jaringan nyata."
+    ],
+    "learning_outcomes": [
+      "Network fundamentals: model OSI/TCP-IP, Ethernet, kabel, dan perangkat jaringan",
+      "IPv4 dan IPv6 addressing serta subnetting",
+      "Switching: VLAN, trunking, STP, EtherChannel",
+      "Routing: static routing, OSPF single-area, default route",
+      "IP services: DHCP, NAT, NTP, DNS, SNMP, syslog",
+      "Security fundamentals: ACL, port security, AAA, VPN",
+      "Wireless LAN dasar serta automation dan programmability (REST API, JSON, SDN)"
+    ],
+    "audience": [
+      "Network engineer / administrator pemula hingga menengah",
+      "Staf IT yang ingin memperdalam infrastruktur jaringan",
+      "Mahasiswa dan fresh graduate yang ingin memperoleh sertifikasi internasional"
+    ],
+    "requirements": [
+      "Pemahaman dasar penggunaan komputer dan internet",
+      "Membawa laptop pribadi (minimal RAM 8 GB)",
+      "Tidak memerlukan sertifikasi sebelumnya"
+    ],
+    "duration_days": 5,
+    "duration_hours": 40,
+    "level": "Fundamental",
+    "mode": "online_offline",
+    "price": 7500000,
+    "quota": 16,
+    "image": null,
+    "certificate": "Cisco CCNA 200-301",
+    "is_popular": true,
+    "availability": "available",
+    "status": "published",
+    "published_at": "2026-11-10T00:00:00.000Z",
+    "sort_order": 1
+  },
+  {
+    "slug": "aws-cloud-practitioner",
+    "code": null,
+    "title": "AWS Cloud Practitioner",
+    "category_slug": "cloud-computing",
+    "vendor": "AWS",
+    "excerpt": "Pelatihan cloud fundamental menggunakan Amazon Web Services.",
+    "overview_intro": [
+      "Training ini memperkenalkan konsep cloud computing dan layanan inti Amazon Web Services (AWS) sebagai bekal menghadapi ujian AWS Certified Cloud Practitioner. Peserta akan memahami nilai bisnis cloud, model harga, keamanan, dan arsitektur dasar di AWS.",
+      "Setiap modul disertai lab langsung di konsol AWS sehingga peserta dapat mencoba layanan compute, storage, database, dan networking secara mandiri."
+    ],
+    "learning_outcomes": [
+      "Konsep cloud: elastisitas, high availability, shared responsibility model",
+      "Layanan inti AWS: EC2, S3, RDS, VPC, IAM, Lambda",
+      "Keamanan dan compliance di AWS",
+      "Model harga, billing, dan cost optimization",
+      "AWS Well-Architected Framework",
+      "Strategi dan tips menghadapi ujian CLF-C02"
+    ],
+    "audience": [
+      "Profesional IT, sales, atau manajemen yang membutuhkan pemahaman cloud",
+      "Developer dan sysadmin yang baru memulai perjalanan ke AWS",
+      "Mahasiswa yang ingin memulai karier di bidang cloud"
+    ],
+    "requirements": [
+      "Pemahaman dasar IT secara umum",
+      "Akun AWS Free Tier (dipandu saat training)",
+      "Membawa laptop pribadi"
+    ],
+    "duration_days": 3,
+    "duration_hours": 24,
+    "level": "Fundamental",
+    "mode": "hybrid",
+    "price": 7000000,
+    "quota": 16,
+    "image": null,
+    "certificate": "AWS Certified Cloud Practitioner",
+    "is_popular": true,
+    "availability": "available",
+    "status": "published",
+    "published_at": "2026-11-07T00:00:00.000Z",
+    "sort_order": 2
+  },
+  {
+    "slug": "devops-engineering",
+    "code": null,
+    "title": "DevOps Engineering",
+    "category_slug": "devops",
+    "vendor": "DevOps",
+    "excerpt": "Praktik CI/CD, container, dan otomasi infrastruktur.",
+    "overview_intro": [
+      "DevOps Engineering membahas budaya, praktik, dan tooling yang menjembatani tim development dan operations. Peserta belajar membangun pipeline CI/CD, mengemas aplikasi dalam container, dan mengotomasi infrastruktur secara end-to-end.",
+      "Training berorientasi proyek: peserta membangun pipeline lengkap dari commit kode hingga deployment ke cluster Kubernetes."
+    ],
+    "learning_outcomes": [
+      "Prinsip DevOps, version control dengan Git, dan branching strategy",
+      "Continuous Integration & Delivery dengan GitLab CI / GitHub Actions",
+      "Containerization dengan Docker dan Docker Compose",
+      "Orkestrasi container dengan Kubernetes",
+      "Infrastructure as Code dengan Terraform dan Ansible",
+      "Monitoring dan logging: Prometheus, Grafana, ELK"
+    ],
+    "audience": [
+      "Software engineer yang ingin memahami deployment modern",
+      "System administrator yang beralih ke peran DevOps/SRE",
+      "Tim IT perusahaan yang ingin mengadopsi CI/CD"
+    ],
+    "requirements": [
+      "Terbiasa dengan command line Linux",
+      "Pemahaman dasar pemrograman atau scripting",
+      "Laptop dengan minimal RAM 8 GB"
+    ],
+    "duration_days": 5,
+    "duration_hours": 40,
+    "level": "Intermediate",
+    "mode": "online",
+    "price": 8500000,
+    "quota": 16,
+    "image": null,
+    "certificate": "Sertifikat Keikutsertaan PPTI - VMES",
+    "is_popular": false,
+    "availability": "available",
+    "status": "published",
+    "published_at": "2026-11-04T00:00:00.000Z",
+    "sort_order": 3
+  },
+  {
+    "slug": "mikrotik-mtcna",
+    "code": null,
+    "title": "MikroTik MTCNA",
+    "category_slug": "networking",
+    "vendor": "MikroTik",
+    "excerpt": "Konfigurasi router dan jaringan dengan MikroTik RouterOS.",
+    "overview_intro": [
+      "MTCNA adalah sertifikasi tingkat dasar MikroTik yang membekali peserta kemampuan mengonfigurasi, mengelola, dan melakukan troubleshooting router MikroTik RouterOS untuk kebutuhan jaringan kantor, ISP kecil, maupun hotspot.",
+      "Training dilaksanakan secara offline di lab PPTI - VMES dengan perangkat RouterBoard asli untuk setiap peserta, dan diakhiri dengan ujian sertifikasi resmi MikroTik."
+    ],
+    "learning_outcomes": [
+      "Pengenalan RouterOS, Winbox, dan RouterBoard",
+      "DHCP client/server, bridging, dan routing dasar",
+      "Wireless: access point, station, dan keamanan WLAN",
+      "Firewall filter, NAT, dan mangle",
+      "QoS dengan Simple Queue dan Queue Tree",
+      "Tunnel (PPPoE, PPTP, L2TP) dan hotspot"
+    ],
+    "audience": [
+      "Teknisi jaringan dan administrator kantor",
+      "Pengelola RT/RW net, hotspot, dan ISP kecil",
+      "Siswa SMK/mahasiswa jurusan jaringan"
+    ],
+    "requirements": [
+      "Pemahaman dasar TCP/IP",
+      "Membawa laptop pribadi dengan port Ethernet atau adapter",
+      "Tidak memerlukan sertifikasi sebelumnya"
+    ],
+    "duration_days": 3,
+    "duration_hours": 24,
+    "level": "Fundamental",
+    "mode": "offline",
+    "price": 5500000,
+    "quota": 16,
+    "image": null,
+    "certificate": "MikroTik Certified Network Associate (MTCNA)",
+    "is_popular": false,
+    "availability": "available",
+    "status": "published",
+    "published_at": "2026-11-01T00:00:00.000Z",
+    "sort_order": 4
+  },
+  {
+    "slug": "cyber-security-foundation",
+    "code": null,
+    "title": "Cyber Security Foundation",
+    "category_slug": "cyber-security",
+    "vendor": "Cyber Security",
+    "excerpt": "Dasar keamanan informasi dan pertahanan jaringan.",
+    "overview_intro": [
+      "Cyber Security Foundation memberikan fondasi keamanan informasi: konsep CIA triad, ancaman dan kerentanan, pertahanan jaringan, hingga respons insiden. Peserta memahami cara penyerang bekerja agar dapat membangun pertahanan yang tepat.",
+      "Lab dilakukan di lingkungan virtual yang aman, mencakup analisis trafik, hardening sistem, dan simulasi serangan dasar."
+    ],
+    "learning_outcomes": [
+      "Prinsip keamanan informasi dan manajemen risiko",
+      "Jenis ancaman: malware, phishing, social engineering, DDoS",
+      "Keamanan jaringan: firewall, IDS/IPS, VPN, segmentasi",
+      "Hardening sistem operasi dan manajemen patch",
+      "Kriptografi dasar dan manajemen identitas",
+      "Pengenalan security operations dan incident response"
+    ],
+    "audience": [
+      "Staf IT yang bertanggung jawab atas keamanan sistem",
+      "Fresh graduate yang ingin memulai karier cyber security",
+      "Manajer yang membutuhkan pemahaman risiko siber"
+    ],
+    "requirements": [
+      "Pemahaman dasar jaringan dan sistem operasi",
+      "Laptop dengan minimal RAM 8 GB untuk menjalankan VM"
+    ],
+    "duration_days": 4,
+    "duration_hours": 32,
+    "level": "Fundamental",
+    "mode": "online",
+    "price": 6500000,
+    "quota": 16,
+    "image": null,
+    "certificate": "Sertifikat Keikutsertaan PPTI - VMES",
+    "is_popular": false,
+    "availability": "coming_soon",
+    "status": "published",
+    "published_at": "2026-10-29T00:00:00.000Z",
+    "sort_order": 5
+  },
+  {
+    "slug": "python-programming",
+    "code": null,
+    "title": "Python Programming",
+    "category_slug": "programming",
+    "vendor": "Programming",
+    "excerpt": "Dasar pemrograman Python untuk otomasi dan analisis data.",
+    "overview_intro": [
+      "Python adalah bahasa pemrograman serbaguna yang paling banyak dipakai untuk otomasi, analisis data, dan kecerdasan buatan. Training ini dirancang bagi pemula tanpa latar belakang pemrograman dan berfokus pada praktik langsung.",
+      "Di akhir training peserta mampu menulis skrip otomasi pekerjaan rutin dan mengolah data sederhana dengan library populer."
+    ],
+    "learning_outcomes": [
+      "Sintaks dasar: variabel, tipe data, kontrol alur, fungsi",
+      "Struktur data: list, dict, set, tuple, dan comprehension",
+      "Modul, package, dan virtual environment",
+      "File handling, exception, dan otomasi tugas (os, pathlib, requests)",
+      "Pengolahan data dengan pandas dan visualisasi dengan matplotlib",
+      "Mini project: otomasi laporan dari file Excel/CSV"
+    ],
+    "audience": [
+      "Pemula yang ingin belajar pemrograman dari nol",
+      "Staf administrasi/analis yang ingin mengotomasi pekerjaan",
+      "Engineer yang membutuhkan Python untuk otomasi industri"
+    ],
+    "requirements": [
+      "Terbiasa menggunakan komputer",
+      "Membawa laptop pribadi (Windows/macOS/Linux)"
+    ],
+    "duration_days": 4,
+    "duration_hours": 32,
+    "level": "Fundamental",
+    "mode": "hybrid",
+    "price": 4500000,
+    "quota": 16,
+    "image": null,
+    "certificate": "Sertifikat Keikutsertaan PPTI - VMES",
+    "is_popular": false,
+    "availability": "available",
+    "status": "published",
+    "published_at": "2026-10-26T00:00:00.000Z",
+    "sort_order": 6
+  },
+  {
+    "slug": "cisco-ccnp-enterprise",
+    "code": null,
+    "title": "Cisco CCNP Enterprise",
+    "category_slug": "networking",
+    "vendor": null,
+    "excerpt": null,
+    "overview_intro": [],
+    "learning_outcomes": [],
+    "audience": [],
+    "requirements": [],
+    "duration_days": 5,
+    "duration_hours": 40,
+    "level": null,
+    "mode": "offline",
+    "price": 9500000,
+    "quota": 10,
+    "image": null,
+    "certificate": null,
+    "is_popular": false,
+    "availability": "coming_soon",
+    "status": "draft",
+    "published_at": null,
+    "sort_order": 106
+  },
+  {
+    "slug": "linux-administration",
+    "code": null,
+    "title": "Linux Administration",
+    "category_slug": "devops",
+    "vendor": null,
+    "excerpt": null,
+    "overview_intro": [],
+    "learning_outcomes": [],
+    "audience": [],
+    "requirements": [],
+    "duration_days": 4,
+    "duration_hours": 32,
+    "level": null,
+    "mode": "hybrid",
+    "price": 5000000,
+    "quota": 12,
+    "image": null,
+    "certificate": null,
+    "is_popular": false,
+    "availability": "coming_soon",
+    "status": "draft",
+    "published_at": null,
+    "sort_order": 107
+  }
+]
