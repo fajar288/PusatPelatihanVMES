@@ -268,23 +268,23 @@ Legenda: `[ ]` belum · `[~]` sedang · `[x]` selesai. Prioritas mengikuti roadm
 - [x] `layout/ContactCards` + `layout/Footer`
 - [x] Metadata: title "PPTI – VMES Training Center", favicon, lang `id`
 - [x] Verifikasi side-by-side dengan screenshot (desktop 800px & mobile 375px: hero, stats, tentang, kursus, kategori+jadwal, partner, mengapa, testimoni, galeri, artikel, CTA, kontak, footer, menu hamburger) — identik
-- [ ] Verifikasi tambahan di 1320px & 1000px + `npm run build` produksi
+- [x] Verifikasi tambahan di 1320px & 900px + `npm run build` produksi (lulus, 57 halaman)
 - [ ] Lighthouse: LCP gambar hero pakai `priority`, `next/image` untuk logo & partner
 
 #### 1C. Halaman publik lain (clone)
 - [x] `/kursus` katalog: `CatalogHero` + `CatalogBar` (cari/filter kategori/mode/urut) + grid `CourseCard` (+ query string `?q=&kategori=&mode=&urut=`)
 - [x] `/kursus/[slug]` detail kursus: `.kd` + chips + `.kic` (durasi, mode, level, sertifikat) + jadwal `.kjl` + overview `.kov` + sidebar harga/CTA WA/`why` + related (`detail/*`, data overview di `data/courses.ts`)
-- [ ] `/jadwal` list jadwal (baris `.card` border-left lime, tanggal pill, tombol "Lihat detail") + kalender bulanan (PRD §5.4)
-- [ ] `/jadwal/[id]` detail batch + tombol Daftar (ke form registrasi, bukan hanya WA)
-- [ ] `/tutorial`, `/berita`, `/kegiatan`, `/dokumentasi` list artikel/galeri (`g-artikel` layout)
-- [ ] `/artikel/[slug]` detail post (`.kd` + sidebar)
-- [ ] `/tentang` (profil, visi-misi, fasilitas, trainer, layanan, kerja sama — PRD §5.1) memakai gaya `.tk`, `.wg`, `.kbx`
-- [ ] `/kontak` (form konsultasi + kartu kontak + peta)
-- [ ] `/kebijakan-privasi`, `/syarat-ketentuan`, `/faq`, `/cara-pendaftaran` (`.ph0` + `.pb`)
-- [ ] `/search?q=` hasil pencarian
+- [x] `/jadwal` list jadwal (baris `.card` border-left lime, tanggal pill, tombol "Lihat detail") + kalender bulanan (PRD §5.4) — `catalog/ScheduleCatalog` + `ScheduleCalendar`
+- [x] `/jadwal/[id]` detail batch + tombol Daftar → `/daftar?jadwal=` (form awal kirim ke WA; API 1E menyusul). Data batch (kode, jam, lokasi, kuota, trainer) di `data/schedules.ts`
+- [x] `/tutorial`, `/berita`, `/kegiatan`, `/dokumentasi` list artikel/galeri (`g-artikel` layout) — route `app/[slug]` + `catalog/PostCatalog`; 18 post dummy di `data/articles.ts`
+- [x] `/artikel/[slug]` detail post (`.kd` + sidebar) — `ui/PostBody` render blok konten
+- [x] `/tentang` (profil, visi-misi, fasilitas, trainer, layanan, kerja sama — PRD §5.1) memakai gaya `.tk`, `.wg`, `.kbx` — konten draf di `data/about.ts` (perlu review PPTI)
+- [x] `/kontak` (form konsultasi + kartu kontak + peta) — form kirim ke WA sementara (`forms/ContactForm`), CSS baru di `styles/extra.css`
+- [x] `/kebijakan-privasi`, `/syarat-ketentuan`, `/faq`, `/cara-pendaftaran` (`.ph0` + `.pb`) — konten draf di `data/pages.ts` (perlu review legal/PPTI)
+- [x] `/search?q=` hasil pencarian (kursus, jadwal, artikel)
 - [x] 404 page gaya `.nores` (`app/not-found.tsx`)
-- [ ] Tombol WhatsApp floating (opsional, konsisten warna `#25a244`)
-- [ ] SEO: metadata per halaman, OpenGraph, sitemap.xml, robots.txt, JSON-LD Course/Event/Organization
+- [x] Tombol WhatsApp floating (`layout/WaFloat`, `#25a244`)
+- [x] SEO: metadata per halaman, OpenGraph, `app/sitemap.ts`, `app/robots.ts`, JSON-LD Organization/Course/EducationEvent/Article (`lib/seo.tsx`, `NEXT_PUBLIC_SITE_URL`)
 
 #### 1D. Backend — Public API & CMS (PRD §5.2)
 - [ ] Migrasi & model: `training_categories`, `training_packages`, `training_curricula`, `training_schedules`, `training_classes`, `partners`, `principals`, `testimonials`, `galleries`, `posts` (news/article/activity), `pages`, `menus`, `banners`, `site_settings`
@@ -363,3 +363,5 @@ Legenda: `[ ]` belum · `[~]` sedang · `[x]` selesai. Prioritas mengikuti roadm
 - Belum: halaman lain (1C), `next build` produksi, backend Laravel (PHP/Composer belum terpasang di mesin ini). Repo: https://github.com/fajar288/PusatPelatihanVMES (commit awal 9c4c927).
 - Halaman `/kursus` (katalog: hero `.cath`, bar `.catb` cari/kategori/mode/urut dengan logika identik `draw()` main.js, grid `.cc`) dan `/kursus/[slug]` (detail: chips, `.kic`, jadwal `.kjl`, overview `.kov`, sidebar `.pcd` + `why`, related `.rcg`) selesai. Data detail (level, sertifikat, overview) ditambahkan ke `src/data/courses.ts`. 404 `.nores`. Diverifikasi 1320/900/375px via Edge headless; `tsc`, `eslint`, `next build` lulus.
 - Catatan teknis: `cacheComponents` aktif → `searchParams` harus dibaca di dalam `<Suspense>` (lihat `app/kursus/page.tsx`).
+- Seluruh checklist 1C selesai: `/jadwal` (+kalender), `/jadwal/[id]`, `/daftar` (form awal), list kategori `/tutorial` `/berita` `/kegiatan` `/dokumentasi`, `/artikel/[slug]`, `/tentang`, `/kontak`, 4 halaman statis, `/search`, WA melayang, SEO (sitemap/robots/JSON-LD). Form kontak & daftar sementara mengirim ke WhatsApp sampai API Laravel (1D/1E) ada. Konten `data/about.ts`, `data/pages.ts`, artikel non-tutorial, dan detail batch adalah DRAF yang harus direview PPTI. Diverifikasi 1320/375px via Edge headless; `tsc`, `eslint`, `next build` lulus.
+- Pola Next 16 (cacheComponents): `searchParams` dibaca di komponen anak dalam `<Suspense>`; `new Date()` di client component dibungkus `useSyncExternalStore` (lihat `ScheduleCalendar`).

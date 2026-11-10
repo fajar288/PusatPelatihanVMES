@@ -8,7 +8,7 @@ import LatestArticles from "@/components/home/LatestArticles";
 import Partners from "@/components/home/Partners";
 import Testimonials from "@/components/home/Testimonials";
 import WhyUs from "@/components/home/WhyUs";
-import { ARTICLES } from "@/data/articles";
+import { LATEST_ARTICLES } from "@/data/articles";
 import { COURSES } from "@/data/courses";
 import { SCHEDULES } from "@/data/schedules";
 import { TESTIMONIALS } from "@/data/testimonials";
@@ -24,12 +24,12 @@ export default function HomePage() {
       <Hero />
       <About />
       <CourseSlider courses={COURSES} />
-      <CategoriesSchedules schedules={SCHEDULES} />
+      <CategoriesSchedules schedules={SCHEDULES.slice(0, 8)} />
       <Partners />
       <WhyUs />
       <Testimonials items={TESTIMONIALS} />
       <Gallery />
-      <LatestArticles articles={ARTICLES} />
+      <LatestArticles articles={LATEST_ARTICLES} />
       <CtaBanner />
     </div>
   );

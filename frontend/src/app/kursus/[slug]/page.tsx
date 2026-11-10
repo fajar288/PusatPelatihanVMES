@@ -8,6 +8,7 @@ import Icon from "@/components/ui/Icon";
 import { COURSES, getCourse, getRelatedCourses } from "@/data/courses";
 import { SCHEDULES } from "@/data/schedules";
 import { SITE } from "@/data/site";
+import { abs, JsonLd } from "@/lib/seo";
 
 export function generateStaticParams() {
   return COURSES.map((c) => ({ slug: c.slug }));
@@ -38,9 +39,21 @@ export default async function KursusDetailPage({ params }: PageProps<"/kursus/[s
   const schedules = SCHEDULES.filter((s) => s.courseSlug === course.slug);
   const related = getRelatedCourses(course);
   const ov = course.overview;
+  const courseLd = {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    name: course.title,
+    description: course.desc,
+    url: abs(`/kursus/${course.slug}`),
+    provider: { "@type": "Organization", name: SITE.company, url: abs("/") },
+    educationalLevel: course.level,
+    offers: { "@type": "Offer", price: course.price, priceCurrency: "IDR", category: course.category },
+    hasCourseInstance: schedules.map((s) => ({ "@type": "CourseInstance", courseMode: s.mode, startDate: s.startDate, endDate: s.endDate, location: s.city })),
+  };
 
   return (
     <div className="g-kursus">
+      <JsonLd data={courseLd} />
       <section className="kd" id="kd">
         <div className="wrap">
           <Link className="bk" href="/kursus" id="kd-back">

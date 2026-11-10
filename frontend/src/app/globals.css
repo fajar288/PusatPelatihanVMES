@@ -5,3 +5,5 @@
 @import "tailwindcss/utilities.css" layer(utilities);
 
 @import "../styles/theme.css";
+/* Elemen baru yang tidak ada di website lama (form, kalender, WA melayang, halaman tentang) */
+@import "../styles/extra.css";

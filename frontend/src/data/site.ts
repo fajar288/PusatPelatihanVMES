@@ -36,7 +36,7 @@ export const FOOTER_COLUMNS: { title: string; links: NavItem[] }[] = [
     title: "Layanan",
     links: [
       { label: "Public Training", href: "/kursus" },
-      { label: "Corporate Training", href: "wa", external: true },
+      { label: "Corporate Training", href: "/kontak" },
       { label: "Online Class", href: "/kursus" },
       { label: "Sertifikasi Internasional", href: "/kursus" },
     ],
@@ -44,17 +44,17 @@ export const FOOTER_COLUMNS: { title: string; links: NavItem[] }[] = [
   {
     title: "Perusahaan",
     links: [
-      { label: "Tentang Kami", href: "/kegiatan" },
+      { label: "Tentang Kami", href: "/tentang" },
       { label: "Tutorial", href: "/tutorial" },
       { label: "Jadwal Training", href: "/jadwal" },
-      { label: "Kontak", href: "wa", external: true },
+      { label: "Kontak", href: "/kontak" },
     ],
   },
   {
     title: "Bantuan",
     links: [
-      { label: "FAQ", href: "wa", external: true },
-      { label: "Cara Pendaftaran", href: "/jadwal" },
+      { label: "FAQ", href: "/faq" },
+      { label: "Cara Pendaftaran", href: "/cara-pendaftaran" },
       { label: "Kebijakan Privasi", href: "/kebijakan-privasi" },
       { label: "Syarat & Ketentuan", href: "/syarat-ketentuan" },
     ],
