@@ -40,4 +40,11 @@ return [
         'revalidate_secret' => env('REVALIDATE_SECRET'),
     ],
 
+    // API Publik (Phase 5): batas default, retensi log permintaan/webhook, timeout webhook
+    'public_api' => [
+        'default_rate_limit' => (int) env('PUBLIC_API_RATE_LIMIT', 60),
+        'log_retention_days' => (int) env('API_LOG_RETENTION_DAYS', 90),
+        'webhook_timeout' => (int) env('WEBHOOK_TIMEOUT', 10),
+    ],
+
 ];

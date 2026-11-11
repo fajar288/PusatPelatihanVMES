@@ -36,6 +36,7 @@ class RolesSeeder extends Seeder
         'certificates.manage' => ['Kelola template & draf sertifikat, tetapkan kelulusan', 'certificates', ['administrator', 'management', 'training_coordinator']],
         'certificates.issue' => ['Terbitkan, cabut & ganti sertifikat (pejabat berwenang)', 'certificates', ['administrator', 'management']],
         'analytics.view' => ['Lihat dashboard eksekutif & analitik manajemen', 'reports', ['administrator', 'management']],
+        'api.manage' => ['Kelola klien API publik, API key & webhook', 'integrations', ['administrator']],
         'portal.access' => ['Akses portal member', 'portal', ['student', 'alumni']],
         'trainer.portal' => ['Akses portal trainer', 'portal', ['trainer', 'assessor']],
     ];

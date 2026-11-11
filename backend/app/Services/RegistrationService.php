@@ -22,14 +22,15 @@ class RegistrationService
     /**
      * @param  array<string, mixed>  $data  hasil StoreRegistrationRequest
      * @param  array<int, array<string, mixed>>  $participants  untuk kolektif
+     * @param  array<string, mixed>  $attributes  kolom tambahan (mis. api_client_id & external_ref dari API Publik)
      */
-    public function create(array $data, TrainingSchedule $schedule, ?User $user = null, array $participants = [], string $source = 'web'): Registration
+    public function create(array $data, TrainingSchedule $schedule, ?User $user = null, array $participants = [], string $source = 'web', array $attributes = []): Registration
     {
         $type = $data['type'] ?? Registration::TYPE_INDIVIDUAL;
         $count = $type === Registration::TYPE_CORPORATE ? max(1, (int) ($data['participants_count'] ?? count($participants) ?: 1)) : 1;
         $price = $schedule->effectivePrice();
 
-        return DB::transaction(function () use ($data, $schedule, $user, $participants, $source, $type, $count, $price) {
+        return DB::transaction(function () use ($data, $schedule, $user, $participants, $source, $type, $count, $price, $attributes) {
             // satu akun = satu member: pengguna login yang belum punya profil member dibuatkan otomatis
             $member = $user ? ($user->member ?? $this->members->createForUser($user)) : null;
 
@@ -54,7 +55,7 @@ class RegistrationService
                 'discount' => 0,
                 'total' => $price !== null ? $price * $count : null,
                 'source' => $source,
-            ]);
+            ] + $attributes);
 
             foreach ($participants as $p) {
                 $registration->participants()->create([

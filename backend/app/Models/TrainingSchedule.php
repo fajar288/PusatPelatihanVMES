@@ -98,6 +98,13 @@ class TrainingSchedule extends Model
         return max(0, (int) $this->quota - (int) $this->registered_count);
     }
 
+    /** Menerima pendaftaran baru: status dibuka/terkonfirmasi & batas pendaftaran belum lewat. */
+    public function acceptsRegistrations(): bool
+    {
+        return in_array($this->status, ['registration_open', 'confirmed'], true)
+            && ($this->registration_deadline === null || ! $this->registration_deadline->isBefore(today()));
+    }
+
     public function durationDays(): int
     {
         return $this->start_date->diffInDays($this->end_date) + 1;
