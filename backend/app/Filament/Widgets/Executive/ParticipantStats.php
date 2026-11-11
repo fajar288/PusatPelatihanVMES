@@ -33,7 +33,7 @@ class ParticipantStats extends StatsOverviewWidget
 
         return [
             Stat::make('Pendaftar', number_format($p['registrations'], 0, ',', '.'))
-                ->description($p['registrations_participants'].' peserta · konversi '.self::pct($p['conversion_rate']))
+                ->description(self::lines($p['registrations_participants'].' peserta', 'Konversi '.self::pct($p['conversion_rate'])))
                 ->icon(Heroicon::OutlinedClipboardDocumentList)
                 ->chart(array_values($p['registrations_by_month']))->color('primary'),
             Stat::make('Peserta aktif', number_format($p['active'], 0, ',', '.'))
@@ -44,10 +44,10 @@ class ParticipantStats extends StatsOverviewWidget
                 ->descriptionIcon(Heroicon::OutlinedArrowTrendingUp)->color('success')
                 ->icon(Heroicon::OutlinedAcademicCap),
             Stat::make('Kelas berjalan', (string) ($ph['running'] ?? 0))
-                ->description(($ph['completed'] ?? 0).' selesai · '.($ph['upcoming'] ?? 0).' akan datang · '.($ph['cancelled'] ?? 0).' batal')
+                ->description(self::lines(($ph['completed'] ?? 0).' selesai', ($ph['upcoming'] ?? 0).' akan datang', ($ph['cancelled'] ?? 0).' batal'))
                 ->icon(Heroicon::OutlinedCalendarDays),
             Stat::make('Kapasitas terisi', self::pct($c['capacity']['utilization']))
-                ->description($c['capacity']['filled'].' / '.$c['capacity']['quota'].' kursi · '.$c['capacity']['full_classes'].' kelas penuh')
+                ->description(self::lines($c['capacity']['filled'].' / '.$c['capacity']['quota'].' kursi', $c['capacity']['full_classes'].' kelas penuh'))
                 ->icon(Heroicon::OutlinedChartPie)
                 ->color(($c['capacity']['utilization'] ?? 0) >= 70 ? 'success' : 'warning'),
         ];

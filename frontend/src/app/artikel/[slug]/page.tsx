@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import RelatedPosts from "@/components/detail/RelatedPosts";
 import TopicCta from "@/components/detail/TopicCta";
 import WhyBox from "@/components/detail/WhyBox";
+import { MetaList } from "@/components/portal/ui";
 import Icon from "@/components/ui/Icon";
 import { getCategorySlug, POST_CATEGORIES } from "@/data/articles";
 import { SITE } from "@/data/site";
@@ -70,8 +71,14 @@ export default async function ArtikelPage({ params }: PageProps<"/artikel/[slug]
           </div>
           <h1>{post.title}</h1>
           <div className="dmeta">
-            {post.dateLabel}
-            {post.author ? ` • ${post.author}` : ""}
+            <MetaList
+              compact
+              style={{ marginTop: 0, fontSize: "inherit" }}
+              items={[
+                { icon: "cal", value: post.dateLabel },
+                { icon: "users", value: post.author },
+              ]}
+            />
           </div>
           <p className="rs" id="kd-rs"></p>
           <div className="kdg">

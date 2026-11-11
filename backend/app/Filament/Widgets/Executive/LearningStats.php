@@ -34,19 +34,19 @@ class LearningStats extends StatsOverviewWidget
 
         return [
             Stat::make('Completion rate', self::pct($l['completion_rate']))
-                ->description($l['completed'].' lulus · '.$l['failed'].' tidak lulus')
+                ->description(self::lines($l['completed'].' lulus', $l['failed'].' tidak lulus'))
                 ->icon(Heroicon::OutlinedCheckBadge)->color(($l['completion_rate'] ?? 100) >= 80 ? 'success' : 'warning'),
             Stat::make('Rata-rata kehadiran', self::pct($l['avg_attendance']))
-                ->description('Progres LMS '.self::pct($l['avg_lms_progress']).' · kuis '.($l['avg_quiz'] ?? '—'))
+                ->description(self::lines('Progres LMS '.self::pct($l['avg_lms_progress']), 'Rata-rata kuis '.($l['avg_quiz'] ?? '—')))
                 ->icon(Heroicon::OutlinedPresentationChartLine),
             Stat::make('Hasil evaluasi', self::pct($l['competent_rate']))
-                ->description('kompeten dari '.$l['assessments_validated'].' penilaian · nilai akhir '.($l['avg_final_score'] ?? '—'))
+                ->description(self::lines('Kompeten dari '.$l['assessments_validated'].' penilaian', 'Nilai akhir rata-rata '.($l['avg_final_score'] ?? '—')))
                 ->icon(Heroicon::OutlinedClipboardDocumentCheck),
             Stat::make('Peserta berisiko', (string) $risk)
                 ->description($risk > 0 ? 'perlu tindak lanjut — lihat tabel di bawah' : 'tidak ada peserta tertinggal')
                 ->icon(Heroicon::OutlinedExclamationTriangle)->color($risk > 0 ? 'danger' : 'success'),
             Stat::make('Trainer bertugas', $t['assigned'].' / '.$t['active'])
-                ->description($t['assignments'].' penugasan · '.$t['sessions_held'].' sesi mengajar')
+                ->description(self::lines($t['assignments'].' penugasan', $t['sessions_held'].' sesi mengajar'))
                 ->icon(Heroicon::OutlinedUsers),
             Stat::make('Logbook', (string) $t['logbooks'])
                 ->description($t['logbooks_validated'].' tervalidasi')

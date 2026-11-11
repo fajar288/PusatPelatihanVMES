@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { MetaList } from "@/components/portal/ui";
 import { type Schedule, scheduleBatchTitle, shortDate } from "@/data/schedules";
 import { type CatalogItem, useCatalog } from "@/lib/useCatalog";
 import CatalogBar, { type CatalogFilter, type SortKey } from "./CatalogBar";
@@ -34,9 +35,15 @@ export default function ScheduleCatalog({ schedules, categories, initial }: Prop
             <div className="cb">
               <span className="tag">Jadwal</span>
               <h3>{scheduleBatchTitle(s)}</h3>
-              <p>
-                {s.city} • {s.mode} • {s.durationDays} Hari • {s.statusLabel}
-              </p>
+              <MetaList
+                compact
+                items={[
+                  { icon: "pin", value: s.city },
+                  { icon: "monitor", value: s.mode },
+                  { icon: "clock", value: `${s.durationDays} Hari` },
+                  { value: <span className={"jst " + s.status}>{s.statusLabel}</span> },
+                ]}
+              />
               <time dateTime={s.startDate}>{shortDate(s.startDate)}</time>
               <span className="go">Lihat detail</span>
             </div>

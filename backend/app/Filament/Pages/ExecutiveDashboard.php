@@ -61,7 +61,7 @@ class ExecutiveDashboard extends Dashboard
     {
         $d = app(AnalyticsService::class)->dashboard($this->filters);
 
-        return 'Periode '.$d['period_label'].' · diperbarui '.now()->format('d/m/Y H:i');
+        return 'Periode '.$d['period_label'].'. Diperbarui '.now()->format('d/m/Y H:i');
     }
 
     public function getWidgets(): array

@@ -4,6 +4,7 @@ namespace App\Filament\Widgets\Executive;
 
 use App\Services\AnalyticsService;
 use Filament\Widgets\Concerns\InteractsWithPageFilters;
+use Illuminate\Support\HtmlString;
 
 /**
  * Perilaku bersama widget Dashboard Eksekutif: membaca filter halaman, data dari AnalyticsService (di-memo per request),
@@ -37,6 +38,12 @@ trait ExecutiveWidget
         }
 
         return 'Rp '.number_format($v, 0, ',', '.');
+    }
+
+    /** Keterangan kartu statistik bertumpuk: satu fakta per baris (nilai di-escape), pengganti teks disambung " · ". */
+    protected static function lines(?string ...$parts): HtmlString
+    {
+        return new HtmlString(implode('<br>', array_map(fn (string $p) => e($p), array_filter($parts, fn ($p) => $p !== null && $p !== ''))));
     }
 
     protected static function pct(float|int|null $v): string

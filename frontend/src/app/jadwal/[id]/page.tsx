@@ -239,10 +239,9 @@ export default async function JadwalDetailPage({ params }: PageProps<"/jadwal/[i
                     <div>
                       <Icon name="clock" />
                       <div>
-                        <small>Durasi</small>
-                        <b>
-                          {s.durationDays} Hari{s.time ? ` • ${s.time}` : ""}
-                        </b>
+                        <small>{s.time ? "Durasi & jam" : "Durasi"}</small>
+                        <b>{s.durationDays} Hari</b>
+                        {s.time && <b>{s.time}</b>}
                       </div>
                     </div>
                     <div>
