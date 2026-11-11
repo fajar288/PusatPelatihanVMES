@@ -11,7 +11,7 @@ Route::get('/', function () {
 // Ekspor laporan admin (CSV/XLSX) — dilindungi sesi panel Filament (redirect ke /admin/login bila belum masuk)
 Route::get('/admin/export/{type}.{format}', ReportExportController::class)
     ->middleware(['web', 'auth'])
-    ->where(['type' => '[a-z_]+', 'format' => 'csv|xlsx'])
+    ->where(['type' => '[a-z_-]+', 'format' => 'csv|xlsx'])
     ->name('admin.export');
 
 // PDF sertifikat (pratinjau/unduh) & contoh template — sesi panel admin
