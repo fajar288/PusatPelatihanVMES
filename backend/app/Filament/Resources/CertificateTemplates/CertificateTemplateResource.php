@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\CertificateTemplates;
 
+use App\Filament\NavigationGroup;
 use App\Filament\Resources\CertificateTemplates\Pages\CreateCertificateTemplate;
 use App\Filament\Resources\CertificateTemplates\Pages\EditCertificateTemplate;
 use App\Filament\Resources\CertificateTemplates\Pages\ListCertificateTemplates;
@@ -33,7 +34,7 @@ class CertificateTemplateResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentDuplicate;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Sertifikat';
+    protected static string|UnitEnum|null $navigationGroup = NavigationGroup::Certificates;
 
     protected static ?int $navigationSort = 2;
 

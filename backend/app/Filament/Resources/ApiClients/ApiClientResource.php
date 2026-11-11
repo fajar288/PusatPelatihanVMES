@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ApiClients;
 
+use App\Filament\NavigationGroup;
 use App\Filament\Resources\ApiClients\Pages\CreateApiClient;
 use App\Filament\Resources\ApiClients\Pages\EditApiClient;
 use App\Filament\Resources\ApiClients\Pages\ListApiClients;
@@ -26,7 +27,7 @@ class ApiClientResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedKey;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Integrasi';
+    protected static string|UnitEnum|null $navigationGroup = NavigationGroup::System;
 
     protected static ?int $navigationSort = 1;
 

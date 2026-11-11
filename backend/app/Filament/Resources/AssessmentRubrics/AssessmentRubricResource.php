@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\AssessmentRubrics;
 
+use App\Filament\NavigationGroup;
 use App\Filament\Resources\AssessmentRubrics\Pages\CreateAssessmentRubric;
 use App\Filament\Resources\AssessmentRubrics\Pages\EditAssessmentRubric;
 use App\Filament\Resources\AssessmentRubrics\Pages\ListAssessmentRubrics;
@@ -33,9 +34,9 @@ class AssessmentRubricResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedAdjustmentsHorizontal;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Monitoring';
+    protected static string|UnitEnum|null $navigationGroup = NavigationGroup::TmsDelivery;
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 3;
 
     protected static ?string $navigationLabel = 'Rubrik penilaian';
 

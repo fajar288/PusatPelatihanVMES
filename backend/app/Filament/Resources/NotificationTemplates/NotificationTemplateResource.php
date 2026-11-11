@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\NotificationTemplates;
 
+use App\Filament\NavigationGroup;
 use App\Filament\Resources\NotificationTemplates\Pages\EditNotificationTemplate;
 use App\Filament\Resources\NotificationTemplates\Pages\ListNotificationTemplates;
 use App\Models\NotificationTemplate;
@@ -29,7 +30,7 @@ class NotificationTemplateResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBellAlert;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Notifikasi';
+    protected static string|UnitEnum|null $navigationGroup = NavigationGroup::Notifications;
 
     protected static ?int $navigationSort = 1;
 

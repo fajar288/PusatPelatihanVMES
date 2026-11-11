@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Certificates;
 
+use App\Filament\NavigationGroup;
 use App\Filament\Resources\Certificates\Pages\CreateCertificate;
 use App\Filament\Resources\Certificates\Pages\EditCertificate;
 use App\Filament\Resources\Certificates\Pages\ListCertificates;
@@ -44,7 +45,7 @@ class CertificateResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedAcademicCap;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Sertifikat';
+    protected static string|UnitEnum|null $navigationGroup = NavigationGroup::Certificates;
 
     protected static ?int $navigationSort = 1;
 

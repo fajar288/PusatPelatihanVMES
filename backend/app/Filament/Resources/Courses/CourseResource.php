@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Courses;
 
+use App\Filament\NavigationGroup;
 use App\Filament\Resources\Courses\Pages\CreateCourse;
 use App\Filament\Resources\Courses\Pages\EditCourse;
 use App\Filament\Resources\Courses\Pages\ListCourses;
@@ -23,7 +24,7 @@ class CourseResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBookOpen;
 
-    protected static string|UnitEnum|null $navigationGroup = 'LMS';
+    protected static string|UnitEnum|null $navigationGroup = NavigationGroup::Lms;
 
     protected static ?int $navigationSort = 1;
 

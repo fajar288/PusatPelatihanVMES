@@ -2,6 +2,8 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\NavigationGroup;
+use App\Filament\Widgets\WelcomeWidget;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -10,7 +12,6 @@ use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-use Filament\Widgets\AccountWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -29,6 +30,12 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->brandName('PPTI VMES ITMS')
+            // Logo PPTI (PNG transparen dari public/images/logo.jpeg); varian gelap: tulisan hijau tua → putih.
+            ->brandLogo(fn () => asset('images/logo-admin.png'))
+            ->darkModeBrandLogo(fn () => asset('images/logo-admin-dark.png'))
+            ->brandLogoHeight(fn () => request()->routeIs('filament.admin.auth.*') ? '4.5rem' : '2.75rem')
+            ->favicon(fn () => asset('images/favicon-admin.png'))
+            ->navigationGroups(NavigationGroup::class)
             ->colors([
                 'primary' => Color::hex('#004B23'), // hijau tema pusatpelatihan.id (--p)
                 'success' => Color::hex('#6BB218'), // --l
@@ -41,7 +48,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
-                AccountWidget::class,
+                WelcomeWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

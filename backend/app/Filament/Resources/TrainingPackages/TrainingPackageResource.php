@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\TrainingPackages;
 
+use App\Filament\NavigationGroup;
 use App\Filament\Resources\TrainingPackages\Pages\CreateTrainingPackage;
 use App\Filament\Resources\TrainingPackages\Pages\EditTrainingPackage;
 use App\Filament\Resources\TrainingPackages\Pages\ListTrainingPackages;
@@ -16,12 +17,23 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use UnitEnum;
 
 class TrainingPackageResource extends Resource
 {
     protected static ?string $model = TrainingPackage::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedSquares2x2;
+
+    protected static string|UnitEnum|null $navigationGroup = NavigationGroup::TmsProgram;
+
+    protected static ?int $navigationSort = 2;
+
+    protected static ?string $navigationLabel = 'Paket training';
+
+    protected static ?string $modelLabel = 'Paket training';
+
+    protected static ?string $pluralModelLabel = 'Paket training';
 
     public static function form(Schema $schema): Schema
     {

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\TrainingSchedules;
 
+use App\Filament\NavigationGroup;
 use App\Filament\Resources\TrainingSchedules\Pages\CreateTrainingSchedule;
 use App\Filament\Resources\TrainingSchedules\Pages\EditTrainingSchedule;
 use App\Filament\Resources\TrainingSchedules\Pages\ListTrainingSchedules;
@@ -19,12 +20,23 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use UnitEnum;
 
 class TrainingScheduleResource extends Resource
 {
     protected static ?string $model = TrainingSchedule::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCalendarDays;
+
+    protected static string|UnitEnum|null $navigationGroup = NavigationGroup::TmsProgram;
+
+    protected static ?int $navigationSort = 3;
+
+    protected static ?string $navigationLabel = 'Jadwal & kelas';
+
+    protected static ?string $modelLabel = 'Jadwal kelas';
+
+    protected static ?string $pluralModelLabel = 'Jadwal & kelas';
 
     public static function form(Schema $schema): Schema
     {

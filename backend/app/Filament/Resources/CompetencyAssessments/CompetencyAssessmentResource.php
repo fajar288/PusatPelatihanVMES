@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\CompetencyAssessments;
 
+use App\Filament\NavigationGroup;
 use App\Filament\Resources\CompetencyAssessments\Pages\EditCompetencyAssessment;
 use App\Filament\Resources\CompetencyAssessments\Pages\ListCompetencyAssessments;
 use App\Models\CompetencyAssessment;
@@ -31,9 +32,9 @@ class CompetencyAssessmentResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentCheck;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Monitoring';
+    protected static string|UnitEnum|null $navigationGroup = NavigationGroup::TmsDelivery;
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 4;
 
     protected static ?string $navigationLabel = 'Penilaian kompetensi';
 

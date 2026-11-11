@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\PromoCodes;
 
+use App\Filament\NavigationGroup;
 use App\Filament\Resources\PromoCodes\Pages\CreatePromoCode;
 use App\Filament\Resources\PromoCodes\Pages\EditPromoCode;
 use App\Filament\Resources\PromoCodes\Pages\ListPromoCodes;
@@ -13,12 +14,17 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class PromoCodeResource extends Resource
 {
     protected static ?string $model = PromoCode::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTicket;
+
+    protected static string|UnitEnum|null $navigationGroup = NavigationGroup::TmsRegistration;
+
+    protected static ?int $navigationSort = 4;
 
     protected static ?string $navigationLabel = 'Kode promo';
 

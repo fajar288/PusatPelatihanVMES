@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Banners;
 
+use App\Filament\NavigationGroup;
 use App\Filament\Resources\Banners\Pages\CreateBanner;
 use App\Filament\Resources\Banners\Pages\EditBanner;
 use App\Filament\Resources\Banners\Pages\ListBanners;
@@ -13,12 +14,23 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class BannerResource extends Resource
 {
     protected static ?string $model = Banner::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedMegaphone;
+
+    protected static string|UnitEnum|null $navigationGroup = NavigationGroup::LandingPage;
+
+    protected static ?int $navigationSort = 1;
+
+    protected static ?string $navigationLabel = 'Banner';
+
+    protected static ?string $modelLabel = 'Banner';
+
+    protected static ?string $pluralModelLabel = 'Banner';
 
     public static function form(Schema $schema): Schema
     {

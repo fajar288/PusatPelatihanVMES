@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Registrations;
 
 use App\Enums\RegistrationStatus;
+use App\Filament\NavigationGroup;
 use App\Filament\Resources\Registrations\Pages\EditRegistration;
 use App\Filament\Resources\Registrations\Pages\ListRegistrations;
 use App\Models\Registration;
@@ -18,21 +19,24 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use UnitEnum;
 
 /** Pendaftaran (PRD §5.5): tinjau data, ubah status lewat aksi "Ubah status" (transisi divalidasi RegistrationService). */
 class RegistrationResource extends Resource
 {
     protected static ?string $model = Registration::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentCheck;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentList;
+
+    protected static string|UnitEnum|null $navigationGroup = NavigationGroup::TmsRegistration;
+
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $navigationLabel = 'Pendaftaran';
 
     protected static ?string $modelLabel = 'Pendaftaran';
 
     protected static ?string $pluralModelLabel = 'Pendaftaran';
-
-    protected static ?int $navigationSort = 1;
 
     public static function form(Schema $schema): Schema
     {

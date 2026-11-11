@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\TrainingLogbooks;
 
+use App\Filament\NavigationGroup;
 use App\Filament\Resources\TrainingLogbooks\Pages\CreateTrainingLogbook;
 use App\Filament\Resources\TrainingLogbooks\Pages\EditTrainingLogbook;
 use App\Filament\Resources\TrainingLogbooks\Pages\ListTrainingLogbooks;
@@ -35,9 +36,9 @@ class TrainingLogbookResource extends Resource
 {
     protected static ?string $model = TrainingLogbook::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBookOpen;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPencilSquare;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Monitoring';
+    protected static string|UnitEnum|null $navigationGroup = NavigationGroup::TmsDelivery;
 
     protected static ?int $navigationSort = 2;
 
