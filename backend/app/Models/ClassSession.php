@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /** Pertemuan/sesi dalam satu kelas (dasar kehadiran & logbook). */
 class ClassSession extends Model
@@ -29,6 +30,11 @@ class ClassSession extends Model
     public function attendances(): HasMany
     {
         return $this->hasMany(Attendance::class, 'session_id');
+    }
+
+    public function logbook(): HasOne
+    {
+        return $this->hasOne(TrainingLogbook::class, 'session_id');
     }
 
     public function label(): string

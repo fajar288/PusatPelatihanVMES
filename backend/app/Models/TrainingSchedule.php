@@ -72,6 +72,11 @@ class TrainingSchedule extends Model
         return $this->hasMany(ScheduleChange::class, 'schedule_id')->latest();
     }
 
+    public function logbooks(): HasMany
+    {
+        return $this->hasMany(TrainingLogbook::class, 'schedule_id')->orderBy('date')->orderBy('id');
+    }
+
     public function scopePublished(Builder $q): Builder
     {
         return $q->whereIn('status', self::PUBLIC_STATUSES)

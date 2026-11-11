@@ -15,7 +15,9 @@ use App\Models\Member;
 use App\Models\Payment;
 use App\Models\Registration;
 use App\Services\MemberService;
+use App\Services\MonitoringService;
 use App\Services\RegistrationService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Gate;
@@ -124,6 +126,15 @@ class MeController extends Controller
             ->latest('enrolled_at');
 
         return EnrollmentResource::collection($q->get());
+    }
+
+    /** GET /me/progress — progress overview per enrollment (PRD §5.9): kehadiran, materi, nilai, praktik, kompetensi & catatan trainer yang sudah divalidasi. */
+    public function progress(Request $request, MonitoringService $monitoring): JsonResponse
+    {
+        $items = Enrollment::query()->ownedBy($request->user())->with('schedule.package')->latest('enrolled_at')->get()
+            ->map(fn (Enrollment $e) => $monitoring->overview($e, true))->values();
+
+        return response()->json(['data' => $items]);
     }
 
     /** GET /me/notifications — riwayat peristiwa akun (audit) sebagai notifikasi aplikasi sederhana. */
