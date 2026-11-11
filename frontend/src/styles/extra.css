@@ -179,3 +179,17 @@
 .vicon .ic{width:22px;height:22px}
 .vlist{margin-top:18px}
 @media(max-width:640px){.vform{grid-template-columns:1fr}.cert-actions .lk{margin-left:0}}
+/* PWA (Phase 5): banner offline / pembaruan + kartu pasang aplikasi */
+.pwa-bar{position:fixed;left:16px;right:16px;bottom:20px;margin:0 auto;width:max-content;z-index:90;display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center;max-width:calc(100% - 32px);padding:12px 18px;border-radius:16px;background:var(--p);color:#fff;font-size:14px;font-weight:600;box-shadow:0 10px 30px rgba(0,0,0,.2)}
+.pwa-bar.is-off{background:#3b3f40}
+.pwa-bar button{border:0;border-radius:10px;padding:8px 14px;background:var(--l);color:#fff;font:800 13px inherit;font-family:inherit;cursor:pointer}
+.pwa-bar button.ghost{background:transparent;border:1px solid rgba(255,255,255,.5)}
+.pwa-inst{display:flex;align-items:center;gap:14px;margin-bottom:20px;padding:14px 16px;border:1px solid var(--ln);border-radius:20px;background:linear-gradient(135deg,#fff,var(--bg));box-shadow:0 6px 24px rgba(0,75,35,.08)}
+.pwa-inst img{width:44px;height:44px;border-radius:12px;flex:none;border:1px solid var(--ln);background:#fff}
+.pwa-inst>div:nth-child(2){flex:1;min-width:0}
+.pwa-inst b{display:block;font-size:15px;color:var(--p)}.pwa-inst p{font-size:13.5px;color:var(--mut);line-height:1.5}
+.pwa-inst-act{display:flex;align-items:center;gap:6px;flex:none}
+.pwa-inst .btn{padding:9px 18px;font-size:14px}
+.pwa-x{width:32px;height:32px;border:0;border-radius:50%;background:transparent;color:var(--mut);font-size:22px;line-height:1;cursor:pointer}.pwa-x:hover{background:var(--ln)}
+@media(max-width:640px){.pwa-inst{flex-wrap:wrap}.pwa-inst-act{width:100%;justify-content:flex-end}}
+@media(max-width:640px){.pwa-bar{bottom:84px;font-size:13px;padding:10px 14px}}

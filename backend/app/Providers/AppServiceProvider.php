@@ -2,9 +2,12 @@
 
 namespace App\Providers;
 
+use App\Models\Certificate;
+use App\Models\Registration;
 use App\Models\TrainingSchedule;
 use App\Observers\AuditObserver;
 use App\Observers\CmsObserver;
+use App\Observers\PublicApiWebhookObserver;
 use App\Observers\TrainingScheduleObserver;
 use App\Services\AnalyticsService;
 use Illuminate\Database\Eloquent\Model;
@@ -35,6 +38,10 @@ class AppServiceProvider extends ServiceProvider
         // Jejak audit otomatis untuk model operasional
         foreach (AuditObserver::MODELS as $model) {
             $model::observe(AuditObserver::class);
+        }
+        // API Publik: webhook ke klien untuk pendaftaran yang dibuat lewat API (status, sertifikat)
+        foreach ([Registration::class, Certificate::class] as $model) {
+            $model::observe(PublicApiWebhookObserver::class);
         }
     }
 }

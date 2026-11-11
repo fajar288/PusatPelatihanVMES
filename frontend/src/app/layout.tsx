@@ -1,9 +1,10 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import ContactCards from "@/components/layout/ContactCards";
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
 import WaFloat from "@/components/layout/WaFloat";
+import PwaProvider from "@/components/pwa/PwaProvider";
 import IconSprite from "@/components/ui/IconSprite";
 import { SITE } from "@/data/site";
 import { getMenus, getSiteSettings } from "@/lib/cms";
@@ -18,11 +19,15 @@ const jakarta = Plus_Jakarta_Sans({
   display: "swap",
 });
 
+export const viewport: Viewport = { themeColor: "#004B23" };
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: SITE.name,
   description: SITE.description,
-  icons: { icon: "/favicon.jpg", apple: "/favicon.jpg" },
+  icons: { icon: "/favicon.jpg", apple: "/icons/apple-touch-icon.png" },
+  // PWA: manifest dari app/manifest.ts; mode aplikasi iOS
+  appleWebApp: { capable: true, title: "PPTI VMES", statusBarStyle: "default" },
   alternates: { canonical: "/" },
   openGraph: { title: SITE.name, description: SITE.description, type: "website", locale: "id_ID", siteName: SITE.name, images: [SITE.logo] },
   twitter: { card: "summary", title: SITE.name, description: SITE.description },
@@ -42,6 +47,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <ContactCards site={site} />
         <Footer site={site} columns={menus.footer} />
         <WaFloat />
+        <PwaProvider />
       </body>
     </html>
   );
