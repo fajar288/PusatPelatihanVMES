@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { EmptyState, PortalCard } from "@/components/portal/ui";
+import { EmptyState, MetaList, PortalCard } from "@/components/portal/ui";
 import { api, requireUser } from "@/lib/auth";
 import type { ResultsInfo } from "@/lib/lms";
 import type { EnrollmentInfo } from "@/lib/portal-types";
@@ -38,7 +38,14 @@ export default async function PortalResultsPage() {
                     <Link href={`/portal/belajar/${q.course.slug}/${q.lessonId}`}>
                       <b>{q.title}</b>
                     </Link>
-                    <small>{q.kindLabel} • lulus ≥ {q.passingScore}%</small>
+                    <MetaList
+                      compact
+                      style={{ marginTop: 2 }}
+                      items={[
+                        { value: q.kindLabel },
+                        { label: "Lulus ≥", value: `${q.passingScore}%` },
+                      ]}
+                    />
                   </td>
                   <td>{q.course.title}</td>
                   <td>{q.attempts}</td>
@@ -91,7 +98,8 @@ export default async function PortalResultsPage() {
             {enrollments.map((e) => (
               <li key={e.id}>
                 <span>
-                  {e.schedule?.title} • {e.schedule?.code}
+                  <b>{e.schedule?.title}</b>
+                  <MetaList compact style={{ marginTop: 2 }} items={[{ icon: "code", value: e.schedule?.code }]} />
                 </span>
                 <b>{e.finalScore ?? "-"}</b>
               </li>

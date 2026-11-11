@@ -39,7 +39,10 @@ export default async function PortalSupportPage() {
         <li>
           <span>Kebijakan</span>
           <b>
-            <Link href="/syarat-ketentuan">Syarat &amp; Ketentuan</Link> • <Link href="/kebijakan-privasi">Privasi</Link>
+            <span className="spv">
+              <Link href="/syarat-ketentuan">Syarat &amp; Ketentuan</Link>
+              <Link href="/kebijakan-privasi">Kebijakan Privasi</Link>
+            </span>
           </b>
         </li>
       </ul>

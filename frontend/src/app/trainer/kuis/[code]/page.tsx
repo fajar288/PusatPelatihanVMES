@@ -1,6 +1,5 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { PortalCard } from "@/components/portal/ui";
+import { BackLink, MetaList, PortalCard } from "@/components/portal/ui";
 import { api, ApiRequestError } from "@/lib/auth";
 import type { TrainerQuizResults } from "@/lib/lms";
 import { requireTrainer } from "@/lib/trainer";
@@ -25,9 +24,7 @@ export default async function TrainerClassQuizResults({ params }: PageProps<"/tr
 
   return (
     <>
-      <Link className="bk" href="/trainer/kuis">
-        ← Hasil kuis
-      </Link>
+      <BackLink href="/trainer/kuis">Kembali ke Hasil kuis</BackLink>
       <PortalCard title={`Hasil kuis — ${d.class.title}`}>
         {d.quizzes.length === 0 ? (
           <p className="fh">Belum ada kuis pada course kelas ini.</p>
@@ -37,10 +34,24 @@ export default async function TrainerClassQuizResults({ params }: PageProps<"/tr
               {d.quizzes.map((q) => (
                 <li key={q.lessonId}>
                   <span>
-                    {q.kindLabel}: {q.title} <small className="fh">• {q.course} • {q.questionsCount} soal • lulus ≥ {q.passingScore}%</small>
+                    <b style={{ color: "var(--ink)" }}>
+                      {q.kindLabel}: {q.title}
+                    </b>
+                    <MetaList
+                      compact
+                      style={{ marginTop: 2 }}
+                      items={[
+                        { icon: "grad", value: q.course },
+                        { value: `${q.questionsCount} soal` },
+                        { label: "Lulus ≥", value: `${q.passingScore}%` },
+                      ]}
+                    />
                   </span>
-                  <b>
-                    rata-rata {avg(q.lessonId) === null ? "-" : `${avg(q.lessonId)}%`} • {d.participants.filter((p) => p.results[String(q.lessonId)]).length}/{d.participants.length} mengerjakan
+                  <b className="spv">
+                    Rata-rata {avg(q.lessonId) === null ? "-" : `${avg(q.lessonId)}%`}
+                    <small>
+                      {d.participants.filter((p) => p.results[String(q.lessonId)]).length}/{d.participants.length} mengerjakan
+                    </small>
                   </b>
                 </li>
               ))}
@@ -69,7 +80,7 @@ export default async function TrainerClassQuizResults({ params }: PageProps<"/tr
                               <>
                                 <span className={"jst " + (r.passed ? "ok" : "no")}>{r.percent}%</span>
                                 <small>
-                                  {r.score}/{r.maxScore} • {r.attempts}× percobaan
+                                  Skor {r.score}/{r.maxScore}, {r.attempts}× percobaan
                                 </small>
                               </>
                             ) : (

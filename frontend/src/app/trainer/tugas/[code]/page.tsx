@@ -1,6 +1,5 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { PortalCard } from "@/components/portal/ui";
+import { BackLink, PortalCard } from "@/components/portal/ui";
 import GradeForm from "@/components/trainer/GradeForm";
 import { api, ApiRequestError } from "@/lib/auth";
 import type { TrainerSubmissions } from "@/lib/lms";
@@ -24,9 +23,7 @@ export default async function TrainerClassAssignments({ params }: PageProps<"/tr
 
   return (
     <>
-      <Link className="bk" href="/trainer/tugas">
-        ← Penilaian tugas
-      </Link>
+      <BackLink href="/trainer/tugas">Kembali ke Penilaian tugas</BackLink>
       <PortalCard title={`Tugas — ${d.class.title}`} action={<span className={"jst " + (pending.length ? "wn" : "ok")}>{pending.length} menunggu penilaian</span>}>
         {d.assignments.length === 0 ? (
           <p className="fh">Belum ada lesson bertipe tugas pada course kelas ini.</p>
@@ -34,11 +31,13 @@ export default async function TrainerClassAssignments({ params }: PageProps<"/tr
           <ul className="sp">
             {d.assignments.map((a) => (
               <li key={a.lessonId}>
-                <span>
-                  {a.title} <small className="fh">• {a.course}</small>
+                <span className="spl">
+                  <b>{a.title}</b>
+                  <small>{a.course}</small>
                 </span>
-                <b>
-                  {d.submissions.filter((s) => s.lessonId === a.lessonId).length}/{d.participantsCount} dikumpulkan • maks. {a.maxScore}
+                <b className="spv">
+                  {d.submissions.filter((s) => s.lessonId === a.lessonId).length}/{d.participantsCount} dikumpulkan
+                  <small>Nilai maks. {a.maxScore}</small>
                 </b>
               </li>
             ))}

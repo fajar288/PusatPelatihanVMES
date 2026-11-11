@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { EmptyState, PortalCard } from "@/components/portal/ui";
+import { EmptyState, MetaList, PortalCard } from "@/components/portal/ui";
 import { api, requireUser } from "@/lib/auth";
 import type { EnrollmentInfo } from "@/lib/portal-types";
 
@@ -32,11 +32,16 @@ export default async function PortalTrainingPage() {
               <h3 style={{ fontSize: 18 }}>{e.schedule?.title}</h3>
               <span className={"jst " + STATUS[e.status].cls}>{STATUS[e.status].label}</span>
             </div>
-            <p className="fh" style={{ marginTop: 6 }}>
-              Kode {e.schedule?.code} • {e.schedule?.dateLabel} • {e.schedule?.city} • {e.schedule?.mode}
-              {e.schedule?.time ? ` • ${e.schedule.time}` : ""}
-              {e.schedule?.trainers.length ? ` • Trainer: ${e.schedule.trainers.map((t) => t.name).join(", ")}` : ""}
-            </p>
+            <MetaList
+              items={[
+                { icon: "code", label: "Kode", value: e.schedule?.code },
+                { icon: "cal", value: e.schedule?.dateLabel },
+                { icon: "clock", value: e.schedule?.time },
+                { icon: "pin", value: e.schedule?.city },
+                { icon: "monitor", value: e.schedule?.mode },
+                !!e.schedule?.trainers.length && { icon: "users", label: "Trainer", value: e.schedule.trainers.map((t) => t.name).join(", ") },
+              ]}
+            />
             <div className="kic" style={{ marginTop: 14 }}>
               <div className="kic1">
                 <small>Kehadiran</small>
@@ -56,9 +61,15 @@ export default async function PortalTrainingPage() {
                 {e.sessions.map((s) => (
                   <li key={s.no}>
                     <span>
-                      Sesi {s.no} • {s.dateLabel}
-                      {s.time ? ` • ${s.time}` : ""}
-                      {s.topic ? ` • ${s.topic}` : ""}
+                      <b>Sesi {s.no}</b>
+                      {s.topic ? ` — ${s.topic}` : ""}
+                      <MetaList
+                        compact
+                        items={[
+                          { icon: "cal", value: s.dateLabel },
+                          { icon: "clock", value: s.time },
+                        ]}
+                      />
                     </span>
                     <b>{s.attendance ? <span className={"jst " + (ATT[s.attendance] ?? "wn")}>{s.attendanceLabel}</span> : <span className="fh">belum dicatat</span>}</b>
                   </li>
@@ -66,15 +77,25 @@ export default async function PortalTrainingPage() {
               </ul>
             )}
             {e.certificate && (
-              <p className="fh" style={{ marginTop: 12 }}>
-                {e.certificate.typeLabel} <b>{e.certificate.number}</b> • {e.certificate.statusLabel}
-                {e.certificate.issuedLabel ? ` • ${e.certificate.issuedLabel}` : ""} •{" "}
+              <div className="pcert">
+                <MetaList
+                  style={{ marginTop: 0 }}
+                  items={[
+                    { icon: "award", label: e.certificate.typeLabel, value: e.certificate.number },
+                    { label: "Status", value: e.certificate.statusLabel },
+                    { icon: "cal", label: "Terbit", value: e.certificate.issuedLabel },
+                  ]}
+                />
                 {e.certificate.downloadable ? (
-                  <a href={`/portal/sertifikat/unduh/${encodeURIComponent(e.certificate.number)}`}>Unduh PDF</a>
+                  <a className="lk" href={`/portal/sertifikat/unduh/${encodeURIComponent(e.certificate.number)}`}>
+                    Unduh PDF
+                  </a>
                 ) : (
-                  <Link href={`/portal/sertifikat/${encodeURIComponent(e.certificate.number)}`}>Detail</Link>
+                  <Link className="lk" href={`/portal/sertifikat/${encodeURIComponent(e.certificate.number)}`}>
+                    Detail sertifikat
+                  </Link>
                 )}
-              </p>
+              </div>
             )}
             {!e.certificate && e.status === "completed" && (
               <p className="fh" style={{ marginTop: 12 }}>

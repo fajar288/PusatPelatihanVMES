@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { EmptyState, PortalCard } from "@/components/portal/ui";
+import { EmptyState, MetaList, PortalCard } from "@/components/portal/ui";
 import { api } from "@/lib/auth";
 import { CLASS_STATUS, requireTrainer, ROLE_LABEL, type TrainerClass } from "@/lib/trainer";
 
@@ -47,9 +47,17 @@ export default async function TrainerDashboard() {
               <div className="kj" key={c.code}>
                 <div>
                   <b>{c.title}</b>
-                  <p>
-                    {c.code} • {c.dateLabel} – {c.endLabel} • {c.city} • {c.mode} • {c.participantsCount} peserta • {ROLE_LABEL[c.myRole ?? ""] ?? c.myRole}
-                  </p>
+                  <MetaList
+                    compact
+                    items={[
+                      { icon: "code", value: c.code },
+                      { icon: "cal", value: `${c.dateLabel} – ${c.endLabel}` },
+                      { icon: "pin", value: c.city },
+                      { icon: "monitor", value: c.mode },
+                      { icon: "users", value: `${c.participantsCount} peserta` },
+                      { label: "Peran", value: ROLE_LABEL[c.myRole ?? ""] ?? c.myRole },
+                    ]}
+                  />
                 </div>
                 <div className="kjr">
                   <span className={"jst " + (c.status === "ongoing" ? "wn" : "ok")}>{CLASS_STATUS[c.status] ?? c.status}</span>

@@ -1,5 +1,5 @@
 import { ProgressBar } from "@/components/lms/ui";
-import { PortalCard } from "@/components/portal/ui";
+import { MetaList, PortalCard } from "@/components/portal/ui";
 import { type ParticipantOverview as Overview, pct, PRACTICE_PILL } from "@/lib/monitoring";
 
 /**
@@ -31,21 +31,21 @@ export default function ParticipantOverview({ o, forTrainer = false }: { o: Over
             {pct(o.scores.quizAvg)} / {pct(o.scores.assignmentAvg)}
           </b>
           <small style={{ textTransform: "none", letterSpacing: 0 }}>
-            {o.scores.quizDone}/{o.scores.quizTotal} kuis • {o.scores.assignmentsGraded}/{o.scores.assignmentsTotal} tugas dinilai
+            {o.scores.quizDone}/{o.scores.quizTotal} kuis, {o.scores.assignmentsGraded}/{o.scores.assignmentsTotal} tugas dinilai
           </small>
         </div>
         <div className="kic1">
           <small>Praktik</small>
           <b>
             {o.practice.completed} selesai
-            {o.practice.partial ? ` • ${o.practice.partial} sebagian` : ""}
+            {o.practice.partial ? `, ${o.practice.partial} sebagian` : ""}
           </b>
           <small style={{ textTransform: "none", letterSpacing: 0 }}>{o.practice.logged} pertemuan tercatat</small>
         </div>
         <div className="kic1">
           <small>Kompetensi</small>
-          <b>{comp ? `${pct(comp.percent)}${comp.isCompetent !== null ? (comp.isCompetent ? " • Kompeten" : " • Belum kompeten") : ""}` : forTrainer ? "belum dinilai" : "menunggu penilaian"}</b>
-          <small style={{ textTransform: "none", letterSpacing: 0 }}>{comp ? `${comp.statusLabel}${comp.assessedBy ? ` • ${comp.assessedBy}` : ""}` : "penilaian trainer"}</small>
+          <b>{comp ? `${pct(comp.percent)}${comp.isCompetent !== null ? (comp.isCompetent ? ", Kompeten" : ", Belum kompeten") : ""}` : forTrainer ? "belum dinilai" : "menunggu penilaian"}</b>
+          <small style={{ textTransform: "none", letterSpacing: 0 }}>{comp ? `${comp.statusLabel}${comp.assessedBy ? ` oleh ${comp.assessedBy}` : ""}` : "penilaian trainer"}</small>
         </div>
       </div>
 
@@ -56,7 +56,7 @@ export default function ParticipantOverview({ o, forTrainer = false }: { o: Over
               <div className="pcard-h">
                 <b>{c.title}</b>
                 <span className={"jst " + (c.percent >= 100 ? "ok" : c.percent > 0 ? "wn" : "no")}>
-                  {c.percent}% • {c.completed}/{c.total}
+                  {c.percent}% ({c.completed}/{c.total})
                 </span>
               </div>
               <ProgressBar percent={c.percent} label={c.title} />
@@ -68,18 +68,23 @@ export default function ParticipantOverview({ o, forTrainer = false }: { o: Over
       <PortalCard title="Pencapaian kompetensi" action={comp ? <span className={"jst " + (comp.isCompetent ? "ok" : comp.isCompetent === false ? "no" : "wn")}>{comp.statusLabel}</span> : undefined}>
         {comp ? (
           <>
-            <p className="fh" style={{ marginTop: 4 }}>
-              Rubrik: {comp.rubric.name} • ambang kompeten {comp.threshold}%{comp.assessedLabel ? ` • dinilai ${comp.assessedLabel}` : ""}
-              {comp.validatedBy ? ` • disahkan ${comp.validatedBy}` : ""}
-            </p>
+            <MetaList
+              compact
+              items={[
+                { icon: "check", label: "Rubrik", value: comp.rubric.name },
+                { label: "Ambang kompeten", value: `${comp.threshold}%` },
+                { icon: "cal", label: "Dinilai", value: comp.assessedLabel },
+                { label: "Disahkan", value: comp.validatedBy },
+              ]}
+            />
             <ProgressBar percent={comp.percent ?? 0} label="Total kompetensi" />
             <ul className="sp">
               {comp.criteria.map((c) => (
                 <li key={c.id}>
-                  <span>
-                    {c.name}
-                    {c.competency ? <small className="fh"> • {c.competency}</small> : null}
-                    {c.note ? <small className="fh"> — {c.note}</small> : null}
+                  <span className="spl">
+                    <b>{c.name}</b>
+                    {c.competency ? <small>Kompetensi: {c.competency}</small> : null}
+                    {c.note ? <small>{c.note}</small> : null}
                   </span>
                   <b>
                     {c.score === null ? "-" : `${c.score}/${c.maxScore}`}
@@ -109,11 +114,16 @@ export default function ParticipantOverview({ o, forTrainer = false }: { o: Over
           <ul className="pnotif">
             {o.notes.map((n) => (
               <li key={n.logbookId}>
-                <time>
-                  {n.dateLabel} • {n.topic}
-                  {n.trainer ? ` • ${n.trainer}` : ""}
-                  {forTrainer && n.status !== "validated" ? " • draf" : ""}
-                </time>
+                <MetaList
+                  compact
+                  style={{ marginTop: 0 }}
+                  items={[
+                    { icon: "cal", value: n.dateLabel },
+                    { value: n.topic },
+                    { icon: "users", value: n.trainer },
+                    forTrainer && n.status !== "validated" && { value: "draf" },
+                  ]}
+                />
                 <p>
                   {n.practiceStatus ? (
                     <span className={"jst " + PRACTICE_PILL[n.practiceStatus]} style={{ marginRight: 8 }}>
@@ -136,8 +146,9 @@ export default function ParticipantOverview({ o, forTrainer = false }: { o: Over
             <ul className="sp" style={{ marginTop: 6, marginBottom: 0 }}>
               {o.logbooks.map((l) => (
                 <li key={l.id}>
-                  <span>
-                    {l.dateLabel} • {l.topic}
+                  <span className="spl">
+                    <b>{l.topic}</b>
+                    <small>{l.dateLabel}</small>
                   </span>
                   <b>
                     {l.competencies.slice(0, 3).map((c) => (

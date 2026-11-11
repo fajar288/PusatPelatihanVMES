@@ -4,6 +4,7 @@ import { useActionState, useState } from "react";
 import { FormMessage } from "@/components/auth/AuthShell";
 import { type FormState } from "@/lib/actions/auth";
 import { gradeSubmissionAction } from "@/lib/actions/lms";
+import { MetaList } from "@/components/portal/ui";
 import type { TrainerSubmission } from "@/lib/lms";
 
 /** Satu kartu pengumpulan tugas + form nilai/umpan balik untuk trainer. */
@@ -14,18 +15,23 @@ export default function GradeForm({ s, code }: { s: TrainerSubmission; code: str
   return (
     <article className="kbx lsub">
       <div className="pcard-h">
-        <h3 style={{ fontSize: 17 }}>
-          {s.participant.name} <small className="fh">• {s.lessonTitle}</small>
-        </h3>
+        <div className="spl">
+          <h3 style={{ fontSize: 17 }}>{s.participant.name}</h3>
+          <small>{s.lessonTitle}</small>
+        </div>
         <span className={"jst " + (s.status === "graded" ? "ok" : s.status === "returned" ? "no" : "wn")}>
           {s.statusLabel}
-          {s.score != null ? ` • ${s.score}/${s.maxScore}` : ""}
+          {s.score != null ? ` (${s.score}/${s.maxScore})` : ""}
         </span>
       </div>
-      <p className="fh" style={{ marginTop: 4 }}>
-        {s.course} • dikumpulkan {s.submittedLabel}
-        {s.gradedBy ? ` • dinilai ${s.gradedBy}` : ""}
-      </p>
+      <MetaList
+        compact
+        items={[
+          { icon: "grad", value: s.course },
+          { icon: "cal", label: "Dikumpulkan", value: s.submittedLabel },
+          { icon: "check", label: "Dinilai", value: s.gradedBy },
+        ]}
+      />
       {s.text && <blockquote className="lsub-t">{s.text}</blockquote>}
       {s.hasFile && (
         <p style={{ marginTop: 8 }}>

@@ -87,7 +87,7 @@ export default function QuizRunner({ course, lesson, initial }: { course: string
       <div className="lquiz">
         <div className="pcard-h">
           <b>
-            Percobaan ke-{o.attemptNo} • {o.questions.length} soal
+            Percobaan ke-{o.attemptNo} <span className="fh">({o.questions.length} soal)</span>
           </b>
           {left !== null && (
             <span className={"jst " + (left < 60 ? "no" : "wn")}>
@@ -135,10 +135,10 @@ export default function QuizRunner({ course, lesson, initial }: { course: string
       {result && (
         <div className={"lres " + (result.passed ? "ok" : "no")}>
           <b>
-            {result.passed ? "Lulus" : "Belum lulus"} • {result.percent}%
+            {result.passed ? "Lulus" : "Belum lulus"} ({result.percent}%)
           </b>
           <span>
-            Skor {result.score} dari {result.maxScore} • percobaan ke-{result.attemptNo}
+            Skor {result.score} dari {result.maxScore}, percobaan ke-{result.attemptNo}
           </span>
         </div>
       )}
@@ -153,8 +153,8 @@ export default function QuizRunner({ course, lesson, initial }: { course: string
                 Jawaban Anda: <b>{fmt(r.given, r.options)}</b>
                 {!r.correct && r.answer && (
                   <>
-                    {" "}
-                    • Kunci: <b>{fmt(r.answer, r.options)}</b>
+                    <br />
+                    Kunci jawaban: <b>{fmt(r.answer, r.options)}</b>
                   </>
                 )}
               </small>
@@ -166,7 +166,7 @@ export default function QuizRunner({ course, lesson, initial }: { course: string
       {!result && info}
       {quiz.best && !result && (
         <p className="fh" style={{ marginTop: 10 }}>
-          Nilai terbaik: <b>{quiz.best.percent}%</b> ({quiz.best.passed ? "lulus" : "belum lulus"}) • {quiz.best.submittedLabel}
+          Nilai terbaik: <b>{quiz.best.percent}%</b> ({quiz.best.passed ? "lulus" : "belum lulus"}), dikerjakan {quiz.best.submittedLabel}
         </p>
       )}
       {err && <p className="fh" style={{ color: "#b34200", marginTop: 8 }}>{err}</p>}

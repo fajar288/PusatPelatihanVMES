@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { EmptyState, PortalCard } from "@/components/portal/ui";
+import { EmptyState, MetaList, PortalCard } from "@/components/portal/ui";
 import { api, requireUser } from "@/lib/auth";
 import { type AssignmentListItem, SUBMISSION_PILL } from "@/lib/lms";
 
@@ -18,9 +18,14 @@ export default async function PortalAssignmentsPage() {
         <Link href={`/portal/belajar/${a.course.slug}/${a.lessonId}`}>
           <h3>{a.title}</h3>
         </Link>
-        <p>
-          {a.course.title} • {a.module} • maks. {a.maxScore}
-        </p>
+        <MetaList
+          compact
+          items={[
+            { icon: "grad", value: a.course.title },
+            { icon: "boxes", value: a.module },
+            { label: "Nilai maks.", value: a.maxScore },
+          ]}
+        />
       </div>
       <div className="j2">
         <b>{a.dueLabel ? `Tenggat ${a.dueLabel}` : "Tanpa tenggat"}</b>

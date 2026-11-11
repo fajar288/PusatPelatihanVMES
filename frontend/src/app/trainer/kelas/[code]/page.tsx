@@ -1,6 +1,5 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { PortalCard } from "@/components/portal/ui";
+import { BackLink, MetaList, PortalCard } from "@/components/portal/ui";
 import AttendanceForm from "@/components/trainer/AttendanceForm";
 import { api, ApiRequestError } from "@/lib/auth";
 import { CLASS_STATUS, requireTrainer, ROLE_LABEL, type TrainerClass } from "@/lib/trainer";
@@ -22,9 +21,7 @@ export default async function TrainerClassDetail({ params }: PageProps<"/trainer
 
   return (
     <>
-      <Link className="bk" href="/trainer/kelas">
-        ← Kelas saya
-      </Link>
+      <BackLink href="/trainer/kelas">Kembali ke Kelas saya</BackLink>
       <PortalCard title={cls.title} action={<span className={"jst " + (cls.status === "cancelled" ? "no" : "ok")}>{CLASS_STATUS[cls.status] ?? cls.status}</span>}>
         <ul className="sp">
           <li>
@@ -33,15 +30,16 @@ export default async function TrainerClassDetail({ params }: PageProps<"/trainer
           </li>
           <li>
             <span>Jadwal</span>
-            <b>
+            <b className="spv">
               {cls.dateLabel} – {cls.endLabel}
-              {cls.time ? ` • ${cls.time}` : ""}
+              {cls.time && <small>{cls.time}</small>}
             </b>
           </li>
           <li>
             <span>Lokasi</span>
-            <b>
-              {cls.location || cls.city} • {cls.mode}
+            <b className="spv">
+              {cls.location || cls.city}
+              <small>{cls.mode}</small>
             </b>
           </li>
           <li>
@@ -64,9 +62,16 @@ export default async function TrainerClassDetail({ params }: PageProps<"/trainer
             {cls.sessions.map((s) => (
               <li key={s.no}>
                 <span>
-                  Sesi {s.no} • {s.dateLabel}
-                  {s.time ? ` • ${s.time}` : ""}
-                  {s.topic ? ` • ${s.topic}` : ""}
+                  <b style={{ color: "var(--ink)" }}>Sesi {s.no}</b>
+                  {s.topic ? ` — ${s.topic}` : ""}
+                  <MetaList
+                    compact
+                    style={{ marginTop: 2 }}
+                    items={[
+                      { icon: "cal", value: s.dateLabel },
+                      { icon: "clock", value: s.time },
+                    ]}
+                  />
                 </span>
                 <b>
                   {s.marked ?? 0}/{participants.length} dicatat

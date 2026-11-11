@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { EmptyState, PortalCard } from "@/components/portal/ui";
+import { EmptyState, MetaList, PortalCard } from "@/components/portal/ui";
 import { CLASS_STATUS, type TrainerClass } from "@/lib/trainer";
 
 /** Daftar kelas trainer sebagai pintu masuk fitur per kelas (materi, tugas, kuis, logbook, penilaian, progres). */
@@ -15,9 +15,15 @@ export default function ClassList({ title, intro, classes, base, cta }: { title:
             <div className="kj" key={c.code}>
               <div>
                 <b>{c.title}</b>
-                <p>
-                  {c.code} • {c.dateLabel} – {c.endLabel} • {c.participantsCount} peserta • {c.sessionsCount} sesi
-                </p>
+                <MetaList
+                  compact
+                  items={[
+                    { icon: "code", value: c.code },
+                    { icon: "cal", value: `${c.dateLabel} – ${c.endLabel}` },
+                    { icon: "users", value: `${c.participantsCount} peserta` },
+                    { value: `${c.sessionsCount} sesi` },
+                  ]}
+                />
               </div>
               <div className="kjr">
                 <span className={"jst " + (c.status === "cancelled" ? "no" : c.status === "ongoing" ? "wn" : "ok")}>{CLASS_STATUS[c.status] ?? c.status}</span>
