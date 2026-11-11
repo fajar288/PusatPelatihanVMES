@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /** Peserta resmi satu kelas (hasil konversi pendaftar → member → enrollment, PRD §5.5). */
 class Enrollment extends Model
@@ -52,6 +53,16 @@ class Enrollment extends Model
     public function submissions(): HasMany
     {
         return $this->hasMany(AssignmentSubmission::class);
+    }
+
+    public function logbookEntries(): HasMany
+    {
+        return $this->hasMany(LogbookEntry::class);
+    }
+
+    public function assessment(): HasOne
+    {
+        return $this->hasOne(CompetencyAssessment::class);
     }
 
     /** Enrollment milik akun: lewat pendaftarannya, member-nya, atau email peserta (kolektif). */

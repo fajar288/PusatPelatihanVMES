@@ -77,6 +77,11 @@ class TrainingPackage extends Model
         return $this->hasMany(TrainingSchedule::class, 'package_id');
     }
 
+    public function rubrics(): HasMany
+    {
+        return $this->hasMany(AssessmentRubric::class, 'package_id');
+    }
+
     public function scopePublished(Builder $q): Builder
     {
         return $q->where('status', self::STATUS_PUBLISHED)

@@ -15,7 +15,7 @@ export default async function TrainerLayout({ children }: LayoutProps<"/trainer"
       <section className="ph0">
         <div className="wrap">
           <h1>Portal Trainer</h1>
-          <p>Kelas yang Anda ampu, peserta, kehadiran, materi &amp; progres belajar, penilaian tugas, hasil kuis, dan profil trainer.</p>
+          <p>Kelas yang Anda ampu, peserta, kehadiran, materi &amp; progres belajar, penilaian tugas, hasil kuis, logbook pertemuan, penilaian kompetensi, progres peserta, dan profil trainer.</p>
         </div>
       </section>
       <div className="wrap pgrid">

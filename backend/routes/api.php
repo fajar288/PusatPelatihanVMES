@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\V1\ScheduleController;
 use App\Http\Controllers\Api\V1\SearchController;
 use App\Http\Controllers\Api\V1\TrainerController;
 use App\Http\Controllers\Api\V1\TrainerLmsController;
+use App\Http\Controllers\Api\V1\TrainerMonitoringController;
 use App\Http\Controllers\Api\V1\WaitlistController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -81,6 +82,7 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
         Route::get('/me/payments', [MeController::class, 'payments'])->name('me.payments');
         Route::get('/me/notifications', [MeController::class, 'notifications'])->name('me.notifications');
         Route::get('/me/enrollments', [MeController::class, 'enrollments'])->name('me.enrollments');
+        Route::get('/me/progress', [MeController::class, 'progress'])->name('me.progress');
 
         // LMS peserta (PRD §5.8) — My Learning, Assignments, Results, forum, berkas materi
         Route::prefix('me/learning')->name('me.learning.')->group(function (): void {
@@ -112,6 +114,17 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
             Route::get('/classes/{code}/quiz-results', [TrainerLmsController::class, 'quizResults'])->name('classes.quiz_results');
             Route::post('/submissions/{id}/grade', [TrainerLmsController::class, 'grade'])->name('submissions.grade');
             Route::get('/submissions/{id}/file', [TrainerLmsController::class, 'submissionFile'])->name('submissions.file');
+            // Monitoring (PRD §5.9): logbook per pertemuan, penilaian kompetensi (rubrik), progress overview
+            Route::get('/classes/{code}/logbooks', [TrainerMonitoringController::class, 'logbooks'])->name('classes.logbooks');
+            Route::post('/classes/{code}/logbooks', [TrainerMonitoringController::class, 'storeLogbook'])->name('classes.logbooks.store');
+            Route::post('/logbooks/{id}', [TrainerMonitoringController::class, 'updateLogbook'])->name('logbooks.update');
+            Route::post('/logbooks/{id}/validate', [TrainerMonitoringController::class, 'validateLogbook'])->name('logbooks.validate');
+            Route::get('/logbooks/{id}/docs/{index}', [TrainerMonitoringController::class, 'logbookDoc'])->name('logbooks.doc');
+            Route::get('/classes/{code}/assessments', [TrainerMonitoringController::class, 'assessments'])->name('classes.assessments');
+            Route::post('/classes/{code}/assessments/{enrollment}', [TrainerMonitoringController::class, 'saveAssessment'])->name('classes.assessments.save');
+            Route::post('/assessments/{id}/validate', [TrainerMonitoringController::class, 'validateAssessment'])->name('assessments.validate');
+            Route::get('/classes/{code}/progress', [TrainerMonitoringController::class, 'progress'])->name('classes.progress');
+            Route::get('/classes/{code}/progress/{enrollment}', [TrainerMonitoringController::class, 'participantProgress'])->name('classes.progress.participant');
         });
     });
 });
