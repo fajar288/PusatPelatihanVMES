@@ -32,6 +32,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 use Illuminate\Validation\ValidationException;
 use UnitEnum;
@@ -106,9 +107,17 @@ class CertificateResource extends Resource
                         }
                         $check = app(CertificateService::class)->eligibility($e, $get('type') ?: null);
                         $rows = collect($check['evaluation']['checks'])->map(fn ($c) => ($c['ok'] ? '✅' : ($c['required'] ? '❌' : '⚪')).' '.e($c['label']).' — '.e($c['detail']))->implode('<br>');
-                        $head = $check['eligible'] ? '<b class="text-success-600">Memenuhi syarat.</b>' : '<b class="text-danger-600">Belum memenuhi syarat:</b> '.e(implode(' ', $check['reasons']));
+                        // Utilitas text-success-600/text-danger-600 tidak ada di CSS Filament terkompilasi → pakai komponen badge.
+                        $head = Blade::render(
+                            '<div style="display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;margin-bottom:.25rem"><x-filament::badge :color="$color">{{ $label }}</x-filament::badge>@if ($reasons)<span>{{ $reasons }}</span>@endif</div>',
+                            [
+                                'color' => $check['eligible'] ? 'success' : 'danger',
+                                'label' => $check['eligible'] ? 'Memenuhi syarat' : 'Belum memenuhi syarat',
+                                'reasons' => $check['eligible'] ? '' : implode(' ', $check['reasons']),
+                            ],
+                        );
 
-                        return new HtmlString($head.'<br>'.$rows);
+                        return new HtmlString($head.$rows);
                     }),
                 Toggle::make('force')->label('Paksa buat draf meski belum memenuhi syarat (admin)')->live()->columnSpan(2),
                 TextInput::make('force_reason')->label('Alasan')->visible(fn (Get $get) => (bool) $get('force'))->required(fn (Get $get) => (bool) $get('force'))->maxLength(255),
@@ -116,9 +125,9 @@ class CertificateResource extends Resource
             Section::make('Status')->columns(4)->visibleOn('edit')->components([
                 Placeholder::make('number_info')->label('Nomor')->content(fn (?Certificate $record) => $record?->number ?? '-'),
                 Placeholder::make('status_info')->label('Status')->content(fn (?Certificate $record) => $record ? new HtmlString('<b>'.e($record->statusLabel()).'</b>'.($record->isExpired() ? ' (kedaluwarsa)' : '')) : '-'),
-                Placeholder::make('class_info')->label('Kelas')->content(fn (?Certificate $record) => ($record?->class_code ?? '-').' • '.($record?->enrollment?->participant_name ?? '')),
-                Placeholder::make('verify_info')->label('Verifikasi')->content(fn (?Certificate $record) => $record ? new HtmlString('<a class="text-primary-600 underline" target="_blank" href="'.e($record->verificationUrl()).'">'.e($record->verificationUrl()).'</a>') : '-'),
-                Placeholder::make('flow_info')->label('Riwayat singkat')->columnSpanFull()->content(fn (?Certificate $record) => $record ? new HtmlString(implode(' • ', array_filter([
+                Placeholder::make('class_info')->label('Kelas')->content(fn (?Certificate $record) => new HtmlString(e($record?->class_code ?? '-').(filled($record?->enrollment?->participant_name) ? '<br>'.e($record->enrollment->participant_name) : ''))),
+                Placeholder::make('verify_info')->label('Verifikasi')->content(fn (?Certificate $record) => $record ? new HtmlString(Blade::render('<x-filament::link :href="$url" target="_blank" rel="noopener" style="max-width:100%;overflow-wrap:anywhere">{{ $url }}</x-filament::link>', ['url' => $record->verificationUrl()])) : '-'),
+                Placeholder::make('flow_info')->label('Riwayat singkat')->columnSpanFull()->content(fn (?Certificate $record) => $record ? new HtmlString(implode('<br>', array_filter([
                     'Dibuat '.($record->created_at?->format('d M Y H:i') ?? '-').' oleh '.e($record->creator?->name ?? '-'),
                     $record->submitted_at ? 'Diajukan '.$record->submitted_at->format('d M Y H:i') : null,
                     $record->issued_on ? 'Terbit '.$record->issued_on->format('d M Y H:i').' oleh '.e($record->issuer?->name ?? '-') : null,

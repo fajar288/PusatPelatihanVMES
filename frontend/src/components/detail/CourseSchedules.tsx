@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { MetaList } from "@/components/portal/ui";
 import type { Schedule } from "@/data/schedules";
 import { formatRupiah, waLink, waRegisterText } from "@/lib/utils";
 
@@ -13,9 +14,14 @@ export default function CourseSchedules({ schedules, title }: { schedules: Sched
             <div className="kj" key={s.id}>
               <div>
                 <b>{s.dateLabel}</b>
-                <p>
-                  {s.city} • {s.mode} • {s.durationDays} Hari
-                </p>
+                <MetaList
+                  compact
+                  items={[
+                    { icon: "pin", value: s.city },
+                    { icon: "monitor", value: s.mode },
+                    { icon: "clock", value: `${s.durationDays} Hari` },
+                  ]}
+                />
               </div>
               <div className="kjr">
                 <span className={"jst " + s.status}>{s.statusLabel}</span>

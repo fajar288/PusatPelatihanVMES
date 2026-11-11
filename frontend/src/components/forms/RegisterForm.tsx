@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useActionState, useState } from "react";
 import { FieldError, FormMessage } from "@/components/auth/AuthShell";
+import { MetaList } from "@/components/portal/ui";
 import { type Schedule, scheduleBatchTitle } from "@/data/schedules";
 import { type RegistrationState, submitRegistrationAction } from "@/lib/actions/registration";
 import { formatRupiah, waLink } from "@/lib/utils";
@@ -33,8 +34,16 @@ export default function RegisterForm({ schedules, selectedId, prefill }: Props) 
           </li>
           <li>
             <span>Jadwal</span>
-            <b>
-              {r.schedule?.dateLabel} • {r.schedule?.city} • {r.schedule?.mode}
+            <b className="spv">
+              <MetaList
+                compact
+                style={{ marginTop: 0, justifyContent: "flex-end" }}
+                items={[
+                  { icon: "cal", value: r.schedule?.dateLabel },
+                  { icon: "pin", value: r.schedule?.city },
+                  { icon: "monitor", value: r.schedule?.mode },
+                ]}
+              />
             </b>
           </li>
           <li>
@@ -75,9 +84,16 @@ export default function RegisterForm({ schedules, selectedId, prefill }: Props) 
           ))}
         </select>
         {s && (
-          <p className="fh" style={{ marginTop: 8 }}>
-            Kode kelas {s.code} • {s.durationDays} hari • {s.time} • Sisa kuota {s.remaining} dari {s.quota} • {formatRupiah(s.price)}/peserta
-          </p>
+          <MetaList
+            style={{ marginTop: 10, fontSize: 13.5 }}
+            items={[
+              { icon: "code", label: "Kode kelas", value: s.code },
+              { icon: "cal", value: `${s.durationDays} hari` },
+              { icon: "clock", value: s.time },
+              { icon: "users", label: "Sisa kuota", value: `${s.remaining} dari ${s.quota}` },
+              { label: "Biaya", value: `${formatRupiah(s.price)}/peserta` },
+            ]}
+          />
         )}
         <FieldError errors={state.errors} name="schedule" />
       </div>

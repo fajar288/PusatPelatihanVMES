@@ -137,9 +137,9 @@ export default async function VerifikasiHasilPage({ params, searchParams }: Page
               {r.issuer && (
                 <li>
                   <span>Penerbit</span>
-                  <b>
+                  <b className="spv">
                     {r.issuer}
-                    {r.signatory ? ` • ${r.signatory}` : ""}
+                    {r.signatory && <small>{r.signatory}</small>}
                   </b>
                 </li>
               )}
