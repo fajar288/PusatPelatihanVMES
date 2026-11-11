@@ -12,6 +12,9 @@ const ITEMS: { href: string; label: string; icon: IconName }[] = [
   { href: "/trainer/materi", label: "Materi & Progres", icon: "laptop" },
   { href: "/trainer/tugas", label: "Penilaian Tugas", icon: "code" },
   { href: "/trainer/kuis", label: "Hasil Kuis", icon: "trophy" },
+  { href: "/trainer/logbook", label: "Logbook", icon: "cal" },
+  { href: "/trainer/penilaian", label: "Penilaian", icon: "award" },
+  { href: "/trainer/progres", label: "Progres Peserta", icon: "check" },
   { href: "/trainer/profil", label: "Profil", icon: "users" },
   { href: "/portal", label: "Portal Member", icon: "arr" },
 ];

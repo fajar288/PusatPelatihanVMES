@@ -3,18 +3,22 @@ import { ProgressBar } from "@/components/lms/ui";
 import { EmptyState, PortalCard } from "@/components/portal/ui";
 import { api, requireUser } from "@/lib/auth";
 import type { CourseCard, CourseDetail, ResultsInfo } from "@/lib/lms";
+import { type ParticipantOverview as Overview, pct, PRACTICE_PILL } from "@/lib/monitoring";
 import type { EnrollmentInfo } from "@/lib/portal-types";
 
 export const instant = false;
 
-/** /portal/progres — My Progress: kehadiran per kelas, progres per course & modul, ringkasan nilai kuis/tugas. */
+/** /portal/progres — My Progress: kehadiran per kelas, progres per course & modul, nilai kuis/tugas, praktik & kompetensi, catatan trainer (yang sudah disahkan). */
 export default async function PortalProgressPage() {
   const { token } = await requireUser("/portal/progres");
-  const [enrollments, courses, results] = await Promise.all([
+  const [enrollments, courses, results, overview] = await Promise.all([
     api<{ data: EnrollmentInfo[] }>("/me/enrollments", { token }).then((r) => r.data),
     api<{ data: CourseCard[] }>("/me/learning", { token }).then((r) => r.data),
     api<{ data: ResultsInfo }>("/me/learning/results", { token }).then((r) => r.data),
+    api<{ data: Overview[] }>("/me/progress", { token }).then((r) => r.data),
   ]);
+  const competent = overview.filter((o) => o.competency?.isCompetent).length;
+  const practiceDone = overview.reduce((n, o) => n + o.practice.completed, 0);
   const details = await Promise.all(
     courses.filter((c) => c.access).map((c) => api<{ data: CourseDetail }>(`/me/learning/${c.slug}`, { token }).then((r) => r.data).catch(() => null)),
   );
@@ -46,6 +50,14 @@ export default async function PortalProgressPage() {
           <b>
             {graded.length}/{results.assignments.length}
           </b>
+        </div>
+        <div className="kic1">
+          <small>Praktik selesai</small>
+          <b>{practiceDone}</b>
+        </div>
+        <div className="kic1">
+          <small>Kompetensi</small>
+          <b>{overview.some((o) => o.competency) ? `${competent}/${overview.filter((o) => o.competency).length} kompeten` : "menunggu"}</b>
         </div>
       </div>
 
@@ -115,6 +127,84 @@ export default async function PortalProgressPage() {
           </ul>
         </PortalCard>
       )}
+
+      {overview.map((o) => (
+        <PortalCard
+          key={o.enrollment.id}
+          title={`Praktik, kompetensi & catatan trainer — ${o.class.title}`}
+          action={
+            o.competency ? (
+              <span className={"jst " + (o.competency.isCompetent ? "ok" : o.competency.isCompetent === false ? "no" : "wn")}>
+                {pct(o.competency.percent)} • {o.competency.isCompetent ? "Kompeten" : "Belum kompeten"}
+              </span>
+            ) : (
+              <span className="jst wn">Penilaian belum disahkan</span>
+            )
+          }
+        >
+          <p className="fh" style={{ marginTop: 4 }}>
+            {o.class.code} • kehadiran {pct(o.attendance.percent)} ({o.attendance.present}/{o.attendance.held} sesi) • praktik: {o.practice.completed} selesai
+            {o.practice.partial ? `, ${o.practice.partial} sebagian` : ""}
+            {o.practice.notDone ? `, ${o.practice.notDone} belum` : ""} • {o.practice.logged} pertemuan tercatat
+          </p>
+          {o.competency && (
+            <>
+              <p className="fh" style={{ marginTop: 8, fontWeight: 800 }}>
+                Pencapaian kompetensi ({o.competency.rubric.name}; ambang {o.competency.threshold}%)
+              </p>
+              <ul className="sp" style={{ marginTop: 6 }}>
+                {o.competency.criteria.map((c) => (
+                  <li key={c.id}>
+                    <span>
+                      {c.name}
+                      {c.note ? <small className="fh"> — {c.note}</small> : null}
+                    </span>
+                    <b>
+                      {c.score === null ? "-" : `${c.score}/${c.maxScore}`}
+                      {c.levelLabel ? <small className="fh"> • {c.levelLabel}</small> : null}
+                    </b>
+                  </li>
+                ))}
+              </ul>
+              {o.competency.summary && (
+                <p style={{ fontSize: 14.5 }}>
+                  <b>Umpan balik trainer:</b> {o.competency.summary}
+                </p>
+              )}
+              {o.competency.recommendation && (
+                <p style={{ fontSize: 14.5, marginTop: 6 }}>
+                  <b>Rekomendasi:</b> {o.competency.recommendation}
+                </p>
+              )}
+            </>
+          )}
+          <p className="fh" style={{ marginTop: 14, fontWeight: 800 }}>
+            Catatan trainer per pertemuan
+          </p>
+          {o.notes.length ? (
+            <ul className="pnotif">
+              {o.notes.map((n) => (
+                <li key={n.logbookId}>
+                  <time>
+                    {n.dateLabel} • {n.topic}
+                    {n.trainer ? ` • ${n.trainer}` : ""}
+                  </time>
+                  <p>
+                    {n.practiceStatus ? (
+                      <span className={"jst " + PRACTICE_PILL[n.practiceStatus]} style={{ marginRight: 8 }}>
+                        {n.practiceLabel}
+                      </span>
+                    ) : null}
+                    {n.observation ?? ""}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="fh">Belum ada catatan trainer yang disahkan untuk kelas ini.</p>
+          )}
+        </PortalCard>
+      ))}
     </>
   );
 }
