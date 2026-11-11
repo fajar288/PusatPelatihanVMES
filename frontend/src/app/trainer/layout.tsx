@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import InstallPrompt from "@/components/pwa/InstallPrompt";
 import TrainerNav from "@/components/trainer/TrainerNav";
 import { SITE } from "@/data/site";
 import { requireTrainer } from "@/lib/trainer";
@@ -20,7 +21,10 @@ export default async function TrainerLayout({ children }: LayoutProps<"/trainer"
       </section>
       <div className="wrap pgrid">
         <TrainerNav name={profile.name} title={profile.title} />
-        <section className="pmain">{children}</section>
+        <section className="pmain">
+          <InstallPrompt />
+          {children}
+        </section>
       </div>
       <div style={{ height: 60 }} />
     </>

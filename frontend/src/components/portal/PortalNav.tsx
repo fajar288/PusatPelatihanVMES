@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Icon from "@/components/ui/Icon";
 import type { IconName } from "@/components/ui/icons";
+import { clearPwaPageCache } from "@/components/pwa/PwaProvider";
 import { logoutAction } from "@/lib/actions/auth";
 
 const ITEMS: { href: string; label: string; icon: IconName }[] = [
@@ -46,7 +47,7 @@ export default function PortalNav({ name, memberNumber, isTrainer }: { name: str
           );
         })}
       </nav>
-      <form action={logoutAction}>
+      <form action={logoutAction} onSubmit={clearPwaPageCache}>
         <button type="submit" className="pnav-out">
           <Icon name="arrl" />
           Keluar
