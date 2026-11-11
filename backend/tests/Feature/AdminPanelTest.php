@@ -34,7 +34,7 @@ class AdminPanelTest extends TestCase
             $this->actingAs($admin)->get("/admin/$slug")->assertOk();
             $this->actingAs($admin)->get("/admin/$slug/create")->assertOk();
         }
-        foreach (['registrations', 'payments', 'audit-logs', 'trainers', 'waitlists', 'attendances', 'promo-codes', 'laporan', 'certificates', 'certificates/create', 'certificate-templates', 'certificate-templates/create'] as $slug) {
+        foreach (['registrations', 'payments', 'audit-logs', 'trainers', 'waitlists', 'attendances', 'promo-codes', 'laporan', 'certificates', 'certificates/create', 'certificate-templates', 'certificate-templates/create', 'dashboard-eksekutif'] as $slug) {
             $this->actingAs($admin)->get("/admin/$slug")->assertOk();
         }
     }

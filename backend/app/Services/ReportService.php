@@ -19,15 +19,44 @@ class ReportService
         'enrollments' => 'Peserta & kehadiran',
     ];
 
-    /** @return array{headers: string[], rows: array<int, array<int, mixed>>} */
-    public function dataset(string $type, ?string $from = null, ?string $to = null): array
+    /** Ekspor Dashboard Eksekutif (Phase 5) — memakai seluruh filter dashboard; butuh izin analytics.view. */
+    public const EXECUTIVE_TYPES = [
+        'executive' => 'Ringkasan eksekutif',
+        'at-risk' => 'Peserta berisiko',
+        'trainers' => 'Kinerja trainer',
+    ];
+
+    /**
+     * @param  array<string, mixed>  $filters  filter Dashboard Eksekutif (lihat AnalyticsService::FILTER_KEYS)
+     * @return array{headers: string[], rows: array<int, array<int, mixed>>}
+     */
+    public function dataset(string $type, ?string $from = null, ?string $to = null, array $filters = []): array
     {
         return match ($type) {
             'registrations' => $this->registrations($from, $to),
             'payments' => $this->payments($from, $to),
             'schedules' => $this->schedules(),
             'enrollments' => $this->enrollments(),
+            'executive', 'at-risk', 'trainers' => $this->executive($type, ['from' => $from, 'to' => $to] + $filters),
             default => throw new \InvalidArgumentException("Jenis laporan tidak dikenal: $type"),
+        };
+    }
+
+    private function executive(string $type, array $filters): array
+    {
+        $analytics = app(AnalyticsService::class);
+        $d = $analytics->dashboard($filters);
+
+        return match ($type) {
+            'executive' => ['headers' => ['Bagian', 'Indikator', 'Nilai'], 'rows' => $analytics->flatten($d)],
+            'at-risk' => [
+                'headers' => ['Peserta', 'Email', 'Kelas', 'Program', 'Status', 'Kehadiran %', 'Progres LMS %', 'Rata-rata kuis', 'Alasan'],
+                'rows' => array_map(fn ($r) => [$r['name'], $r['email'], $r['class'], $r['program'], $r['status'], $r['attendance'], $r['lms'], $r['quiz'], implode('; ', $r['reasons'])], $d['learning']['at_risk']),
+            ],
+            'trainers' => [
+                'headers' => ['Trainer', 'Jabatan', 'Kelas', 'Sesi terlaksana', 'Sesi terjadwal', 'Logbook', 'Logbook tervalidasi', 'Peserta', 'Penilaian', 'Skor kompetensi %', 'Completion rate %'],
+                'rows' => array_map(fn ($r) => [$r['name'], $r['title'], $r['classes'], $r['sessions_held'], $r['sessions_planned'], $r['logbooks'], $r['logbooks_validated'], $r['participants'], $r['assessments'], $r['avg_competency'], $r['completion_rate']], $d['trainers']['rows']),
+            ],
         };
     }
 

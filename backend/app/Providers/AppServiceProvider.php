@@ -6,6 +6,7 @@ use App\Models\TrainingSchedule;
 use App\Observers\AuditObserver;
 use App\Observers\CmsObserver;
 use App\Observers\TrainingScheduleObserver;
+use App\Services\AnalyticsService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
 
@@ -16,7 +17,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Dashboard Eksekutif: hasil analitik di-memo per request (dipakai banyak widget sekaligus).
+        $this->app->scoped(AnalyticsService::class);
     }
 
     /**
