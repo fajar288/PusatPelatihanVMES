@@ -14,6 +14,7 @@ const ITEMS: { href: string; label: string; icon: IconName }[] = [
   { href: "/portal/progres", label: "Progres Saya", icon: "chart" },
   { href: "/portal/tugas", label: "Tugas", icon: "code" },
   { href: "/portal/hasil", label: "Hasil", icon: "trophy" },
+  { href: "/portal/sertifikat", label: "Sertifikat", icon: "award" },
   { href: "/portal/pendaftaran", label: "Riwayat Pendaftaran", icon: "brief" },
   { href: "/portal/pembayaran", label: "Riwayat Pembayaran", icon: "award" },
   { href: "/portal/notifikasi", label: "Notifikasi", icon: "msg" },

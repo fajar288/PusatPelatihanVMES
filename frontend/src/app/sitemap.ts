@@ -13,6 +13,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: abs("/jadwal"), lastModified: now, changeFrequency: "weekly", priority: 0.9 },
     { url: abs("/tentang"), lastModified: now, changeFrequency: "monthly", priority: 0.6 },
     { url: abs("/kontak"), lastModified: now, changeFrequency: "monthly", priority: 0.6 },
+    { url: abs("/verifikasi"), lastModified: now, changeFrequency: "yearly", priority: 0.4 },
     ...POST_CATEGORIES.map((c) => ({ url: abs(`/${c.slug}`), lastModified: now, changeFrequency: "weekly" as const, priority: 0.7 })),
     ...STATIC_PAGES.map((p) => ({ url: abs(`/${p.slug}`), lastModified: now, changeFrequency: "yearly" as const, priority: 0.3 })),
   ];

@@ -65,6 +65,22 @@ export default async function PortalTrainingPage() {
                 ))}
               </ul>
             )}
+            {e.certificate && (
+              <p className="fh" style={{ marginTop: 12 }}>
+                {e.certificate.typeLabel} <b>{e.certificate.number}</b> • {e.certificate.statusLabel}
+                {e.certificate.issuedLabel ? ` • ${e.certificate.issuedLabel}` : ""} •{" "}
+                {e.certificate.downloadable ? (
+                  <a href={`/portal/sertifikat/unduh/${encodeURIComponent(e.certificate.number)}`}>Unduh PDF</a>
+                ) : (
+                  <Link href={`/portal/sertifikat/${encodeURIComponent(e.certificate.number)}`}>Detail</Link>
+                )}
+              </p>
+            )}
+            {!e.certificate && e.status === "completed" && (
+              <p className="fh" style={{ marginTop: 12 }}>
+                Lulus. Sertifikat sedang diproses; akan muncul di menu <Link href="/portal/sertifikat">Sertifikat</Link> setelah diterbitkan.
+              </p>
+            )}
             {e.schedule?.packageSlug && (
               <p className="fh" style={{ marginTop: 12 }}>
                 <Link href={`/kursus/${e.schedule.packageSlug}`}>Lihat detail program</Link>
@@ -74,7 +90,8 @@ export default async function PortalTrainingPage() {
         ))}
       </PortalCard>
       <p className="fh" style={{ marginTop: 18 }}>
-        Materi belajar, kuis, dan tugas kelas ada di menu <Link href="/portal/belajar">Belajar</Link>. Sertifikat menyusul setelah kelas selesai.
+        Materi belajar, kuis, dan tugas kelas ada di menu <Link href="/portal/belajar">Belajar</Link>. Sertifikat terbit setelah kelas selesai dan Anda dinyatakan lulus; lihat menu{" "}
+        <Link href="/portal/sertifikat">Sertifikat</Link>.
       </p>
     </>
   );

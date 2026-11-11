@@ -122,7 +122,7 @@ class MeController extends Controller
     public function enrollments(Request $request): AnonymousResourceCollection
     {
         $q = Enrollment::query()->ownedBy($request->user())
-            ->with(['schedule.package', 'schedule.trainers', 'schedule.sessions', 'attendances', 'registration'])
+            ->with(['schedule.package', 'schedule.trainers', 'schedule.sessions', 'attendances', 'registration', 'certificate'])
             ->latest('enrolled_at');
 
         return EnrollmentResource::collection($q->get());
