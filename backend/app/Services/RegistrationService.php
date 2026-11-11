@@ -65,6 +65,7 @@ class RegistrationService
 
             AuditLog::record('registration.created', $registration, null, ['status' => 'pending', 'number' => $registration->registration_number], $user);
             $registration->notify(new RegistrationReceived($registration));
+            app(NotificationEvents::class)->registrationReceived($registration);
 
             return $registration;
         });
@@ -105,6 +106,7 @@ class RegistrationService
 
             AuditLog::record('registration.status_changed', $registration, ['status' => $from->value], ['status' => $to->value, 'note' => $note], $actor);
             $registration->notify(new RegistrationStatusChanged($registration, $from));
+            app(NotificationEvents::class)->registrationStatusChanged($registration, $from);
 
             return $registration->refresh();
         });

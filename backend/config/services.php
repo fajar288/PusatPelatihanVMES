@@ -40,6 +40,13 @@ return [
         'revalidate_secret' => env('REVALIDATE_SECRET'),
     ],
 
+    // Web Push PWA (PRD §5.12): buat kunci dengan `php artisan webpush:vapid`
+    'webpush' => [
+        'public_key' => env('VAPID_PUBLIC_KEY'),
+        'private_key' => env('VAPID_PRIVATE_KEY'),
+        'subject' => env('VAPID_SUBJECT'),
+    ],
+
     // API Publik (Phase 5): batas default, retensi log permintaan/webhook, timeout webhook
     'public_api' => [
         'default_rate_limit' => (int) env('PUBLIC_API_RATE_LIMIT', 60),
