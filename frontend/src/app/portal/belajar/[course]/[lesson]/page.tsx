@@ -5,7 +5,8 @@ import CompleteButton from "@/components/lms/CompleteButton";
 import Discussion from "@/components/lms/Discussion";
 import QuizRunner from "@/components/lms/QuizRunner";
 import VideoPlayer from "@/components/lms/VideoPlayer";
-import { PortalCard } from "@/components/portal/ui";
+import { BackLink, MetaList, PortalCard } from "@/components/portal/ui";
+import Icon from "@/components/ui/Icon";
 import { api, ApiRequestError, requireUser } from "@/lib/auth";
 import { type DiscussionPostInfo, LESSON_ICON, type LessonDetail, type ResourceInfo } from "@/lib/lms";
 
@@ -24,9 +25,7 @@ export default async function LessonPage({ params }: PageProps<"/portal/belajar/
     if (e instanceof ApiRequestError && e.error.status === 403) {
       return (
         <>
-          <Link className="bk" href={`/portal/belajar/${course}`}>
-            ← Kembali ke course
-          </Link>
+          <BackLink href={`/portal/belajar/${course}`}>Kembali ke course</BackLink>
           <PortalCard title="Materi belum dapat diakses">
             <p className="fh">{e.error.message}</p>
           </PortalCard>
@@ -40,18 +39,19 @@ export default async function LessonPage({ params }: PageProps<"/portal/belajar/
 
   return (
     <>
-      <Link className="bk" href={`/portal/belajar/${course}`}>
-        ← {l.course.title}
-      </Link>
+      <BackLink href={`/portal/belajar/${course}`}>Kembali ke {l.course.title}</BackLink>
       <PortalCard
         title={`${LESSON_ICON[l.type]} ${l.title}`}
         action={canMark ? <CompleteButton course={course} lesson={l.id} done={l.progress.status === "completed"} /> : <span className={"jst " + (l.progress.status === "completed" ? "ok" : "wn")}>{l.progress.status === "completed" ? "Selesai" : l.typeLabel}</span>}
       >
-        <p className="fh" style={{ marginTop: 4 }}>
-          {l.module.title} • {l.typeLabel}
-          {l.durationMinutes ? ` • ${l.durationMinutes} menit` : ""}
-          {!l.isRequired ? " • opsional" : ""}
-        </p>
+        <MetaList
+          items={[
+            { icon: "boxes", label: "Modul", value: l.module.title },
+            { value: l.typeLabel },
+            !!l.durationMinutes && { icon: "clock", value: `${l.durationMinutes} menit` },
+            !l.isRequired && { value: "opsional" },
+          ]}
+        />
 
         {l.type === "video" && <VideoPlayer lesson={l} />}
 
@@ -88,14 +88,16 @@ export default async function LessonPage({ params }: PageProps<"/portal/belajar/
       <nav className="lnav">
         {l.prev ? (
           <Link className="jb" href={`/portal/belajar/${course}/${l.prev.id}`}>
-            ← {l.prev.title}
+            <Icon name="arrl" />
+            {l.prev.title}
           </Link>
         ) : (
           <span />
         )}
         {l.next ? (
           <Link className="jb" href={`/portal/belajar/${course}/${l.next.id}`}>
-            {l.next.title} →
+            {l.next.title}
+            <Icon name="arr" />
           </Link>
         ) : (
           <Link className="jb" href={`/portal/belajar/${course}`}>
@@ -122,10 +124,15 @@ function ResourceList({ items }: { items: ResourceInfo[] }) {
           <li key={r.id}>
             <div className="lres-h">
               <b>{r.title}</b>
-              <small className="fh">
-                {r.type === "link" ? "Tautan" : `${r.fileName ?? ""}${r.sizeLabel ? ` • ${r.sizeLabel}` : ""}`}
-                {r.type === "file" && !r.allowDownload ? " • hanya baca" : ""}
-              </small>
+              <MetaList
+                compact
+                style={{ marginTop: 0 }}
+                items={[
+                  { value: r.type === "link" ? "Tautan" : r.fileName },
+                  r.type === "file" && { value: r.sizeLabel },
+                  r.type === "file" && !r.allowDownload && { value: "hanya baca" },
+                ]}
+              />
               <span>
                 {r.type === "link" && r.url && (
                   <a className="lk" href={r.url} target="_blank" rel="noopener noreferrer">

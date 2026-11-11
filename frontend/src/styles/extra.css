@@ -224,3 +224,35 @@
 .nset-note{font-size:13px;color:var(--mut)}
 .nset-form>.btn{border:0;cursor:pointer;font-family:inherit}
 @media(max-width:640px){.nset-h,.nset-r{grid-template-columns:minmax(0,1fr) 52px 52px;padding:10px 12px}}
+/* Rapikan UI portal/trainer: metadata per butir (ganti teks disambung "•") & tombol kembali */
+.pmeta{list-style:none;display:flex;flex-wrap:wrap;align-items:center;gap:8px 22px;margin-top:10px;font-size:14px;line-height:1.45;color:var(--mut)}
+.pmeta li{display:inline-flex;align-items:center;gap:7px;min-width:0}
+.pmeta .ic{width:16px;height:16px;color:var(--p)}
+.pmeta-l{font-weight:600}
+.pmeta-v{font-weight:700;color:var(--ink)}
+.pmeta.sm{gap:4px 16px;margin-top:6px;font-size:13px}
+.pmeta.sm .ic{width:14px;height:14px;color:var(--l)}
+.pmeta.sm .pmeta-v{font-weight:600;color:var(--mut)}
+.pmeta.sm .pmeta-l+.pmeta-v{color:var(--ink)}
+.pmeta .jst{font-size:11px}
+.pbk{gap:10px;margin-bottom:18px;padding:7px 16px 7px 7px;border:1px solid var(--ln);border-radius:99px;background:#fff;box-shadow:0 2px 10px rgba(0,75,35,.06);transition:border-color .2s,color .2s,box-shadow .2s}
+.pbk:hover{border-color:var(--l);box-shadow:0 6px 16px rgba(0,75,35,.1)}
+.pbk-ic{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:rgba(0,75,35,.08);flex:none;transition:background .2s}
+.pbk:hover .pbk-ic{background:rgba(250,80,0,.1)}
+.pbk .ic{width:16px;height:16px}
+.pbk>span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:min(60vw,520px)}
+.pmain>.pbk+.kbx{margin-top:0}
+.lnav .jb{display:inline-flex;align-items:center;gap:8px;max-width:100%}
+.lnav .jb .ic{width:16px;height:16px;flex:none}
+.npg a{display:inline-flex;align-items:center;gap:6px}.npg a .ic{width:15px;height:15px}
+.sp li>span>.pmeta.sm{margin-top:2px}
+.pcert{display:flex;align-items:center;justify-content:space-between;gap:10px 16px;flex-wrap:wrap;margin-top:14px;padding:12px 16px;border:1px solid var(--ln);border-radius:14px;background:var(--bg)}
+.pcert .lk{margin-top:0}
+.sp li>b.spv,.sp li>b>.spv{display:grid;justify-items:end;gap:2px;text-align:right;min-width:0}
+.spv small{font-size:13px;font-weight:600;color:var(--mut)}
+.att td .pmeta.sm{margin-top:2px}
+.pnotif .pmeta.sm .pmeta-v{font-weight:700}
+.spl{display:grid;gap:2px;min-width:0}.spl>b{color:var(--ink)}.spl small{font-size:13px;color:var(--mut);font-weight:500;line-height:1.45}
+/* Reset: butir metadata bisa berada di dalam .sp/.lres-l/.pnotif/.kj — jangan mewarisi gaya li/b/span daftar induk */
+.pmeta>li.pmi{display:inline-flex;align-items:center;justify-content:flex-start;gap:7px;min-width:0;margin:0;padding:0;border:0;border-radius:0;background:none;box-shadow:none;overflow:visible;font-size:inherit}
+.pmeta .pmi>span{display:inline;flex:none}

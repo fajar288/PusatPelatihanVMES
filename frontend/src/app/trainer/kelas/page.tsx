@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { EmptyState, PortalCard } from "@/components/portal/ui";
+import { EmptyState, MetaList, PortalCard } from "@/components/portal/ui";
 import { api } from "@/lib/auth";
 import { CLASS_STATUS, requireTrainer, ROLE_LABEL, type TrainerClass } from "@/lib/trainer";
 
@@ -19,14 +19,20 @@ export default async function TrainerClassesPage() {
                 <Link href={`/trainer/kelas/${c.code}`}>
                   <h3>{c.title}</h3>
                 </Link>
-                <p>
-                  {c.code} • {c.city} • {c.mode} • {ROLE_LABEL[c.myRole ?? ""] ?? c.myRole}
-                </p>
+                <MetaList
+                  compact
+                  items={[
+                    { icon: "code", value: c.code },
+                    { icon: "pin", value: c.city },
+                    { icon: "monitor", value: c.mode },
+                    { icon: "users", label: "Peran", value: ROLE_LABEL[c.myRole ?? ""] ?? c.myRole },
+                  ]}
+                />
               </div>
               <div className="j2">
                 <b>{c.dateLabel}</b>
                 <span>
-                  {c.sessionsCount} sesi • {c.participantsCount} peserta
+                  {c.sessionsCount} sesi, {c.participantsCount} peserta
                 </span>
               </div>
               <div className="j3">

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ProgressBar } from "@/components/lms/ui";
-import { EmptyState, PortalCard } from "@/components/portal/ui";
+import { EmptyState, MetaList, PortalCard } from "@/components/portal/ui";
 import { api, requireUser } from "@/lib/auth";
 import type { CourseCard, CourseDetail, ResultsInfo } from "@/lib/lms";
 import { type ParticipantOverview as Overview, pct, PRACTICE_PILL } from "@/lib/monitoring";
@@ -74,11 +74,15 @@ export default async function PortalProgressPage() {
                 </h3>
                 <span className={"jst " + (c.percent >= 100 ? "ok" : c.percent > 0 ? "wn" : "no")}>{c.percent}%</span>
               </div>
-              <p className="fh" style={{ marginTop: 4 }}>
-                {c.class.title} • {c.class.code}
-                {enr ? ` • kehadiran ${enr.attendancePercent === null ? "-" : `${enr.attendancePercent}%`}` : ""}
-                {enr?.finalScore != null ? ` • nilai akhir ${enr.finalScore}` : ""}
-              </p>
+              <MetaList
+                compact
+                items={[
+                  { icon: "grad", value: c.class.title },
+                  { icon: "code", value: c.class.code },
+                  !!enr && { icon: "check", label: "Kehadiran", value: enr.attendancePercent === null ? "-" : `${enr.attendancePercent}%` },
+                  enr?.finalScore != null && { icon: "award", label: "Nilai akhir", value: enr.finalScore },
+                ]}
+              />
               <ProgressBar percent={c.percent} />
               {d && (
                 <ul className="sp" style={{ marginBottom: 0 }}>
@@ -135,18 +139,25 @@ export default async function PortalProgressPage() {
           action={
             o.competency ? (
               <span className={"jst " + (o.competency.isCompetent ? "ok" : o.competency.isCompetent === false ? "no" : "wn")}>
-                {pct(o.competency.percent)} • {o.competency.isCompetent ? "Kompeten" : "Belum kompeten"}
+                {o.competency.isCompetent ? "Kompeten" : "Belum kompeten"} ({pct(o.competency.percent)})
               </span>
             ) : (
               <span className="jst wn">Penilaian belum disahkan</span>
             )
           }
         >
-          <p className="fh" style={{ marginTop: 4 }}>
-            {o.class.code} • kehadiran {pct(o.attendance.percent)} ({o.attendance.present}/{o.attendance.held} sesi) • praktik: {o.practice.completed} selesai
-            {o.practice.partial ? `, ${o.practice.partial} sebagian` : ""}
-            {o.practice.notDone ? `, ${o.practice.notDone} belum` : ""} • {o.practice.logged} pertemuan tercatat
-          </p>
+          <MetaList
+            items={[
+              { icon: "code", value: o.class.code },
+              { icon: "check", label: "Kehadiran", value: `${pct(o.attendance.percent)} (${o.attendance.present}/${o.attendance.held} sesi)` },
+              {
+                icon: "wrench",
+                label: "Praktik",
+                value: [`${o.practice.completed} selesai`, o.practice.partial ? `${o.practice.partial} sebagian` : "", o.practice.notDone ? `${o.practice.notDone} belum` : ""].filter(Boolean).join(", "),
+              },
+              { icon: "brief", label: "Logbook", value: `${o.practice.logged} pertemuan` },
+            ]}
+          />
           {o.competency && (
             <>
               <p className="fh" style={{ marginTop: 8, fontWeight: 800 }}>
@@ -155,13 +166,13 @@ export default async function PortalProgressPage() {
               <ul className="sp" style={{ marginTop: 6 }}>
                 {o.competency.criteria.map((c) => (
                   <li key={c.id}>
-                    <span>
-                      {c.name}
-                      {c.note ? <small className="fh"> — {c.note}</small> : null}
+                    <span className="spl">
+                      <b>{c.name}</b>
+                      {c.note ? <small>{c.note}</small> : null}
                     </span>
-                    <b>
+                    <b className="spv">
                       {c.score === null ? "-" : `${c.score}/${c.maxScore}`}
-                      {c.levelLabel ? <small className="fh"> • {c.levelLabel}</small> : null}
+                      {c.levelLabel ? <small>{c.levelLabel}</small> : null}
                     </b>
                   </li>
                 ))}
@@ -185,10 +196,15 @@ export default async function PortalProgressPage() {
             <ul className="pnotif">
               {o.notes.map((n) => (
                 <li key={n.logbookId}>
-                  <time>
-                    {n.dateLabel} • {n.topic}
-                    {n.trainer ? ` • ${n.trainer}` : ""}
-                  </time>
+                  <MetaList
+                    compact
+                    style={{ marginTop: 0 }}
+                    items={[
+                      { icon: "cal", value: n.dateLabel },
+                      { value: n.topic },
+                      { icon: "users", value: n.trainer },
+                    ]}
+                  />
                   <p>
                     {n.practiceStatus ? (
                       <span className={"jst " + PRACTICE_PILL[n.practiceStatus]} style={{ marginRight: 8 }}>

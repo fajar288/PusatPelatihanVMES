@@ -1,6 +1,7 @@
 import Link from "next/link";
 import NotificationSettingsForm from "@/components/portal/NotificationSettingsForm";
 import { EmptyState, PortalCard } from "@/components/portal/ui";
+import Icon from "@/components/ui/Icon";
 import { openNotificationAction, readAllNotificationsAction } from "@/lib/actions/notifications";
 import { api, requireUser } from "@/lib/auth";
 import type { AppNotification, NotificationSettings } from "@/lib/portal-types";
@@ -80,11 +81,17 @@ export default async function PortalNotificationsPage({ searchParams }: PageProp
         )}
         {meta.last_page > 1 && (
           <div className="npg">
-            {page > 1 ? <Link href={qs(page - 1)}>← Sebelumnya</Link> : <span />}
+            {page > 1 ? <Link href={qs(page - 1)}>
+                <Icon name="arrl" />
+                Sebelumnya
+              </Link> : <span />}
             <span>
               Halaman {page} dari {meta.last_page}
             </span>
-            {page < meta.last_page ? <Link href={qs(page + 1)}>Berikutnya →</Link> : <span />}
+            {page < meta.last_page ? <Link href={qs(page + 1)}>
+                Berikutnya
+                <Icon name="arr" />
+              </Link> : <span />}
           </div>
         )}
       </PortalCard>

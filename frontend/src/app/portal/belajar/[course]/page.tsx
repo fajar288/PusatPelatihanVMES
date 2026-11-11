@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import Discussion from "@/components/lms/Discussion";
 import { LessonItem, ProgressBar } from "@/components/lms/ui";
-import { PortalCard } from "@/components/portal/ui";
+import { BackLink, MetaList, PortalCard } from "@/components/portal/ui";
 import { api, ApiRequestError, requireUser } from "@/lib/auth";
 import type { CourseDetail, DiscussionPostInfo } from "@/lib/lms";
 
@@ -22,9 +22,7 @@ export default async function CoursePage({ params }: PageProps<"/portal/belajar/
     else throw e;
     return (
       <>
-        <Link className="bk" href="/portal/belajar">
-          ← Belajar
-        </Link>
+        <BackLink href="/portal/belajar">Kembali ke Belajar</BackLink>
         <PortalCard title="Materi belum dapat diakses">
           <p className="fh">{denied}</p>
         </PortalCard>
@@ -35,19 +33,26 @@ export default async function CoursePage({ params }: PageProps<"/portal/belajar/
 
   return (
     <>
-      <Link className="bk" href="/portal/belajar">
-        ← Belajar
-      </Link>
+      <BackLink href="/portal/belajar">Kembali ke Belajar</BackLink>
       <PortalCard title={c.title} action={<span className={"jst " + (c.percent >= 100 ? "ok" : "wn")}>{c.percent}% selesai</span>}>
-        <p className="fh" style={{ marginTop: 4 }}>
-          {c.class.title} • {c.class.code} • {c.class.dateLabel} – {c.class.endLabel}
-        </p>
+        <MetaList
+          items={[
+            { icon: "grad", value: c.class.title },
+            { icon: "code", label: "Kode", value: c.class.code },
+            { icon: "cal", value: `${c.class.dateLabel} – ${c.class.endLabel}` },
+          ]}
+        />
         {c.description && <p style={{ marginTop: 10 }}>{c.description}</p>}
         <ProgressBar percent={c.percent} />
         <div className="lcourse-f">
-          <small className="fh">
-            {c.completed}/{c.lessonsCount} lesson • {c.requiredCompleted}/{c.requiredTotal} wajib selesai
-          </small>
+          <MetaList
+            compact
+            style={{ marginTop: 0 }}
+            items={[
+              { icon: "check", label: "Lesson selesai", value: `${c.completed}/${c.lessonsCount}` },
+              { label: "Wajib selesai", value: `${c.requiredCompleted}/${c.requiredTotal}` },
+            ]}
+          />
           {c.nextLesson && (
             <Link className="jb" href={`/portal/belajar/${c.slug}/${c.nextLesson.id}`}>
               {c.percent > 0 ? "Lanjutkan: " : "Mulai: "}

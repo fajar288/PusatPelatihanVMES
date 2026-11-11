@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { PortalCard } from "@/components/portal/ui";
+import { MetaList, PortalCard } from "@/components/portal/ui";
 import { api, ApiRequestError, requireUser } from "@/lib/auth";
 import { CERT_PILL, type CertificateHistory, type CertificateInfo, HISTORY_LABEL } from "@/lib/certificates";
 
@@ -25,9 +25,7 @@ export default async function PortalCertificateDetailPage({ params }: PageProps<
         title={c.programTitle}
         action={<span className={"jst " + (CERT_PILL[c.isExpired ? "expired" : c.status] ?? "wn")}>{c.isExpired ? "Kedaluwarsa" : c.statusLabel}</span>}
       >
-        <p className="fh" style={{ marginTop: 6 }}>
-          {c.typeLabel} • Nomor <b>{c.number}</b>
-        </p>
+        <MetaList items={[{ icon: "award", label: c.typeLabel, value: c.number }]} />
         <ul className="sp" style={{ marginTop: 14 }}>
           <li>
             <span>Nama pada sertifikat</span>
@@ -73,9 +71,14 @@ export default async function PortalCertificateDetailPage({ params }: PageProps<
           </li>
           <li>
             <span>Penerbit</span>
-            <b>
+            <b className="spv">
               {c.issuer ?? "-"}
-              {c.signatory ? ` • ${c.signatory}${c.signatoryTitle ? `, ${c.signatoryTitle}` : ""}` : ""}
+              {c.signatory && (
+                <small>
+                  {c.signatory}
+                  {c.signatoryTitle ? `, ${c.signatoryTitle}` : ""}
+                </small>
+              )}
             </b>
           </li>
           {c.replacedBy && (

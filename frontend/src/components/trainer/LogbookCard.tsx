@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { FormMessage } from "@/components/auth/AuthShell";
 import { validateLogbookAction } from "@/lib/actions/monitoring";
 import { type LogbookInfo, type LogbooksData, PRACTICE_PILL } from "@/lib/monitoring";
+import { MetaList } from "@/components/portal/ui";
 import LogbookForm from "./LogbookForm";
 
 /** Satu logbook: ringkasan isi, catatan peserta, dokumentasi, aksi Ubah (bila belum dikunci) & Validasi. */
@@ -24,19 +25,31 @@ export default function LogbookCard({ d, l }: { d: LogbooksData; l: LogbookInfo 
   return (
     <article className="kbx lsub">
       <div className="pcard-h">
-        <h3 style={{ fontSize: 17 }}>
-          {l.dateLabel}
-          {l.sessionNo ? <small className="fh"> • Sesi {l.sessionNo}</small> : null} — {l.topic}
-        </h3>
+        <div className="spl">
+          <h3 style={{ fontSize: 17 }}>{l.topic}</h3>
+          <small>
+            {l.sessionNo ? `Sesi ${l.sessionNo}, ` : ""}
+            {l.dateLabel}
+          </small>
+        </div>
         <span className={"jst " + (l.isLocked ? "ok" : "wn")}>
           {l.statusLabel}
           {l.isLocked ? " 🔒" : ""}
         </span>
       </div>
-      <p className="fh" style={{ marginTop: 4 }}>
-        {l.trainer ? `${l.trainer} • ` : ""}
-        {l.isLocked && l.validatedAt ? `divalidasi ${new Date(l.validatedAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}${l.validatedBy ? ` oleh ${l.validatedBy}` : ""}` : "draf — belum divalidasi"}
-      </p>
+      <MetaList
+        compact
+        items={[
+          { icon: "users", value: l.trainer },
+          {
+            icon: "check",
+            value:
+              l.isLocked && l.validatedAt
+                ? `Divalidasi ${new Date(l.validatedAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}${l.validatedBy ? ` oleh ${l.validatedBy}` : ""}`
+                : "Draf, belum divalidasi",
+          },
+        ]}
+      />
       {edit ? (
         <LogbookForm d={d} logbook={l} onDone={() => setEdit(false)} />
       ) : (

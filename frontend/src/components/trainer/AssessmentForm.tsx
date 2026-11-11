@@ -4,6 +4,7 @@ import { useActionState, useState } from "react";
 import { FormMessage } from "@/components/auth/AuthShell";
 import { type FormState } from "@/lib/actions/auth";
 import { saveAssessmentAction } from "@/lib/actions/monitoring";
+import { MetaList } from "@/components/portal/ui";
 import type { AssessmentsData } from "@/lib/monitoring";
 
 type Item = AssessmentsData["participants"][number];
@@ -29,32 +30,36 @@ export default function AssessmentForm({ code, item }: { code: string; item: Ite
   return (
     <article className="kbx lsub">
       <div className="pcard-h">
-        <h3 style={{ fontSize: 17 }}>
-          {item.participant.name} <small className="fh">• {item.participant.email ?? ""}</small>
-        </h3>
+        <div className="spl">
+          <h3 style={{ fontSize: 17 }}>{item.participant.name}</h3>
+          {item.participant.email && <small>{item.participant.email}</small>}
+        </div>
         <span className={"jst " + (a.status === "validated" ? (a.isCompetent ? "ok" : "no") : a.percent !== null ? "wn" : "no")}>
           {a.statusLabel}
-          {a.percent !== null ? ` • ${a.percent}%` : ""}
-          {a.status === "validated" ? (a.isCompetent ? " • Kompeten" : " • Belum kompeten") : ""}
+          {a.percent !== null ? ` (${a.percent}%)` : ""}
+          {a.status === "validated" ? (a.isCompetent ? ", Kompeten" : ", Belum kompeten") : ""}
           {a.isLocked ? " 🔒" : ""}
         </span>
       </div>
-      <p className="fh" style={{ marginTop: 4 }}>
-        {a.assessedLabel ? `dinilai ${a.assessedLabel}${a.assessedBy ? ` oleh ${a.assessedBy}` : ""}` : "belum dinilai"}
-        {a.validatedBy ? ` • divalidasi oleh ${a.validatedBy}` : ""}
-      </p>
+      <MetaList
+        compact
+        items={[
+          { icon: "cal", label: "Dinilai", value: a.assessedLabel ? `${a.assessedLabel}${a.assessedBy ? ` oleh ${a.assessedBy}` : ""}` : "belum" },
+          { icon: "check", label: "Divalidasi oleh", value: a.validatedBy },
+        ]}
+      />
       {!open ? (
         <>
           <ul className="sp" style={{ marginBottom: 0 }}>
             {a.criteria.map((c) => (
               <li key={c.id}>
-                <span>
-                  {c.name}
-                  {c.note ? <small className="fh"> — {c.note}</small> : null}
+                <span className="spl">
+                  <b>{c.name}</b>
+                  {c.note ? <small>{c.note}</small> : null}
                 </span>
-                <b>
+                <b className="spv">
                   {c.score === null ? "-" : `${c.score}/${c.maxScore}`}
-                  {c.levelLabel ? <small className="fh"> • {c.levelLabel}</small> : null}
+                  {c.levelLabel ? <small>{c.levelLabel}</small> : null}
                 </b>
               </li>
             ))}
@@ -99,11 +104,9 @@ export default function AssessmentForm({ code, item }: { code: string; item: Ite
                   <tr key={c.id}>
                     <td>
                       <b>{c.name}</b>
-                      <small>
-                        {c.competency ? `${c.competency} • ` : ""}
-                        {c.description ?? ""}
-                        {c.weight !== 1 ? ` • bobot ${c.weight}` : ""}
-                      </small>
+                      {c.competency && <small>Kompetensi: {c.competency}</small>}
+                      {c.description && <small>{c.description}</small>}
+                      {c.weight !== 1 && <small>Bobot {c.weight}</small>}
                     </td>
                     <td>
                       {c.levels.length ? (

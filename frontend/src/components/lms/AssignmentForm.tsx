@@ -29,15 +29,18 @@ export default function AssignmentForm({ lesson }: { lesson: LessonDetail }) {
             <li>
               <span>Status</span>
               <b>
-                <span className={"jst " + (sub.status === "graded" ? "ok" : sub.status === "returned" ? "no" : "wn")}>{sub.statusLabel}</span> • {sub.submittedLabel}
+                <span className="spv">
+                  <span className={"jst " + (sub.status === "graded" ? "ok" : sub.status === "returned" ? "no" : "wn")}>{sub.statusLabel}</span>
+                  <small>{sub.submittedLabel}</small>
+                </span>
               </b>
             </li>
             {sub.score !== null && (
               <li>
                 <span>Nilai</span>
-                <b>
+                <b className="spv">
                   {sub.score} / {a.maxScore}
-                  {sub.gradedBy ? ` • oleh ${sub.gradedBy}` : ""}
+                  {sub.gradedBy && <small>Dinilai oleh {sub.gradedBy}</small>}
                 </b>
               </li>
             )}

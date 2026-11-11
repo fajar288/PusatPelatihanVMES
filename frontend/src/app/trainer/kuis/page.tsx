@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { EmptyState, PortalCard } from "@/components/portal/ui";
+import { EmptyState, MetaList, PortalCard } from "@/components/portal/ui";
 import { api } from "@/lib/auth";
 import { requireTrainer, type TrainerClass } from "@/lib/trainer";
 
@@ -17,9 +17,14 @@ export default async function TrainerQuizIndex() {
             <div className="kj" key={c.code}>
               <div>
                 <b>{c.title}</b>
-                <p>
-                  {c.code} • {c.dateLabel} • {c.participantsCount} peserta
-                </p>
+                <MetaList
+                  compact
+                  items={[
+                    { icon: "code", value: c.code },
+                    { icon: "cal", value: c.dateLabel },
+                    { icon: "users", value: `${c.participantsCount} peserta` },
+                  ]}
+                />
               </div>
               <div className="kjr">
                 <Link className="jb" href={`/trainer/kuis/${c.code}`}>

@@ -1,6 +1,5 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { PortalCard } from "@/components/portal/ui";
+import { BackLink, MetaList, PortalCard } from "@/components/portal/ui";
 import AssessmentForm from "@/components/trainer/AssessmentForm";
 import { api, ApiRequestError } from "@/lib/auth";
 import type { AssessmentsData } from "@/lib/monitoring";
@@ -24,33 +23,38 @@ export default async function TrainerClassAssessments({ params }: PageProps<"/tr
 
   return (
     <>
-      <Link className="bk" href="/trainer/penilaian">
-        ← Penilaian
-      </Link>
+      <BackLink href="/trainer/penilaian">Kembali ke Penilaian</BackLink>
       <PortalCard
         title={`Penilaian — ${d.class.title}`}
         action={
           <span className={"jst " + (validated === d.participants.length && d.participants.length > 0 ? "ok" : "wn")}>
-            {validated}/{d.participants.length} tervalidasi • {competent} kompeten
+            {validated}/{d.participants.length} tervalidasi, {competent} kompeten
           </span>
         }
       >
         {d.rubric ? (
           <>
-            <p className="fh" style={{ marginTop: 4 }}>
-              Rubrik: <b>{d.rubric.name}</b> • ambang kompeten {d.rubric.threshold}% • {d.rubric.criteria.length} kriteria. {d.rubric.description ?? ""} Rubrik dikelola admin (menu Monitoring › Rubrik penilaian).
+            <MetaList
+              items={[
+                { icon: "check", label: "Rubrik", value: d.rubric.name },
+                { label: "Ambang kompeten", value: `${d.rubric.threshold}%` },
+                { label: "Kriteria", value: d.rubric.criteria.length },
+              ]}
+            />
+            <p className="fh" style={{ marginTop: 8 }}>
+              {d.rubric.description ? `${d.rubric.description} ` : ""}Rubrik dikelola admin (menu Monitoring › Rubrik penilaian).
             </p>
             <ul className="sp" style={{ marginBottom: 0 }}>
               {d.rubric.criteria.map((c) => (
                 <li key={c.id}>
-                  <span>
-                    {c.name}
-                    {c.competency ? <small className="fh"> • {c.competency}</small> : null}
-                    {c.description ? <small className="fh"> — {c.description}</small> : null}
+                  <span className="spl">
+                    <b>{c.name}</b>
+                    {c.competency ? <small>Kompetensi: {c.competency}</small> : null}
+                    {c.description ? <small>{c.description}</small> : null}
                   </span>
-                  <b>
-                    maks. {c.maxScore}
-                    {c.weight !== 1 ? ` • bobot ${c.weight}` : ""}
+                  <b className="spv">
+                    Maks. {c.maxScore}
+                    {c.weight !== 1 ? <small>Bobot {c.weight}</small> : null}
                   </b>
                 </li>
               ))}

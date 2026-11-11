@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { videoProgressAction } from "@/lib/actions/lms";
+import { MetaList } from "@/components/portal/ui";
 import type { LessonDetail } from "@/lib/lms";
 
 const HEARTBEAT = 15; // detik
@@ -81,11 +82,20 @@ export default function VideoPlayer({ lesson }: { lesson: LessonDetail }) {
       ) : (
         <p className="fh">Video belum tersedia.</p>
       )}
-      <p className="fh" style={{ marginTop: 10 }}>
-        Ditonton {percent}% • dianggap selesai setelah {v.minWatchPct}%
-        {status === "completed" ? " • ✓ Selesai" : ""}
-        {v.provider !== "file" && !v.durationSeconds ? " • durasi belum diatur, tandai selesai secara manual setelah menonton" : ""}
-      </p>
+      <MetaList
+        compact
+        style={{ marginTop: 10 }}
+        items={[
+          { icon: "monitor", label: "Ditonton", value: `${percent}%` },
+          { label: "Selesai setelah", value: `${v.minWatchPct}%` },
+          status === "completed" && { icon: "check", value: "Selesai" },
+        ]}
+      />
+      {v.provider !== "file" && !v.durationSeconds && (
+        <p className="fh" style={{ marginTop: 4, fontSize: 13 }}>
+          Durasi video belum diatur. Tandai selesai secara manual setelah menonton.
+        </p>
+      )}
     </div>
   );
 }

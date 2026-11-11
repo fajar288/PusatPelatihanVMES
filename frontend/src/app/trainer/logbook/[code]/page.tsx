@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { PortalCard } from "@/components/portal/ui";
+import { BackLink, PortalCard } from "@/components/portal/ui";
 import LogbookCard from "@/components/trainer/LogbookCard";
 import LogbookForm from "@/components/trainer/LogbookForm";
 import { api, ApiRequestError } from "@/lib/auth";
@@ -25,9 +25,7 @@ export default async function TrainerClassLogbook({ params }: PageProps<"/traine
 
   return (
     <>
-      <Link className="bk" href="/trainer/logbook">
-        ← Logbook
-      </Link>
+      <BackLink href="/trainer/logbook">Kembali ke Logbook</BackLink>
       <PortalCard
         title={`Logbook — ${d.class.title}`}
         action={
@@ -44,8 +42,11 @@ export default async function TrainerClassLogbook({ params }: PageProps<"/traine
         <ul className="sp">
           <li>
             <span>Kelas</span>
-            <b>
-              {d.class.code} • {d.class.dateLabel} – {d.class.endLabel}
+            <b className="spv">
+              {d.class.code}
+              <small>
+                {d.class.dateLabel} – {d.class.endLabel}
+              </small>
             </b>
           </li>
           <li>
@@ -56,8 +57,9 @@ export default async function TrainerClassLogbook({ params }: PageProps<"/traine
           </li>
           <li>
             <span>Logbook</span>
-            <b>
-              {d.logbooks.length} pertemuan • {validated} tervalidasi
+            <b className="spv">
+              {d.logbooks.length} pertemuan
+              <small>{validated} tervalidasi</small>
             </b>
           </li>
         </ul>

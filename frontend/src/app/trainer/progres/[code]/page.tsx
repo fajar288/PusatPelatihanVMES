@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { PortalCard } from "@/components/portal/ui";
+import { BackLink, PortalCard } from "@/components/portal/ui";
 import { api, ApiRequestError } from "@/lib/auth";
 import { type ClassOverview, ENROLLMENT_STATUS, pct } from "@/lib/monitoring";
 import { requireTrainer } from "@/lib/trainer";
@@ -26,9 +26,7 @@ export default async function TrainerClassProgress({ params }: PageProps<"/train
 
   return (
     <>
-      <Link className="bk" href="/trainer/progres">
-        ← Progres peserta
-      </Link>
+      <BackLink href="/trainer/progres">Kembali ke Progres peserta</BackLink>
       <div className="kic pstats">
         <div className="kic1">
           <small>Peserta</small>
@@ -110,7 +108,7 @@ export default async function TrainerClassProgress({ params }: PageProps<"/train
                     <td>
                       <b>{p.practice_completed} selesai</b>
                       <small>
-                        {p.practice_partial} sebagian • {p.practice_not_done} belum
+                        {p.practice_partial} sebagian, {p.practice_not_done} belum
                       </small>
                     </td>
                     <td>

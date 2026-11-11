@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import RegistrationActions from "@/components/portal/RegistrationActions";
-import { PaymentPill, PortalCard, StatusPill } from "@/components/portal/ui";
+import { BackLink, MetaList, PaymentPill, PortalCard, StatusPill } from "@/components/portal/ui";
 import { api, ApiRequestError, requireUser } from "@/lib/auth";
 import type { RegistrationInfo } from "@/lib/portal-types";
 import { formatRupiah } from "@/lib/utils";
@@ -33,9 +33,7 @@ export default async function PortalRegistrationDetail({ params }: PageProps<"/p
 
   return (
     <>
-      <Link className="bk" href="/portal/pendaftaran">
-        ← Riwayat pendaftaran
-      </Link>
+      <BackLink href="/portal/pendaftaran">Kembali ke Riwayat pendaftaran</BackLink>
       <PortalCard title={`Pendaftaran ${r.number}`} action={<StatusPill status={r.status} />}>
         {!final && (
           <ol className="psteps" aria-label="Progres pendaftaran">
@@ -59,8 +57,11 @@ export default async function PortalRegistrationDetail({ params }: PageProps<"/p
           </li>
           <li>
             <span>Kelas</span>
-            <b>
-              {r.schedule?.code} • {r.schedule?.dateLabel} • {r.schedule?.city} • {r.schedule?.mode}
+            <b className="spv">
+              {r.schedule?.code}
+              <small>
+                {r.schedule?.dateLabel}, {r.schedule?.city} ({r.schedule?.mode})
+              </small>
             </b>
           </li>
           <li>
@@ -69,16 +70,18 @@ export default async function PortalRegistrationDetail({ params }: PageProps<"/p
           </li>
           <li>
             <span>Pendaftar</span>
-            <b>
-              {r.name} • {r.email} • {r.phone}
+            <b className="spv">
+              {r.name}
+              <small>{r.email}</small>
+              <small>{r.phone}</small>
             </b>
           </li>
           {r.company && (
             <li>
               <span>Instansi</span>
-              <b>
+              <b className="spv">
                 {r.company}
-                {r.position ? ` • ${r.position}` : ""}
+                {r.position && <small>{r.position}</small>}
               </b>
             </li>
           )}
@@ -104,7 +107,10 @@ export default async function PortalRegistrationDetail({ params }: PageProps<"/p
               {r.participants.map((p, i) => (
                 <li key={i}>
                   <span>{p.name}</span>
-                  <b>{[p.email, p.position].filter(Boolean).join(" • ") || "-"}</b>
+                  <b className="spv">
+                    {p.email || "-"}
+                    {p.position && <small>{p.position}</small>}
+                  </b>
                 </li>
               ))}
             </ul>
@@ -118,8 +124,8 @@ export default async function PortalRegistrationDetail({ params }: PageProps<"/p
             {r.payments.map((p) => (
               <li key={p.invoice}>
                 <span>
-                  {p.invoice}
-                  {p.dueLabel ? ` • jatuh tempo ${p.dueLabel}` : ""}
+                  <b style={{ color: "var(--ink)" }}>{p.invoice}</b>
+                  <MetaList compact style={{ marginTop: 2 }} items={[{ icon: "cal", label: "Jatuh tempo", value: p.dueLabel }]} />
                 </span>
                 <b>
                   {formatRupiah(p.amount)} <PaymentPill status={p.status} />

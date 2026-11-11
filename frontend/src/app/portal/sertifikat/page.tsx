@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { EmptyState, PortalCard } from "@/components/portal/ui";
+import { EmptyState, MetaList, PortalCard } from "@/components/portal/ui";
 import { api, requireUser } from "@/lib/auth";
 import { CERT_PILL, type CertificateInfo, MEMBER_STATUS } from "@/lib/certificates";
 
@@ -48,13 +48,15 @@ export default async function PortalCertificatesPage() {
               </h3>
               <span className={"jst " + (CERT_PILL[c.isExpired ? "expired" : c.status] ?? "wn")}>{c.isExpired ? "Kedaluwarsa" : c.statusLabel}</span>
             </div>
-            <p className="fh" style={{ marginTop: 6 }}>
-              {c.typeLabel} • Nomor <b>{c.number}</b>
-              {c.classCode ? ` • Kelas ${c.classCode}` : ""}
-              {c.issuedLabel ? ` • Terbit ${c.issuedLabel}` : ""}
-              {c.validUntilLabel ? ` • Berlaku hingga ${c.validUntilLabel}` : " • Tanpa batas berlaku"}
-              {c.predicate ? ` • ${c.predicate}` : ""}
-            </p>
+            <MetaList
+              items={[
+                { icon: "award", label: c.typeLabel, value: c.number },
+                { icon: "code", label: "Kelas", value: c.classCode },
+                { icon: "cal", label: "Terbit", value: c.issuedLabel },
+                { icon: "clock", label: "Berlaku", value: c.validUntilLabel ? `hingga ${c.validUntilLabel}` : "tanpa batas" },
+                { icon: "star", label: "Predikat", value: c.predicate },
+              ]}
+            />
             {c.status === "replaced" && c.replacedBy && (
               <p className="fh" style={{ marginTop: 6 }}>
                 Digantikan oleh sertifikat <b>{c.replacedBy}</b>.

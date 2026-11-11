@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { EmptyState, PaymentPill, PortalCard } from "@/components/portal/ui";
+import { EmptyState, MetaList, PaymentPill, PortalCard } from "@/components/portal/ui";
 import { api, requireUser } from "@/lib/auth";
 import type { PaymentInfo } from "@/lib/portal-types";
 import { formatRupiah } from "@/lib/utils";
@@ -19,9 +19,15 @@ export default async function PortalPaymentsPage() {
             <li key={p.invoice}>
               <span>
                 <b style={{ display: "block", color: "var(--ink)" }}>{p.invoice}</b>
-                {p.registration && <Link href={`/portal/pendaftaran/${p.registration}`}>{p.registration}</Link>}
-                {p.dueLabel ? ` • jatuh tempo ${p.dueLabel}` : ""}
-                {p.note ? ` • ${p.note}` : ""}
+                <MetaList
+                  compact
+                  style={{ marginTop: 2 }}
+                  items={[
+                    !!p.registration && { icon: "code", value: <Link href={`/portal/pendaftaran/${p.registration}`}>{p.registration}</Link> },
+                    { icon: "cal", label: "Jatuh tempo", value: p.dueLabel },
+                    { value: p.note },
+                  ]}
+                />
               </span>
               <b>
                 {formatRupiah(p.amount)} <PaymentPill status={p.status} />

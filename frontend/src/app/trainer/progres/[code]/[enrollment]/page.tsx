@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { PortalCard } from "@/components/portal/ui";
+import { BackLink, MetaList, PortalCard } from "@/components/portal/ui";
 import ParticipantOverview from "@/components/trainer/ParticipantOverview";
 import { api, ApiRequestError } from "@/lib/auth";
 import { ENROLLMENT_STATUS, type ParticipantOverview as Overview } from "@/lib/monitoring";
@@ -22,9 +22,7 @@ export default async function TrainerParticipantProgress({ params }: PageProps<"
 
   return (
     <>
-      <Link className="bk" href={`/trainer/progres/${code}`}>
-        ← Progres kelas
-      </Link>
+      <BackLink href={`/trainer/progres/${code}`}>Kembali ke Progres kelas</BackLink>
       <PortalCard
         title={o.enrollment.name}
         action={
@@ -38,11 +36,19 @@ export default async function TrainerParticipantProgress({ params }: PageProps<"
           </span>
         }
       >
-        <p className="fh" style={{ marginTop: 4 }}>
-          {o.enrollment.email ?? ""} • {o.class.title} ({o.class.code}) • {ENROLLMENT_STATUS[o.enrollment.status] ?? o.enrollment.status}
-          {o.enrollment.finalScore != null ? ` • nilai akhir ${o.enrollment.finalScore}` : ""}
-          {o.learning.lastSeenAt ? ` • terakhir belajar ${new Date(o.learning.lastSeenAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}` : ""}
-        </p>
+        <MetaList
+          items={[
+            { icon: "mail", value: o.enrollment.email },
+            { icon: "grad", value: `${o.class.title} (${o.class.code})` },
+            { label: "Status", value: ENROLLMENT_STATUS[o.enrollment.status] ?? o.enrollment.status },
+            o.enrollment.finalScore != null && { icon: "award", label: "Nilai akhir", value: o.enrollment.finalScore },
+            !!o.learning.lastSeenAt && {
+              icon: "clock",
+              label: "Terakhir belajar",
+              value: new Date(o.learning.lastSeenAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }),
+            },
+          ]}
+        />
       </PortalCard>
       <ParticipantOverview o={o} forTrainer />
     </>

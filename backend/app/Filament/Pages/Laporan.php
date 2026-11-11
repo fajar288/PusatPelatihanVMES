@@ -2,6 +2,8 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Widgets\LaporanStats;
+use App\Services\FinanceService;
 use App\Services\ReportService;
 use BackedEnum;
 use Filament\Pages\Page;
@@ -33,6 +35,22 @@ class Laporan extends Page
         return (bool) ($u?->hasPermission('reports.view') || $u?->isAdmin());
     }
 
+    public function resetRange(): void
+    {
+        $this->from = null;
+        $this->to = null;
+    }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [LaporanStats::class];
+    }
+
+    public function getHeaderWidgetsColumns(): int|array
+    {
+        return 1;
+    }
+
     /** @return array<string, mixed> */
     protected function getViewData(): array
     {
@@ -40,7 +58,7 @@ class Laporan extends Page
         $q = array_filter(['from' => $this->from, 'to' => $this->to]);
 
         return [
-            'overview' => $reports->overview(),
+            'monthly' => array_slice(app(FinanceService::class)->revenueSummary()['by_month'], -6, null, true),
             'types' => ReportService::TYPES,
             'exportUrl' => fn (string $type, string $format) => route('admin.export', ['type' => $type, 'format' => $format] + $q),
             'preview' => collect(ReportService::TYPES)->mapWithKeys(fn ($label, $type) => [$type => $reports->toAssoc($reports->dataset($type, $this->from, $this->to))->take(8)]),

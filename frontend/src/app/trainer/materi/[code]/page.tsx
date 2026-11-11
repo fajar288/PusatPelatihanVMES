@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { PortalCard } from "@/components/portal/ui";
+import { BackLink, MetaList, PortalCard } from "@/components/portal/ui";
 import { api, ApiRequestError } from "@/lib/auth";
 import { LESSON_ICON, type TrainerLearning } from "@/lib/lms";
 import { requireTrainer } from "@/lib/trainer";
@@ -21,9 +21,7 @@ export default async function TrainerClassMaterials({ params }: PageProps<"/trai
 
   return (
     <>
-      <Link className="bk" href="/trainer/materi">
-        ← Materi
-      </Link>
+      <BackLink href="/trainer/materi">Kembali ke Materi</BackLink>
       <PortalCard
         title={`Progres belajar — ${d.class.title}`}
         action={
@@ -93,9 +91,13 @@ export default async function TrainerClassMaterials({ params }: PageProps<"/trai
       {d.courses.map((c) => (
         <PortalCard key={c.slug} title={c.title} action={<span className="jst ok">{c.lessonsCount} lesson</span>}>
           {c.description && <p className="fh">{c.description}</p>}
-          <p className="fh" style={{ marginTop: 4 }}>
-            Akses: {c.availableBeforeClass ? "sebelum kelas mulai" : "sejak kelas mulai"} • setelah kelas: {c.accessDaysAfter === null ? "selamanya" : `${c.accessDaysAfter} hari`}
-          </p>
+          <MetaList
+            compact
+            items={[
+              { icon: "clock", label: "Akses dibuka", value: c.availableBeforeClass ? "sebelum kelas mulai" : "sejak kelas mulai" },
+              { label: "Setelah kelas", value: c.accessDaysAfter === null ? "selamanya" : `${c.accessDaysAfter} hari` },
+            ]}
+          />
           {c.modules.map((m, i) => (
             <div key={m.id} style={{ marginTop: 14 }}>
               <b>
@@ -110,12 +112,16 @@ export default async function TrainerClassMaterials({ params }: PageProps<"/trai
                       </span>
                       <span className="lles-t">
                         <b>{l.title}</b>
-                        <small>
-                          {l.typeLabel}
-                          {l.durationMinutes ? ` • ${l.durationMinutes} menit` : ""}
-                          {!l.isRequired ? " • opsional" : ""}
-                          {l.resources.length ? ` • ${l.resources.length} berkas` : ""}
-                        </small>
+                        <MetaList
+                          compact
+                          style={{ marginTop: 2 }}
+                          items={[
+                            { value: l.typeLabel },
+                            !!l.durationMinutes && { icon: "clock", value: `${l.durationMinutes} menit` },
+                            !l.isRequired && { value: "opsional" },
+                            !!l.resources.length && { value: `${l.resources.length} berkas` },
+                          ]}
+                        />
                       </span>
                       {l.resources.some((r) => r.type === "file") && (
                         <span style={{ display: "flex", gap: 8 }}>
