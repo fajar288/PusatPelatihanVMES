@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Trainers;
 
+use App\Filament\NavigationGroup;
 use App\Filament\Resources\Trainers\Pages\CreateTrainer;
 use App\Filament\Resources\Trainers\Pages\EditTrainer;
 use App\Filament\Resources\Trainers\Pages\ListTrainers;
@@ -13,12 +14,17 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class TrainerResource extends Resource
 {
     protected static ?string $model = Trainer::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedIdentification;
+
+    protected static string|UnitEnum|null $navigationGroup = NavigationGroup::TmsProgram;
+
+    protected static ?int $navigationSort = 4;
 
     protected static ?string $navigationLabel = 'Trainer';
 

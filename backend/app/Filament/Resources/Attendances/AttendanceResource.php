@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Attendances;
 
+use App\Filament\NavigationGroup;
 use App\Filament\Resources\Attendances\Pages\CreateAttendance;
 use App\Filament\Resources\Attendances\Pages\EditAttendance;
 use App\Filament\Resources\Attendances\Pages\ListAttendances;
@@ -13,12 +14,17 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class AttendanceResource extends Resource
 {
     protected static ?string $model = Attendance::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCheckBadge;
+
+    protected static string|UnitEnum|null $navigationGroup = NavigationGroup::TmsDelivery;
+
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $navigationLabel = 'Kehadiran';
 

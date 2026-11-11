@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\NavigationGroup;
 use App\Filament\Widgets\Executive\AtRiskTable;
 use App\Filament\Widgets\Executive\CertificateStatusChart;
 use App\Filament\Widgets\Executive\ClassStatusChart;
@@ -28,6 +29,7 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
+use UnitEnum;
 
 /**
  * /admin/dashboard-eksekutif — Executive dashboard manajemen (PRD §5.13, peran Management "Executive Dashboard").
@@ -48,7 +50,9 @@ class ExecutiveDashboard extends Dashboard
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPresentationChartBar;
 
-    protected static ?int $navigationSort = -1;
+    protected static string|UnitEnum|null $navigationGroup = NavigationGroup::Analytics;
+
+    protected static ?int $navigationSort = 1;
 
     public static function canAccess(): bool
     {

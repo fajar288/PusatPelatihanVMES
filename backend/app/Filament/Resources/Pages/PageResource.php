@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Pages;
 
+use App\Filament\NavigationGroup;
 use App\Filament\Resources\Pages\Pages\CreatePage;
 use App\Filament\Resources\Pages\Pages\EditPage;
 use App\Filament\Resources\Pages\Pages\ListPages;
@@ -13,12 +14,23 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class PageResource extends Resource
 {
     protected static ?string $model = Page::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocument;
+
+    protected static string|UnitEnum|null $navigationGroup = NavigationGroup::LandingPage;
+
+    protected static ?int $navigationSort = 2;
+
+    protected static ?string $navigationLabel = 'Halaman';
+
+    protected static ?string $modelLabel = 'Halaman';
+
+    protected static ?string $pluralModelLabel = 'Halaman';
 
     public static function form(Schema $schema): Schema
     {

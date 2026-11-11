@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Payments;
 
 use App\Enums\RegistrationStatus;
+use App\Filament\NavigationGroup;
 use App\Filament\Resources\Payments\Pages\ListPayments;
 use App\Models\AuditLog;
 use App\Models\Payment;
@@ -17,6 +18,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use UnitEnum;
 
 /** Verifikasi pembayaran oleh finance (PRD §5.11): verifikasi → pendaftaran terkonfirmasi; tolak → kembali menunggu pembayaran. */
 class PaymentResource extends Resource
@@ -25,13 +27,15 @@ class PaymentResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBanknotes;
 
+    protected static string|UnitEnum|null $navigationGroup = NavigationGroup::TmsRegistration;
+
+    protected static ?int $navigationSort = 3;
+
     protected static ?string $navigationLabel = 'Pembayaran';
 
     protected static ?string $modelLabel = 'Pembayaran';
 
     protected static ?string $pluralModelLabel = 'Pembayaran';
-
-    protected static ?int $navigationSort = 2;
 
     public static function table(Table $table): Table
     {

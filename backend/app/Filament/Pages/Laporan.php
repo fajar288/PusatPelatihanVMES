@@ -2,25 +2,29 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\NavigationGroup;
 use App\Filament\Widgets\LaporanStats;
 use App\Services\FinanceService;
 use App\Services\ReportService;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
+use UnitEnum;
 
 /** /admin/laporan — ringkasan operasional & pendapatan + ekspor CSV/XLSX (task Phase 2 "Laporan operasional + ekspor"). */
 class Laporan extends Page
 {
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChartBar;
 
+    protected static string|UnitEnum|null $navigationGroup = NavigationGroup::Analytics;
+
+    protected static ?int $navigationSort = 2;
+
     protected static ?string $navigationLabel = 'Laporan';
 
     protected static ?string $title = 'Laporan';
 
     protected static ?string $slug = 'laporan';
-
-    protected static ?int $navigationSort = 90;
 
     protected string $view = 'filament.pages.laporan';
 

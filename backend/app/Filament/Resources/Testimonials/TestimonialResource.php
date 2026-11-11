@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Testimonials;
 
+use App\Filament\NavigationGroup;
 use App\Filament\Resources\Testimonials\Pages\CreateTestimonial;
 use App\Filament\Resources\Testimonials\Pages\EditTestimonial;
 use App\Filament\Resources\Testimonials\Pages\ListTestimonials;
@@ -13,12 +14,23 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class TestimonialResource extends Resource
 {
     protected static ?string $model = Testimonial::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChatBubbleLeftRight;
+
+    protected static string|UnitEnum|null $navigationGroup = NavigationGroup::LandingPage;
+
+    protected static ?int $navigationSort = 5;
+
+    protected static ?string $navigationLabel = 'Testimoni';
+
+    protected static ?string $modelLabel = 'Testimoni';
+
+    protected static ?string $pluralModelLabel = 'Testimoni';
 
     public static function form(Schema $schema): Schema
     {

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\AuditLogs;
 
+use App\Filament\NavigationGroup;
 use App\Filament\Resources\AuditLogs\Pages\ListAuditLogs;
 use App\Models\AuditLog;
 use BackedEnum;
@@ -10,6 +11,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use UnitEnum;
 
 /** Jejak audit (hanya baca). */
 class AuditLogResource extends Resource
@@ -18,13 +20,15 @@ class AuditLogResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedShieldCheck;
 
+    protected static string|UnitEnum|null $navigationGroup = NavigationGroup::System;
+
+    protected static ?int $navigationSort = 2;
+
     protected static ?string $navigationLabel = 'Audit log';
 
     protected static ?string $modelLabel = 'Audit log';
 
     protected static ?string $pluralModelLabel = 'Audit log';
-
-    protected static ?int $navigationSort = 99;
 
     public static function canCreate(): bool
     {

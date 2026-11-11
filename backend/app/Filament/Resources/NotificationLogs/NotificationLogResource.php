@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\NotificationLogs;
 
+use App\Filament\NavigationGroup;
 use App\Filament\Resources\NotificationLogs\Pages\ListNotificationLogs;
 use App\Models\NotificationLog;
 use App\Models\NotificationTemplate;
@@ -22,7 +23,7 @@ class NotificationLogResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedInboxStack;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Notifikasi';
+    protected static string|UnitEnum|null $navigationGroup = NavigationGroup::Notifications;
 
     protected static ?int $navigationSort = 2;
 

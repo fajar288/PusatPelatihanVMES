@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\SiteSettings;
 
+use App\Filament\NavigationGroup;
 use App\Filament\Resources\SiteSettings\Pages\CreateSiteSetting;
 use App\Filament\Resources\SiteSettings\Pages\EditSiteSetting;
 use App\Filament\Resources\SiteSettings\Pages\ListSiteSettings;
@@ -13,12 +14,23 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class SiteSettingResource extends Resource
 {
     protected static ?string $model = SiteSetting::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCog6Tooth;
+
+    protected static string|UnitEnum|null $navigationGroup = NavigationGroup::LandingPage;
+
+    protected static ?int $navigationSort = 8;
+
+    protected static ?string $navigationLabel = 'Pengaturan situs';
+
+    protected static ?string $modelLabel = 'Pengaturan situs';
+
+    protected static ?string $pluralModelLabel = 'Pengaturan situs';
 
     public static function form(Schema $schema): Schema
     {
