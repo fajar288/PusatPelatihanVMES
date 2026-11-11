@@ -214,6 +214,7 @@ class MonitoringService
         $a->recalculate();
         $a->fill(['status' => 'validated', 'validated_at' => now(), 'validated_by' => $actor->id, 'is_locked' => true])->save();
         AuditLog::record('assessment.validated', $a, ['status' => 'draft'], ['status' => 'validated', 'locked' => true, 'total_percent' => $a->total_percent, 'is_competent' => $a->is_competent], $actor);
+        app(NotificationEvents::class)->assessmentValidated($a);
 
         return $a->refresh()->load(['rubric.criteria', 'scores']);
     }

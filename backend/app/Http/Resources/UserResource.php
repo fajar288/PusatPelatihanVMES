@@ -21,6 +21,7 @@ class UserResource extends JsonResource
             'role' => $this->role,
             'roles' => $this->roleSlugs(),
             'isAdmin' => $this->isAdmin(),
+            'unreadNotifications' => $this->unreadNotifications()->count(),
             'member' => $m ? [
                 'memberNumber' => $m->member_number,
                 'status' => $m->status,

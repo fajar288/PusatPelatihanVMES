@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\ContentController;
 use App\Http\Controllers\Api\V1\HomeController;
 use App\Http\Controllers\Api\V1\LearningController;
 use App\Http\Controllers\Api\V1\MeController;
+use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\PackageController;
 use App\Http\Controllers\Api\V1\PostController;
 use App\Http\Controllers\Api\V1\RegistrationController;
@@ -84,7 +85,15 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
         Route::post('/me/registrations/{registration}/cancel', [MeController::class, 'cancel'])->name('me.registration.cancel');
         Route::post('/me/registrations/{registration}/payment-proof', [MeController::class, 'paymentProof'])->name('me.registration.proof');
         Route::get('/me/payments', [MeController::class, 'payments'])->name('me.payments');
-        Route::get('/me/notifications', [MeController::class, 'notifications'])->name('me.notifications');
+        // Notifikasi aplikasi, preferensi & web push (PRD §5.12)
+        Route::get('/me/notifications', [NotificationController::class, 'index'])->name('me.notifications');
+        Route::post('/me/notifications/read-all', [NotificationController::class, 'readAll'])->name('me.notifications.read_all');
+        Route::post('/me/notifications/{id}/read', [NotificationController::class, 'read'])->whereUuid('id')->name('me.notifications.read');
+        Route::get('/me/notification-settings', [NotificationController::class, 'settings'])->name('me.notification_settings');
+        Route::put('/me/notification-settings', [NotificationController::class, 'updateSettings'])->name('me.notification_settings.update');
+        Route::post('/me/push-subscriptions', [NotificationController::class, 'subscribe'])->middleware('throttle:push-subscribe')->name('me.push.subscribe');
+        Route::delete('/me/push-subscriptions', [NotificationController::class, 'unsubscribe'])->name('me.push.unsubscribe');
+        Route::post('/me/push-subscriptions/test', [NotificationController::class, 'test'])->middleware('throttle:push-test')->name('me.push.test');
         Route::get('/me/enrollments', [MeController::class, 'enrollments'])->name('me.enrollments');
         Route::get('/me/progress', [MeController::class, 'progress'])->name('me.progress');
         // Sertifikat & dashboard alumni (PRD §5.10, §5.6)

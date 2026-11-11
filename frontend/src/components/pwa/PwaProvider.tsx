@@ -3,6 +3,12 @@
 import { useOffline } from "next/offline";
 import { useEffect, useState } from "react";
 
+declare global {
+  interface Window {
+    __pptiSwReload?: boolean;
+  }
+}
+
 /** Daftarkan service worker hanya di build produksi (dev: HMR & cache tidak saling ganggu) atau bila dipaksa lewat env. */
 const SW_ENABLED = process.env.NODE_ENV === "production" || process.env.NEXT_PUBLIC_ENABLE_SW === "1";
 
@@ -18,8 +24,10 @@ export default function PwaProvider() {
     if (!SW_ENABLED || !("serviceWorker" in navigator)) return;
     let reloading = false;
     let interval: number | undefined;
+    // Reload hanya setelah pengguna memilih "Muat ulang" (SKIP_WAITING); SW pertama kali (clients.claim) juga memicu
+    // controllerchange dan tidak boleh me-reload halaman.
     const onControllerChange = () => {
-      if (reloading) return;
+      if (reloading || !window.__pptiSwReload) return;
       reloading = true;
       window.location.reload();
     };
@@ -56,7 +64,13 @@ export default function PwaProvider() {
       {waiting && !offline && (
         <div className="pwa-bar" role="status" aria-live="polite">
           <span>Versi baru situs tersedia.</span>
-          <button type="button" onClick={() => waiting.postMessage("SKIP_WAITING")}>
+          <button
+            type="button"
+            onClick={() => {
+              window.__pptiSwReload = true;
+              waiting.postMessage("SKIP_WAITING");
+            }}
+          >
             Muat ulang
           </button>
           <button type="button" className="ghost" onClick={() => setWaiting(null)} aria-label="Tutup">

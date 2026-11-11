@@ -74,6 +74,16 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasOne(Member::class);
     }
 
+    public function pushSubscriptions(): HasMany
+    {
+        return $this->hasMany(PushSubscription::class);
+    }
+
+    public function notificationPreferences(): HasMany
+    {
+        return $this->hasMany(NotificationPreference::class);
+    }
+
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class, 'user_roles')->withPivot('created_at');

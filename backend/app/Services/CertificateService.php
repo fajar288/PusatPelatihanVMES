@@ -231,6 +231,9 @@ class CertificateService
             if ($notify && $c->recipient_email) {
                 Notification::route('mail', [$c->recipient_email => $c->recipient_name])->notify(new CertificateIssued($c));
             }
+            if ($notify) {
+                app(NotificationEvents::class)->certificateIssued($c);
+            }
             $e = $c->enrollment;
             if ($e && $e->member) {
                 app(MemberService::class)->syncStatus($e->member);

@@ -9,6 +9,7 @@ use App\Models\TrainingSchedule;
 use App\Models\User;
 use App\Notifications\RegistrationReceived;
 use App\Notifications\RegistrationStatusChanged;
+use App\Notifications\SystemNotification;
 use App\Services\RegistrationService;
 use Carbon\Carbon;
 use Database\Seeders\CmsSeeder;
@@ -129,7 +130,8 @@ class RegistrationFlowTest extends TestCase
 
         // sudah terkonfirmasi → pendaftar tidak bisa batal sendiri
         $this->actingAs($member, 'sanctum')->postJson("/api/v1/me/registrations/{$reg->registration_number}/cancel")->assertForbidden();
-        $this->actingAs($member, 'sanctum')->getJson('/api/v1/me/notifications')->assertOk()->assertJsonFragment(['action' => 'registration.status_changed']);
+        // notifikasi aplikasi ke akun member (PRD §5.12)
+        Notification::assertSentTo($member, SystemNotification::class, fn (SystemNotification $n) => $n->key === 'registration.status_changed' && str_contains($n->title, 'Terkonfirmasi'));
     }
 
     public function test_owner_can_cancel_pending_registration(): void

@@ -4,14 +4,12 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Enums\RegistrationStatus;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\AuditLogResource;
 use App\Http\Resources\EnrollmentResource;
 use App\Http\Resources\PaymentResource;
 use App\Http\Resources\RegistrationResource;
 use App\Http\Resources\UserResource;
 use App\Models\AuditLog;
 use App\Models\Enrollment;
-use App\Models\Member;
 use App\Models\Payment;
 use App\Models\Registration;
 use App\Services\MemberService;
@@ -135,18 +133,5 @@ class MeController extends Controller
             ->map(fn (Enrollment $e) => $monitoring->overview($e, true))->values();
 
         return response()->json(['data' => $items]);
-    }
-
-    /** GET /me/notifications — riwayat peristiwa akun (audit) sebagai notifikasi aplikasi sederhana. */
-    public function notifications(Request $request): AnonymousResourceCollection
-    {
-        $user = $request->user();
-        $regIds = Registration::query()->ownedBy($user)->pluck('id');
-        $logs = AuditLog::query()
-            ->where(fn ($q) => $q->where(fn ($w) => $w->where('auditable_type', Registration::class)->whereIn('auditable_id', $regIds))
-                ->orWhere(fn ($w) => $w->where('auditable_type', Member::class)->where('auditable_id', $user->member?->id ?? 0)))
-            ->latest('created_at')->limit(50)->get();
-
-        return AuditLogResource::collection($logs);
     }
 }

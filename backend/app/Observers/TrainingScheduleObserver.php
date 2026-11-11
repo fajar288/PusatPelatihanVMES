@@ -6,6 +6,7 @@ use App\Enums\RegistrationStatus;
 use App\Models\ScheduleChange;
 use App\Models\TrainingSchedule;
 use App\Notifications\ScheduleChanged;
+use App\Services\NotificationEvents;
 
 /**
  * Perubahan jadwal yang berdampak ke peserta (tanggal, jam, lokasi, metode, status) dicatat ke `schedule_changes`
@@ -44,6 +45,8 @@ class TrainingScheduleObserver
             $r->notify(new ScheduleChanged($schedule, $change));
         }
         $change->update(['notified_count' => $registrations->count(), 'notified_at' => now()]);
+        // notifikasi aplikasi/push untuk akun pendaftar & peserta (PRD §5.12)
+        app(NotificationEvents::class)->scheduleChanged($schedule, $change);
     }
 
     private function plain(mixed $v): mixed

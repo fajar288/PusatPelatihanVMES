@@ -247,6 +247,7 @@ class LmsService
         $before = $sub->only(['score', 'feedback', 'status']);
         $sub->update(['score' => $status === 'graded' ? $score : null, 'feedback' => $feedback, 'status' => $status, 'graded_by' => $grader->id, 'graded_at' => now()]);
         AuditLog::record('assignment.graded', $sub, $before, $sub->only(['score', 'feedback', 'status']), $grader);
+        app(NotificationEvents::class)->assignmentGraded($sub);
 
         return $sub->refresh();
     }
