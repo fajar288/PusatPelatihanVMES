@@ -24,7 +24,7 @@ export default async function PortalLayout({ children }: LayoutProps<"/portal">)
         </div>
       </section>
       <div className="wrap pgrid">
-        <PortalNav name={user.name} memberNumber={user.member?.memberNumber} isTrainer={user.roles.some((r) => r === "trainer" || r === "assessor")} />
+        <PortalNav name={user.name} memberNumber={user.member?.memberNumber} isTrainer={user.roles.some((r) => r === "trainer" || r === "assessor")} unread={user.unreadNotifications ?? 0} />
         <section className="pmain">
           <InstallPrompt />
           {children}

@@ -11,8 +11,9 @@
  * - Permintaan lintas origin (API Laravel, CDN, YouTube) tidak disentuh.
  *
  * Naikkan VERSION saat strategi berubah; cache versi lama dihapus saat activate.
+ * v2: notifikasi push (push / notificationclick).
  */
-const VERSION = "v1";
+const VERSION = "v2";
 const STATIC_CACHE = `ppti-static-${VERSION}`;
 const PAGE_CACHE = `ppti-pages-${VERSION}`;
 const IMAGE_CACHE = `ppti-images-${VERSION}`;
@@ -112,6 +113,44 @@ async function navigation(event, url) {
     return offlinePage();
   }
 }
+
+// ---- Web Push (PRD §5.12): payload JSON {title, body, url, tag, icon, badge} dari backend (SystemNotification::toWebPush)
+self.addEventListener("push", (event) => {
+  let data = {};
+  try {
+    data = event.data ? event.data.json() : {};
+  } catch {
+    data = { body: event.data ? event.data.text() : "" };
+  }
+  const title = data.title || "PPTI VMES";
+  event.waitUntil(
+    self.registration.showNotification(title, {
+      body: data.body || "",
+      icon: data.icon || "/icons/icon-192.png",
+      badge: data.badge || "/icons/shortcut-96.png",
+      tag: data.tag || undefined,
+      renotify: Boolean(data.tag),
+      lang: "id",
+      data: { url: typeof data.url === "string" && data.url.startsWith("/") ? data.url : "/portal/notifikasi" },
+    })
+  );
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const target = new URL(event.notification.data?.url || "/portal/notifikasi", self.location.origin).href;
+  event.waitUntil(
+    (async () => {
+      const windows = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
+      const same = windows.find((w) => new URL(w.url).origin === self.location.origin);
+      if (same) {
+        await same.focus();
+        return same.navigate(target);
+      }
+      return self.clients.openWindow(target);
+    })()
+  );
+});
 
 self.addEventListener("fetch", (event) => {
   const { request } = event;

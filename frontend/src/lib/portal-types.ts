@@ -24,6 +24,7 @@ export type PortalUser = {
   role: string;
   roles: string[];
   isAdmin: boolean;
+  unreadNotifications?: number;
   member: MemberProfile | null;
 };
 
@@ -80,15 +81,24 @@ export type RegistrationInfo = {
   payments?: PaymentInfo[];
 };
 
-export type AuditEvent = {
-  id: number;
-  action: string;
-  actor: string | null;
-  subject: string | null;
-  subjectId: number | null;
-  before: Record<string, unknown> | null;
-  after: Record<string, unknown> | null;
-  at: string;
+/** Notifikasi aplikasi (GET /me/notifications, PRD §5.12). `url` = path portal tujuan. */
+export type AppNotification = {
+  id: string;
+  key: string;
+  category: string;
+  title: string;
+  body: string;
+  url: string | null;
+  read: boolean;
+  createdAt: string;
+};
+
+export type NotificationCategoryPref = { key: string; label: string; description: string; mail: boolean; push: boolean };
+
+export type NotificationSettings = {
+  categories: NotificationCategoryPref[];
+  push: { available: boolean; publicKey: string | null; devices: number };
+  emailEnabled: boolean;
 };
 
 export type EnrollmentInfo = {
@@ -137,21 +147,3 @@ export const PAYMENT_PILL: Record<PaymentInfo["status"], { label: string; cls: "
   refunded: { label: "Dikembalikan", cls: "no" },
 };
 
-/** Teks notifikasi aplikasi dari aksi audit. */
-export function describeEvent(e: AuditEvent): string {
-  const after = (e.after ?? {}) as Record<string, string>;
-  switch (e.action) {
-    case "registration.created":
-      return `Pendaftaran ${after.number ?? ""} diterima dan menunggu diproses.`;
-    case "registration.status_changed":
-      return `Status pendaftaran berubah menjadi "${STATUS_PILL[after.status as RegistrationStatus]?.label ?? after.status}"${after.note ? `: ${after.note}` : "."}`;
-    case "payment.proof_uploaded":
-      return "Bukti pembayaran diunggah dan menunggu verifikasi.";
-    case "member.created":
-      return `Akun member ${after.member_number ?? ""} dibuat.`;
-    case "member.profile_updated":
-      return "Profil diperbarui.";
-    default:
-      return e.action;
-  }
-}

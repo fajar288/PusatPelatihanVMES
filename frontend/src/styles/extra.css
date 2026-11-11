@@ -193,3 +193,34 @@
 .pwa-x{width:32px;height:32px;border:0;border-radius:50%;background:transparent;color:var(--mut);font-size:22px;line-height:1;cursor:pointer}.pwa-x:hover{background:var(--ln)}
 @media(max-width:640px){.pwa-inst{flex-wrap:wrap}.pwa-inst-act{width:100%;justify-content:flex-end}}
 @media(max-width:640px){.pwa-bar{bottom:84px;font-size:13px;padding:10px 14px}}
+/* Notifikasi (PRD §5.12): daftar, tab, badge, pengaturan, push */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.pnav-badge{margin-left:auto;min-width:22px;height:22px;padding:0 7px;border-radius:99px;background:var(--o);color:#fff;font-size:12px;font-weight:800;display:inline-grid;place-items:center;line-height:1}
+.nbtn-sm{padding:8px 14px;font-size:13px;border-width:1px;cursor:pointer;font-family:inherit}
+.ntabs{display:flex;gap:6px;margin-top:14px;border-bottom:1px solid var(--ln)}
+.ntabs a{padding:8px 14px;font-weight:700;font-size:14px;color:var(--mut);border-bottom:3px solid transparent;margin-bottom:-1px}
+.ntabs a.on{color:var(--p);border-bottom-color:var(--l)}
+.pnotif li{padding:0;overflow:hidden}
+.pnotif li.unread{border-color:rgba(107,178,24,.6);background:linear-gradient(90deg,rgba(107,178,24,.08),#fff 40%)}
+.nitem{display:grid;gap:4px;width:100%;padding:12px 14px;border:0;background:transparent;text-align:left;font:inherit;color:inherit;cursor:pointer}
+.nitem:hover{background:var(--bg)}
+.nitem b{font-size:15px;line-height:1.4}.nitem p{font-size:14px;color:var(--mut)}
+.pnotif li.unread .nitem b{color:var(--p)}
+.nmeta{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.ncat{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--p);background:rgba(0,75,35,.08);padding:3px 8px;border-radius:99px}
+.ndot{width:9px;height:9px;border-radius:50%;background:var(--o);margin-left:auto}
+.npg{display:flex;justify-content:space-between;align-items:center;margin-top:16px;font-size:14px;color:var(--mut)}.npg a{font-weight:700;color:var(--p)}
+.npush{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-top:14px;padding:14px 16px;border:1px solid var(--ln);border-radius:16px;background:var(--bg)}
+.npush b{display:block;font-size:15px}.npush p{font-size:14px;color:var(--mut)}
+.npush .npush-ok{color:var(--p);font-weight:700}.npush .npush-err{color:#b34200;font-weight:700}
+.npush-act{display:flex;gap:8px;flex-wrap:wrap}.npush-act .btn{padding:9px 16px;font-size:14px;cursor:pointer;font-family:inherit;border:0}.npush-act .btn.bl{border:2px solid var(--p)}
+.nset-form{margin-top:18px;display:grid;gap:14px;justify-items:start}
+.nset{width:100%;border:1px solid var(--ln);border-radius:16px;overflow:hidden}
+.nset-h,.nset-r{display:grid;grid-template-columns:minmax(0,1fr) 72px 72px;gap:8px;align-items:center;padding:12px 16px}
+.nset-h{background:var(--bg);font-size:13px;font-weight:800;color:var(--mut)}.nset-h span+span{text-align:center}
+.nset-r+.nset-r{border-top:1px solid var(--ln)}
+.nset-r b{display:block;font-size:14.5px}.nset-r small{display:block;font-size:13px;color:var(--mut);line-height:1.45}
+.nset-c{display:grid;place-items:center;cursor:pointer}.nset-c input{width:20px;height:20px;accent-color:var(--p);cursor:pointer}
+.nset-note{font-size:13px;color:var(--mut)}
+.nset-form>.btn{border:0;cursor:pointer;font-family:inherit}
+@media(max-width:640px){.nset-h,.nset-r{grid-template-columns:minmax(0,1fr) 52px 52px;padding:10px 12px}}

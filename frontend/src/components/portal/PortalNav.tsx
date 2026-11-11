@@ -23,7 +23,7 @@ const ITEMS: { href: string; label: string; icon: IconName }[] = [
 ];
 
 /** Navigasi samping portal member (PRD §5.6) dengan tautan aktif + tombol keluar. */
-export default function PortalNav({ name, memberNumber, isTrainer }: { name: string; memberNumber?: string | null; isTrainer?: boolean }) {
+export default function PortalNav({ name, memberNumber, isTrainer, unread = 0 }: { name: string; memberNumber?: string | null; isTrainer?: boolean; unread?: number }) {
   const path = usePathname();
   return (
     <aside className="pnav">
@@ -43,6 +43,11 @@ export default function PortalNav({ name, memberNumber, isTrainer }: { name: str
             <Link key={it.href} href={it.href} className={active ? "on" : undefined} aria-current={active ? "page" : undefined}>
               <Icon name={it.icon} />
               {it.label}
+              {it.href === "/portal/notifikasi" && unread > 0 && (
+                <span className="pnav-badge" aria-label={`${unread} belum dibaca`}>
+                  {unread > 99 ? "99+" : unread}
+                </span>
+              )}
             </Link>
           );
         })}
