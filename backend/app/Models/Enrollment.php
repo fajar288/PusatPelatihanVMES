@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\MemberService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -63,6 +64,30 @@ class Enrollment extends Model
     public function assessment(): HasOne
     {
         return $this->hasOne(CompetencyAssessment::class);
+    }
+
+    public function certificates(): HasMany
+    {
+        return $this->hasMany(Certificate::class)->latest('id');
+    }
+
+    /** Sertifikat aktif (bukan dicabut/diganti) — satu per enrollment. */
+    public function certificate(): HasOne
+    {
+        return $this->hasOne(Certificate::class)->whereIn('status', ['draft', 'pending_validation', 'issued'])->latestOfMany();
+    }
+
+    /** Status member mengikuti enrollment (registered → active → alumni), lihat MemberService::syncStatus. */
+    protected static function booted(): void
+    {
+        static::saved(function (Enrollment $e): void {
+            if ($e->member_id && ($e->wasRecentlyCreated || $e->wasChanged(['status', 'member_id']))) {
+                $member = $e->member;
+                if ($member) {
+                    app(MemberService::class)->syncStatus($member);
+                }
+            }
+        });
     }
 
     /** Enrollment milik akun: lewat pendaftarannya, member-nya, atau email peserta (kolektif). */

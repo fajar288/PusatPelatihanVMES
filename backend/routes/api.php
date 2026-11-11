@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\CertificateController;
 use App\Http\Controllers\Api\V1\ContentController;
 use App\Http\Controllers\Api\V1\HomeController;
 use App\Http\Controllers\Api\V1\LearningController;
@@ -60,6 +61,9 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
     Route::get('/settings', [ContentController::class, 'settings'])->name('settings');
     Route::get('/pages/{slug}', [ContentController::class, 'page'])->name('pages.show');
 
+    // Verifikasi sertifikat publik (PRD §5.10, AC-10)
+    Route::get('/verify/{number}', [CertificateController::class, 'verify'])->middleware('throttle:60,1')->where('number', '.+')->name('certificates.verify');
+
     // ---- Pendaftaran publik (tamu atau member) & autentikasi (Phase 1E) ----
     Route::post('/registrations', [RegistrationController::class, 'store'])->middleware('throttle:10,1')->name('registrations.store');
     Route::prefix('auth')->name('auth.')->middleware('throttle:20,1')->group(function (): void {
@@ -83,6 +87,10 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
         Route::get('/me/notifications', [MeController::class, 'notifications'])->name('me.notifications');
         Route::get('/me/enrollments', [MeController::class, 'enrollments'])->name('me.enrollments');
         Route::get('/me/progress', [MeController::class, 'progress'])->name('me.progress');
+        // Sertifikat & dashboard alumni (PRD §5.10, §5.6)
+        Route::get('/me/certificates', [CertificateController::class, 'index'])->name('me.certificates');
+        Route::get('/me/certificates/{certificate}', [CertificateController::class, 'show'])->name('me.certificate');
+        Route::get('/me/certificates/{certificate}/pdf', [CertificateController::class, 'pdf'])->name('me.certificate.pdf');
 
         // LMS peserta (PRD §5.8) — My Learning, Assignments, Results, forum, berkas materi
         Route::prefix('me/learning')->name('me.learning.')->group(function (): void {

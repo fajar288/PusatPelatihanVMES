@@ -33,6 +33,8 @@ class RolesSeeder extends Seeder
         'reports.view' => ['Lihat laporan', 'reports', ['administrator', 'management', 'finance']],
         'lms.manage' => ['Kelola materi LMS (course, modul, lesson, kuis, tugas)', 'lms', ['administrator', 'management', 'training_coordinator']],
         'monitoring.manage' => ['Kelola logbook, rubrik & penilaian kompetensi (termasuk buka kunci)', 'monitoring', ['administrator', 'management', 'training_coordinator']],
+        'certificates.manage' => ['Kelola template & draf sertifikat, tetapkan kelulusan', 'certificates', ['administrator', 'management', 'training_coordinator']],
+        'certificates.issue' => ['Terbitkan, cabut & ganti sertifikat (pejabat berwenang)', 'certificates', ['administrator', 'management']],
         'portal.access' => ['Akses portal member', 'portal', ['student', 'alumni']],
         'trainer.portal' => ['Akses portal trainer', 'portal', ['trainer', 'assessor']],
     ];

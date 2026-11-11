@@ -26,6 +26,11 @@ class EnrollmentResource extends JsonResource
             'completedAt' => $this->completed_at?->toIso8601String(),
             'finalScore' => $this->final_score !== null ? (float) $this->final_score : null,
             'attendancePercent' => $this->attendancePercent(),
+            'certificate' => $this->relationLoaded('certificate') && $this->certificate && $this->certificate->status !== 'draft' && $this->certificate->status !== 'pending_validation' ? [
+                'number' => $this->certificate->number, 'status' => $this->certificate->status, 'statusLabel' => $this->certificate->statusLabel(),
+                'typeLabel' => $this->certificate->typeLabel(), 'issuedLabel' => $this->certificate->issued_at ? IdDate::long($this->certificate->issued_at) : null,
+                'downloadable' => $this->certificate->isIssued(), 'verificationUrl' => $this->certificate->verificationUrl(),
+            ] : null,
             'schedule' => $s ? [
                 'code' => $s->code, 'title' => $s->title ?? $s->package?->title, 'packageSlug' => $s->package?->slug,
                 'startDate' => $s->start_date->toDateString(), 'endDate' => $s->end_date->toDateString(), 'dateLabel' => IdDate::long($s->start_date),

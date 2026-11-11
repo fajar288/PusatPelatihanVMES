@@ -1,4 +1,5 @@
 // Bentuk data API portal member (/api/v1/me/*, /auth/*, /registrations) — lihat backend App\Http\Resources\{User,Registration,Payment,AuditLog}Resource.
+import type { EnrollmentCertificate } from "./certificates";
 
 export type MemberProfile = {
   memberNumber: string;
@@ -114,6 +115,7 @@ export type EnrollmentInfo = {
     trainers: { name: string; role: string }[];
   } | null;
   sessions: { no: number; date: string; dateLabel: string; topic: string | null; time: string | null; attendance: string | null; attendanceLabel: string | null }[];
+  certificate?: EnrollmentCertificate | null;
 };
 
 /** Label & warna pill status (dipetakan ke .jst ok|wn|no tema). */
