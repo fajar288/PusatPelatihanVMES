@@ -107,9 +107,17 @@ class CertificateResource extends Resource
                         }
                         $check = app(CertificateService::class)->eligibility($e, $get('type') ?: null);
                         $rows = collect($check['evaluation']['checks'])->map(fn ($c) => ($c['ok'] ? '✅' : ($c['required'] ? '❌' : '⚪')).' '.e($c['label']).' — '.e($c['detail']))->implode('<br>');
-                        $head = $check['eligible'] ? '<b class="text-success-600">Memenuhi syarat.</b>' : '<b class="text-danger-600">Belum memenuhi syarat:</b> '.e(implode(' ', $check['reasons']));
+                        // Utilitas text-success-600/text-danger-600 tidak ada di CSS Filament terkompilasi → pakai komponen badge.
+                        $head = Blade::render(
+                            '<div style="display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;margin-bottom:.25rem"><x-filament::badge :color="$color">{{ $label }}</x-filament::badge>@if ($reasons)<span>{{ $reasons }}</span>@endif</div>',
+                            [
+                                'color' => $check['eligible'] ? 'success' : 'danger',
+                                'label' => $check['eligible'] ? 'Memenuhi syarat' : 'Belum memenuhi syarat',
+                                'reasons' => $check['eligible'] ? '' : implode(' ', $check['reasons']),
+                            ],
+                        );
 
-                        return new HtmlString($head.'<br>'.$rows);
+                        return new HtmlString($head.$rows);
                     }),
                 Toggle::make('force')->label('Paksa buat draf meski belum memenuhi syarat (admin)')->live()->columnSpan(2),
                 TextInput::make('force_reason')->label('Alasan')->visible(fn (Get $get) => (bool) $get('force'))->required(fn (Get $get) => (bool) $get('force'))->maxLength(255),
