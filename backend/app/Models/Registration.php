@@ -51,6 +51,12 @@ class Registration extends Model
         return $this->belongsTo(TrainingPackage::class, 'package_id');
     }
 
+    /** Organisasi sponsor untuk pendaftaran kolektif (Roadmap 5). Kolom `company` hanya isian, bukan hak akses. */
+    public function organization(): BelongsTo
+    {
+        return $this->belongsTo(Organization::class);
+    }
+
     public function member(): BelongsTo
     {
         return $this->belongsTo(Member::class);

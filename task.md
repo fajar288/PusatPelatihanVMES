@@ -333,10 +333,67 @@ Legenda: `[ ]` belum · `[~]` sedang · `[x]` selesai. Prioritas mengikuti roadm
 - [x] PWA: manifest + ikon (maskable, apple-touch), service worker (cache aset/gambar/halaman publik, fallback `/offline`, area per-pengguna tidak di-cache), `experimental.useOffline` + banner offline, notifikasi versi baru, kartu "Pasang aplikasi" di portal member & trainer
 - [x] Notifikasi & komunikasi (PRD §5.12): notifikasi aplikasi di portal (baca/belum dibaca, badge), web push PWA (VAPID), email opsional, template pesan (admin), preferensi per kategori, log terkirim/gagal semua kanal, pengingat otomatis (kelas H-1, tenggat tugas, materi baru), pengumuman admin
 - [x] Pembayaran **manual** (keputusan 2026-11-12, tanpa payment gateway): transfer ke rekening resmi / Virtual Account statis → unggah bukti di portal → verifikasi finance. Admin **TMS: Pendaftaran & Keuangan → Rekening pembayaran** (izin `payments.verify`); tampil di portal & email tagihan. Sisa: isi data rekening/VA resmi PPTI di admin
-- [ ] WhatsApp automation (kanal WA di modul notifikasi) — penyedia WA **diurus nanti**
-- [ ] Corporate portal — menunggu spesifikasi
+- [ ] WhatsApp automation (kanal WA di modul notifikasi) — penyedia WA **diurus nanti** → lanjut di Roadmap 5 tahap 5D (driver `log`)
+- [ ] Corporate portal → dikerjakan di **PHASE 5 — Roadmap 5** di bawah
 - [x] Chatbot informasi publik memakai **Claude (Anthropic API)** — dibangun **nonaktif** (aktifkan: `CHATBOT_ENABLED=true` + `ANTHROPIC_API_KEY` di .env backend). Hanya data katalog website, tanpa data pribadi peserta; log + KPI di admin **Landing Page → Chatbot AI**
-- [ ] Fitur AI terukur lain (PRD Roadmap 5 §9: rekomendasi training, early warning, analisis feedback, LMS assistant) — menunggu data & keputusan
+- [ ] Fitur AI terukur lain (PRD Roadmap 5 §9: rekomendasi training, early warning, analisis feedback, LMS assistant) — ditunda (lihat Roadmap 5 tahap 5G)
+
+### PHASE 5 — Roadmap 5: Enterprise, Integration & Intelligence (`docs/PRD-Roadmap5.md`, aturan kerja `docs/PROMPT-Roadmap5.md`)
+
+**Keputusan & penyimpangan yang disengaja dari PRD Roadmap 5**
+- **Payment gateway TIDAK dikerjakan** (PRD §5, §10 langkah 3–4, §15 butir webhook) — penyimpangan yang disengaja: atasan mengonfirmasi ulang 2026-11-12 bahwa pembayaran tetap manual (transfer bank / VA statis + unggah bukti + verifikasi finance). Aturan PRD yang tetap berlaku untuk alur manual: invoice lunas tidak bisa dibayar ulang, status hanya berubah lewat verifikasi finance, refund punya alasan/penyetuju/waktu/referensi, semua perubahan diaudit. Tidak ada form nomor kartu.
+- **WhatsApp ditunda**: kanal WA hanya antarmuka dengan driver `log`, dimatikan lewat konfigurasi.
+- **AI** (pilihan nomor 3, 2026-11-12): chatbot publik Claude dari PR #22 dipertahankan (nonaktif, `CHATBOT_ENABLED`); asisten belajar di portal member hanya kerangka "Belum tersedia" (`AI_CHATBOT_ENABLED=false`, endpoint 503 `ai_unavailable`, tanpa panggilan API AI). Rekomendasi, early warning berbasis model, dan analisis feedback tidak dikerjakan.
+- Kolom teks `members.company` / `registrations.company` tetap sebagai isian, **tidak** dipakai untuk hak akses perusahaan.
+
+**Keputusan terbuka (dibuat bisa dikonfigurasi, default aman)**
+- [ ] Pembuatan akun organisasi — default: hanya admin VMES yang membuat organisasi lalu mengundang Corporate Owner (setting agar pendaftaran mandiri perusahaan bisa dibuka nanti)
+- [ ] Pajak invoice — default tarif 0%, baris pajak disembunyikan bila 0 (5C)
+- [ ] Akses histori setelah resign — setting per organisasi, default PRD §20.7: peserta dengan employment INACTIVE hilang dari daftar karyawan aktif dan detail progresnya tidak bisa dibuka, tetapi enrollment sponsored lamanya tetap dihitung di laporan agregat dan status sertifikatnya tetap terlihat
+- [ ] Verifikasi email peserta — aplikasi belum punya alur verifikasi email; sampai ada (rencana 5B bersama undangan), kecocokan email akun yang belum terverifikasi diperlakukan sebagai kandidat yang perlu dikonfirmasi, bukan dipakai otomatis (PRD §20.5)
+
+**5A Fondasi data enterprise** (`feat/enterprise-foundation`)
+- [x] `organizations` (profil legal, alamat, industri, kontak, data pajak/invoice, logo, status, `needs_review`, setting), `organization_units` (departemen/cost center/proyek), `employment_relationships` (member, organisasi, employee ID, unit, posisi, mulai, selesai, ACTIVE/INACTIVE, sumber), `corporate_users` (user ↔ organisasi + peran perusahaan + batas unit opsional)
+- [x] `enrollments.type` (self/corporate) + `sponsor_organization_id` (+ unit sponsor); aturan R1/R2 di service **dan** constraint DB
+- [x] Migrasi backfill: enrollment individu → SELF; enrollment dari pendaftaran kolektif → CORPORATE dengan organisasi hasil normalisasi nama perusahaan, ditandai `needs_review`
+- [x] `IdentityMatchingService` sesuai tabel §20.5 + review queue untuk data meragukan; backfill `member_id` kosong lewat service ini (tanpa membuat akun otomatis)
+- [x] Query scope server-side `visibleToOrganization` + Policy; organization_id tidak bisa diganti lewat URL/API (§20.21)
+- [x] Sponsorship Transfer (§20.20): permintaan → otorisasi → berlaku per tanggal efektif, audit tak bisa diubah
+- [x] Resign → employment INACTIVE, akses corporate dicabut sesuai kebijakan, member/sertifikat/histori tetap
+- [x] Admin Filament: Organisasi, Employment, Corporate User, Review identitas, Transfer sponsor
+- [x] Tes setiap baris tabel §11 + skenario §20.7–20.8
+
+**5B Corporate Portal MVP** (`feat/corporate-portal`)
+- [ ] `training_requests` (status §4.2 DRAFT → … → COMPLETED/CANCELLED) + `request_seats`; reserved seat tidak membuat Member
+- [ ] Quotation dibuat admin VMES; approval perusahaan opsional per organisasi
+- [ ] Penugasan peserta: manual, unggah Excel/CSV (template + laporan galat per baris), tautan undangan bertoken (verifikasi + consent), cari member existing — semua lewat identity matching, tolak enrollment ganda di batch yang sama
+- [ ] Request terjadwal → enrollment CORPORATE bersponsor; pembatalan satu peserta hanya mengubah enrollment itu
+- [ ] Pendaftaran kolektif form publik tetap jalan, admin wajib menautkan ke organisasi sebelum konfirmasi
+- [ ] Frontend `/corporate/*` (login akun sama): ringkasan, request, peserta, progres (tanpa catatan privat trainer), sertifikat (status), keuangan, pengguna perusahaan, ekspor sesuai scope; batas privasi §20.11
+
+**5C Transaksi** (`feat/payment-transactions`) — tanpa payment gateway
+- [ ] Invoice lengkap (item, subtotal, pajak dapat dikonfigurasi, diskon, total, jatuh tempo) untuk individu & training request
+- [ ] `payment_transactions` untuk setiap bukti & verifikasi/penolakan; pemetaan status → Pending/Paid/Failed/Refunded + Expired (job terjadwal)
+- [ ] Invoice lunas menolak bukti baru; verifikasi ganda tidak membuat enrollment/notifikasi ganda
+- [ ] Rekonsiliasi finance (selisih nominal, unggah mutasi CSV opsional); alur refund (alasan, penyetuju, waktu, referensi)
+- [ ] Finance perusahaan: lihat invoice organisasi, unggah bukti, status verifikasi di portal perusahaan
+
+**5D Otomasi notifikasi** (`feat/notification-engine`)
+- [ ] Katalog event §6, penerima per scope (termasuk admin perusahaan hanya untuk enrollment bersponsor), penjadwalan, retry, status Queued/Sent/Delivered/Failed/Read, versi template, kanal WA driver `log`
+
+**5E API enterprise** (`feat/api-enterprise`)
+- [ ] Klien API terikat organisasi, endpoint §7 dengan scope/rate limit/versioning, `Idempotency-Key`, event webhook domain baru, OpenAPI diperbarui
+
+**5F Analitik lanjutan** (`feat/advanced-analytics`)
+- [ ] `docs/KPI.md` dari §8.1 dan implementasi persis definisinya
+- [ ] Corporate vs self-funded, funnel corporate, cohort/repeat order, AOV, analitik perusahaan §20.15, master kompetensi + target per posisi (competency gap dasar)
+
+**5G Kerangka asisten belajar AI** (`feat/ai-chatbot-shell`)
+- [ ] Panel "Asisten Belajar" di portal member berlabel "Belum tersedia", flag `AI_CHATBOT_ENABLED`, endpoint 503 `ai_unavailable`, tabel `ai_insights` kosong (use case, versi model, versi prompt, referensi data, reviewer); chatbot publik PR #22 tidak diubah
+
+**5H Hardening** (`feat/roadmap5-hardening`)
+- [ ] Tes keamanan organization scope (IDOR antar perusahaan, ekspor, token dicabut), cakupan audit, indeks DB untuk kueri dashboard
+- [ ] Checklist acceptance criteria §15 + §20.22 dengan status tiap butir
 
 ### NON-FUNGSIONAL (PRD §9) — berlaku lintas fase
 - [ ] HTTPS, hashing, RBAC, validasi input, CSRF/XSS/SQLi, secure session, rate limit
@@ -399,3 +456,4 @@ Legenda: `[ ]` belum · `[~]` sedang · `[x]` selesai. Prioritas mengikuti roadm
 - Video YouTube memakai IFrame Player API (`components/lms/VideoPlayer.tsx`): posisi & durasi dibaca dari player (durasi tidak wajib diisi lagi), lanjut dari posisi terakhir (`start`), persentase = titik terjauh yang ditonton berurutan (seek ke depan tidak dihitung; berlaku juga untuk file MP4). Vimeo / API gagal dimuat tetap memakai hitungan waktu di halaman. Tervalidasi di Edge headless: 31 dtk → 3%, muat ulang lanjut dari detik 47 → 6%.
 - Rekening pembayaran manual (branch `feat/payment-accounts`): tabel `payment_accounts` (jenis transfer bank / Virtual Account statis, bank, nomor, atas nama, petunjuk, urutan, aktif), admin Filament `Rekening pembayaran` (ManageRecords, urut seret, izin `payments.verify`), API `GET /me/payment-accounts`, email "Menunggu pembayaran" mencantumkan rekening aktif (tanpa data → kalimat umum lama), portal `/portal/pembayaran` & kartu unggah bukti di detail pendaftaran menampilkan daftar rekening + tombol "Salin nomor" (`PaymentAccounts`, `CopyText`). 74 tes backend lulus.
 - Chatbot AI publik (branch `feat/ai-chatbot`): SDK resmi `anthropic-ai/sdk` ^1.8, model `claude-opus-5-5` (effort `low`, server-side fallback `fallbacks: default` bila model menolak), prompt sistem + data katalog (profil & kontak, alur pendaftaran, program, jadwal mendatang dengan harga/sisa kursi/tautan) di-cache (`cache_control`). `config/chatbot.php` — NONAKTIF bawaan; batas 6/menit & 40/hari per IP + kuota global 500/hari. API publik `GET /chat/status`, `POST /chat` (riwayat dikirim klien, maks. 12 giliran, 800 karakter), `POST /chat/feedback`. Measurable AI (Roadmap 5 §9): tabel `chat_logs` (pertanyaan/jawaban, status answered/unresolved/refused/error, model + versi prompt, token termasuk cache, latensi, 👍/👎 pengunjung, tinjauan admin), IP disimpan sebagai HMAC, dipangkas 90 hari; penanda `[[PERLU_ADMIN]]` dari model → status "tidak terjawab". Admin **Chatbot AI** (izin `cms.manage`/`analytics.view`): KPI 30 hari + aksi Tinjau. Frontend `components/chat/ChatWidget.tsx` (tidak dirender bila nonaktif; memanggil backend langsung via CORS sehingga IP pengunjung terbaca), tautan path internal & URL jadi link, saran pertanyaan, 👍/👎, tombol WhatsApp admin; layar penuh di ponsel. Tes: `ChatbotTest` (9) dengan `FakeChatModel` + `AnthropicChatModelTest` (bentuk request SDK lewat transport palsu: header beta, `cache_control`, `fallbacks`, effort). 85 tes backend lulus. Catatan: SDK PHP ini mengirim API key sebagai `Authorization: Bearer`. Produksi di balik proxy/CDN perlu `trustProxies` agar batas per IP memakai IP asli.
+- Roadmap 5 tahap **5A Fondasi data enterprise** (branch `feat/enterprise-foundation`): tabel `organizations` (kode ORG-0001, nama legal + `normalized_name` tanpa PT/CV/Tbk, kontak, NPWP & data invoice, status, `needs_review`, `source`, `settings.exit_access`), `organization_units` (departemen/cost center/proyek, hierarki), `employment_relationships` (EMP-000001, member, organisasi, unit, employee ID, posisi, mulai/selesai, active/inactive, alasan berakhir, sumber), `corporate_users` (owner/hr_admin/supervisor/finance/viewer + batas unit, active/disabled), `identity_reviews`, `sponsorship_transfers`. `enrollments.type` (self/corporate) + `sponsor_organization_id` + `sponsor_unit_id`; `registrations.organization_id`. **R1/R2** dijaga model (`Enrollment::saving`, DomainException) **dan** DB (`enrollments_sponsor_rule`: CHECK di PostgreSQL/MySQL, trigger INSERT/UPDATE di SQLite — migrasi berikutnya yang membangun ulang tabel `enrollments` di SQLite akan menghapus trigger; tes `test_sponsor_rules_enforced_by_model_and_database` akan menangkapnya). **R7**: sponsor enrollment lama hanya bisa berubah lewat `SponsorshipService` (flag `Enrollment::$sponsorChangeAuthorized`). Backfill migrasi `SponsorshipBackfill` (idempoten). `IdentityMatchingService` + `IdentityMatch` (tabel §20.5; email belum terverifikasi & nomor HP = kandidat konfirmasi; tidak pernah membuat akun otomatis; duplikat di batch yang sama ditolak), perintah `identity:backfill`. `EnrollmentService::fromRegistration` kini: individu → SELF, kolektif → CORPORATE dengan sponsor organisasi pendaftaran (`OrganizationService::forRegistration` mencocokkan nama ternormalisasi, bila tidak ada membuat organisasi `needs_review`), peserta dicocokkan, sisanya ke Review identitas; `drop()` membatalkan satu peserta. `EmploymentService` (start/end/move; berakhir → corporate user orang itu di organisasi tsb dicabut). `SponsorshipService` (request → approve oleh orang lain ber-izin `sponsorship.approve` → apply per tanggal efektif; `sponsorship:apply-due` harian 00:15). `CorporateAccess` + `OrganizationPolicy` (`viewCorporate`, `viewEnrollmentProgress`; tolak sebagai 404), scope `Enrollment::visibleToOrganization` / `visibleToCorporateUser`. `AuditLog` kini tidak bisa diubah/dihapus lewat aplikasi; `SponsorshipTransfer` final juga terkunci. API dasar 5B: `GET /corporate/organizations`, `GET /corporate/organizations/{kode}/enrollments` (audit `corporate.participants_viewed`). Admin grup **Korporat (Enterprise)**: Organisasi (+ relasi Unit & Enrollment bersponsor, badge perlu diperiksa), Employment (`/admin/employments`), Pengguna perusahaan, Review identitas (tautkan / buat member / cocokkan ulang / abaikan), Transfer sponsor; penolakan aturan bisnis tampil sebagai notifikasi (`EnterpriseFields::attempt`). Izin baru `corporate.manage`, `sponsorship.approve` → **jalankan `php artisan db:seed --class=RolesSeeder` lalu `php artisan identity:backfill` setelah deploy**. Tes: `EnterpriseFoundationTest` (22: setiap baris §11 yang relevan untuk 5A, §20.7, §20.8, R1/R2/R7, §20.5, backfill, transfer, IDOR, batas unit, exit_access) + `EnterpriseAdminTest` (3: halaman berisi data, izin, aksi Filament lewat Livewire); 110 tes backend lulus. E2E lokal (curl + token): organisasi sendiri 200, organisasi lain 404, tanpa token 401. Migrasi + rollback diuji pada DB lokal (cadangan sebelum migrasi di scratchpad sesi). §11 baris "Payment gagal" & "Webhook dikirim dua kali" → 5C/5E (pembayaran manual; konfirmasi ulang pendaftaran sudah idempoten).

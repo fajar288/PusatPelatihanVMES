@@ -74,6 +74,12 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasOne(Member::class);
     }
 
+    /** Keanggotaan sebagai pengguna perusahaan (Roadmap 5 §20.12) — aktif maupun dicabut. */
+    public function corporateMemberships(): HasMany
+    {
+        return $this->hasMany(CorporateUser::class);
+    }
+
     public function pushSubscriptions(): HasMany
     {
         return $this->hasMany(PushSubscription::class);

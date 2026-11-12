@@ -3,16 +3,31 @@
 namespace App\Models;
 
 use App\Services\MemberService;
+use DomainException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-/** Peserta resmi satu kelas (hasil konversi pendaftar → member → enrollment, PRD §5.5). */
+/**
+ * Peserta resmi satu kelas (hasil konversi pendaftar → member → enrollment, PRD §5.5).
+ * Roadmap 5: enrollment adalah unit sponsorship & visibilitas perusahaan (§4.4, §18) —
+ * CORPORATE wajib punya sponsor organisasi (R1), SELF tanpa sponsor (R2), sponsor lama hanya berubah lewat
+ * SponsorshipService (R7/R8). Aturan ini juga dijaga constraint DB `enrollments_sponsor_rule`.
+ */
 class Enrollment extends Model
 {
     public const STATUSES = ['enrolled', 'attending', 'completed', 'failed', 'dropped'];
+
+    public const TYPE_SELF = 'self';
+
+    public const TYPE_CORPORATE = 'corporate';
+
+    public const TYPES = [self::TYPE_SELF => 'Mandiri (self-funded)', self::TYPE_CORPORATE => 'Corporate (disponsori)'];
+
+    /** Diaktifkan sementara oleh SponsorshipService saat menerapkan transfer resmi. */
+    public static bool $sponsorChangeAuthorized = false;
 
     protected $guarded = [];
 
@@ -34,6 +49,58 @@ class Enrollment extends Model
     public function registration(): BelongsTo
     {
         return $this->belongsTo(Registration::class);
+    }
+
+    public function registrationParticipant(): BelongsTo
+    {
+        return $this->belongsTo(RegistrationParticipant::class);
+    }
+
+    public function sponsor(): BelongsTo
+    {
+        return $this->belongsTo(Organization::class, 'sponsor_organization_id');
+    }
+
+    public function sponsorUnit(): BelongsTo
+    {
+        return $this->belongsTo(OrganizationUnit::class, 'sponsor_unit_id');
+    }
+
+    public function sponsorshipTransfers(): HasMany
+    {
+        return $this->hasMany(SponsorshipTransfer::class)->latest('id');
+    }
+
+    public function isCorporate(): bool
+    {
+        return $this->type === self::TYPE_CORPORATE;
+    }
+
+    /** R3: hanya enrollment CORPORATE dengan sponsor organisasi yang sama. */
+    public function scopeVisibleToOrganization(Builder $q, Organization|int $organization): Builder
+    {
+        $id = $organization instanceof Organization ? $organization->id : $organization;
+
+        return $q->where('type', self::TYPE_CORPORATE)->where('sponsor_organization_id', $id);
+    }
+
+    /**
+     * Batas data untuk pengguna perusahaan (server-side, §20.21): sponsor organisasi + batas unit pengguna.
+     * Kebijakan exit_access diterapkan di CorporateAccess (daftar/detail), bukan di sini — agregat tetap menghitung semua.
+     */
+    public function scopeVisibleToCorporateUser(Builder $q, CorporateUser $cu): Builder
+    {
+        $q->visibleToOrganization($cu->organization_id);
+        if (($units = $cu->unitScope()) !== null) {
+            $q->whereIn('sponsor_unit_id', $units);
+        }
+
+        return $q;
+    }
+
+    public function scopeSelfFunded(Builder $q): Builder
+    {
+        return $q->where('type', self::TYPE_SELF);
     }
 
     public function attendances(): HasMany
@@ -80,6 +147,22 @@ class Enrollment extends Model
     /** Status member mengikuti enrollment (registered → active → alumni), lihat MemberService::syncStatus. */
     protected static function booted(): void
     {
+        static::saving(function (Enrollment $e): void {
+            $e->type ??= self::TYPE_SELF;
+            if (! array_key_exists($e->type, self::TYPES)) {
+                throw new DomainException("Tipe enrollment tidak dikenal: {$e->type}");
+            }
+            if ($e->type === self::TYPE_CORPORATE && ! $e->sponsor_organization_id) {
+                throw new DomainException('R1: enrollment CORPORATE wajib memiliki sponsor organisasi.');
+            }
+            if ($e->type === self::TYPE_SELF && ($e->sponsor_organization_id || $e->sponsor_unit_id)) {
+                throw new DomainException('R2: enrollment SELF tidak boleh memiliki sponsor organisasi.');
+            }
+            if ($e->exists && $e->isDirty(['type', 'sponsor_organization_id']) && ! self::$sponsorChangeAuthorized) {
+                throw new DomainException('R7/R8: sponsor enrollment hanya bisa diubah lewat transfer sponsor resmi.');
+            }
+        });
+
         static::saved(function (Enrollment $e): void {
             if ($e->member_id && ($e->wasRecentlyCreated || $e->wasChanged(['status', 'member_id']))) {
                 $member = $e->member;

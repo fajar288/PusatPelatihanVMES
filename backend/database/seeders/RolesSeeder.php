@@ -38,6 +38,8 @@ class RolesSeeder extends Seeder
         'analytics.view' => ['Lihat dashboard eksekutif & analitik manajemen', 'reports', ['administrator', 'management']],
         'api.manage' => ['Kelola klien API publik, API key & webhook', 'integrations', ['administrator']],
         'notifications.manage' => ['Kelola template notifikasi, log pengiriman & kirim pengumuman', 'notifications', ['administrator', 'management', 'marketing', 'training_coordinator']],
+        'corporate.manage' => ['Kelola organisasi, employment, pengguna perusahaan & review identitas', 'corporate', ['administrator', 'management', 'marketing']],
+        'sponsorship.approve' => ['Setujui/tolak transfer sponsor enrollment', 'corporate', ['administrator', 'management']],
         'portal.access' => ['Akses portal member', 'portal', ['student', 'alumni']],
         'trainer.portal' => ['Akses portal trainer', 'portal', ['trainer', 'assessor']],
     ];

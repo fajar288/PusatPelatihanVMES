@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\CertificateController;
 use App\Http\Controllers\Api\V1\ChatController;
 use App\Http\Controllers\Api\V1\ContentController;
+use App\Http\Controllers\Api\V1\CorporateController;
 use App\Http\Controllers\Api\V1\HomeController;
 use App\Http\Controllers\Api\V1\LearningController;
 use App\Http\Controllers\Api\V1\MeController;
@@ -92,6 +93,10 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
         Route::post('/me/registrations/{registration}/payment-proof', [MeController::class, 'paymentProof'])->name('me.registration.proof');
         Route::get('/me/payments', [MeController::class, 'payments'])->name('me.payments');
         Route::get('/me/payment-accounts', [MeController::class, 'paymentAccounts'])->name('me.payment_accounts');
+
+        // Pengguna perusahaan (Roadmap 5 5A): organisasi selalu diverifikasi terhadap keanggotaan aktif (§20.21)
+        Route::get('/corporate/organizations', [CorporateController::class, 'organizations'])->name('corporate.organizations');
+        Route::get('/corporate/organizations/{organization}/enrollments', [CorporateController::class, 'enrollments'])->name('corporate.enrollments');
         // Notifikasi aplikasi, preferensi & web push (PRD §5.12)
         Route::get('/me/notifications', [NotificationController::class, 'index'])->name('me.notifications');
         Route::post('/me/notifications/read-all', [NotificationController::class, 'readAll'])->name('me.notifications.read_all');
