@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\V1\CertificateController;
 use App\Http\Controllers\Api\V1\ChatController;
 use App\Http\Controllers\Api\V1\ContentController;
 use App\Http\Controllers\Api\V1\CorporateController;
+use App\Http\Controllers\Api\V1\CorporateFinanceController;
 use App\Http\Controllers\Api\V1\CorporateRequestController;
 use App\Http\Controllers\Api\V1\HomeController;
 use App\Http\Controllers\Api\V1\InvitationController;
@@ -96,7 +97,10 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
         Route::get('/me/registrations', [MeController::class, 'registrations'])->name('me.registrations');
         Route::get('/me/registrations/{registration}', [MeController::class, 'registration'])->name('me.registration');
         Route::post('/me/registrations/{registration}/cancel', [MeController::class, 'cancel'])->name('me.registration.cancel');
-        Route::post('/me/registrations/{registration}/payment-proof', [MeController::class, 'paymentProof'])->name('me.registration.proof');
+        Route::post('/me/registrations/{registration}/payment-proof', [MeController::class, 'paymentProof'])->middleware('throttle:payment-proof')->name('me.registration.proof');
+        Route::get('/me/invoices/{invoice}', [MeController::class, 'invoice'])->name('me.invoice');
+        Route::post('/me/invoices/{invoice}/proof', [MeController::class, 'invoiceProof'])->middleware('throttle:payment-proof')->name('me.invoice.proof');
+        Route::get('/me/invoices/{invoice}/pdf', [MeController::class, 'invoicePdf'])->name('me.invoice.pdf');
         Route::get('/me/payments', [MeController::class, 'payments'])->name('me.payments');
         Route::get('/me/payment-accounts', [MeController::class, 'paymentAccounts'])->name('me.payment_accounts');
 
@@ -118,6 +122,11 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
             Route::post('/users', [CorporateController::class, 'addUser'])->name('users.add');
             Route::patch('/users/{corporateUser}', [CorporateController::class, 'updateUser'])->name('users.update');
             Route::post('/users/{corporateUser}/disable', [CorporateController::class, 'disableUser'])->name('users.disable');
+
+            Route::get('/invoices', [CorporateFinanceController::class, 'index'])->name('invoices');
+            Route::get('/invoices/{invoice}', [CorporateFinanceController::class, 'show'])->name('invoices.show');
+            Route::get('/invoices/{invoice}/pdf', [CorporateFinanceController::class, 'pdf'])->name('invoices.pdf');
+            Route::post('/invoices/{invoice}/proof', [CorporateFinanceController::class, 'proof'])->middleware('throttle:payment-proof')->name('invoices.proof');
 
             Route::get('/requests', [CorporateRequestController::class, 'index'])->name('requests');
             Route::post('/requests', [CorporateRequestController::class, 'store'])->name('requests.store');

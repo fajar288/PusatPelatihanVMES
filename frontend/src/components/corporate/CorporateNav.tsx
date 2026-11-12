@@ -16,6 +16,7 @@ export default function CorporateNav({ org, name, role, unit, capabilities, mult
     { href: `${base}/permintaan`, label: "Permintaan Training", icon: "brief" },
     ...(capabilities.includes("view_progress") || capabilities.includes("manage_participants") ? [{ href: `${base}/peserta`, label: "Peserta & Progres", icon: "users" as IconName }] : []),
     { href: `${base}/sertifikat`, label: "Sertifikat", icon: "award" },
+    ...(capabilities.includes("view_finance") ? [{ href: `${base}/keuangan`, label: "Keuangan", icon: "boxes" as IconName }] : []),
     ...(capabilities.includes("manage_users") ? [{ href: `${base}/pengguna`, label: "Pengguna Perusahaan", icon: "shield" as IconName }] : []),
   ];
   return (

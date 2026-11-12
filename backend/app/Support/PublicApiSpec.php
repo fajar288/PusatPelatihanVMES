@@ -5,6 +5,7 @@ namespace App\Support;
 use App\Enums\RegistrationStatus;
 use App\Models\ApiClient;
 use App\Models\Certificate;
+use App\Models\Invoice;
 use App\Models\TrainingPackage;
 use App\Models\TrainingSchedule;
 
@@ -250,7 +251,7 @@ final class PublicApiSpec
                 'participants_count' => $i(),
                 'participants' => ['type' => 'array', 'items' => ['type' => 'object', 'properties' => ['name' => $s(), 'email' => $s(true), 'phone' => $s(true), 'position' => $s(true)]]],
                 'price' => $n(true), 'discount' => $n(), 'total' => $n(true), 'currency' => ['type' => 'string', 'const' => 'IDR'],
-                'invoice' => ['type' => ['object', 'null'], 'properties' => ['number' => $s(), 'amount' => $n(), 'status' => ['type' => 'string', 'enum' => ['unpaid', 'submitted', 'verified', 'rejected', 'refunded']], 'due_date' => $date(true)]],
+                'invoice' => ['type' => ['object', 'null'], 'description' => 'Invoice pertama yang tidak dibatalkan. Pembayaran manual: status berubah hanya setelah verifikasi finance VMES.', 'properties' => ['number' => $s(), 'amount' => array_merge($n(), ['description' => 'Total invoice termasuk pajak']), 'amount_paid' => $n(), 'status' => ['type' => 'string', 'enum' => array_keys(Invoice::STATUSES)], 'due_date' => $date(true)]],
                 'created_at' => $dt(), 'updated_at' => $dt(), 'confirmed_at' => $dt(true),
             ]],
             'CertificateVerification' => ['type' => 'object', 'properties' => [

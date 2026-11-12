@@ -3,12 +3,15 @@
 namespace App\Filament\Resources\TrainingRequests;
 
 use App\Filament\NavigationGroup;
+use App\Filament\Resources\Invoices\InvoiceResource;
 use App\Filament\Resources\TrainingRequests\Pages\ListTrainingRequests;
 use App\Filament\Resources\TrainingRequests\Pages\ViewTrainingRequest;
 use App\Filament\Resources\TrainingRequests\RelationManagers\SeatsRelationManager;
 use App\Filament\Support\EnterpriseFields;
+use App\Filament\Support\FinanceFields;
 use App\Models\TrainingRequest;
 use App\Models\TrainingSchedule;
+use App\Services\InvoiceService;
 use App\Services\TrainingRequestService;
 use BackedEnum;
 use Filament\Actions\Action;
@@ -149,12 +152,16 @@ class TrainingRequestResource extends Resource
                 ->action(fn (array $data, TrainingRequest $record, Action $action) => EnterpriseFields::attempt($action,
                     fn () => $svc()->quote($record, auth()->user(), (float) $data['price_per_seat'], (float) ($data['discount'] ?? 0), $data['valid_until'], $data['notes'] ?? null), 'Penawaran dikirim ke perusahaan')),
 
-            Action::make('paid')->label('Konfirmasi pembayaran')->icon('heroicon-o-banknotes')->color('success')
-                ->visible(fn (TrainingRequest $record) => $record->status === 'approved' && (auth()->user()?->hasPermission('payments.verify') || auth()->user()?->isSuperAdmin()))
-                ->modalDescription('Pembayaran manual (transfer / VA) sudah diterima dan diverifikasi finance.')
-                ->schema([TextInput::make('reference')->label('Referensi (no. transfer / mutasi)')->maxLength(255)])
-                ->action(fn (array $data, TrainingRequest $record, Action $action) => EnterpriseFields::attempt($action,
-                    fn () => $svc()->markPaid($record, auth()->user(), $data['reference'] ?? null), 'Pembayaran dikonfirmasi')),
+            // 5C: status "Pembayaran diterima" hanya lewat verifikasi transaksi pada invoice (bukan tombol konfirmasi manual)
+            Action::make('invoice')->label(fn (TrainingRequest $record) => 'Invoice '.$record->invoices()->where('status', '!=', 'cancelled')->value('invoice_number'))
+                ->icon('heroicon-o-document-currency-dollar')->color('success')
+                ->visible(fn (TrainingRequest $record) => FinanceFields::canManage() && $record->invoices()->where('status', '!=', 'cancelled')->exists())
+                ->url(fn (TrainingRequest $record) => InvoiceResource::getUrl('view', ['record' => $record->invoices()->where('status', '!=', 'cancelled')->first()])),
+            Action::make('createInvoice')->label('Buat invoice')->icon('heroicon-o-document-plus')->color('success')
+                ->visible(fn (TrainingRequest $record) => $record->status === 'approved' && FinanceFields::canManage() && ! $record->invoices()->where('status', '!=', 'cancelled')->exists())
+                ->modalDescription('Invoice dibuat dari penawaran yang disetujui (biasanya otomatis saat persetujuan).')
+                ->action(fn (TrainingRequest $record, Action $action) => EnterpriseFields::attempt($action,
+                    fn () => app(InvoiceService::class)->forTrainingRequest($record, auth()->user()), 'Invoice dibuat')),
 
             Action::make('schedule')->label(fn (TrainingRequest $record) => $record->schedule_id ? 'Ganti batch' : 'Tetapkan batch')
                 ->icon('heroicon-o-calendar-days')->color('primary')

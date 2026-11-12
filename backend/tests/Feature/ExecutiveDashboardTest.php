@@ -18,12 +18,13 @@ use App\Filament\Widgets\Executive\TrendChart;
 use App\Models\Attendance;
 use App\Models\ClassSession;
 use App\Models\Enrollment;
-use App\Models\Payment;
+use App\Models\Invoice;
 use App\Models\Registration;
 use App\Models\Trainer;
 use App\Models\TrainingSchedule;
 use App\Models\User;
 use App\Services\AnalyticsService;
+use App\Services\PaymentService;
 use App\Services\RegistrationService;
 use App\Services\ReportService;
 use Carbon\Carbon;
@@ -76,10 +77,13 @@ class ExecutiveDashboardTest extends TestCase
         $svc = app(RegistrationService::class);
         $svc->transition($reg, RegistrationStatus::WaitingPayment, $this->admin);
         if ($paid) {
-            $reg->payments()->update(['status' => 'verified', 'verified_at' => now()]);
+            // finance mencatat dana masuk → invoice lunas → pendaftaran terkonfirmasi (5C)
+            $invoice = $reg->invoices()->firstOrFail();
+            app(PaymentService::class)->recordReceived($invoice, $this->admin, ['amount' => (float) $invoice->total]);
+        } else {
+            $svc->transition($reg, RegistrationStatus::PaymentVerification, $this->admin);
+            $svc->transition($reg, RegistrationStatus::Confirmed, $this->admin);
         }
-        $svc->transition($reg, RegistrationStatus::PaymentVerification, $this->admin);
-        $svc->transition($reg, RegistrationStatus::Confirmed, $this->admin);
         $enrollment = Enrollment::query()->where('registration_id', $reg->id)->firstOrFail();
         foreach ($this->schedule->sessions()->orderBy('session_no')->get()->take($present) as $s) {
             Attendance::query()->create(['session_id' => $s->id, 'enrollment_id' => $enrollment->id, 'status' => 'present']);
@@ -100,7 +104,7 @@ class ExecutiveDashboardTest extends TestCase
     public function test_metrics_cover_participants_classes_finance_learning_and_trainers(): void
     {
         $this->fixture();
-        $amount = (float) Payment::query()->where('status', 'verified')->sum('amount');
+        $amount = (float) Invoice::query()->where('status', 'paid')->sum('amount_paid');
         $this->assertGreaterThan(0, $amount);
 
         $d = app(AnalyticsService::class)->dashboard(['from' => '2026-11-01', 'to' => '2026-11-30']);

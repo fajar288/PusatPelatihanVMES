@@ -15,6 +15,10 @@
 .ff .kb1{border:0;cursor:pointer;width:100%;font-family:inherit}
 .fok{margin-top:16px;padding:14px 18px;border-radius:14px;background:#eef7e1;border:1px solid #cfe6a8;color:#2f6a0a;font-weight:700;font-size:14px}
 @media(max-width:640px){.ff .fg2{grid-template-columns:1fr}}
+.ff small.fh,.ff .ferr{display:block;margin-top:4px}.ff .ferr{color:#b42318;font-size:12.5px;font-weight:600}
+/* invoice (Roadmap 5C): baris total & riwayat transaksi */
+.inv-tot li span{color:var(--mut)}.inv-tot li.grand span,.inv-tot li.grand b{color:var(--ink);font-size:16px;font-weight:800}
+.inv-note{margin-top:12px;padding:12px 14px;border-radius:14px;background:var(--bg2,#f5f7f6);font-size:13.5px;color:var(--mut)}
 
 /* ---- Halaman kontak ---- */
 .kgrid{display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:36px;align-items:start;margin-bottom:60px}

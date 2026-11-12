@@ -69,16 +69,16 @@ class Phase2BTest extends TestCase
         // termin 3x dari total 7.000.000 → 2.333.333 + 2.333.333 + 2.333.334, jatuh tempo berjarak 30 hari
         $payments = $finance->createInstallments($reg, 3, 30, '2026-11-15');
         $this->assertCount(3, $payments);
-        $this->assertSame(7000000.0, array_sum(array_map(fn ($p) => (float) $p->amount, $payments)));
+        $this->assertSame(7000000.0, array_sum(array_map(fn ($p) => (float) $p->total, $payments)));
         $this->assertSame('2026-12-15', $payments[1]->due_date->toDateString());
         $this->assertSame('Termin 3 dari 3', $payments[2]->description);
-        $this->assertSame(3, $reg->payments()->count());
+        $this->assertSame(3, $reg->invoices()->where('status', '!=', 'cancelled')->count());
 
         // ringkasan pendapatan
-        $payments[0]->update(['status' => 'verified', 'verified_at' => now()]);
+        $payments[0]->update(['status' => 'paid', 'amount_paid' => $payments[0]->total, 'paid_at' => now()]);
         $sum = $finance->revenueSummary();
-        $this->assertSame((float) $payments[0]->amount, $sum['verified']);
-        $this->assertSame(['2026-11' => (float) $payments[0]->amount], $sum['by_month']);
+        $this->assertSame((float) $payments[0]->total, $sum['verified']);
+        $this->assertSame(['2026-11' => (float) $payments[0]->total], $sum['by_month']);
         $this->assertGreaterThan(0, $sum['outstanding']);
     }
 

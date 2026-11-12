@@ -30,7 +30,7 @@ class AdminPanelTest extends TestCase
                 'Laporan &amp; Analitik', 'Dashboard Eksekutif',
                 'Landing Page (Website)', 'Banner', 'Berita &amp; artikel', 'Pengaturan situs',
                 'TMS: Program &amp; Kelas', 'Kategori training', 'Jadwal &amp; kelas',
-                'TMS: Pendaftaran &amp; Keuangan', 'Pendaftaran', 'Pembayaran',
+                'TMS: Pendaftaran &amp; Keuangan', 'Pendaftaran', 'Invoice', 'Verifikasi pembayaran', 'Rekonsiliasi', 'Refund',
                 'TMS: Pelaksanaan &amp; Penilaian', 'Kehadiran', 'Penilaian kompetensi',
                 'LMS (E-learning)', 'Sertifikat &amp; Alumni', 'Notifikasi', 'Sistem &amp; Integrasi', 'Audit log',
             ], false);
@@ -55,7 +55,7 @@ class AdminPanelTest extends TestCase
             $this->actingAs($admin)->get("/admin/$slug")->assertOk();
             $this->actingAs($admin)->get("/admin/$slug/create")->assertOk();
         }
-        foreach (['registrations', 'payments', 'audit-logs', 'trainers', 'waitlists', 'attendances', 'promo-codes', 'laporan', 'certificates', 'certificates/create', 'certificate-templates', 'certificate-templates/create', 'dashboard-eksekutif', 'api-clients', 'api-clients/create'] as $slug) {
+        foreach (['registrations', 'invoices', 'payment-transactions', 'payment-refunds', 'reconciliation', 'audit-logs', 'trainers', 'waitlists', 'attendances', 'promo-codes', 'laporan', 'certificates', 'certificates/create', 'certificate-templates', 'certificate-templates/create', 'dashboard-eksekutif', 'api-clients', 'api-clients/create'] as $slug) {
             $this->actingAs($admin)->get("/admin/$slug")->assertOk();
         }
     }

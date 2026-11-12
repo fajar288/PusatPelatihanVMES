@@ -77,9 +77,10 @@ class Registration extends Model
         return $this->hasMany(RegistrationParticipant::class);
     }
 
-    public function payments(): HasMany
+    /** Invoice pendaftaran (termin pertama dulu; invoice batal tetap tersimpan sebagai riwayat). */
+    public function invoices(): HasMany
     {
-        return $this->hasMany(Payment::class)->latest();
+        return $this->hasMany(Invoice::class)->orderBy('installment_no')->orderByDesc('id');
     }
 
     public function getRouteKeyName(): string

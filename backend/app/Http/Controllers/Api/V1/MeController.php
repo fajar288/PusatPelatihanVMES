@@ -5,20 +5,23 @@ namespace App\Http\Controllers\Api\V1;
 use App\Enums\RegistrationStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\EnrollmentResource;
-use App\Http\Resources\PaymentResource;
+use App\Http\Resources\InvoiceResource;
 use App\Http\Resources\RegistrationResource;
 use App\Http\Resources\UserResource;
 use App\Models\AuditLog;
 use App\Models\Enrollment;
-use App\Models\Payment;
+use App\Models\Invoice;
 use App\Models\PaymentAccount;
 use App\Models\Registration;
+use App\Services\InvoiceService;
 use App\Services\MemberService;
 use App\Services\MonitoringService;
+use App\Services\PaymentService;
 use App\Services\RegistrationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 
@@ -69,7 +72,7 @@ class MeController extends Controller
     /** GET /me/registrations */
     public function registrations(Request $request): AnonymousResourceCollection
     {
-        return RegistrationResource::collection(Registration::query()->ownedBy($request->user())->with('schedule.package', 'payments')->latest()->get());
+        return RegistrationResource::collection(Registration::query()->ownedBy($request->user())->with('schedule.package', 'invoices')->latest()->get());
     }
 
     /** GET /me/registrations/{registration} */
@@ -77,7 +80,7 @@ class MeController extends Controller
     {
         Gate::authorize('view', $registration);
 
-        return new RegistrationResource($registration->load('schedule.package', 'payments', 'participants'));
+        return new RegistrationResource($registration->load('schedule.package', 'invoices.items', 'invoices.transactions', 'participants'));
     }
 
     /** POST /me/registrations/{registration}/cancel */
@@ -86,35 +89,81 @@ class MeController extends Controller
         Gate::authorize('cancel', $registration);
         $service->transition($registration, RegistrationStatus::Cancelled, $request->user(), $request->string('reason')->toString() ?: 'Dibatalkan oleh pendaftar');
 
-        return new RegistrationResource($registration->load('schedule.package', 'payments'));
+        return new RegistrationResource($registration->load('schedule.package', 'invoices'));
     }
 
-    /** POST /me/registrations/{registration}/payment-proof (multipart: proof) */
-    public function paymentProof(Request $request, Registration $registration, RegistrationService $service): PaymentResource
+    /**
+     * POST /me/registrations/{registration}/payment-proof (multipart: proof, amount?, transfer_date?, payment_account_id?, note?)
+     * Bukti untuk invoice terbuka pertama pendaftaran ini (kompatibel dengan alur lama).
+     */
+    public function paymentProof(Request $request, Registration $registration, PaymentService $payments): InvoiceResource
     {
         Gate::authorize('view', $registration);
-        $request->validate(['proof' => ['required', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:4096'], 'note' => ['nullable', 'string', 'max:500']]);
-        abort_unless(in_array($registration->status->value, ['waiting_payment', 'payment_verification'], true), 422, 'Pendaftaran belum pada tahap pembayaran.');
+        $data = $this->validateProof($request);
+        $invoice = $registration->invoices()->whereIn('status', [...Invoice::PAYABLE, 'expired'])->orderBy('installment_no')->first()
+            ?? $registration->invoices()->where('status', 'paid')->first();
+        abort_unless($invoice, 422, 'Pendaftaran belum pada tahap pembayaran.');
+        $payments->submitProof($invoice, $request->user(), $request->file('proof'), $data, 'member');
 
-        $payment = $registration->payments()->whereIn('status', ['unpaid', 'submitted', 'rejected'])->first()
-            ?? Payment::query()->create(['registration_id' => $registration->id, 'invoice_number' => Payment::nextNumber(), 'amount' => $registration->total ?? 0, 'status' => 'unpaid']);
-        $path = $request->file('proof')->store('payments/'.$registration->registration_number, config('filesystems.default'));
-        $payment->update(['proof_path' => $path, 'proof_uploaded_at' => now(), 'status' => 'submitted', 'note' => $request->string('note')->toString() ?: $payment->note]);
-        AuditLog::record('payment.proof_uploaded', $payment, null, ['path' => $path], $request->user());
-
-        if ($registration->status === RegistrationStatus::WaitingPayment) {
-            $service->transition($registration, RegistrationStatus::PaymentVerification, $request->user(), 'Bukti pembayaran diunggah');
-        }
-
-        return new PaymentResource($payment->refresh());
+        return new InvoiceResource($invoice->refresh()->load('items', 'transactions', 'refunds', 'registration'));
     }
 
-    /** GET /me/payments */
+    /** GET /me/payments — semua invoice pendaftaran milik pengguna (nama lama dipertahankan). */
     public function payments(Request $request): AnonymousResourceCollection
     {
         $ids = Registration::query()->ownedBy($request->user())->pluck('id');
 
-        return PaymentResource::collection(Payment::query()->whereIn('registration_id', $ids)->with('registration')->latest()->get());
+        return InvoiceResource::collection(Invoice::query()->whereIn('registration_id', $ids)->where('status', '!=', 'cancelled')
+            ->with('registration', 'items', 'transactions', 'refunds')->latest('id')->get());
+    }
+
+    /** GET /me/invoices/{invoice} */
+    public function invoice(Request $request, Invoice $invoice): InvoiceResource
+    {
+        return new InvoiceResource($this->ownedInvoice($request, $invoice)->load('registration', 'items', 'transactions', 'refunds'));
+    }
+
+    /** POST /me/invoices/{invoice}/proof — unggah bukti transfer untuk invoice tertentu (termin). */
+    public function invoiceProof(Request $request, Invoice $invoice, PaymentService $payments): InvoiceResource
+    {
+        $invoice = $this->ownedInvoice($request, $invoice);
+        $payments->submitProof($invoice, $request->user(), $request->file('proof') ?? abort(422), $this->validateProof($request), 'member');
+
+        return new InvoiceResource($invoice->refresh()->load('registration', 'items', 'transactions', 'refunds'));
+    }
+
+    /** GET /me/invoices/{invoice}/pdf */
+    public function invoicePdf(Request $request, Invoice $invoice, InvoiceService $invoices): Response
+    {
+        $invoice = $this->ownedInvoice($request, $invoice);
+
+        return response($invoices->pdf($invoice), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="'.$invoice->invoice_number.'.pdf"',
+            'Cache-Control' => 'private, no-store',
+        ]);
+    }
+
+    /** Invoice pendaftaran milik pengguna; invoice lain (termasuk milik perusahaan) → 404, bukan 403. */
+    private function ownedInvoice(Request $request, Invoice $invoice): Invoice
+    {
+        $owned = $invoice->registration_id && Registration::query()->ownedBy($request->user())->whereKey($invoice->registration_id)->exists();
+        abort_unless($owned && $invoice->status !== 'cancelled', 404);
+
+        return $invoice;
+    }
+
+    /** @return array<string, mixed> */
+    private function validateProof(Request $request): array
+    {
+        return $request->validate([
+            'proof' => ['required', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:4096'],
+            'amount' => ['nullable', 'numeric', 'min:1', 'max:9999999999'],
+            'transfer_date' => ['nullable', 'date', 'before_or_equal:today'],
+            'payment_account_id' => ['nullable', 'integer', Rule::exists('payment_accounts', 'id')->where('is_active', true)],
+            'payer_name' => ['nullable', 'string', 'max:120'],
+            'note' => ['nullable', 'string', 'max:500'],
+        ]);
     }
 
     /** GET /me/payment-accounts — rekening/VA tujuan pembayaran manual yang aktif. */

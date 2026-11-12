@@ -6,7 +6,7 @@
         $usesRange = ['registrations', 'payments'];
         $descriptions = [
             'registrations' => 'Nomor, status, kontak pendaftar, kelas, paket, harga, diskon & total.',
-            'payments' => 'Invoice, termin, jatuh tempo, status & waktu verifikasi pembayaran.',
+            'payments' => 'Invoice (sumber, subtotal, diskon, pajak, total, terbayar, refund), termin, jatuh tempo, status & transaksi terakhir.',
             'schedules' => 'Kuota, kursi terisi, sisa kursi, daftar tunggu & trainer per kelas.',
             'enrollments' => 'Peserta per kelas dengan nomor member, status, kehadiran & nilai akhir.',
         ];

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { PAYMENT_PILL, type PaymentInfo, type RegistrationInfo, STATUS_PILL } from "@/lib/portal-types";
+import { INVOICE_PILL, type InvoiceInfo, type RegistrationInfo, STATUS_PILL } from "@/lib/portal-types";
 import Icon from "@/components/ui/Icon";
 import type { IconName } from "@/components/ui/icons";
 import { formatRupiah } from "@/lib/utils";
@@ -9,8 +9,10 @@ export function StatusPill({ status }: { status: RegistrationInfo["status"] }) {
   return <span className={"jst " + p.cls}>{p.label}</span>;
 }
 
-export function PaymentPill({ status }: { status: PaymentInfo["status"] }) {
-  const p = PAYMENT_PILL[status];
+/** Pill status invoice; invoice terbuka dengan bukti yang menunggu verifikasi tampil "Menunggu verifikasi". */
+export function InvoicePill({ invoice }: { invoice: Pick<InvoiceInfo, "status" | "awaitingVerification"> }) {
+  const awaiting = invoice.awaitingVerification && (invoice.status === "pending" || invoice.status === "failed");
+  const p = INVOICE_PILL[awaiting ? "awaiting" : invoice.status];
   return <span className={"jst " + p.cls}>{p.label}</span>;
 }
 

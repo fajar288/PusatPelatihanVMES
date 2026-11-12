@@ -3,11 +3,10 @@
 namespace App\Services;
 
 use App\Models\AuditLog;
-use App\Models\Payment;
+use App\Models\Invoice;
 use App\Models\PromoCode;
 use App\Models\Registration;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -34,6 +33,7 @@ class FinanceService
             $before = ['discount' => (float) $registration->discount, 'total' => (float) $registration->total, 'promo_code' => $registration->promo_code];
             $registration->update(['promo_code' => $promo->code, 'discount' => $discount, 'discount_note' => $promo->name, 'total' => max(0, $gross - $discount)]);
             AuditLog::record('registration.promo_applied', $registration, $before, ['promo_code' => $promo->code, 'discount' => $discount, 'total' => (float) $registration->total], $actor);
+            app(InvoiceService::class)->syncFromRegistration($registration, $actor);
 
             return $registration;
         });
@@ -47,72 +47,48 @@ class FinanceService
         $before = ['discount' => (float) $registration->discount, 'total' => (float) $registration->total];
         $registration->update(['discount' => $discount, 'discount_note' => $note, 'promo_code' => null, 'total' => $gross - $discount]);
         AuditLog::record('registration.discount_applied', $registration, $before, ['discount' => $discount, 'note' => $note], $actor);
+        app(InvoiceService::class)->syncFromRegistration($registration, $actor);
 
         return $registration;
     }
 
     /**
-     * Buat tagihan termin: total dibagi n (sisa pembulatan ke termin terakhir), jatuh tempo berjarak `$intervalDays`.
-     * Tagihan lama yang belum dibayar diganti.
+     * Tagihan termin (dipindahkan ke InvoiceService di Roadmap 5C): nilai bersih dibagi n, pajak per termin.
      *
-     * @return Payment[]
+     * @return Invoice[]
      */
     public function createInstallments(Registration $registration, int $count, int $intervalDays = 30, ?string $firstDue = null, ?User $actor = null): array
     {
-        $count = max(1, min(12, $count));
-        $total = (float) ($registration->total ?? 0);
-        if ($total <= 0) {
-            throw ValidationException::withMessages(['total' => 'Total pendaftaran belum ditentukan.']);
-        }
-
-        return DB::transaction(function () use ($registration, $count, $intervalDays, $firstDue, $total, $actor) {
-            $registration->payments()->whereIn('status', ['unpaid', 'rejected'])->delete();
-            $paid = (float) $registration->payments()->where('status', 'verified')->sum('amount');
-            $remaining = max(0, $total - $paid);
-            $base = floor($remaining / $count);
-            $due = $firstDue ? Carbon::parse($firstDue) : now()->addDays(3);
-            $out = [];
-            for ($i = 1; $i <= $count; $i++) {
-                $amount = $i === $count ? $remaining - $base * ($count - 1) : $base;
-                $out[] = Payment::query()->create([
-                    'registration_id' => $registration->id,
-                    'invoice_number' => Payment::nextNumber(),
-                    'amount' => $amount,
-                    'installment_no' => $i,
-                    'installment_total' => $count,
-                    'description' => $count > 1 ? "Termin {$i} dari {$count}" : null,
-                    'due_date' => $due->copy()->addDays($intervalDays * ($i - 1))->toDateString(),
-                    'status' => 'unpaid',
-                ]);
-            }
-            AuditLog::record('payment.installments_created', $registration, null, ['count' => $count, 'remaining' => $remaining], $actor);
-
-            return $out;
-        });
+        return app(InvoiceService::class)->installments($registration, $count, $intervalDays, $firstDue, $actor);
     }
 
-    /** @return array{verified: float, pending: float, outstanding: float, by_month: array<string, float>} */
+    /**
+     * Ringkasan pendapatan dari invoice. verified = dana diterima bersih refund; pending = bukti menunggu verifikasi;
+     * outstanding = sisa tagihan terbuka (termasuk kedaluwarsa).
+     *
+     * @return array{verified: float, pending: float, outstanding: float, by_month: array<string, float>}
+     */
     public function revenueSummary(?string $from = null, ?string $to = null): array
     {
-        $q = Payment::query();
+        $q = Invoice::query()->whereNotIn('status', ['cancelled']);
         if ($from) {
             $q->whereDate('created_at', '>=', $from);
         }
         if ($to) {
             $q->whereDate('created_at', '<=', $to);
         }
-        $rows = $q->get(['amount', 'status', 'verified_at', 'created_at']);
+        $rows = $q->with(['transactions' => fn ($t) => $t->where('status', 'pending')])->get();
         $byMonth = [];
-        foreach ($rows->where('status', 'verified') as $p) {
-            $k = ($p->verified_at ?? $p->created_at)->format('Y-m');
-            $byMonth[$k] = ($byMonth[$k] ?? 0) + (float) $p->amount;
+        foreach ($rows->filter(fn (Invoice $i) => (float) $i->amount_paid > 0) as $i) {
+            $k = ($i->paid_at ?? $i->updated_at)->format('Y-m');
+            $byMonth[$k] = ($byMonth[$k] ?? 0) + (float) $i->amount_paid - (float) $i->amount_refunded;
         }
         ksort($byMonth);
 
         return [
-            'verified' => (float) $rows->where('status', 'verified')->sum('amount'),
-            'pending' => (float) $rows->where('status', 'submitted')->sum('amount'),
-            'outstanding' => (float) $rows->whereIn('status', ['unpaid', 'rejected'])->sum('amount'),
+            'verified' => (float) $rows->sum(fn (Invoice $i) => (float) $i->amount_paid - (float) $i->amount_refunded),
+            'pending' => (float) $rows->sum(fn (Invoice $i) => (float) $i->transactions->sum('amount')),
+            'outstanding' => (float) $rows->whereIn('status', ['pending', 'failed', 'expired'])->sum(fn (Invoice $i) => $i->outstanding()),
             'by_month' => $byMonth,
         ];
     }

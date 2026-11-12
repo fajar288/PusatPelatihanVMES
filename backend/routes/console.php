@@ -7,6 +7,7 @@ use App\Models\Lesson;
 use App\Models\NotificationLog;
 use App\Models\WebhookDelivery;
 use App\Services\IdentityMatchingService;
+use App\Services\InvoiceService;
 use App\Services\NotificationEvents;
 use App\Services\SponsorshipService;
 use App\Services\TrainingRequestService;
@@ -71,3 +72,10 @@ Artisan::command('requests:sync-status', function (TrainingRequestService $reque
 })->purpose('Sinkronkan status Corporate Training Request dengan jadwal batch');
 
 Schedule::command('requests:sync-status')->dailyAt('00:30');
+
+// Roadmap 5C: invoice belum dibayar yang lewat jatuh tempo → Expired (kecuali ada bukti menunggu verifikasi). Aman diulang.
+Artisan::command('invoices:expire', function (InvoiceService $invoices) {
+    $this->info('Invoice kedaluwarsa: '.$invoices->expireOverdue());
+})->purpose('Tandai invoice yang lewat jatuh tempo tanpa pembayaran sebagai kedaluwarsa');
+
+Schedule::command('invoices:expire')->dailyAt('00:45');

@@ -11,7 +11,7 @@ class RegistrationResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-        $payment = $this->relationLoaded('payments') ? $this->payments->first() : null;
+        $invoice = $this->relationLoaded('invoices') ? $this->invoices->where('status', '!=', 'cancelled')->first() : null;
         $schedule = $this->schedule;
 
         return [
@@ -36,11 +36,12 @@ class RegistrationResource extends JsonResource
             'discount' => (float) $this->discount,
             'total' => $this->total !== null ? (float) $this->total : null,
             'currency' => 'IDR',
-            'invoice' => $payment ? [
-                'number' => $payment->invoice_number,
-                'amount' => (float) $payment->amount,
-                'status' => $payment->status,
-                'due_date' => $payment->due_date?->toDateString(),
+            'invoice' => $invoice ? [
+                'number' => $invoice->invoice_number,
+                'amount' => (float) $invoice->total,
+                'amount_paid' => (float) $invoice->amount_paid,
+                'status' => $invoice->status,
+                'due_date' => $invoice->due_date?->toDateString(),
             ] : null,
             'created_at' => $this->created_at?->toIso8601String(),
             'updated_at' => $this->updated_at?->toIso8601String(),

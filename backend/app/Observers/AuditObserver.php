@@ -3,10 +3,10 @@
 namespace App\Observers;
 
 use App\Models\AuditLog;
+use App\Models\Invoice;
 use App\Models\Member;
 use App\Models\Organization;
 use App\Models\OrganizationUnit;
-use App\Models\Payment;
 use App\Models\Registration;
 use App\Models\TrainingSchedule;
 use Illuminate\Database\Eloquent\Model;
@@ -14,13 +14,13 @@ use Illuminate\Database\Eloquent\Model;
 /** Jejak audit otomatis untuk perubahan dari panel admin (created/updated/deleted). Aksi domain dicatat eksplisit oleh service. */
 class AuditObserver
 {
-    public const MODELS = [Registration::class, Payment::class, Member::class, TrainingSchedule::class, Organization::class, OrganizationUnit::class];
+    public const MODELS = [Registration::class, Invoice::class, Member::class, TrainingSchedule::class, Organization::class, OrganizationUnit::class];
 
     private const IGNORE = ['updated_at', 'created_at', 'remember_token', 'password'];
 
     public function created(Model $model): void
     {
-        if ($model instanceof Registration || $model instanceof Member || $model instanceof Organization) {
+        if ($model instanceof Registration || $model instanceof Member || $model instanceof Organization || $model instanceof Invoice) {
             return; // sudah dicatat oleh service dengan konteks aksi
         }
         AuditLog::record(class_basename($model).'.created', $model, null, $this->clean($model->getAttributes()));

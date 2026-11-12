@@ -1,6 +1,7 @@
 // Corporate Portal (Roadmap 5 tahap 5B) — tipe & helper. Semua data diambil di server dengan token sesi (cookie httpOnly);
 // organisasi di URL selalu diverifikasi API terhadap keanggotaan aktif pengguna (organisasi lain → 404).
 import type { ParticipantOverview } from "./monitoring";
+import type { InvoiceInfo } from "./portal-types";
 
 export type Capability = "view_progress" | "manage_participants" | "manage_requests" | "approve_requests" | "manage_users" | "view_finance" | "export";
 
@@ -57,6 +58,7 @@ export type CorporateRequest = {
   schedule: { code: string; dates: string } | null;
   createdAt: string | null;
   quote: { pricePerSeat: number; discount: number; total: number; validUntil: string | null; notes: string | null; expired: boolean } | null;
+  invoice?: { number: string; status: string; statusLabel: string; total: number; outstanding: number; dueLabel: string | null; canOpen: boolean } | null;
   can: { edit: boolean; submit: boolean; acceptQuote: boolean; approve: boolean; cancel: boolean; assign: boolean };
   trainerRequirements?: string | null;
   notes?: string | null;
@@ -128,3 +130,9 @@ export function can(s: CorporateSummary, c: Capability): boolean {
 export function rupiah(n: number | null | undefined): string {
   return n === null || n === undefined ? "-" : "Rp " + Math.round(n).toLocaleString("id-ID");
 }
+
+/** GET .../invoices — invoice organisasi (peran view_finance) + ringkasan piutang. */
+export type CorporateInvoiceList = {
+  data: InvoiceInfo[];
+  summary: { outstanding: number; openCount: number; paid: number; awaiting: number };
+};

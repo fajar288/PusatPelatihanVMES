@@ -21,7 +21,7 @@ use Illuminate\Validation\Rule;
 /** API Publik v1 — pendaftaran atas nama peserta (scope registrations.write / registrations.read). */
 class RegistrationController extends Controller
 {
-    private const WITH = ['schedule.package', 'participants', 'payments'];
+    private const WITH = ['schedule.package', 'participants', 'invoices'];
 
     /** POST /registrations — idempoten bila `external_ref` dikirim ulang (200 + header Idempotent-Replayed). */
     public function store(StoreApiRegistrationRequest $request, RegistrationService $service, WebhookService $webhooks): JsonResponse

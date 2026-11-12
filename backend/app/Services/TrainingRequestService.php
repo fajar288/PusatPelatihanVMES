@@ -24,7 +24,7 @@ use Illuminate\Validation\ValidationException;
  */
 class TrainingRequestService
 {
-    public function __construct(private ParticipantAssignmentService $assignments) {}
+    public function __construct(private ParticipantAssignmentService $assignments, private InvoiceService $invoices) {}
 
     /** @param array{package_id:int, seats:int, delivery?:string, target_date?:mixed, location?:?string, unit_id?:?int, trainer_requirements?:?string, notes?:?string} $data */
     public function create(CorporateUser $cu, array $data, bool $submit = false): TrainingRequest
@@ -110,7 +110,7 @@ class TrainingRequestService
         return $this->move($r, ['approval'], 'approved', ['approved_by' => $cu->user_id, 'approved_at' => now(), 'approval_note' => $note], $cu->user, notifyVmes: true);
     }
 
-    /** Finance VMES mengonfirmasi pembayaran manual sudah diterima & diverifikasi (invoice lengkap di 5C). */
+    /** Dipanggil PaymentService saat invoice permintaan ini lunas diverifikasi finance VMES (Roadmap 5C). */
     public function markPaid(TrainingRequest $r, User $actor, ?string $reference = null): TrainingRequest
     {
         return $this->move($r, ['approved'], 'paid', ['paid_at' => now(), 'paid_confirmed_by' => $actor->id, 'payment_reference' => $reference], $actor, notifyCorporate: true);
@@ -179,6 +179,13 @@ class TrainingRequestService
         $this->assertStatus($r, $from);
         $before = $r->status;
         $r->update(['status' => $to] + $extra);
+        if ($to === 'approved') {
+            $this->invoices->forTrainingRequest($r, $actor);   // invoice dari penawaran yang disetujui (5C)
+        }
+        if ($to === 'cancelled') {
+            $r->invoices()->whereIn('status', ['pending', 'failed', 'expired'])->where('amount_paid', 0)->get()
+                ->each(fn ($inv) => $inv->hasPendingTransaction() ? null : $this->invoices->cancel($inv, 'Permintaan training dibatalkan', $actor));
+        }
         AuditLog::record('training_request.'.$to, $r, ['status' => $before], ['status' => $to] + array_intersect_key($extra, array_flip(['price_per_seat', 'quote_total', 'schedule_id', 'cancel_reason', 'payment_reference', 'approval_note'])), $actor);
 
         if ($notifyCorporate) {

@@ -213,7 +213,15 @@ class CorporateRequestController extends Controller
             return $base;
         }
 
+        $invoice = $finance ? $r->invoices()->where('status', '!=', 'cancelled')->first() : null;
+
         return $base + [
+            // invoice dari penawaran yang disetujui (5C); detail & unggah bukti di menu Keuangan (peran view_finance)
+            'invoice' => $invoice ? [
+                'number' => $invoice->invoice_number, 'status' => $invoice->status, 'statusLabel' => $invoice->statusLabel(),
+                'total' => (float) $invoice->total, 'outstanding' => $invoice->outstanding(), 'dueLabel' => IdDate::long($invoice->due_date),
+                'canOpen' => $cu->allows('view_finance'),
+            ] : null,
             'trainerRequirements' => $r->trainer_requirements,
             'notes' => $r->notes,
             'cancelReason' => $r->cancel_reason,
