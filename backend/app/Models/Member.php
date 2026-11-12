@@ -28,6 +28,17 @@ class Member extends Model
         return $this->hasMany(Registration::class)->latest();
     }
 
+    public function enrollments(): HasMany
+    {
+        return $this->hasMany(Enrollment::class);
+    }
+
+    /** Hubungan kerja (Roadmap 5 §20.6) — satu member bisa punya banyak, aktif maupun tidak. */
+    public function employments(): HasMany
+    {
+        return $this->hasMany(EmploymentRelationship::class)->latest('id');
+    }
+
     /** Nomor member MBR-YYYY-000001 (urut per tahun). */
     public static function nextNumber(): string
     {

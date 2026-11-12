@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use LogicException;
 
 /** Jejak audit: siapa, aksi apa, pada model mana, sebelum/sesudah (PRD §9). */
 class AuditLog extends Model
@@ -16,6 +17,13 @@ class AuditLog extends Model
     protected function casts(): array
     {
         return ['before' => 'array', 'after' => 'array', 'created_at' => 'datetime'];
+    }
+
+    /** Jejak audit tidak bisa diubah/dihapus lewat aplikasi (Roadmap 5 §13 "Immutable activity trail", §20.20). */
+    protected static function booted(): void
+    {
+        static::updating(fn () => throw new LogicException('Audit log tidak bisa diubah.'));
+        static::deleting(fn () => throw new LogicException('Audit log tidak bisa dihapus.'));
     }
 
     public function actor(): BelongsTo

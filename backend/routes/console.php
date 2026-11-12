@@ -2,10 +2,14 @@
 
 use App\Models\ApiRequestLog;
 use App\Models\ChatLog;
+use App\Models\Enrollment;
 use App\Models\Lesson;
 use App\Models\NotificationLog;
 use App\Models\WebhookDelivery;
+use App\Services\IdentityMatchingService;
 use App\Services\NotificationEvents;
+use App\Services\SponsorshipService;
+use App\Support\Enterprise\IdentityMatch;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
@@ -40,3 +44,22 @@ Schedule::command('notifications:reminders')->hourly()->between('7:00', '20:00')
 
 // Pangkas log permintaan API Publik, riwayat webhook & log notifikasi lama (API_LOG_RETENTION_DAYS, default 90 hari)
 Schedule::command('model:prune', ['--model' => [ApiRequestLog::class, WebhookDelivery::class, NotificationLog::class, ChatLog::class]])->daily();
+
+// Roadmap 5 (5A): cocokkan peserta enrollment yang belum punya member ke Member yang ada (PRD Roadmap 5 §20.5).
+// Hanya hasil yakin (email terverifikasi / nomor member) yang ditautkan; sisanya masuk Review identitas. Aman diulang.
+Artisan::command('identity:backfill', function (IdentityMatchingService $identity) {
+    $linked = 0;
+    $queued = 0;
+    Enrollment::query()->whereNull('member_id')->with(['schedule', 'sponsor', 'registration', 'registrationParticipant'])->orderBy('id')
+        ->each(function (Enrollment $e) use ($identity, &$linked, &$queued): void {
+            $identity->resolveEnrollment($e)->outcome === IdentityMatch::USE_EXISTING ? $linked++ : $queued++;
+        });
+    $this->info("Ditautkan otomatis: $linked enrollment. Masuk Review identitas: $queued.");
+})->purpose('Cocokkan enrollment tanpa member ke Member yang ada; sisanya ke review queue');
+
+// Terapkan transfer sponsor yang sudah disetujui dan tanggal efektifnya tiba (PRD Roadmap 5 §20.20).
+Artisan::command('sponsorship:apply-due', function (SponsorshipService $sponsorship) {
+    $this->info('Transfer sponsor diterapkan: '.$sponsorship->applyDue());
+})->purpose('Terapkan transfer sponsor yang disetujui dengan tanggal efektif hari ini atau lebih awal');
+
+Schedule::command('sponsorship:apply-due')->dailyAt('00:15');

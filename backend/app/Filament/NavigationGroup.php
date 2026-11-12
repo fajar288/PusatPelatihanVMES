@@ -16,6 +16,7 @@ enum NavigationGroup implements Collapsible, HasLabel
     case LandingPage;
     case TmsProgram;
     case TmsRegistration;
+    case Corporate;
     case TmsDelivery;
     case Lms;
     case Certificates;
@@ -29,6 +30,7 @@ enum NavigationGroup implements Collapsible, HasLabel
             self::LandingPage => 'Landing Page (Website)',
             self::TmsProgram => 'TMS: Program & Kelas',
             self::TmsRegistration => 'TMS: Pendaftaran & Keuangan',
+            self::Corporate => 'Korporat (Enterprise)',
             self::TmsDelivery => 'TMS: Pelaksanaan & Penilaian',
             self::Lms => 'LMS (E-learning)',
             self::Certificates => 'Sertifikat & Alumni',
