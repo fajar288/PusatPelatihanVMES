@@ -83,6 +83,17 @@ class Organization extends Model
         return $this->display_name ?: $this->legal_name;
     }
 
+    /** Approval internal perusahaan sebelum penawaran disetujui (PRD Roadmap 5 §4.1 "Optional approval", §20.13). */
+    public function requiresApproval(): bool
+    {
+        return (bool) ($this->settings['requires_approval'] ?? false);
+    }
+
+    public function trainingRequests(): HasMany
+    {
+        return $this->hasMany(TrainingRequest::class);
+    }
+
     public function exitAccess(): string
     {
         $v = $this->settings['exit_access'] ?? 'summary';

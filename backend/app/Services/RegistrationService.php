@@ -78,6 +78,10 @@ class RegistrationService
         if (! $from->canTransitionTo($to)) {
             throw ValidationException::withMessages(['status' => "Transisi {$from->label()} → {$to->label()} tidak diizinkan."]);
         }
+        // Roadmap 5B: pendaftaran kolektif wajib ditautkan admin ke organisasi sebelum dikonfirmasi (sponsor enrollment)
+        if ($to === RegistrationStatus::Confirmed && $registration->type === Registration::TYPE_CORPORATE && ! $registration->organization_id) {
+            throw ValidationException::withMessages(['organization_id' => 'Tautkan pendaftaran kolektif ini ke organisasi (menu Pendaftaran → Tautkan organisasi) sebelum dikonfirmasi.']);
+        }
 
         return DB::transaction(function () use ($registration, $from, $to, $actor, $note) {
             $registration->forceFill([

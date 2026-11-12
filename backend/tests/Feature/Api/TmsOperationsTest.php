@@ -13,6 +13,7 @@ use App\Models\TrainingSchedule;
 use App\Models\User;
 use App\Notifications\ScheduleChanged;
 use App\Services\EnrollmentService;
+use App\Services\OrganizationService;
 use App\Services\RegistrationService;
 use Carbon\Carbon;
 use Database\Seeders\CmsSeeder;
@@ -49,6 +50,10 @@ class TmsOperationsTest extends TestCase
         $svc = app(RegistrationService::class);
         $svc->transition($reg, RegistrationStatus::WaitingPayment, $admin);
         $svc->transition($reg, RegistrationStatus::PaymentVerification, $admin);
+        if ($reg->type === Registration::TYPE_CORPORATE) {
+            // Roadmap 5B: pendaftaran kolektif wajib ditautkan ke organisasi sebelum konfirmasi
+            $reg->update(['organization_id' => app(OrganizationService::class)->create(['legal_name' => $reg->company ?: 'PT Uji'])->id]);
+        }
         $svc->transition($reg, RegistrationStatus::Confirmed, $admin);
 
         return $reg->refresh();

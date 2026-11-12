@@ -60,6 +60,7 @@ class AppServiceProvider extends ServiceProvider
             Limit::perMinute(max(1, (int) config('chatbot.per_ip_per_minute')))->by('chat-m:'.$request->ip()),
             Limit::perDay(max(1, (int) config('chatbot.per_ip_per_day')))->by('chat-d:'.$request->ip()),
         ]);
+        RateLimiter::for('verify-resend', fn (Request $request) => Limit::perMinute(3)->by('verify-resend:'.($request->user()?->id ?: $request->ip())));
         RateLimiter::for('chatbot-feedback', fn (Request $request) => Limit::perMinute(30)->by('chat-fb:'.$request->ip()));
 
         // Notifikasi "materi baru" saat lesson terbit / mulai tersedia (PRD §5.12)

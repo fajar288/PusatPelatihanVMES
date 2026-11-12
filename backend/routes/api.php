@@ -5,7 +5,9 @@ use App\Http\Controllers\Api\V1\CertificateController;
 use App\Http\Controllers\Api\V1\ChatController;
 use App\Http\Controllers\Api\V1\ContentController;
 use App\Http\Controllers\Api\V1\CorporateController;
+use App\Http\Controllers\Api\V1\CorporateRequestController;
 use App\Http\Controllers\Api\V1\HomeController;
+use App\Http\Controllers\Api\V1\InvitationController;
 use App\Http\Controllers\Api\V1\LearningController;
 use App\Http\Controllers\Api\V1\MeController;
 use App\Http\Controllers\Api\V1\NotificationController;
@@ -79,7 +81,11 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
         Route::post('/login', [AuthController::class, 'login'])->name('login');
         Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->name('forgot');
         Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('reset');
+        Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])->middleware('signed:relative')->name('verify');
     });
+
+    // Undangan peserta dari perusahaan (Roadmap 5B): info publik (tanpa data sensitif)
+    Route::get('/invitations/{token}', [InvitationController::class, 'show'])->middleware('throttle:30,1')->name('invitations.show');
 
     // ---- Terautentikasi (portal member) ----
     Route::middleware('auth:sanctum')->group(function (): void {
@@ -94,9 +100,37 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
         Route::get('/me/payments', [MeController::class, 'payments'])->name('me.payments');
         Route::get('/me/payment-accounts', [MeController::class, 'paymentAccounts'])->name('me.payment_accounts');
 
-        // Pengguna perusahaan (Roadmap 5 5A): organisasi selalu diverifikasi terhadap keanggotaan aktif (§20.21)
+        // Verifikasi email (Roadmap 5B) & undangan peserta
+        Route::post('/auth/email/resend', [AuthController::class, 'resendVerification'])->middleware('throttle:verify-resend')->name('auth.verify_resend');
+        Route::post('/invitations/{token}/accept', [InvitationController::class, 'accept'])->middleware('throttle:20,1')->name('invitations.accept');
+
+        // Corporate Portal (Roadmap 5A/5B): organisasi SELALU diverifikasi terhadap keanggotaan aktif (§20.21)
         Route::get('/corporate/organizations', [CorporateController::class, 'organizations'])->name('corporate.organizations');
-        Route::get('/corporate/organizations/{organization}/enrollments', [CorporateController::class, 'enrollments'])->name('corporate.enrollments');
+        Route::prefix('corporate/organizations/{organization}')->name('corporate.')->group(function (): void {
+            Route::get('/', [CorporateController::class, 'summary'])->name('summary');
+            Route::get('/enrollments', [CorporateController::class, 'enrollments'])->name('enrollments');
+            Route::get('/enrollments-export', [CorporateController::class, 'export'])->middleware('throttle:10,1')->name('export');
+            Route::get('/enrollments/{enrollment}', [CorporateController::class, 'enrollment'])->name('enrollment');
+            Route::get('/certificates', [CorporateController::class, 'certificates'])->name('certificates');
+            Route::get('/employees', [CorporateController::class, 'employees'])->name('employees');
+            Route::get('/units', [CorporateController::class, 'units'])->name('units');
+            Route::get('/users', [CorporateController::class, 'users'])->name('users');
+            Route::post('/users', [CorporateController::class, 'addUser'])->name('users.add');
+            Route::patch('/users/{corporateUser}', [CorporateController::class, 'updateUser'])->name('users.update');
+            Route::post('/users/{corporateUser}/disable', [CorporateController::class, 'disableUser'])->name('users.disable');
+
+            Route::get('/requests', [CorporateRequestController::class, 'index'])->name('requests');
+            Route::post('/requests', [CorporateRequestController::class, 'store'])->name('requests.store');
+            Route::get('/requests/{trainingRequest}', [CorporateRequestController::class, 'show'])->name('requests.show');
+            Route::patch('/requests/{trainingRequest}', [CorporateRequestController::class, 'update'])->name('requests.update');
+            Route::get('/requests/{trainingRequest}/import-template', [CorporateRequestController::class, 'template'])->name('requests.template');
+            Route::post('/requests/{trainingRequest}/import', [CorporateRequestController::class, 'import'])->middleware('throttle:10,1')->name('requests.import');
+            Route::post('/requests/{trainingRequest}/seats/{seat}/assign', [CorporateRequestController::class, 'assign'])->name('seats.assign');
+            Route::post('/requests/{trainingRequest}/seats/{seat}/assign-employee', [CorporateRequestController::class, 'assignEmployee'])->name('seats.assign_employee');
+            Route::post('/requests/{trainingRequest}/seats/{seat}/release', [CorporateRequestController::class, 'release'])->name('seats.release');
+            Route::post('/requests/{trainingRequest}/{action}', [CorporateRequestController::class, 'transition'])
+                ->whereIn('action', ['submit', 'accept-quote', 'approve', 'cancel'])->name('requests.transition');
+        });
         // Notifikasi aplikasi, preferensi & web push (PRD §5.12)
         Route::get('/me/notifications', [NotificationController::class, 'index'])->name('me.notifications');
         Route::post('/me/notifications/read-all', [NotificationController::class, 'readAll'])->name('me.notifications.read_all');

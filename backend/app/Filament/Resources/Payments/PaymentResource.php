@@ -7,6 +7,7 @@ use App\Filament\NavigationGroup;
 use App\Filament\Resources\Payments\Pages\ListPayments;
 use App\Models\AuditLog;
 use App\Models\Payment;
+use App\Models\Registration;
 use App\Services\RegistrationService;
 use App\Support\Media;
 use BackedEnum;
@@ -18,6 +19,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\DB;
 use UnitEnum;
 
 /** Verifikasi pembayaran oleh finance (PRD §5.11): verifikasi → pendaftaran terkonfirmasi; tolak → kembali menunggu pembayaran. */
@@ -59,13 +61,19 @@ class PaymentResource extends Resource
                 Action::make('verifikasi')->label('Verifikasi')->icon('heroicon-o-check-circle')->color('success')
                     ->requiresConfirmation()
                     ->visible(fn (Payment $p) => $p->status === 'submitted')
-                    ->action(function (Payment $p, RegistrationService $service): void {
-                        $p->update(['status' => 'verified', 'verified_by' => auth()->id(), 'verified_at' => now()]);
-                        AuditLog::record('payment.verified', $p, ['status' => 'submitted'], ['status' => 'verified']);
+                    ->action(function (Payment $p, RegistrationService $service, Action $action): void {
                         $reg = $p->registration;
-                        if ($reg && $reg->status->canTransitionTo(RegistrationStatus::Confirmed)) {
-                            $service->transition($reg, RegistrationStatus::Confirmed, auth()->user(), 'Pembayaran terverifikasi');
+                        if ($reg && $reg->type === Registration::TYPE_CORPORATE && ! $reg->organization_id) {
+                            Notification::make()->title('Tautkan organisasi dulu')->body("Pendaftaran kolektif {$reg->registration_number} belum ditautkan ke organisasi. Buka pendaftaran → Tautkan organisasi, lalu verifikasi lagi.")->danger()->send();
+                            $action->halt();
                         }
+                        DB::transaction(function () use ($p, $reg, $service): void {
+                            $p->update(['status' => 'verified', 'verified_by' => auth()->id(), 'verified_at' => now()]);
+                            AuditLog::record('payment.verified', $p, ['status' => 'submitted'], ['status' => 'verified']);
+                            if ($reg && $reg->status->canTransitionTo(RegistrationStatus::Confirmed)) {
+                                $service->transition($reg, RegistrationStatus::Confirmed, auth()->user(), 'Pembayaran terverifikasi');
+                            }
+                        });
                         Notification::make()->title('Pembayaran diverifikasi')->success()->send();
                     }),
                 Action::make('tolak')->label('Tolak')->icon('heroicon-o-x-circle')->color('danger')

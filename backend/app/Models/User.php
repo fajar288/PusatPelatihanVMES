@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Notifications\ResetPasswordNotification;
+use App\Notifications\VerifyEmailNotification;
 use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
@@ -72,6 +73,12 @@ class User extends Authenticatable implements FilamentUser
     public function member(): HasOne
     {
         return $this->hasOne(Member::class);
+    }
+
+    /** Tautan verifikasi menuju frontend (Roadmap 5B). */
+    public function sendEmailVerificationNotification(): void
+    {
+        $this->notify(new VerifyEmailNotification);
     }
 
     /** Keanggotaan sebagai pengguna perusahaan (Roadmap 5 §20.12) — aktif maupun dicabut. */

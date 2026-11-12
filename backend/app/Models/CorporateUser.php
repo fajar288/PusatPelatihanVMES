@@ -19,7 +19,7 @@ class CorporateUser extends Model
 
     /** Kemampuan per peran perusahaan (dipakai policy; portal 5B memakai daftar yang sama). */
     public const CAPABILITIES = [
-        'owner' => ['view_progress', 'manage_participants', 'manage_requests', 'manage_users', 'view_finance', 'export'],
+        'owner' => ['view_progress', 'manage_participants', 'manage_requests', 'approve_requests', 'manage_users', 'view_finance', 'export'],
         'hr_admin' => ['view_progress', 'manage_participants', 'manage_requests', 'export'],
         'supervisor' => ['view_progress'],
         'finance' => ['view_finance'],
