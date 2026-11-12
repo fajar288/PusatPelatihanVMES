@@ -333,10 +333,67 @@ Legenda: `[ ]` belum · `[~]` sedang · `[x]` selesai. Prioritas mengikuti roadm
 - [x] PWA: manifest + ikon (maskable, apple-touch), service worker (cache aset/gambar/halaman publik, fallback `/offline`, area per-pengguna tidak di-cache), `experimental.useOffline` + banner offline, notifikasi versi baru, kartu "Pasang aplikasi" di portal member & trainer
 - [x] Notifikasi & komunikasi (PRD §5.12): notifikasi aplikasi di portal (baca/belum dibaca, badge), web push PWA (VAPID), email opsional, template pesan (admin), preferensi per kategori, log terkirim/gagal semua kanal, pengingat otomatis (kelas H-1, tenggat tugas, materi baru), pengumuman admin
 - [x] Pembayaran **manual** (keputusan 2026-11-12, tanpa payment gateway): transfer ke rekening resmi / Virtual Account statis → unggah bukti di portal → verifikasi finance. Admin **TMS: Pendaftaran & Keuangan → Rekening pembayaran** (izin `payments.verify`); tampil di portal & email tagihan. Sisa: isi data rekening/VA resmi PPTI di admin
-- [ ] WhatsApp automation (kanal WA di modul notifikasi) — penyedia WA **diurus nanti**
-- [ ] Corporate portal — menunggu spesifikasi
+- [ ] WhatsApp automation (kanal WA di modul notifikasi) — penyedia WA **diurus nanti** → lanjut di Roadmap 5 tahap 5D (driver `log`)
+- [ ] Corporate portal → dikerjakan di **PHASE 5 — Roadmap 5** di bawah
 - [x] Chatbot informasi publik memakai **Claude (Anthropic API)** — dibangun **nonaktif** (aktifkan: `CHATBOT_ENABLED=true` + `ANTHROPIC_API_KEY` di .env backend). Hanya data katalog website, tanpa data pribadi peserta; log + KPI di admin **Landing Page → Chatbot AI**
-- [ ] Fitur AI terukur lain (PRD Roadmap 5 §9: rekomendasi training, early warning, analisis feedback, LMS assistant) — menunggu data & keputusan
+- [ ] Fitur AI terukur lain (PRD Roadmap 5 §9: rekomendasi training, early warning, analisis feedback, LMS assistant) — ditunda (lihat Roadmap 5 tahap 5G)
+
+### PHASE 5 — Roadmap 5: Enterprise, Integration & Intelligence (`docs/PRD-Roadmap5.md`, aturan kerja `docs/PROMPT-Roadmap5.md`)
+
+**Keputusan & penyimpangan yang disengaja dari PRD Roadmap 5**
+- **Payment gateway TIDAK dikerjakan** (PRD §5, §10 langkah 3–4, §15 butir webhook) — penyimpangan yang disengaja: atasan mengonfirmasi ulang 2026-11-12 bahwa pembayaran tetap manual (transfer bank / VA statis + unggah bukti + verifikasi finance). Aturan PRD yang tetap berlaku untuk alur manual: invoice lunas tidak bisa dibayar ulang, status hanya berubah lewat verifikasi finance, refund punya alasan/penyetuju/waktu/referensi, semua perubahan diaudit. Tidak ada form nomor kartu.
+- **WhatsApp ditunda**: kanal WA hanya antarmuka dengan driver `log`, dimatikan lewat konfigurasi.
+- **AI** (pilihan nomor 3, 2026-11-12): chatbot publik Claude dari PR #22 dipertahankan (nonaktif, `CHATBOT_ENABLED`); asisten belajar di portal member hanya kerangka "Belum tersedia" (`AI_CHATBOT_ENABLED=false`, endpoint 503 `ai_unavailable`, tanpa panggilan API AI). Rekomendasi, early warning berbasis model, dan analisis feedback tidak dikerjakan.
+- Kolom teks `members.company` / `registrations.company` tetap sebagai isian, **tidak** dipakai untuk hak akses perusahaan.
+
+**Keputusan terbuka (dibuat bisa dikonfigurasi, default aman)**
+- [ ] Pembuatan akun organisasi — default: hanya admin VMES yang membuat organisasi lalu mengundang Corporate Owner (setting agar pendaftaran mandiri perusahaan bisa dibuka nanti)
+- [ ] Pajak invoice — default tarif 0%, baris pajak disembunyikan bila 0 (5C)
+- [ ] Akses histori setelah resign — setting per organisasi, default PRD §20.7: peserta dengan employment INACTIVE hilang dari daftar karyawan aktif dan detail progresnya tidak bisa dibuka, tetapi enrollment sponsored lamanya tetap dihitung di laporan agregat dan status sertifikatnya tetap terlihat
+- [ ] Verifikasi email peserta — aplikasi belum punya alur verifikasi email; sampai ada (rencana 5B bersama undangan), kecocokan email akun yang belum terverifikasi diperlakukan sebagai kandidat yang perlu dikonfirmasi, bukan dipakai otomatis (PRD §20.5)
+
+**5A Fondasi data enterprise** (`feat/enterprise-foundation`)
+- [ ] `organizations` (profil legal, alamat, industri, kontak, data pajak/invoice, logo, status, `needs_review`, setting), `organization_units` (departemen/cost center/proyek), `employment_relationships` (member, organisasi, employee ID, unit, posisi, mulai, selesai, ACTIVE/INACTIVE, sumber), `corporate_users` (user ↔ organisasi + peran perusahaan + batas unit opsional)
+- [ ] `enrollments.type` (self/corporate) + `sponsor_organization_id` (+ unit sponsor); aturan R1/R2 di service **dan** constraint DB
+- [ ] Migrasi backfill: enrollment individu → SELF; enrollment dari pendaftaran kolektif → CORPORATE dengan organisasi hasil normalisasi nama perusahaan, ditandai `needs_review`
+- [ ] `IdentityMatchingService` sesuai tabel §20.5 + review queue untuk data meragukan; backfill `member_id` kosong lewat service ini (tanpa membuat akun otomatis)
+- [ ] Query scope server-side `visibleToOrganization` + Policy; organization_id tidak bisa diganti lewat URL/API (§20.21)
+- [ ] Sponsorship Transfer (§20.20): permintaan → otorisasi → berlaku per tanggal efektif, audit tak bisa diubah
+- [ ] Resign → employment INACTIVE, akses corporate dicabut sesuai kebijakan, member/sertifikat/histori tetap
+- [ ] Admin Filament: Organisasi, Employment, Corporate User, Review identitas, Transfer sponsor
+- [ ] Tes setiap baris tabel §11 + skenario §20.7–20.8
+
+**5B Corporate Portal MVP** (`feat/corporate-portal`)
+- [ ] `training_requests` (status §4.2 DRAFT → … → COMPLETED/CANCELLED) + `request_seats`; reserved seat tidak membuat Member
+- [ ] Quotation dibuat admin VMES; approval perusahaan opsional per organisasi
+- [ ] Penugasan peserta: manual, unggah Excel/CSV (template + laporan galat per baris), tautan undangan bertoken (verifikasi + consent), cari member existing — semua lewat identity matching, tolak enrollment ganda di batch yang sama
+- [ ] Request terjadwal → enrollment CORPORATE bersponsor; pembatalan satu peserta hanya mengubah enrollment itu
+- [ ] Pendaftaran kolektif form publik tetap jalan, admin wajib menautkan ke organisasi sebelum konfirmasi
+- [ ] Frontend `/corporate/*` (login akun sama): ringkasan, request, peserta, progres (tanpa catatan privat trainer), sertifikat (status), keuangan, pengguna perusahaan, ekspor sesuai scope; batas privasi §20.11
+
+**5C Transaksi** (`feat/payment-transactions`) — tanpa payment gateway
+- [ ] Invoice lengkap (item, subtotal, pajak dapat dikonfigurasi, diskon, total, jatuh tempo) untuk individu & training request
+- [ ] `payment_transactions` untuk setiap bukti & verifikasi/penolakan; pemetaan status → Pending/Paid/Failed/Refunded + Expired (job terjadwal)
+- [ ] Invoice lunas menolak bukti baru; verifikasi ganda tidak membuat enrollment/notifikasi ganda
+- [ ] Rekonsiliasi finance (selisih nominal, unggah mutasi CSV opsional); alur refund (alasan, penyetuju, waktu, referensi)
+- [ ] Finance perusahaan: lihat invoice organisasi, unggah bukti, status verifikasi di portal perusahaan
+
+**5D Otomasi notifikasi** (`feat/notification-engine`)
+- [ ] Katalog event §6, penerima per scope (termasuk admin perusahaan hanya untuk enrollment bersponsor), penjadwalan, retry, status Queued/Sent/Delivered/Failed/Read, versi template, kanal WA driver `log`
+
+**5E API enterprise** (`feat/api-enterprise`)
+- [ ] Klien API terikat organisasi, endpoint §7 dengan scope/rate limit/versioning, `Idempotency-Key`, event webhook domain baru, OpenAPI diperbarui
+
+**5F Analitik lanjutan** (`feat/advanced-analytics`)
+- [ ] `docs/KPI.md` dari §8.1 dan implementasi persis definisinya
+- [ ] Corporate vs self-funded, funnel corporate, cohort/repeat order, AOV, analitik perusahaan §20.15, master kompetensi + target per posisi (competency gap dasar)
+
+**5G Kerangka asisten belajar AI** (`feat/ai-chatbot-shell`)
+- [ ] Panel "Asisten Belajar" di portal member berlabel "Belum tersedia", flag `AI_CHATBOT_ENABLED`, endpoint 503 `ai_unavailable`, tabel `ai_insights` kosong (use case, versi model, versi prompt, referensi data, reviewer); chatbot publik PR #22 tidak diubah
+
+**5H Hardening** (`feat/roadmap5-hardening`)
+- [ ] Tes keamanan organization scope (IDOR antar perusahaan, ekspor, token dicabut), cakupan audit, indeks DB untuk kueri dashboard
+- [ ] Checklist acceptance criteria §15 + §20.22 dengan status tiap butir
 
 ### NON-FUNGSIONAL (PRD §9) — berlaku lintas fase
 - [ ] HTTPS, hashing, RBAC, validasi input, CSRF/XSS/SQLi, secure session, rate limit
