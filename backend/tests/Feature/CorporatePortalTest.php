@@ -87,7 +87,7 @@ class CorporatePortalTest extends TestCase
     private function newRequest(int $seats = 3, array $extra = []): TrainingRequest
     {
         $code = $this->actingAs($this->hr, 'sanctum')->postJson($this->url('/requests'), [
-            'package_id' => $this->schedule->package_id, 'seats' => $seats, 'delivery' => 'onsite', 'target_date' => '2026-12-01', 'location' => 'Batam', 'submit' => true,
+            'package' => $this->schedule->package->slug, 'seats' => $seats, 'delivery' => 'onsite', 'target_date' => '2026-12-01', 'location' => 'Batam', 'submit' => true,
         ] + $extra)->assertCreated()->json('data.code');
 
         return TrainingRequest::query()->where('code', $code)->firstOrFail();
@@ -190,7 +190,7 @@ class CorporatePortalTest extends TestCase
     {
         $viewer = User::factory()->create();
         $this->orgs->addCorporateUser($this->abc, $viewer, 'viewer');
-        $this->actingAs($viewer, 'sanctum')->postJson($this->url('/requests'), ['package_id' => $this->schedule->package_id, 'seats' => 2, 'delivery' => 'online'])->assertUnprocessable();
+        $this->actingAs($viewer, 'sanctum')->postJson($this->url('/requests'), ['package' => $this->schedule->package->slug, 'seats' => 2, 'delivery' => 'online'])->assertUnprocessable();
 
         $eng = OrganizationUnit::query()->create(['organization_id' => $this->abc->id, 'name' => 'Engineering']);
         $hrd = OrganizationUnit::query()->create(['organization_id' => $this->abc->id, 'name' => 'HRD']);

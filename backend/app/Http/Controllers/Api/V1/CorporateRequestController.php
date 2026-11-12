@@ -7,6 +7,7 @@ use App\Models\CorporateUser;
 use App\Models\EmploymentRelationship;
 use App\Models\Organization;
 use App\Models\RequestSeat;
+use App\Models\TrainingPackage;
 use App\Models\TrainingRequest;
 use App\Services\ParticipantAssignmentService;
 use App\Services\TrainingRequestService;
@@ -159,14 +160,19 @@ class CorporateRequestController extends Controller
         return $seat;
     }
 
+    /** Program dipilih dengan slug (sama dengan katalog publik /packages). */
     private function validateRequest(Request $request): array
     {
-        return $request->validate([
-            'package_id' => ['required', 'integer'], 'seats' => ['required', 'integer', 'min:1', 'max:500'],
+        $data = $request->validate([
+            'package' => ['required', 'string', 'max:255'], 'seats' => ['required', 'integer', 'min:1', 'max:500'],
             'delivery' => ['required', Rule::in(array_keys(TrainingRequest::DELIVERY))], 'target_date' => ['nullable', 'date', 'after_or_equal:today'],
             'location' => ['nullable', 'string', 'max:255'], 'unit_id' => ['nullable', 'integer'],
             'trainer_requirements' => ['nullable', 'string', 'max:2000'], 'notes' => ['nullable', 'string', 'max:2000'], 'submit' => ['nullable', 'boolean'],
         ]);
+        $data['package_id'] = TrainingPackage::query()->published()->where('slug', $data['package'])->value('id') ?? 0;
+        unset($data['package']);
+
+        return $data;
     }
 
     private function present(CorporateUser $cu, TrainingRequest $r, bool $detail): array
@@ -177,7 +183,7 @@ class CorporateRequestController extends Controller
             'status' => $r->status,
             'statusLabel' => $r->label(),
             'program' => $r->package?->title,
-            'packageId' => $r->package_id,
+            'package' => $r->package?->slug,
             'delivery' => $r->delivery,
             'deliveryLabel' => TrainingRequest::DELIVERY[$r->delivery] ?? $r->delivery,
             'targetDate' => $r->target_date?->toDateString(),

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import InstallPrompt from "@/components/pwa/InstallPrompt";
 import PortalNav from "@/components/portal/PortalNav";
+import VerifyEmailBanner from "@/components/portal/VerifyEmailBanner";
 import { SITE } from "@/data/site";
 import { requireUser } from "@/lib/auth";
 
@@ -24,8 +25,15 @@ export default async function PortalLayout({ children }: LayoutProps<"/portal">)
         </div>
       </section>
       <div className="wrap pgrid">
-        <PortalNav name={user.name} memberNumber={user.member?.memberNumber} isTrainer={user.roles.some((r) => r === "trainer" || r === "assessor")} unread={user.unreadNotifications ?? 0} />
+        <PortalNav
+          name={user.name}
+          memberNumber={user.member?.memberNumber}
+          isTrainer={user.roles.some((r) => r === "trainer" || r === "assessor")}
+          hasCorporate={(user.corporate?.length ?? 0) > 0}
+          unread={user.unreadNotifications ?? 0}
+        />
         <section className="pmain">
+          {user.emailVerified === false && <VerifyEmailBanner email={user.email} />}
           <InstallPrompt />
           {children}
         </section>
