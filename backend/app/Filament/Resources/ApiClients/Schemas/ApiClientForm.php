@@ -3,15 +3,20 @@
 namespace App\Filament\Resources\ApiClients\Schemas;
 
 use App\Models\ApiClient;
+use App\Models\CorporateUser;
+use App\Models\Organization;
 use Closure;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 
 class ApiClientForm
@@ -26,9 +31,32 @@ class ApiClientForm
                 Toggle::make('is_active')->label('Aktif')->default(true)->inline(false),
                 Textarea::make('description')->label('Keterangan / tujuan integrasi')->rows(2)->columnSpanFull(),
             ]),
+            Section::make('Organisasi (API enterprise)')->columns(2)
+                ->description('Klien enterprise hanya dapat membaca/mengubah data organisasi ini dan bertindak atas nama satu pengguna perusahaan aktif: peran & batas unit pengguna itu ikut membatasi scope. Bila pengguna itu dinonaktifkan (mis. resign), akses klien otomatis terputus.')
+                ->components([
+                    Select::make('organization_id')->label('Organisasi terikat')->searchable()->preload()->live()
+                        ->options(fn () => Organization::query()->orderBy('legal_name')->get()->mapWithKeys(fn (Organization $o) => [$o->id => $o->code.' — '.$o->name()])->all())
+                        ->afterStateUpdated(fn (Set $set) => $set('corporate_user_id', null))
+                        ->helperText('Kosongkan untuk klien mitra/agregator (hanya scope umum).'),
+                    Select::make('corporate_user_id')->label('Bertindak atas nama')->searchable()
+                        ->options(fn (Get $get) => $get('organization_id')
+                            ? CorporateUser::query()->active()->where('organization_id', $get('organization_id'))->with(['user:id,name,email', 'unit'])->get()
+                                ->mapWithKeys(fn (CorporateUser $cu) => [$cu->id => ($cu->user?->name ?? '?').' ('.(CorporateUser::ROLES[$cu->role] ?? $cu->role).($cu->unit ? ', '.$cu->unit->label() : '').')'])->all()
+                            : [])
+                        ->required(fn (Get $get) => filled($get('organization_id')))
+                        ->disabled(fn (Get $get) => blank($get('organization_id')))
+                        ->helperText('Pengguna perusahaan aktif organisasi tsb. Disarankan akun layanan khusus integrasi.'),
+                ]),
             Section::make('Akses')->columns(2)->components([
-                CheckboxList::make('scopes')->label('Scope')->options(ApiClient::SCOPES)->required()->columnSpanFull()
-                    ->helperText('Berikan scope seminimal mungkin sesuai kebutuhan integrasi.'),
+                CheckboxList::make('scopes')->label('Scope')->required()->columnSpanFull()->columns(2)
+                    ->options(fn () => ApiClient::SCOPES + collect(ApiClient::ENTERPRISE_SCOPES)->mapWithKeys(fn ($d, $s) => [$s => "[Enterprise] $s"])->all())
+                    ->descriptions(ApiClient::allScopes())
+                    ->rule(fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get): void {
+                        if (array_intersect((array) $value, array_keys(ApiClient::ENTERPRISE_SCOPES)) !== [] && (blank($get('organization_id')) || blank($get('corporate_user_id')))) {
+                            $fail('Scope [Enterprise] membutuhkan organisasi terikat dan pengguna perusahaan yang diwakili.');
+                        }
+                    })
+                    ->helperText('Berikan scope seminimal mungkin sesuai kebutuhan integrasi. Scope [Enterprise] juga dibatasi peran pengguna perusahaan yang diwakili.'),
                 TextInput::make('rate_limit')->label('Batas permintaan / menit')->numeric()->minValue(1)->maxValue(6000)
                     ->default(fn () => config('services.public_api.default_rate_limit', 60))->required(),
                 DateTimePicker::make('expires_at')->label('Kedaluwarsa')->native(false)->helperText('Kosongkan bila tidak kedaluwarsa.'),
@@ -50,7 +78,15 @@ class ApiClientForm
                         }
                     })
                     ->helperText('PPTI mengirim POST JSON bertanda tangan HMAC-SHA256 (header X-PPTI-Signature). Secret dibuat otomatis.'),
-                CheckboxList::make('webhook_events')->label('Event')->options(ApiClient::WEBHOOK_EVENTS)->columnSpanFull(),
+                CheckboxList::make('webhook_events')->label('Event')->columnSpanFull()
+                    ->options(fn () => ApiClient::WEBHOOK_EVENTS + collect(ApiClient::ENTERPRISE_WEBHOOK_EVENTS)->mapWithKeys(fn ($d, $e) => [$e => "[Enterprise] $e"])->all())
+                    ->descriptions(ApiClient::allWebhookEvents())
+                    ->rule(fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get): void {
+                        if (array_intersect((array) $value, array_keys(ApiClient::ENTERPRISE_WEBHOOK_EVENTS)) !== [] && (blank($get('organization_id')) || blank($get('corporate_user_id')))) {
+                            $fail('Event [Enterprise] membutuhkan organisasi terikat dan pengguna perusahaan yang diwakili.');
+                        }
+                    })
+                    ->helperText('Event enterprise hanya dikirim bila klien juga punya scope baca yang sesuai (mis. enrollments.read untuk enrollment.*) dan subjeknya dalam batas unit pengguna yang diwakili.'),
             ]),
             Section::make('Kredensial & pemakaian')->columns(3)->visibleOn('edit')->components([
                 TextEntry::make('key_prefix')->label('API key')->state(fn (?ApiClient $record) => $record?->maskedKey())->fontFamily('mono'),

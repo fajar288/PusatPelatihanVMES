@@ -16,7 +16,7 @@ class ApiClientsTable
         return $table
             ->defaultSort('created_at', 'desc')
             ->columns([
-                TextColumn::make('name')->label('Klien')->searchable()->description(fn (ApiClient $record) => $record->organization),
+                TextColumn::make('name')->label('Klien')->searchable()->description(fn (ApiClient $record) => $record->boundOrganization ? 'Enterprise · '.$record->boundOrganization->code.' '.$record->boundOrganization->name() : $record->organization),
                 TextColumn::make('key_prefix')->label('API key')->formatStateUsing(fn ($state, ApiClient $record) => $record->maskedKey())->fontFamily('mono')->size('sm'),
                 TextColumn::make('scopes')->label('Scope')->badge()->separator(','),
                 TextColumn::make('rate_limit')->label('Limit/mnt')->numeric(),

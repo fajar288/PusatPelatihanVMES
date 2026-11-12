@@ -34,6 +34,48 @@ class WebhookService
         return $delivery;
     }
 
+    /** Scope baca yang wajib dimiliki klien untuk menerima tiap kelompok event enterprise — webhook tidak memberi lebih dari API. */
+    public const ENTERPRISE_EVENT_SCOPES = [
+        'training_request' => 'corporate.requests.read',
+        'enrollment' => 'enrollments.read',
+        'employee' => 'corporate.employees.read',
+        'invoice' => 'payments.read',
+        'certificate' => 'certificates.read',
+    ];
+
+    /**
+     * Kirim event enterprise ke klien API yang terikat organisasi (Roadmap 5E). Klien hanya menerima bila: aktif, berlangganan
+     * event itu, punya scope baca yang sesuai, pengguna perusahaan yang diwakili masih aktif dan perannya mengizinkan, serta
+     * subjek berada dalam batas unitnya (`$unitId` null = tanpa unit → hanya klien tanpa batas unit).
+     *
+     * @return int jumlah klien yang dikirimi
+     */
+    public function emitToOrganization(int $organizationId, string $event, array $data, ?int $unitId = null, ?int $exceptClientId = null): int
+    {
+        $scope = self::ENTERPRISE_EVENT_SCOPES[strstr($event, '.', true) ?: $event] ?? null;
+        $sent = 0;
+        ApiClient::query()->where('organization_id', $organizationId)->where('is_active', true)->whereNotNull('webhook_url')
+            ->with(['corporateUser.unit'])->get()
+            ->each(function (ApiClient $client) use ($organizationId, $event, $data, $unitId, $exceptClientId, $scope, &$sent): void {
+                $cu = $client->corporateUser;
+                if ($client->id === $exceptClientId || $client->isExpired() || ! $client->wantsWebhook($event) || ! $scope || ! $client->hasScope($scope)
+                    || ! $cu || ! $cu->isActive() || $cu->organization_id !== $organizationId) {
+                    return;
+                }
+                $caps = ApiClient::SCOPE_CAPABILITIES[$scope] ?? [];
+                if ($caps !== [] && collect($caps)->doesntContain(fn (string $c) => $cu->allows($c))) {
+                    return;
+                }
+                if (($units = $cu->unitScope()) !== null && ($unitId === null || ! in_array($unitId, $units, true))) {
+                    return;
+                }
+                $this->emit($client, $event, $data);
+                $sent++;
+            });
+
+        return $sent;
+    }
+
     /** Event uji `ping` dari panel admin — dikirim langsung (tanpa antrean) agar hasilnya terlihat seketika. */
     public function ping(ApiClient $client): WebhookDelivery
     {

@@ -8,6 +8,7 @@ use App\Models\AuditLog;
 use App\Models\CorporateUser;
 use App\Models\Invoice;
 use App\Models\Organization;
+use App\Services\CorporateReporting;
 use App\Services\InvoiceService;
 use App\Services\PaymentService;
 use Illuminate\Database\Eloquent\Builder;
@@ -22,7 +23,7 @@ use Illuminate\Validation\Rule;
  */
 class CorporateFinanceController extends Controller
 {
-    public function __construct(private CorporateController $corporate) {}
+    public function __construct(private CorporateController $corporate, private CorporateReporting $reporting) {}
 
     public function index(Request $request, Organization $organization): JsonResponse
     {
@@ -94,10 +95,7 @@ class CorporateFinanceController extends Controller
      */
     private function query(CorporateUser $cu): Builder
     {
-        $scope = $cu->unitScope();
-
-        return Invoice::query()->forOrganization($cu->organization_id)->where('status', '!=', 'cancelled')
-            ->when($scope !== null, fn (Builder $q) => $q->whereHas('trainingRequest', fn (Builder $r) => $r->whereIn('unit_id', $scope)));
+        return $this->reporting->invoicesQuery($cu);   // sama dengan API enterprise GET /payments
     }
 
     private function scoped(CorporateUser $cu, Invoice $invoice): Invoice

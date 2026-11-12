@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Middleware\AuthenticateApiClient;
+use App\Http\Middleware\EnforceIdempotency;
+use App\Http\Middleware\EnsureOrganizationClient;
 use App\Http\Middleware\RequireApiScope;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -29,6 +31,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'api.client' => AuthenticateApiClient::class,
             'api.scope' => RequireApiScope::class,
+            'api.organization' => EnsureOrganizationClient::class,
+            'api.idempotent' => EnforceIdempotency::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
