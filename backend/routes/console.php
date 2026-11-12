@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\ApiRequestLog;
+use App\Models\ChatLog;
 use App\Models\Lesson;
 use App\Models\NotificationLog;
 use App\Models\WebhookDelivery;
@@ -38,4 +39,4 @@ Artisan::command('webpush:vapid', function () {
 Schedule::command('notifications:reminders')->hourly()->between('7:00', '20:00');
 
 // Pangkas log permintaan API Publik, riwayat webhook & log notifikasi lama (API_LOG_RETENTION_DAYS, default 90 hari)
-Schedule::command('model:prune', ['--model' => [ApiRequestLog::class, WebhookDelivery::class, NotificationLog::class]])->daily();
+Schedule::command('model:prune', ['--model' => [ApiRequestLog::class, WebhookDelivery::class, NotificationLog::class, ChatLog::class]])->daily();
