@@ -7,19 +7,26 @@ import type { FormState } from "@/lib/actions/auth";
 import { saveNotificationPrefsAction } from "@/lib/actions/notifications";
 import type { NotificationSettings } from "@/lib/portal-types";
 
-/** Preferensi notifikasi per kategori (email & push) + aktivasi push perangkat ini. Notifikasi di portal selalu aktif. */
+/**
+ * Preferensi notifikasi per kategori (email, push, dan WhatsApp bila kanal WA diaktifkan server) + aktivasi push
+ * perangkat ini. Notifikasi di portal selalu aktif.
+ */
 export default function NotificationSettingsForm({ settings }: { settings: NotificationSettings }) {
   const [state, action, pending] = useActionState<FormState, FormData>(saveNotificationPrefsAction, { ok: false });
+  const wa = settings.whatsapp?.available ? settings.whatsapp : null;
+  const waUsable = !!wa && wa.enabled && wa.hasNumber;
   return (
     <>
       <PushToggle publicKey={settings.push.publicKey} available={settings.push.available} />
       <form action={action} className="nset-form">
         <input type="hidden" name="categories" value={settings.categories.map((c) => c.key).join(",")} />
-        <div className="nset" role="table" aria-label="Preferensi notifikasi">
+        {wa && <input type="hidden" name="wa" value="1" />}
+        <div className={wa ? "nset wa" : "nset"} role="table" aria-label="Preferensi notifikasi">
           <div className="nset-h" role="row">
             <span role="columnheader">Jenis notifikasi</span>
             <span role="columnheader">Email</span>
             <span role="columnheader">Push</span>
+            {wa && <span role="columnheader">WhatsApp</span>}
           </div>
           {settings.categories.map((c) => (
             <div className="nset-r" role="row" key={c.key}>
@@ -37,9 +44,18 @@ export default function NotificationSettingsForm({ settings }: { settings: Notif
                 <input type="checkbox" name={`push_${c.key}`} defaultChecked={c.push} />
                 <span className="sr-only">Push {c.label}</span>
               </label>
+              {wa && (
+                <label role="cell" className="nset-c">
+                  <input type="checkbox" name={`wa_${c.key}`} defaultChecked={c.whatsapp} disabled={!waUsable} />
+                  {!waUsable && c.whatsapp && <input type="hidden" name={`wa_${c.key}`} value="on" />}
+                  <span className="sr-only">WhatsApp {c.label}</span>
+                </label>
+              )}
             </div>
           ))}
         </div>
+        {wa && !wa.hasNumber && <p className="nset-note">Isi nomor HP di Profil untuk menerima notifikasi WhatsApp.</p>}
+        {wa && wa.hasNumber && !wa.enabled && <p className="nset-note">WhatsApp dimatikan di Profil (preferensi komunikasi).</p>}
         {!settings.emailEnabled && <p className="nset-note">Email notifikasi dimatikan di Profil (preferensi komunikasi). Email penting seperti status pendaftaran dan sertifikat tetap dikirim.</p>}
         <p className="nset-note">Notifikasi di portal selalu aktif. Email penting (status pendaftaran, tagihan, perubahan jadwal, sertifikat) selalu dikirim.</p>
         <FormMessage ok={state.ok} message={state.message} />

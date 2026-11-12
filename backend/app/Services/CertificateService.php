@@ -232,7 +232,7 @@ class CertificateService
                 Notification::route('mail', [$c->recipient_email => $c->recipient_name])->notify(new CertificateIssued($c));
             }
             if ($notify) {
-                app(NotificationEvents::class)->certificateIssued($c);
+                app(NotificationEvents::class)->certificateIssued($c, $actor);
             }
             $e = $c->enrollment;
             if ($e && $e->member) {

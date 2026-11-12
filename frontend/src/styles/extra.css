@@ -223,12 +223,14 @@
 .nset{width:100%;border:1px solid var(--ln);border-radius:16px;overflow:hidden}
 .nset-h,.nset-r{display:grid;grid-template-columns:minmax(0,1fr) 72px 72px;gap:8px;align-items:center;padding:12px 16px}
 .nset-h{background:var(--bg);font-size:13px;font-weight:800;color:var(--mut)}.nset-h span+span{text-align:center}
+.nset.wa .nset-h,.nset.wa .nset-r{grid-template-columns:minmax(0,1fr) 72px 72px 80px}
 .nset-r+.nset-r{border-top:1px solid var(--ln)}
 .nset-r b{display:block;font-size:14.5px}.nset-r small{display:block;font-size:13px;color:var(--mut);line-height:1.45}
 .nset-c{display:grid;place-items:center;cursor:pointer}.nset-c input{width:20px;height:20px;accent-color:var(--p);cursor:pointer}
 .nset-note{font-size:13px;color:var(--mut)}
 .nset-form>.btn{border:0;cursor:pointer;font-family:inherit}
 @media(max-width:640px){.nset-h,.nset-r{grid-template-columns:minmax(0,1fr) 52px 52px;padding:10px 12px}}
+@media(max-width:640px){.nset.wa .nset-h,.nset.wa .nset-r{grid-template-columns:minmax(0,1fr) 44px 44px 64px;gap:4px}.nset.wa .nset-h{font-size:12px}}
 /* Rapikan UI portal/trainer: metadata per butir (ganti teks disambung "•") & tombol kembali */
 .pmeta{list-style:none;display:flex;flex-wrap:wrap;align-items:center;gap:8px 22px;margin-top:10px;font-size:14px;line-height:1.45;color:var(--mut)}
 .pmeta li{display:inline-flex;align-items:center;gap:7px;min-width:0;max-width:100%}.pmeta-v{min-width:0;overflow-wrap:anywhere}

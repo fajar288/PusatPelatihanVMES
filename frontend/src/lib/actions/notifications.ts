@@ -35,7 +35,18 @@ export async function readAllNotificationsAction(): Promise<void> {
 
 export async function saveNotificationPrefsAction(_prev: FormState, form: FormData): Promise<FormState> {
   const categories = String(form.get("categories") ?? "").split(",").filter(Boolean);
-  const preferences = Object.fromEntries(categories.map((c) => [c, { mail: form.get(`mail_${c}`) === "on", push: form.get(`push_${c}`) === "on" }]));
+  const withWhatsapp = form.get("wa") === "1";
+  const preferences = Object.fromEntries(
+    categories.map((c) => [
+      c,
+      {
+        mail: form.get(`mail_${c}`) === "on",
+        push: form.get(`push_${c}`) === "on",
+        // kolom WA hanya dikirim bila ditampilkan, agar preferensi tersimpan tidak tertimpa
+        ...(withWhatsapp ? { whatsapp: form.get(`wa_${c}`) === "on" } : {}),
+      },
+    ]),
+  );
   try {
     await api<{ data: NotificationSettings }>("/me/notification-settings", { method: "PUT", token: await getToken(), json: { preferences } });
     return { ok: true, message: "Pengaturan notifikasi disimpan." };

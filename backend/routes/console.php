@@ -8,6 +8,7 @@ use App\Models\NotificationLog;
 use App\Models\WebhookDelivery;
 use App\Services\IdentityMatchingService;
 use App\Services\InvoiceService;
+use App\Services\NotificationDispatcher;
 use App\Services\NotificationEvents;
 use App\Services\SponsorshipService;
 use App\Services\TrainingRequestService;
@@ -21,8 +22,10 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-// Pengingat otomatis (PRD §5.12): kelas H-1, tenggat tugas < 24 jam, materi yang mulai tersedia hari ini. Aman diulang (dedupe).
+// Pengingat otomatis (PRD §5.12, Roadmap 5 §6): kelas H-7 & H-1 (peserta, perusahaan sponsor, trainer), tenggat tugas < 24 jam,
+// materi yang mulai tersedia hari ini. Aman diulang (business event dibuat sekali per kelas per tanggal).
 Artisan::command('notifications:reminders', function (NotificationEvents $events) {
+    $h7 = $events->classRemindersH7();
     $classes = $events->classReminders();
     $tasks = $events->assignmentDueReminders();
     $lessons = 0;
@@ -30,8 +33,8 @@ Artisan::command('notifications:reminders', function (NotificationEvents $events
         $events->lessonPublished($l);
         $lessons++;
     });
-    $this->info("Pengingat kelas: $classes penerima, tenggat tugas: $tasks penerima, materi baru diperiksa: $lessons lesson.");
-})->purpose('Kirim pengingat kelas H-1, tenggat tugas, dan materi yang mulai tersedia');
+    $this->info("Pengingat kelas H-7: $h7 penerima, H-1: $classes penerima, tenggat tugas: $tasks penerima, materi baru diperiksa: $lessons lesson.");
+})->purpose('Kirim pengingat kelas H-7/H-1, tenggat tugas, dan materi yang mulai tersedia');
 
 // Buat pasangan kunci VAPID untuk Web Push (salin ke .env: VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY, VAPID_SUBJECT)
 Artisan::command('webpush:vapid', function () {
@@ -43,6 +46,22 @@ Artisan::command('webpush:vapid', function () {
 })->purpose('Buat kunci VAPID untuk notifikasi push PWA');
 
 Schedule::command('notifications:reminders')->hourly()->between('7:00', '20:00');
+
+// Notification Engine (Roadmap 5 §6.1): kirim pengiriman terjadwal & retry yang jatuh tempo, sinkron status "Dibaca".
+Artisan::command('notifications:dispatch {--limit=200}', function (NotificationDispatcher $dispatcher) {
+    $sent = $dispatcher->processDue((int) $this->option('limit'));
+    $read = $dispatcher->syncRead();
+    $this->info("Pengiriman diproses: $sent. Ditandai dibaca: $read.");
+})->purpose('Proses notifikasi terjadwal dan retry yang jatuh tempo');
+
+Schedule::command('notifications:dispatch')->everyMinute()->withoutOverlapping();
+
+// Peringatan peserta berisiko tertinggal (Roadmap 5 §6 "Progress Risk") ke peserta, perusahaan sponsor & admin.
+Artisan::command('notifications:risk', function (NotificationEvents $events) {
+    $this->info('Peserta berisiko diperingatkan: '.$events->progressRisk());
+})->purpose('Kirim peringatan progres berisiko (sekali per enrollment per periode)');
+
+Schedule::command('notifications:risk')->dailyAt('08:00');
 
 // Pangkas log permintaan API Publik, riwayat webhook & log notifikasi lama (API_LOG_RETENTION_DAYS, default 90 hari)
 Schedule::command('model:prune', ['--model' => [ApiRequestLog::class, WebhookDelivery::class, NotificationLog::class, ChatLog::class]])->daily();

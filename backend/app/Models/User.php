@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -85,6 +86,23 @@ class User extends Authenticatable implements FilamentUser
     public function corporateMemberships(): HasMany
     {
         return $this->hasMany(CorporateUser::class);
+    }
+
+    /** Nomor WhatsApp: telepon profil member, atau telepon data trainer untuk akun trainer. */
+    public function whatsappNumber(): ?string
+    {
+        return $this->member?->phone ?: Trainer::query()->where('user_id', $this->id)->value('phone');
+    }
+
+    public function routeNotificationForWhatsapp(): ?string
+    {
+        return $this->whatsappNumber();
+    }
+
+    /** Notifikasi untuk portal member/trainer/perusahaan — tanpa notifikasi lonceng panel admin (type `admin:*`). */
+    public function portalNotifications(): MorphMany
+    {
+        return $this->notifications()->where('type', 'not like', 'admin:%');
     }
 
     public function pushSubscriptions(): HasMany

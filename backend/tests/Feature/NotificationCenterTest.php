@@ -107,7 +107,7 @@ class NotificationCenterTest extends TestCase
 
         Sanctum::actingAs($rina);
         $settings = $this->getJson('/api/v1/me/notification-settings')->assertOk()->json('data');
-        $this->assertCount(count(NotificationTemplate::CATEGORIES), $settings['categories']);
+        $this->assertCount(5, $settings['categories'], 'kategori perusahaan, trainer & admin hanya untuk peran terkait');
         $this->assertTrue($settings['categories'][1]['mail']);
         $this->putJson('/api/v1/me/notification-settings', ['preferences' => ['schedule' => ['mail' => false, 'push' => true]]])->assertOk()
             ->assertJsonPath('data.categories.1.key', 'schedule')->assertJsonPath('data.categories.1.mail', false);

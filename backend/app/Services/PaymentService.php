@@ -281,6 +281,8 @@ class PaymentService
         if ($req && $req->status === 'approved') {
             $this->requests->markPaid($req, $actor, $tx->code.' / '.$invoice->invoice_number);
         }
+        // Roadmap 5 §6 "Payment Success": peserta, finance perusahaan, staf finance VMES (sekali per invoice)
+        app(NotificationEvents::class)->paymentSucceeded($invoice->refresh(), $actor);
     }
 
     public static function rupiah(float $v): string

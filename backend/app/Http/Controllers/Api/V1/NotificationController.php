@@ -5,8 +5,12 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Models\NotificationTemplate;
 use App\Models\PushSubscription;
+use App\Models\Trainer;
 use App\Services\NotificationCenter;
+use App\Services\NotificationDispatcher;
 use App\Support\Push\PushSender;
+use App\Support\WhatsApp\LogWhatsAppSender;
+use App\Support\WhatsApp\WhatsAppSender;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\DatabaseNotification;
@@ -21,7 +25,7 @@ class NotificationController extends Controller
     {
         $request->validate(['filter' => ['nullable', 'in:all,unread'], 'per_page' => ['nullable', 'integer', 'min:1', 'max:50']]);
         $user = $request->user();
-        $q = $user->notifications()->reorder()->orderByDesc('created_at')->orderByDesc('id');
+        $q = $user->portalNotifications()->reorder()->orderByDesc('created_at')->orderByDesc('id');
         if ($request->input('filter') === 'unread') {
             $q->whereNull('read_at');
         }
@@ -29,35 +33,38 @@ class NotificationController extends Controller
 
         return response()->json([
             'data' => collect($page->items())->map(fn (DatabaseNotification $n) => self::toArray($n))->values(),
-            'meta' => ['current_page' => $page->currentPage(), 'last_page' => $page->lastPage(), 'total' => $page->total(), 'unread' => $user->unreadNotifications()->count()],
+            'meta' => ['current_page' => $page->currentPage(), 'last_page' => $page->lastPage(), 'total' => $page->total(), 'unread' => $user->portalNotifications()->whereNull('read_at')->count()],
         ]);
     }
 
     /** POST /me/notifications/{id}/read */
-    public function read(Request $request, string $id): JsonResponse
+    public function read(Request $request, string $id, NotificationDispatcher $dispatcher): JsonResponse
     {
-        $n = $request->user()->notifications()->whereKey($id)->firstOrFail();
+        $n = $request->user()->portalNotifications()->whereKey($id)->firstOrFail();
         $n->markAsRead();
+        $dispatcher->markRead([$n->id]);
 
-        return response()->json(['data' => self::toArray($n), 'unread' => $request->user()->unreadNotifications()->count()]);
+        return response()->json(['data' => self::toArray($n), 'unread' => $request->user()->portalNotifications()->whereNull('read_at')->count()]);
     }
 
     /** POST /me/notifications/read-all */
-    public function readAll(Request $request): JsonResponse
+    public function readAll(Request $request, NotificationDispatcher $dispatcher): JsonResponse
     {
-        $count = $request->user()->unreadNotifications()->update(['read_at' => now()]);
+        $ids = $request->user()->portalNotifications()->whereNull('read_at')->pluck('id')->all();
+        $count = $request->user()->portalNotifications()->whereNull('read_at')->update(['read_at' => now()]);
+        $dispatcher->markRead($ids);
 
         return response()->json(['data' => ['marked' => $count], 'unread' => 0]);
     }
 
     /** GET /me/notification-settings — preferensi per kategori + status push. */
-    public function settings(Request $request, NotificationCenter $center, PushSender $push): JsonResponse
+    public function settings(Request $request, NotificationCenter $center, PushSender $push, WhatsAppSender $whatsapp): JsonResponse
     {
-        return response()->json(['data' => $this->settingsPayload($request, $center, $push)]);
+        return response()->json(['data' => $this->settingsPayload($request, $center, $push, $whatsapp)]);
     }
 
     /** PUT /me/notification-settings {preferences: {category: {mail: bool, push: bool}}} */
-    public function updateSettings(Request $request, NotificationCenter $center, PushSender $push): JsonResponse
+    public function updateSettings(Request $request, NotificationCenter $center, PushSender $push, WhatsAppSender $whatsapp): JsonResponse
     {
         $cats = array_keys(NotificationTemplate::CATEGORIES);
         $data = $request->validate([
@@ -65,11 +72,12 @@ class NotificationController extends Controller
             'preferences.*' => ['array'],
             'preferences.*.mail' => ['boolean'],
             'preferences.*.push' => ['boolean'],
+            'preferences.*.whatsapp' => ['boolean'],
         ]);
         abort_if(array_diff(array_keys($data['preferences']), $cats) !== [], 422, 'Kategori tidak dikenal.');
         $center->savePreferences($request->user(), $data['preferences']);
 
-        return response()->json(['data' => $this->settingsPayload($request, $center, $push), 'message' => 'Pengaturan notifikasi disimpan.']);
+        return response()->json(['data' => $this->settingsPayload($request, $center, $push, $whatsapp), 'message' => 'Pengaturan notifikasi disimpan.']);
     }
 
     /** POST /me/push-subscriptions — simpan langganan dari PushManager.subscribe() (format toJSON()). */
@@ -116,16 +124,29 @@ class NotificationController extends Controller
     }
 
     /** @return array<string, mixed> */
-    private function settingsPayload(Request $request, NotificationCenter $center, PushSender $push): array
+    private function settingsPayload(Request $request, NotificationCenter $center, PushSender $push, WhatsAppSender $whatsapp): array
     {
-        $prefs = $center->preferences($request->user());
+        $user = $request->user();
+        $prefs = $center->preferences($user);
+        // kategori khusus peran hanya tampil bagi yang relevan
+        $relevant = [
+            'corporate' => $user->corporateMemberships()->where('status', 'active')->exists(),
+            'teaching' => Trainer::query()->where('user_id', $user->id)->exists(),
+            'operations' => $user->isAdmin(),
+        ];
 
         return [
-            'categories' => collect(NotificationTemplate::CATEGORIES)->map(fn ($c, $key) => [
-                'key' => $key, 'label' => $c[0], 'description' => $c[1], 'mail' => $prefs[$key]['mail'], 'push' => $prefs[$key]['push'],
+            'categories' => collect(NotificationTemplate::CATEGORIES)->filter(fn ($c, $key) => $relevant[$key] ?? true)->map(fn ($c, $key) => [
+                'key' => $key, 'label' => $c[0], 'description' => $c[1],
+                'mail' => $prefs[$key]['mail'], 'push' => $prefs[$key]['push'], 'whatsapp' => $prefs[$key]['whatsapp'],
             ])->values(),
-            'push' => ['available' => $push->configured(), 'publicKey' => $push->publicKey(), 'devices' => $request->user()->pushSubscriptions()->count()],
-            'emailEnabled' => ($request->user()->member?->communication_pref['email'] ?? true) !== false,
+            'push' => ['available' => $push->configured(), 'publicKey' => $push->publicKey(), 'devices' => $user->pushSubscriptions()->count()],
+            'emailEnabled' => ($user->member?->communication_pref['email'] ?? true) !== false,
+            'whatsapp' => [
+                'available' => $whatsapp->enabled(),
+                'enabled' => ($user->member?->communication_pref['whatsapp'] ?? true) !== false,
+                'hasNumber' => LogWhatsAppSender::normalize($user->whatsappNumber()) !== null,
+            ],
         ];
     }
 

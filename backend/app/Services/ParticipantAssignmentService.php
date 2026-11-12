@@ -193,7 +193,7 @@ class ParticipantAssignmentService
     }
 
     /** Buat enrollment CORPORATE bersponsor untuk kursi berisi member bila batch sudah ditetapkan. */
-    public function enrollSeat(RequestSeat $seat, ?User $actor = null): ?Enrollment
+    public function enrollSeat(RequestSeat $seat, ?User $actor = null, bool $notify = true): ?Enrollment
     {
         $r = $seat->request;
         if (! $r->schedule_id || ! $seat->member_id || $seat->status === 'enrolled') {
@@ -219,6 +219,9 @@ class ParticipantAssignmentService
         $r->schedule->increment('registered_count');
         $seat->update(['status' => 'enrolled', 'enrollment_id' => $e->id]);
         AuditLog::record('enrollment.created', $e, null, ['type' => 'corporate', 'sponsor_organization_id' => $r->organization_id, 'request' => $r->code, 'seat' => $seat->seat_no], $actor);
+        if ($notify) {
+            app(NotificationEvents::class)->sponsoredEnrollmentsCreated([$e]);
+        }
 
         return $e;
     }

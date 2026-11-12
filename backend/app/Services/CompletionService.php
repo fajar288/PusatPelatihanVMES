@@ -108,8 +108,10 @@ class CompletionService
                 'status' => $e->status, 'final_score' => $e->final_score, 'eligible' => $eval['eligible'], 'forced' => $pass !== $eval['eligible'],
                 'checks' => collect($eval['checks'])->map(fn ($c) => $c['key'].':'.($c['ok'] ? 'ok' : 'fail'))->implode(','),
             ], $actor);
+            $e->refresh();
+            app(NotificationEvents::class)->trainingCompleted($e, $actor);
 
-            return $e->refresh();
+            return $e;
         });
     }
 }

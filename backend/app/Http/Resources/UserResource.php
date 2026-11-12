@@ -25,7 +25,7 @@ class UserResource extends JsonResource
             'emailVerified' => $this->hasVerifiedEmail(),
             'corporate' => CorporateUser::query()->active()->where('user_id', $this->id)->whereHas('organization', fn ($q) => $q->active())
                 ->with('organization:id,code,legal_name,display_name')->get()->map(fn (CorporateUser $cu) => ['code' => $cu->organization->code, 'name' => $cu->organization->name(), 'role' => $cu->role])->values(),
-            'unreadNotifications' => $this->unreadNotifications()->count(),
+            'unreadNotifications' => $this->portalNotifications()->whereNull('read_at')->count(),
             'member' => $m ? [
                 'memberNumber' => $m->member_number,
                 'status' => $m->status,

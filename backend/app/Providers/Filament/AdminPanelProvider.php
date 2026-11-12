@@ -36,6 +36,9 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogoHeight(fn () => request()->routeIs('filament.admin.auth.*') ? '4.5rem' : '2.75rem')
             ->favicon(fn () => asset('images/favicon-admin.png'))
             ->navigationGroups(NavigationGroup::class)
+            // Notification Engine (Roadmap 5 §6): notifikasi audiens admin ("Dashboard") tampil di lonceng panel
+            ->databaseNotifications()
+            ->databaseNotificationsPolling('60s')
             ->colors([
                 'primary' => Color::hex('#004B23'), // hijau tema pusatpelatihan.id (--p)
                 'success' => Color::hex('#6BB218'), // --l

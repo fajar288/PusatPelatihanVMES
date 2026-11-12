@@ -10,12 +10,14 @@ use App\Models\TrainingSchedule;
 use App\Models\User;
 use App\Services\NotificationCenter;
 use Filament\Actions\Action;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Schemas\Components\Utilities\Get;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
 class ListNotificationTemplates extends ListRecords
@@ -32,7 +34,7 @@ class ListNotificationTemplates extends ListRecords
     {
         return [
             Action::make('announce')->label('Kirim pengumuman')->icon('heroicon-o-megaphone')
-                ->modalDescription('Dikirim sebagai notifikasi aplikasi, push, dan email (sesuai preferensi tiap penerima) memakai template "Pengumuman".')
+                ->modalDescription('Dikirim sebagai notifikasi aplikasi, push, email, dan WhatsApp bila aktif (sesuai preferensi tiap penerima) memakai template "Pengumuman". Bisa dijadwalkan; jadwal dapat dibatalkan di menu Pengiriman notifikasi.')
                 ->schema([
                     Select::make('target')->label('Penerima')->required()->native(false)->live()->default('class')->options([
                         'class' => 'Peserta satu kelas',
@@ -48,6 +50,8 @@ class ListNotificationTemplates extends ListRecords
                     Textarea::make('message')->label('Pesan')->required()->rows(4)->maxLength(1000),
                     TextInput::make('url')->label('Tautan di portal (opsional)')->placeholder('/portal/pelatihan')->maxLength(255)
                         ->rule('regex:/^\/[A-Za-z0-9\/_\-?=&.]*$/'),
+                    DateTimePicker::make('scheduled_at')->label('Jadwalkan (opsional)')->seconds(false)->native(false)
+                        ->minDate(now()->startOfMinute())->helperText('Kosongkan untuk mengirim sekarang.'),
                 ])
                 ->action(function (array $data, NotificationCenter $center): void {
                     $users = $this->recipients($data);
@@ -56,9 +60,10 @@ class ListNotificationTemplates extends ListRecords
 
                         return;
                     }
-                    $sent = $center->send($users, 'announcement', ['title' => $data['title'], 'message' => $data['message']], $data['url'] ?: '/portal/notifikasi');
-                    AuditLog::record('notification.announcement', null, null, ['target' => $data['target'], 'schedule_id' => $data['schedule_id'] ?? null, 'title' => $data['title'], 'recipients' => $sent]);
-                    Notification::make()->title("Pengumuman dikirim ke $sent penerima")->success()->send();
+                    $at = filled($data['scheduled_at'] ?? null) ? Carbon::parse($data['scheduled_at']) : null;
+                    $sent = $center->send($users, 'announcement', ['title' => $data['title'], 'message' => $data['message']], $data['url'] ?: '/portal/notifikasi', null, null, $at);
+                    AuditLog::record('notification.announcement', null, null, ['target' => $data['target'], 'schedule_id' => $data['schedule_id'] ?? null, 'title' => $data['title'], 'recipients' => $sent, 'scheduled_at' => $at?->toIso8601String()]);
+                    Notification::make()->title($at && $at->isFuture() ? "Pengumuman dijadwalkan {$at->format('d M Y H:i')} untuk $sent penerima" : "Pengumuman dikirim ke $sent penerima")->success()->send();
                 }),
         ];
     }
