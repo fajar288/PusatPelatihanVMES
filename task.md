@@ -230,7 +230,7 @@ D:\PPTI
 Keputusan:
 - **Frontend** memakai CSS tema asli (class sama) untuk semua halaman publik → jaminan identik. Tailwind untuk portal/admin.
 - **Backend** Laravel sebagai REST API (`/api/v1/*`) + Sanctum; frontend fetch via server components / route handlers.
-- **DB** PostgreSQL. Storage S3-compatible. Video: YouTube unlisted / layanan streaming (keputusan bisnis §13 PRD).
+- **DB** PostgreSQL. Storage S3-compatible. Video: **embed YouTube** (keputusan 2026-11-12; tidak memakai layanan streaming berbayar).
 
 ---
 
@@ -332,8 +332,10 @@ Legenda: `[ ]` belum · `[~]` sedang · `[x]` selesai. Prioritas mengikuti roadm
 - [x] API publik integrasi pihak ketiga `/api/public/v1` (API key per klien + scope, rate limit, batas IP, log permintaan, webhook bertanda tangan HMAC, OpenAPI 3.1 + dokumentasi `/docs/api`, admin Integrasi → Klien API)
 - [x] PWA: manifest + ikon (maskable, apple-touch), service worker (cache aset/gambar/halaman publik, fallback `/offline`, area per-pengguna tidak di-cache), `experimental.useOffline` + banner offline, notifikasi versi baru, kartu "Pasang aplikasi" di portal member & trainer
 - [x] Notifikasi & komunikasi (PRD §5.12): notifikasi aplikasi di portal (baca/belum dibaca, badge), web push PWA (VAPID), email opsional, template pesan (admin), preferensi per kategori, log terkirim/gagal semua kanal, pengingat otomatis (kelas H-1, tenggat tugas, materi baru), pengumuman admin
-- [ ] Payment gateway, WhatsApp automation (kanal WA di modul notifikasi), corporate portal — menunggu keputusan penyedia / spesifikasi
-- [ ] Fitur AI terukur (setelah data memadai)
+- [ ] Pembayaran **manual** (keputusan 2026-11-12, tanpa payment gateway): transfer ke rekening resmi → unggah bukti di portal → verifikasi finance (dasar sudah ada: `payments` unpaid/submitted/verified/rejected). Sisa: detail konsep yang disetujui atasan + data rekening resmi
+- [ ] WhatsApp automation (kanal WA di modul notifikasi) — penyedia WA **diurus nanti**
+- [ ] Corporate portal — menunggu spesifikasi
+- [ ] Fitur AI terukur memakai **Claude (Anthropic API)** (keputusan 2026-11-12) — fitur & data yang boleh dikirim ke API belum ditentukan
 
 ### NON-FUNGSIONAL (PRD §9) — berlaku lintas fase
 - [ ] HTTPS, hashing, RBAC, validasi input, CSRF/XSS/SQLi, secure session, rate limit
@@ -344,13 +346,13 @@ Legenda: `[ ]` belum · `[~]` sedang · `[x]` selesai. Prioritas mengikuti roadm
 - [ ] Pengujian: functional, role/permission, integration (registrasi, pembayaran, LMS, sertifikat), security (auth, upload), UAT, backup restore — kriteria AC-01..AC-12
 
 ### KEPUTUSAN BISNIS YANG MASIH TERBUKA (PRD §13.1) — tanyakan ke stakeholder
-- [ ] Domain & brand final (pusatpelatihan.id tetap?)
+- [x] Domain & brand final — **pusatpelatihan.id tetap** (2026-11-12)
 - [ ] Daftar kategori/paket/kurikulum/sertifikat riil (menggantikan dummy)
 - [ ] Kebijakan harga, diskon, pembayaran, refund
 - [ ] Aturan kelulusan per program
 - [ ] Akses materi pasca-kelas
 - [ ] Penerbit/penandatangan sertifikat & mekanisme verifikasi
-- [ ] Penyedia email, WA API, payment gateway, object storage, video
+- [ ] Penyedia layanan — keputusan 2026-11-12: pembayaran **manual** (tanpa gateway), AI **Claude**, video **embed YouTube**; email, WA API, server/hosting & object storage **diurus nanti**
 - [ ] Kebijakan data pribadi, retensi, backup, PIC operasional
 - [ ] Foto asli PPTI untuk hero & galeri (pengganti hotlink pihak ketiga)
 - [ ] Link media sosial (footer `.so` kosong di website lama)
@@ -390,3 +392,7 @@ Legenda: `[ ]` belum · `[~]` sedang · `[x]` selesai. Prioritas mengikuti roadm
 - Catatan teknis: observer webhook `ShouldHandleEventsAfterCommit` → nilai lama memakai `getPrevious()` (bukan `getOriginal()`). Job webhook memakai `release()` bukan exception agar antrean `sync` tidak menggagalkan request pemicu. Di Git Bash argumen yang diawali `/` (mis. `/kursus`) diubah jadi path Windows → pakai `MSYS_NO_PATHCONV=1` saat menjalankan skrip node dengan path URL.
 - Phase 5 tahap 3 (branch `feat/notification-center`): **Notifikasi & komunikasi (PRD §5.12)** - tabel `notifications` (database channel Laravel), `notification_templates` (kunci peristiwa, kategori, judul/isi aplikasi & push, subjek/isi email, kanal, aktif; bawaan dibuat otomatis `NotificationTemplate::ensureDefaults`), `notification_preferences` (per pengguna × kategori: email, push), `notification_logs` (semua notifikasi & kanal, termasuk email transaksional lama, lewat listener `LogSentNotification` + kegagalan per kanal), `push_subscriptions`. `NotificationCenter::send` render placeholder `{var}`, pilih kanal (aplikasi selalu; email/push sesuai preferensi + `communication_pref.email` profil), kirim per kanal (gagal satu kanal tidak menggagalkan lainnya), dedupe untuk pengingat. `NotificationEvents`: pendaftaran diterima/status berubah, perubahan jadwal, materi baru (event `Lesson::saved`), tenggat tugas < 24 jam, tugas dinilai, penilaian kompetensi tervalidasi, sertifikat terbit; perintah `notifications:reminders` (tiap jam 07-20: kelas H-1, tenggat tugas, materi yang mulai tersedia). Web Push: `minishlink/web-push` ^11 (`WebPushSender`, kanal `WebPushChannel`, langganan kedaluwarsa 404/410 dihapus), kunci `php artisan webpush:vapid` → `VAPID_*`. API `/me/notifications` (+ `read`, `read-all`), `/me/notification-settings` (GET/PUT), `/me/push-subscriptions` (POST/DELETE/test, limiter bernama `push-subscribe`/`push-test`); `GET /me` menyertakan `unreadNotifications`. Admin grup **Notifikasi**: Template notifikasi (edit, aksi "Kirim pengumuman" ke peserta kelas/kelas aktif/alumni/semua member) dan Log notifikasi; izin `notifications.manage` (administrator, management, marketing, training coordinator). Frontend `/portal/notifikasi` (tab semua/belum dibaca, klik = tandai dibaca + menuju tautan, tandai semua, paginasi, pengaturan per kategori, `PushToggle` aktif/matikan/uji), badge belum dibaca di menu portal, `sw.js` v2 menangani `push` & `notificationclick`. `PwaProvider` tidak lagi me-reload halaman saat SW pertama kali mengambil alih (hanya setelah "Muat ulang"). Tervalidasi: 69 tes backend; E2E build produksi + Edge headless - langganan push ke WNS asli tersimpan, push uji terkirim (HTTP 201) dan diterima handler `push` di SW (headless tidak bisa menampilkan notifikasi), klik notifikasi menandai dibaca.
 - Catatan teknis: `throttle:N,1` tanpa nama memakai satu penghitung per pengguna lintas route → pakai limiter bernama. Notifikasi memakai UUIDv7 (`SystemNotification::$id`) agar urutan stabil. PHP Windows dev: `OPENSSL_CONF` harus di-set sebelum PHP start (putenv tidak berpengaruh) dan `curl.cainfo` perlu CA bundle (mis. salinan `C:\Program Files\Git\usr\ssl\certs\ca-bundle.crt` di path tanpa spasi) agar push ke layanan push berjalan; produksi Linux tidak perlu. Dev server :3000 lama mengalami loop reload terus-menerus (juga di /kursus) setelah restart otomatis karena `next.config` berubah → restart manual `npm run dev`.
+
+### 2026-11-12
+- Keputusan atasan dicatat (§2, Phase 5, §13.1): pembayaran manual (transfer + unggah bukti + verifikasi finance; nomor Virtual Account statis per bank bila PPTI punya rekening bisnis), AI memakai Claude (arah: chatbot), video embed YouTube, domain tetap pusatpelatihan.id; WA, email, server/hosting diurus nanti.
+- Video YouTube memakai IFrame Player API (`components/lms/VideoPlayer.tsx`): posisi & durasi dibaca dari player (durasi tidak wajib diisi lagi), lanjut dari posisi terakhir (`start`), persentase = titik terjauh yang ditonton berurutan (seek ke depan tidak dihitung; berlaku juga untuk file MP4). Vimeo / API gagal dimuat tetap memakai hitungan waktu di halaman. Tervalidasi di Edge headless: 31 dtk → 3%, muat ulang lanjut dari detik 47 → 6%.
