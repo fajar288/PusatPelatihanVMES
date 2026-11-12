@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import RegistrationActions from "@/components/portal/RegistrationActions";
 import { BackLink, MetaList, PaymentPill, PortalCard, StatusPill } from "@/components/portal/ui";
 import { api, ApiRequestError, requireUser } from "@/lib/auth";
+import { getPaymentAccounts } from "@/lib/payment-accounts";
 import type { RegistrationInfo } from "@/lib/portal-types";
 import { formatRupiah } from "@/lib/utils";
 
@@ -30,6 +31,7 @@ export default async function PortalRegistrationDetail({ params }: PageProps<"/p
   }
   const stepIndex = STEPS.findIndex((s) => s.key === r.status);
   const final = r.status === "rejected" || r.status === "cancelled";
+  const accounts = r.status === "waiting_payment" || r.status === "payment_verification" ? await getPaymentAccounts(token) : [];
 
   return (
     <>
@@ -136,7 +138,7 @@ export default async function PortalRegistrationDetail({ params }: PageProps<"/p
         </PortalCard>
       )}
 
-      <RegistrationActions r={r} />
+      <RegistrationActions r={r} accounts={accounts} />
     </>
   );
 }

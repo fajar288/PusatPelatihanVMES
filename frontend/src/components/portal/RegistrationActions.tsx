@@ -3,10 +3,11 @@
 import { useActionState, useState, useTransition } from "react";
 import { FormMessage } from "@/components/auth/AuthShell";
 import { cancelRegistrationAction, type RegistrationState, uploadPaymentProofAction } from "@/lib/actions/registration";
-import type { RegistrationInfo } from "@/lib/portal-types";
+import PaymentAccounts from "@/components/portal/PaymentAccounts";
+import type { PaymentAccountInfo, RegistrationInfo } from "@/lib/portal-types";
 
 /** Aksi pendaftar: unggah bukti transfer (saat menunggu pembayaran/verifikasi) dan batalkan (sebelum terkonfirmasi). */
-export default function RegistrationActions({ r }: { r: RegistrationInfo }) {
+export default function RegistrationActions({ r, accounts }: { r: RegistrationInfo; accounts: PaymentAccountInfo[] }) {
   const [upState, upAction, upPending] = useActionState<RegistrationState, FormData>(uploadPaymentProofAction, { ok: false });
   const [cancelMsg, setCancelMsg] = useState<RegistrationState | null>(null);
   const [pending, start] = useTransition();
@@ -17,8 +18,9 @@ export default function RegistrationActions({ r }: { r: RegistrationInfo }) {
       {canUpload && (
         <section className="kbx pcard">
           <h2>Unggah Bukti Pembayaran</h2>
-          <p className="fh" style={{ marginTop: 6 }}>
-            Transfer ke rekening resmi PT. PPTI - VMES Training Center sesuai rincian pada email tagihan, lalu unggah bukti (JPG/PNG/PDF maks. 4 MB).
+          <PaymentAccounts accounts={accounts} intro="Transfer sesuai nominal tagihan ke salah satu rekening resmi berikut:" />
+          <p className="fh" style={{ marginTop: 10 }}>
+            Lalu unggah bukti transfer (JPG/PNG/PDF maks. 4 MB).
           </p>
           <form className="ff" action={upAction} style={{ marginTop: 16 }}>
             <input type="hidden" name="number" value={r.number} />

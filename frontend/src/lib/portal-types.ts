@@ -45,6 +45,17 @@ export type PaymentInfo = {
   createdAt: string | null;
 };
 
+/** Rekening tujuan pembayaran manual (GET /me/payment-accounts). */
+export type PaymentAccountInfo = {
+  id: number;
+  type: "bank_transfer" | "virtual_account";
+  typeLabel: string;
+  bank: string;
+  number: string;
+  name: string;
+  instructions: string | null;
+};
+
 export type RegistrationInfo = {
   number: string;
   type: "individual" | "corporate";
