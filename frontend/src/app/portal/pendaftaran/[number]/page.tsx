@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import RegistrationActions from "@/components/portal/RegistrationActions";
-import { BackLink, MetaList, PaymentPill, PortalCard, StatusPill } from "@/components/portal/ui";
+import { BackLink, InvoicePill, MetaList, PortalCard, StatusPill } from "@/components/portal/ui";
 import { api, ApiRequestError, requireUser } from "@/lib/auth";
 import { getPaymentAccounts } from "@/lib/payment-accounts";
 import type { RegistrationInfo } from "@/lib/portal-types";
@@ -21,7 +21,7 @@ const STEPS: { key: RegistrationInfo["status"]; label: string }[] = [
 /** /portal/pendaftaran/[number] — detail pendaftaran: progres status, rincian, tagihan, aksi pendaftar. */
 export default async function PortalRegistrationDetail({ params }: PageProps<"/portal/pendaftaran/[number]">) {
   const { number } = await params;
-  const { token } = await requireUser(`/portal/pendaftaran/${number}`);
+  const { token, user } = await requireUser(`/portal/pendaftaran/${number}`);
   let r: RegistrationInfo;
   try {
     r = (await api<{ data: RegistrationInfo }>(`/me/registrations/${encodeURIComponent(number)}`, { token })).data;
@@ -120,17 +120,25 @@ export default async function PortalRegistrationDetail({ params }: PageProps<"/p
         )}
       </PortalCard>
 
-      {r.payments && r.payments.length > 0 && (
-        <PortalCard title="Tagihan & Pembayaran">
+      {r.invoices && r.invoices.length > 0 && (
+        <PortalCard title="Invoice & Pembayaran">
           <ul className="sp">
-            {r.payments.map((p) => (
-              <li key={p.invoice}>
-                <span>
-                  <b style={{ color: "var(--ink)" }}>{p.invoice}</b>
-                  <MetaList compact style={{ marginTop: 2 }} items={[{ icon: "cal", label: "Jatuh tempo", value: p.dueLabel }]} />
+            {r.invoices.map((inv) => (
+              <li key={inv.number}>
+                <span className="spl">
+                  <b>
+                    <Link href={`/portal/pembayaran/${inv.number}`}>{inv.number}</Link>
+                  </b>
+                  <MetaList
+                    compact
+                    items={[
+                      inv.installmentTotal > 1 && { value: `Termin ${inv.installmentNo}/${inv.installmentTotal}` },
+                      { icon: "cal", label: "Jatuh tempo", value: inv.dueLabel },
+                    ]}
+                  />
                 </span>
-                <b>
-                  {formatRupiah(p.amount)} <PaymentPill status={p.status} />
+                <b className="spv">
+                  {formatRupiah(inv.total)} <InvoicePill invoice={inv} />
                 </b>
               </li>
             ))}
@@ -138,7 +146,7 @@ export default async function PortalRegistrationDetail({ params }: PageProps<"/p
         </PortalCard>
       )}
 
-      <RegistrationActions r={r} accounts={accounts} />
+      <RegistrationActions r={r} accounts={accounts} payer={user.name} />
     </>
   );
 }

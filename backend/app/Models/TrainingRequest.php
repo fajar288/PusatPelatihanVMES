@@ -67,6 +67,11 @@ class TrainingRequest extends Model
         return $this->hasMany(RequestSeat::class)->orderBy('seat_no');
     }
 
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class)->latest('id');
+    }
+
     public function invitations(): HasMany
     {
         return $this->hasMany(ParticipantInvitation::class);

@@ -60,20 +60,3 @@ export async function cancelRegistrationAction(number: string, reason: string): 
     return fail(e);
   }
 }
-
-export async function uploadPaymentProofAction(_prev: RegistrationState, form: FormData): Promise<RegistrationState> {
-  const number = String(form.get("number") ?? "");
-  const file = form.get("proof");
-  if (!(file instanceof File) || file.size === 0) return { ok: false, message: "Pilih berkas bukti transfer (JPG/PNG/PDF maks. 4 MB)." };
-  const body = new FormData();
-  body.set("proof", file, file.name);
-  if (form.get("note")) body.set("note", String(form.get("note")));
-  try {
-    const token = await getToken();
-    await api(`/me/registrations/${encodeURIComponent(number)}/payment-proof`, { method: "POST", token, body });
-    revalidatePath("/portal");
-    return { ok: true, message: "Bukti pembayaran terkirim dan menunggu verifikasi finance." };
-  } catch (e) {
-    return fail(e);
-  }
-}

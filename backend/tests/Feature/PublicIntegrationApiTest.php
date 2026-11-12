@@ -200,7 +200,7 @@ class PublicIntegrationApiTest extends TestCase
         // status & tagihan terlihat setelah diproses admin
         app(RegistrationService::class)->transition($reg, RegistrationStatus::WaitingPayment);
         $this->getJson(self::BASE."/registrations/$number", $h)->assertOk()
-            ->assertJsonPath('data.status', 'waiting_payment')->assertJsonPath('data.invoice.status', 'unpaid');
+            ->assertJsonPath('data.status', 'waiting_payment')->assertJsonPath('data.invoice.status', 'pending')->assertJsonPath('data.invoice.amount_paid', 0);
     }
 
     public function test_webhooks_are_signed_and_logged(): void

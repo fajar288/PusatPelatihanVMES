@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Enums\RegistrationStatus;
 use App\Models\AuditLog;
 use App\Models\Member;
-use App\Models\Payment;
 use App\Models\Registration;
 use App\Models\TrainingSchedule;
 use App\Models\User;
@@ -17,7 +16,7 @@ use Illuminate\Validation\ValidationException;
 /** Alur pendaftaran (PRD §5.5): buat pendaftaran, ubah status dengan validasi transisi, catat audit, kirim notifikasi. */
 class RegistrationService
 {
-    public function __construct(private readonly MemberService $members, private readonly EnrollmentService $enrollments) {}
+    public function __construct(private readonly MemberService $members, private readonly EnrollmentService $enrollments, private readonly InvoiceService $invoices) {}
 
     /**
      * @param  array<string, mixed>  $data  hasil StoreRegistrationRequest
@@ -92,14 +91,8 @@ class RegistrationService
                 'confirmed_at' => $to === RegistrationStatus::Confirmed ? now() : $registration->confirmed_at,
             ])->save();
 
-            if ($to === RegistrationStatus::WaitingPayment && $registration->total !== null && $registration->payments()->whereIn('status', ['unpaid', 'submitted'])->doesntExist()) {
-                Payment::query()->create([
-                    'registration_id' => $registration->id,
-                    'invoice_number' => Payment::nextNumber(),
-                    'amount' => $registration->total,
-                    'due_date' => now()->addDays(3)->toDateString(),
-                    'status' => 'unpaid',
-                ]);
+            if ($to === RegistrationStatus::WaitingPayment) {
+                $this->invoices->forRegistration($registration, $actor);   // idempoten (Roadmap 5C)
             }
 
             if ($to === RegistrationStatus::Confirmed) {

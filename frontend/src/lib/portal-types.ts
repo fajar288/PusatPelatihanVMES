@@ -1,4 +1,4 @@
-// Bentuk data API portal member (/api/v1/me/*, /auth/*, /registrations) — lihat backend App\Http\Resources\{User,Registration,Payment,AuditLog}Resource.
+// Bentuk data API portal member (/api/v1/me/*, /auth/*, /registrations) — lihat backend App\Http\Resources\{User,Registration,Invoice,AuditLog}Resource.
 import type { EnrollmentCertificate } from "./certificates";
 
 export type MemberProfile = {
@@ -33,18 +33,60 @@ export type PortalUser = {
 
 export type RegistrationStatus = "pending" | "under_review" | "waiting_payment" | "payment_verification" | "confirmed" | "rejected" | "cancelled";
 
-export type PaymentInfo = {
-  invoice: string;
-  registration?: string;
+/** Invoice (Roadmap 5C) — backend App\Http\Resources\InvoiceResource. Pembayaran manual: status berubah hanya lewat verifikasi finance. */
+export type InvoiceStatus = "pending" | "paid" | "failed" | "expired" | "refunded" | "cancelled";
+
+export type InvoiceTransaction = {
+  code: string;
+  method: string;
+  destination: string | null;
   amount: number;
+  amountReceived: number | null;
+  transferLabel: string | null;
+  status: "pending" | "paid" | "failed" | "cancelled";
+  statusLabel: string;
+  submittedAt: string | null;
+  submittedLabel: string | null;
+  verifiedLabel: string | null;
+  reviewNote: string | null;
+  proofUploaded: boolean;
+};
+
+export type InvoiceInfo = {
+  number: string;
+  registration: string | null;
+  trainingRequest: string | null;
+  source: string;
+  status: InvoiceStatus;
+  statusLabel: string;
+  awaitingVerification: boolean;
+  payable: boolean;
+  overdue: boolean;
+  billTo: { name: string; email: string | null; company: string | null; address: string | null; taxId: string | null };
+  items?: { description: string; quantity: number; unitPrice: number; amount: number }[];
+  subtotal: number;
+  discount: number;
+  discountNote: string | null;
+  taxRate: number;
+  taxLabel: string | null;
+  taxAmount: number;
+  showTax: boolean;
+  total: number;
+  amountPaid: number;
+  amountRefunded: number;
+  outstanding: number;
+  installmentNo: number;
+  installmentTotal: number;
+  description: string | null;
+  notes: string | null;
+  settlementNote: string | null;
+  issuedAt: string | null;
+  issuedLabel: string | null;
   dueDate: string | null;
   dueLabel: string | null;
-  method: string;
-  status: "unpaid" | "submitted" | "verified" | "rejected" | "refunded";
-  proofUploaded: boolean;
-  proofUploadedAt: string | null;
-  verifiedAt: string | null;
-  note: string | null;
+  paidLabel: string | null;
+  transactions?: InvoiceTransaction[];
+  refunds?: { code: string; amount: number; status: string; statusLabel: string; completedLabel: string | null; reference: string | null }[];
   createdAt: string | null;
 };
 
@@ -92,7 +134,7 @@ export type RegistrationInfo = {
     time: string | null;
   } | null;
   participants?: { name: string; email: string | null; phone: string | null; position: string | null }[];
-  payments?: PaymentInfo[];
+  invoices?: InvoiceInfo[];
 };
 
 /** Notifikasi aplikasi (GET /me/notifications, PRD §5.12). `url` = path portal tujuan. */
@@ -153,11 +195,13 @@ export const STATUS_PILL: Record<RegistrationStatus, { label: string; cls: "ok" 
   cancelled: { label: "Dibatalkan", cls: "no" },
 };
 
-export const PAYMENT_PILL: Record<PaymentInfo["status"], { label: string; cls: "ok" | "wn" | "no" }> = {
-  unpaid: { label: "Belum dibayar", cls: "wn" },
-  submitted: { label: "Menunggu verifikasi", cls: "wn" },
-  verified: { label: "Terverifikasi", cls: "ok" },
-  rejected: { label: "Ditolak", cls: "no" },
+export const INVOICE_PILL: Record<InvoiceStatus | "awaiting", { label: string; cls: "ok" | "wn" | "no" }> = {
+  pending: { label: "Belum dibayar", cls: "wn" },
+  awaiting: { label: "Menunggu verifikasi", cls: "wn" },
+  paid: { label: "Lunas", cls: "ok" },
+  failed: { label: "Bukti ditolak", cls: "no" },
+  expired: { label: "Kedaluwarsa", cls: "no" },
   refunded: { label: "Dikembalikan", cls: "no" },
+  cancelled: { label: "Dibatalkan", cls: "no" },
 };
 

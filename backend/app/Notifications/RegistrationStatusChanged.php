@@ -23,7 +23,7 @@ class RegistrationStatusChanged extends Notification
 
     public function toMail(object $notifiable): MailMessage
     {
-        $r = $this->registration->loadMissing('schedule.package', 'payments');
+        $r = $this->registration->loadMissing('schedule.package', 'invoices');
         $to = $r->status;
         $portal = rtrim((string) explode(',', (string) config('services.frontend.url'))[0], '/');
         $m = (new MailMessage)
@@ -51,7 +51,11 @@ class RegistrationStatusChanged extends Notification
     /** Instruksi pembayaran manual: nominal, rekening/VA aktif (menu admin Rekening pembayaran), jatuh tempo. */
     private function paymentLines(MailMessage $m, Registration $r): MailMessage
     {
-        $amount = 'Rp '.number_format((float) ($r->payments->first()?->amount ?? $r->total), 0, ',', '.');
+        $invoice = $r->invoices->first(fn ($i) => $i->isPayable());
+        $amount = 'Rp '.number_format((float) ($invoice?->outstanding() ?? $r->total), 0, ',', '.');
+        if ($invoice) {
+            $m->line("Invoice: **{$invoice->invoice_number}**".($invoice->installment_total > 1 ? " (termin {$invoice->installment_no} dari {$invoice->installment_total})" : '').'.');
+        }
         $accounts = PaymentAccount::query()->shown()->get();
 
         if ($accounts->isEmpty()) {
@@ -61,10 +65,10 @@ class RegistrationStatusChanged extends Notification
             foreach ($accounts as $a) {
                 $m->line('- '.$a->summary());
             }
-            $m->line('Setelah membayar, unggah bukti transfer di portal member.');
+            $m->line('Cantumkan nomor invoice pada berita transfer. Setelah membayar, unggah bukti transfer di portal member.');
         }
 
-        if ($due = $r->payments->first()?->due_date) {
+        if ($due = $invoice?->due_date) {
             $m->line('Jatuh tempo: '.$due->locale('id')->translatedFormat('j F Y'));
         }
 

@@ -47,7 +47,7 @@ class RegistrationResource extends JsonResource
                 'time' => $s->timeLabel(),
             ] : null,
             'participants' => $this->whenLoaded('participants', fn () => $this->participants->map(fn ($p) => ['name' => $p->name, 'email' => $p->email, 'phone' => $p->phone, 'position' => $p->position])),
-            'payments' => PaymentResource::collection($this->whenLoaded('payments')),
+            'invoices' => InvoiceResource::collection($this->whenLoaded('invoices', fn () => $this->invoices->where('status', '!=', 'cancelled')->values())),
         ];
     }
 }

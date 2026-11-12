@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Enums\RegistrationStatus;
 use App\Models\Enrollment;
-use App\Models\Payment;
+use App\Models\Invoice;
 use App\Models\Registration;
 use App\Models\TrainingSchedule;
 use Illuminate\Support\Collection;
@@ -14,7 +14,7 @@ class ReportService
 {
     public const TYPES = [
         'registrations' => 'Pendaftaran',
-        'payments' => 'Pembayaran',
+        'payments' => 'Invoice & pembayaran',
         'schedules' => 'Kelas & kapasitas',
         'enrollments' => 'Peserta & kehadiran',
     ];
@@ -92,14 +92,21 @@ class ReportService
 
     private function payments(?string $from, ?string $to): array
     {
-        $q = Payment::query()->with('registration');
+        $q = Invoice::query()->with(['registration', 'trainingRequest', 'organization', 'transactions']);
         $this->range($q, 'created_at', $from, $to);
-        $rows = $q->orderBy('created_at')->get()->map(fn (Payment $p) => [
-            $p->invoice_number, $p->registration?->registration_number, $p->registration?->name, (float) $p->amount, "{$p->installment_no}/{$p->installment_total}",
-            $p->due_date?->format('Y-m-d'), $p->status, $p->proof_uploaded_at?->format('Y-m-d H:i'), $p->verified_at?->format('Y-m-d H:i'), $p->note,
-        ])->all();
+        $rows = $q->orderBy('created_at')->get()->map(function (Invoice $i) {
+            $last = $i->transactions->first();
 
-        return ['headers' => ['Invoice', 'Registrasi', 'Pendaftar', 'Jumlah', 'Termin', 'Jatuh tempo', 'Status', 'Bukti diunggah', 'Diverifikasi', 'Catatan'], 'rows' => $rows];
+            return [
+                $i->invoice_number, $i->created_at->format('Y-m-d'), $i->sourceLabel(), $i->bill_to_name, $i->organization?->code,
+                (float) $i->subtotal, (float) $i->discount, (float) $i->tax_amount, (float) $i->total, (float) $i->amount_paid, (float) $i->amount_refunded,
+                "{$i->installment_no}/{$i->installment_total}", $i->due_date?->format('Y-m-d'), $i->status, $i->paid_at?->format('Y-m-d H:i'),
+                $last?->code, $last?->status, $last?->submitted_at?->format('Y-m-d H:i'), $last?->verified_at?->format('Y-m-d H:i'), $i->settlement_note,
+            ];
+        })->all();
+
+        return ['headers' => ['Invoice', 'Tanggal', 'Sumber', 'Ditagihkan ke', 'Organisasi', 'Subtotal', 'Diskon', 'Pajak', 'Total', 'Terbayar', 'Direfund', 'Termin',
+            'Jatuh tempo', 'Status', 'Lunas', 'Transaksi terakhir', 'Status transaksi', 'Bukti diunggah', 'Diverifikasi', 'Catatan selisih'], 'rows' => $rows];
     }
 
     private function schedules(): array

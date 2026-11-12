@@ -1,53 +1,59 @@
 import Link from "next/link";
 import PaymentAccounts from "@/components/portal/PaymentAccounts";
-import { EmptyState, MetaList, PaymentPill, PortalCard } from "@/components/portal/ui";
+import { EmptyState, InvoicePill, MetaList, PortalCard } from "@/components/portal/ui";
 import { api, requireUser } from "@/lib/auth";
 import { getPaymentAccounts } from "@/lib/payment-accounts";
-import type { PaymentInfo } from "@/lib/portal-types";
+import type { InvoiceInfo } from "@/lib/portal-types";
 import { formatRupiah } from "@/lib/utils";
 
 // Halaman per-pengguna (cookie sesi + API terautentikasi) → diblokir di server, tidak di-prerender.
 export const instant = false;
 
-/** /portal/pembayaran — riwayat tagihan & status verifikasi (Payment History). */
+/** /portal/pembayaran — invoice & status verifikasi pembayaran (Payment History, Roadmap 5C). */
 export default async function PortalPaymentsPage() {
   const { token } = await requireUser("/portal/pembayaran");
-  const [payments, accounts] = await Promise.all([
-    api<{ data: PaymentInfo[] }>("/me/payments", { token }).then((r) => r.data),
+  const [invoices, accounts] = await Promise.all([
+    api<{ data: InvoiceInfo[] }>("/me/payments", { token }).then((r) => r.data),
     getPaymentAccounts(token),
   ]);
   return (
-    <PortalCard title="Riwayat Pembayaran">
-      {payments.length ? (
+    <PortalCard title="Invoice & Pembayaran">
+      {invoices.length ? (
         <ul className="sp">
-          {payments.map((p) => (
-            <li key={p.invoice}>
-              <span>
-                <b style={{ display: "block", color: "var(--ink)" }}>{p.invoice}</b>
+          {invoices.map((inv) => (
+            <li key={inv.number}>
+              <span className="spl">
+                <b>
+                  <Link href={`/portal/pembayaran/${inv.number}`}>{inv.number}</Link>
+                </b>
                 <MetaList
                   compact
-                  style={{ marginTop: 2 }}
                   items={[
-                    !!p.registration && { icon: "code", value: <Link href={`/portal/pendaftaran/${p.registration}`}>{p.registration}</Link> },
-                    { icon: "cal", label: "Jatuh tempo", value: p.dueLabel },
-                    { value: p.note },
+                    !!inv.registration && { icon: "code", value: inv.registration },
+                    inv.installmentTotal > 1 && { value: `Termin ${inv.installmentNo}/${inv.installmentTotal}` },
+                    { icon: "cal", label: "Jatuh tempo", value: inv.dueLabel },
                   ]}
                 />
               </span>
-              <b>
-                {formatRupiah(p.amount)} <PaymentPill status={p.status} />
+              <b className="spv">
+                {formatRupiah(inv.total)} <InvoicePill invoice={inv} />
+                {inv.payable && (
+                  <small>
+                    <Link href={`/portal/pembayaran/${inv.number}`}>Bayar &amp; unggah bukti</Link>
+                  </small>
+                )}
               </b>
             </li>
           ))}
         </ul>
       ) : (
-        <EmptyState text="Belum ada tagihan. Tagihan dibuat setelah pendaftaran disetujui admin." />
+        <EmptyState text="Belum ada tagihan. Invoice dibuat setelah pendaftaran disetujui admin." />
       )}
       <div style={{ marginTop: 20 }}>
         <h3 style={{ fontSize: 17, color: "var(--ink)" }}>Rekening Pembayaran</h3>
-        <PaymentAccounts accounts={accounts} intro="Bayar tagihan dengan transfer ke salah satu rekening resmi berikut." />
+        <PaymentAccounts accounts={accounts} intro="Bayar invoice dengan transfer ke salah satu rekening resmi berikut, cantumkan nomor invoice di berita transfer." />
         <p className="fh" style={{ marginTop: 10 }}>
-          Setelah membayar, unggah bukti transfer dari halaman detail pendaftaran. Tim finance akan memverifikasinya.
+          Setelah membayar, buka invoice lalu unggah bukti transfer. Status berubah menjadi lunas setelah diverifikasi tim finance.
         </p>
       </div>
     </PortalCard>

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import BulkImportForm from "@/components/corporate/BulkImportForm";
 import RequestActions from "@/components/corporate/RequestActions";
 import SeatAssignPanel from "@/components/corporate/SeatAssignPanel";
@@ -74,6 +75,28 @@ export default async function RequestDetailPage({ params }: PageProps<"/corporat
               />
               {r.quote.notes && <p className="fh" style={{ marginTop: 6, fontSize: 13 }}>{r.quote.notes}</p>}
             </div>
+          </div>
+        )}
+        {r.invoice && (
+          <div className="pcert" style={{ alignItems: "flex-start" }}>
+            <div>
+              <b style={{ color: "var(--ink)" }}>Invoice {r.invoice.number}</b>
+              <MetaList
+                compact
+                style={{ marginTop: 4 }}
+                items={[
+                  { label: "Status", value: r.invoice.statusLabel },
+                  { label: "Total", value: <b>{rupiah(r.invoice.total)}</b> },
+                  r.invoice.outstanding > 0 && { label: "Sisa", value: rupiah(r.invoice.outstanding) },
+                  { label: "Jatuh tempo", value: r.invoice.dueLabel },
+                ]}
+              />
+            </div>
+            {r.invoice.canOpen && (
+              <Link className="lk" href={`/corporate/${org}/keuangan/${r.invoice.number}`}>
+                Buka invoice
+              </Link>
+            )}
           </div>
         )}
         <RequestActions org={org} code={r.code} can={r.can} status={r.status} requiresApproval={s.organization.requiresApproval} />

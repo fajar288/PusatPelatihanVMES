@@ -112,14 +112,14 @@ class RegistrationFlowTest extends TestCase
 
         $service->transition($reg, RegistrationStatus::UnderReview, $admin, 'Data lengkap');
         $service->transition($reg, RegistrationStatus::WaitingPayment, $admin);
-        $this->assertDatabaseHas('payments', ['registration_id' => $reg->id, 'amount' => 7500000, 'status' => 'unpaid', 'invoice_number' => 'INV-202611-0001']);
+        $this->assertDatabaseHas('invoices', ['registration_id' => $reg->id, 'total' => 7500000, 'status' => 'pending', 'invoice_number' => 'INV-202611-0001']);
         Notification::assertSentToTimes($reg, RegistrationStatusChanged::class, 2);
 
         // member unggah bukti → payment_verification
         $this->actingAs($member, 'sanctum')->post("/api/v1/me/registrations/{$reg->registration_number}/payment-proof", ['proof' => UploadedFile::fake()->image('bukti.jpg')])
-            ->assertOk()->assertJsonPath('data.status', 'submitted');
+            ->assertOk()->assertJsonPath('data.status', 'pending')->assertJsonPath('data.awaitingVerification', true);
         $this->assertSame('payment_verification', $reg->refresh()->status->value);
-        $this->actingAs($member, 'sanctum')->getJson('/api/v1/me/payments')->assertOk()->assertJsonCount(1, 'data')->assertJsonPath('data.0.proofUploaded', true);
+        $this->actingAs($member, 'sanctum')->getJson('/api/v1/me/payments')->assertOk()->assertJsonCount(1, 'data')->assertJsonPath('data.0.transactions.0.proofUploaded', true)->assertJsonPath('data.0.statusLabel', 'Menunggu verifikasi');
 
         // finance konfirmasi → kuota bertambah, member aktif
         $before = TrainingSchedule::query()->where('code', 'CCNA-2611')->value('registered_count');

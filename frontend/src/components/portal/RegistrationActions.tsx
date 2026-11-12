@@ -1,44 +1,26 @@
 "use client";
 
-import { useActionState, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { FormMessage } from "@/components/auth/AuthShell";
-import { cancelRegistrationAction, type RegistrationState, uploadPaymentProofAction } from "@/lib/actions/registration";
+import { cancelRegistrationAction, type RegistrationState } from "@/lib/actions/registration";
+import InvoiceProofForm from "@/components/portal/InvoiceProofForm";
 import PaymentAccounts from "@/components/portal/PaymentAccounts";
 import type { PaymentAccountInfo, RegistrationInfo } from "@/lib/portal-types";
 
-/** Aksi pendaftar: unggah bukti transfer (saat menunggu pembayaran/verifikasi) dan batalkan (sebelum terkonfirmasi). */
-export default function RegistrationActions({ r, accounts }: { r: RegistrationInfo; accounts: PaymentAccountInfo[] }) {
-  const [upState, upAction, upPending] = useActionState<RegistrationState, FormData>(uploadPaymentProofAction, { ok: false });
+/** Aksi pendaftar: unggah bukti transfer untuk invoice terbuka pertama dan batalkan (sebelum terkonfirmasi). */
+export default function RegistrationActions({ r, accounts, payer }: { r: RegistrationInfo; accounts: PaymentAccountInfo[]; payer?: string }) {
   const [cancelMsg, setCancelMsg] = useState<RegistrationState | null>(null);
   const [pending, start] = useTransition();
-  const canUpload = r.status === "waiting_payment" || r.status === "payment_verification";
+  // invoice yang masih bisa dibayar (termin paling awal); invoice lunas/kedaluwarsa tidak menerima bukti
+  const invoice = (r.status === "waiting_payment" || r.status === "payment_verification") ? r.invoices?.find((i) => i.payable) : undefined;
 
   return (
     <>
-      {canUpload && (
+      {invoice && (
         <section className="kbx pcard">
           <h2>Unggah Bukti Pembayaran</h2>
-          <PaymentAccounts accounts={accounts} intro="Transfer sesuai nominal tagihan ke salah satu rekening resmi berikut:" />
-          <p className="fh" style={{ marginTop: 10 }}>
-            Lalu unggah bukti transfer (JPG/PNG/PDF maks. 4 MB).
-          </p>
-          <form className="ff" action={upAction} style={{ marginTop: 16 }}>
-            <input type="hidden" name="number" value={r.number} />
-            <div>
-              <label htmlFor="pf-file">Berkas bukti transfer</label>
-              <input id="pf-file" name="proof" type="file" accept="image/jpeg,image/png,application/pdf" required />
-            </div>
-            <div>
-              <label htmlFor="pf-note">
-                Catatan <small>(bank pengirim, nama rekening, dll.)</small>
-              </label>
-              <input id="pf-note" name="note" />
-            </div>
-            <FormMessage ok={upState.ok} message={upState.message} />
-            <button className="kb1" type="submit" disabled={upPending}>
-              {upPending ? "Mengunggah…" : "Kirim Bukti Pembayaran"}
-            </button>
-          </form>
+          <PaymentAccounts accounts={accounts} intro={`Transfer sesuai sisa tagihan invoice ${invoice.number} ke salah satu rekening resmi berikut:`} />
+          <InvoiceProofForm scope="me" number={invoice.number} outstanding={invoice.outstanding} accounts={accounts} payer={payer} replacing={invoice.awaitingVerification} />
         </section>
       )}
 

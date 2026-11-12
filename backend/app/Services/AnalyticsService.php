@@ -8,8 +8,8 @@ use App\Models\Certificate;
 use App\Models\ClassSession;
 use App\Models\CompetencyAssessment;
 use App\Models\Enrollment;
+use App\Models\Invoice;
 use App\Models\Member;
-use App\Models\Payment;
 use App\Models\Registration;
 use App\Models\Trainer;
 use App\Models\TrainingCategory;
@@ -227,42 +227,59 @@ class AnalyticsService
         ];
     }
 
-    /** @return array<string, mixed> */
+    /**
+     * Keuangan dari invoice & transaksi (Roadmap 5C). Pendapatan = transaksi terverifikasi dalam periode − refund selesai
+     * dalam periode. Invoice pendaftaran mengikuti kelas; invoice Corporate Training Request mengikuti batch atau, bila
+     * belum dijadwalkan, program kelas yang terfilter.
+     *
+     * @return array<string, mixed>
+     */
     private function finance(array $f, Collection $programIds): array
     {
-        $payments = Payment::query()
-            ->whereHas('registration', fn (Builder $q) => $q->whereIn('schedule_id', $programIds))
-            ->with('registration:id,schedule_id,package_id')
-            ->get(['id', 'registration_id', 'amount', 'status', 'due_date', 'verified_at', 'created_at']);
+        $schedulePackage = TrainingSchedule::query()->whereIn('id', $programIds)->pluck('package_id', 'id');
+        $packageIds = $schedulePackage->unique()->values();
+        $invoices = Invoice::query()->where('status', '!=', 'cancelled')
+            ->where(fn (Builder $q) => $q->whereHas('registration', fn (Builder $r) => $r->whereIn('schedule_id', $programIds))
+                ->orWhereHas('trainingRequest', fn (Builder $r) => $r->whereIn('schedule_id', $programIds)
+                    ->orWhere(fn (Builder $w) => $w->whereNull('schedule_id')->whereIn('package_id', $packageIds))))
+            ->with(['registration:id,schedule_id,package_id', 'trainingRequest:id,package_id', 'transactions:id,invoice_id,status,amount,amount_received,verified_at', 'refunds:id,invoice_id,status,amount,completed_at'])
+            ->get();
         $inPeriod = fn ($d) => $d && $d->toDateString() >= $f['from'] && $d->toDateString() <= $f['to'];
 
-        $invoices = $payments->filter(fn ($p) => $inPeriod($p->created_at));
-        $verified = $payments->filter(fn ($p) => $p->status === 'verified' && $inPeriod($p->verified_at ?? $p->created_at));
-        $open = $payments->filter(fn ($p) => in_array($p->status, ['unpaid', 'rejected'], true) && $p->created_at->toDateString() <= $f['to']);
-        $overdue = $open->filter(fn ($p) => $p->due_date && $p->due_date->lt(today()));
-        $submitted = $payments->filter(fn ($p) => $p->status === 'submitted');
+        $issued = $invoices->filter(fn (Invoice $i) => $inPeriod($i->created_at));
+        $txs = $invoices->flatMap(fn (Invoice $i) => $i->transactions->each(fn ($t) => $t->setRelation('invoice', $i)));
+        $verified = $txs->filter(fn ($t) => $t->status === 'paid' && $inPeriod($t->verified_at));
+        $refunds = $invoices->flatMap(fn (Invoice $i) => $i->refunds)->filter(fn ($r) => $r->status === 'completed' && $inPeriod($r->completed_at));
+        $pending = $txs->filter(fn ($t) => $t->status === 'pending');
+        $open = $invoices->filter(fn (Invoice $i) => in_array($i->status, ['pending', 'failed', 'expired'], true) && $i->created_at->toDateString() <= $f['to']);
+        $overdue = $open->filter(fn (Invoice $i) => $i->status === 'expired' || ($i->due_date && $i->due_date->lt(today())));
 
-        $schedulePackage = TrainingSchedule::query()->whereIn('id', $programIds)->pluck('package_id', 'id');
-        $pkgOf = fn (Payment $p): int => (int) ($p->registration?->package_id ?? $schedulePackage[$p->registration?->schedule_id] ?? 0);
+        $pkgOf = fn (Invoice $i): int => (int) ($i->registration?->package_id ?? $schedulePackage[$i->registration?->schedule_id] ?? $i->trainingRequest?->package_id ?? 0);
+        $received = fn ($t): float => (float) ($t->amount_received ?? $t->amount);
         $titles = TrainingPackage::query()->pluck('title', 'id');
-        $byProgram = $verified->groupBy($pkgOf)
-            ->map(fn ($g, $pid) => ['package_id' => (int) $pid, 'title' => $titles[$pid] ?? '—', 'amount' => (float) $g->sum('amount'), 'payments' => $g->count()])
+        $byProgram = $verified->groupBy(fn ($t) => $pkgOf($t->invoice))
+            ->map(fn ($g, $pid) => ['package_id' => (int) $pid, 'title' => $titles[$pid] ?? '—', 'amount' => (float) $g->sum($received), 'payments' => $g->count()])
             ->sortByDesc('amount')->take(8)->values()->all();
-        $invoicedAmount = (float) $invoices->sum('amount');
+        $invoicedAmount = (float) $issued->sum('total');
+        $monthly = $verified->groupBy(fn ($t) => $t->verified_at->format('Y-m'))->map(fn ($g) => (float) $g->sum($received));
+        foreach ($refunds->groupBy(fn ($r) => $r->completed_at->format('Y-m')) as $k => $g) {
+            $monthly[$k] = ($monthly[$k] ?? 0) - (float) $g->sum('amount');
+        }
 
         return [
-            'revenue' => (float) $verified->sum('amount'),
-            'invoices' => $invoices->count(),
+            'revenue' => (float) $verified->sum($received) - (float) $refunds->sum('amount'),
+            'refunded' => (float) $refunds->sum('amount'),
+            'invoices' => $issued->count(),
             'invoiced_amount' => $invoicedAmount,
             'payments_verified' => $verified->count(),
-            'pending_verification' => (float) $submitted->sum('amount'),
-            'pending_count' => $submitted->count(),
-            'outstanding' => (float) $open->sum('amount'),
+            'pending_verification' => (float) $pending->sum('amount'),
+            'pending_count' => $pending->count(),
+            'outstanding' => (float) $open->sum(fn (Invoice $i) => $i->outstanding()),
             'outstanding_count' => $open->count(),
-            'overdue' => (float) $overdue->sum('amount'),
+            'overdue' => (float) $overdue->sum(fn (Invoice $i) => $i->outstanding()),
             'overdue_count' => $overdue->count(),
-            'collection_rate' => $invoicedAmount > 0 ? round((float) $invoices->where('status', 'verified')->sum('amount') / $invoicedAmount * 100, 1) : null,
-            'revenue_by_month' => $this->months($f, $verified->groupBy(fn ($p) => ($p->verified_at ?? $p->created_at)->format('Y-m'))->map(fn ($g) => (float) $g->sum('amount'))),
+            'collection_rate' => $invoicedAmount > 0 ? round((float) $issued->sum(fn (Invoice $i) => min((float) $i->amount_paid, (float) $i->total)) / $invoicedAmount * 100, 1) : null,
+            'revenue_by_month' => $this->months($f, $monthly),
             'revenue_by_program' => $byProgram,
         ];
     }
