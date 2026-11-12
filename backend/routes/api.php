@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\CertificateController;
+use App\Http\Controllers\Api\V1\ChatController;
 use App\Http\Controllers\Api\V1\ContentController;
 use App\Http\Controllers\Api\V1\HomeController;
 use App\Http\Controllers\Api\V1\LearningController;
@@ -64,6 +65,11 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
 
     // Verifikasi sertifikat publik (PRD §5.10, AC-10)
     Route::get('/verify/{number}', [CertificateController::class, 'verify'])->middleware('throttle:60,1')->where('number', '.+')->name('certificates.verify');
+
+    // Chatbot informasi publik (Phase 5 — Claude). Nonaktif bawaan: CHATBOT_ENABLED + ANTHROPIC_API_KEY.
+    Route::get('/chat/status', [ChatController::class, 'status'])->name('chat.status');
+    Route::post('/chat', [ChatController::class, 'send'])->middleware('throttle:chatbot')->name('chat.send');
+    Route::post('/chat/feedback', [ChatController::class, 'feedback'])->middleware('throttle:chatbot-feedback')->name('chat.feedback');
 
     // ---- Pendaftaran publik (tamu atau member) & autentikasi (Phase 1E) ----
     Route::post('/registrations', [RegistrationController::class, 'store'])->middleware('throttle:10,1')->name('registrations.store');

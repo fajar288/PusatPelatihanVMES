@@ -4,6 +4,7 @@ import ContactCards from "@/components/layout/ContactCards";
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
 import WaFloat from "@/components/layout/WaFloat";
+import ChatWidget from "@/components/chat/ChatWidget";
 import PwaProvider from "@/components/pwa/PwaProvider";
 import IconSprite from "@/components/ui/IconSprite";
 import { SITE } from "@/data/site";
@@ -47,6 +48,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <ContactCards site={site} />
         <Footer site={site} columns={menus.footer} />
         <WaFloat />
+        <ChatWidget />
         <PwaProvider />
       </body>
     </html>

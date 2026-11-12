@@ -263,3 +263,35 @@
 .pacc-i{white-space:pre-line}
 .copyb{border:1px solid var(--ln);background:var(--w);border-radius:99px;padding:3px 12px;font:inherit;font-size:12px;font-weight:700;color:var(--p);cursor:pointer}
 .copyb:hover{border-color:currentColor}
+/* Asisten virtual (chatbot AI) — tombol di atas tombol WhatsApp, panel melayang; layar penuh di ponsel */
+.chatf{position:fixed;right:20px;bottom:84px;z-index:91;display:inline-flex;align-items:center;gap:8px;border:0;cursor:pointer;background:var(--p);color:var(--w);border-radius:99px;padding:11px 16px 11px 13px;font:inherit;font-weight:800;font-size:14px;box-shadow:0 10px 26px rgba(0,75,35,.35);transition:transform .2s,box-shadow .2s}
+.chatf:hover{transform:translateY(-2px)}.chatf.on{background:var(--pd)}
+.chatf svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.chatp{position:fixed;right:20px;bottom:142px;z-index:92;width:min(380px,calc(100vw - 32px));height:min(560px,calc(100vh - 170px));display:flex;flex-direction:column;background:var(--w);border:1px solid var(--ln);border-radius:20px;box-shadow:0 24px 60px rgba(11,60,38,.22);overflow:hidden}
+.chatp header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;background:var(--p);color:var(--w)}
+.chatp header b{display:block;font-size:15px}.chatp header small{display:block;font-size:11.5px;opacity:.85;line-height:1.35;margin-top:2px}
+.chatr{border:1px solid rgba(255,255,255,.5);background:transparent;color:inherit;border-radius:99px;padding:3px 10px;font:inherit;font-size:12px;font-weight:700;cursor:pointer;flex:none}
+.chatl{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;background:var(--bg)}
+.chatm{max-width:88%;padding:10px 13px;border-radius:16px;font-size:14px;line-height:1.5;color:var(--ink);overflow-wrap:anywhere}
+.chatm p{margin:0}.chatm p+p,.chatm ul+p,.chatm p+ul{margin-top:6px}.chatm ul{margin:0;padding-left:18px}.chatm li{list-style:disc}
+.chatm a{color:var(--p);font-weight:700;text-decoration:underline}
+.chatm.bot{align-self:flex-start;background:var(--w);border:1px solid var(--ln);border-bottom-left-radius:6px}
+.chatm.me{align-self:flex-end;background:var(--p);color:var(--w);border-bottom-right-radius:6px;white-space:pre-wrap}
+.chats{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chats button{border:1px solid var(--ln);background:var(--bg);color:var(--p);border-radius:99px;padding:5px 11px;font:inherit;font-size:12.5px;font-weight:700;cursor:pointer}
+.chats button:hover{border-color:var(--p)}
+.chatfb{display:flex;gap:4px;margin-top:6px}.chatfb button{border:1px solid var(--ln);background:var(--w);border-radius:99px;padding:1px 8px;cursor:pointer;font-size:13px}
+.chatfb small{font-size:12px;color:var(--mut)}
+.chatm.typing{display:flex;gap:4px;padding:13px 14px}.chatm.typing i{width:7px;height:7px;border-radius:50%;background:var(--mut);opacity:.4;animation:chatdot 1s infinite}
+.chatm.typing i:nth-child(2){animation-delay:.15s}.chatm.typing i:nth-child(3){animation-delay:.3s}
+@keyframes chatdot{50%{opacity:1;transform:translateY(-3px)}}
+.chati{display:flex;align-items:flex-end;gap:8px;padding:10px 12px;border-top:1px solid var(--ln);background:var(--w)}
+.chati textarea{flex:1;resize:none;border:1px solid var(--ln);border-radius:14px;padding:9px 12px;font:inherit;font-size:14px;max-height:110px;color:var(--ink);background:var(--w)}
+.chati textarea:focus{outline:2px solid var(--l);outline-offset:0;border-color:transparent}
+.chati button{flex:none;width:40px;height:40px;border:0;border-radius:50%;background:var(--o);color:var(--w);display:grid;place-items:center;cursor:pointer}
+.chati button:disabled{opacity:.45;cursor:default}.chati svg{width:19px;height:19px;fill:currentColor}
+.chatw{margin:0;padding:0 14px 10px;font-size:12px;color:var(--mut);background:var(--w)}.chatw a{color:#1d8f3a;font-weight:700}
+@media(prefers-reduced-motion:reduce){.chatm.typing i{animation:none;opacity:.7}}
+@media(max-width:640px){.chatf{right:14px;bottom:72px;padding:12px}.chatf span{display:none}
+.chatp{inset:0;width:auto;height:auto;border-radius:0;z-index:95}.chatp header{padding-right:64px}
+.chatf.on{z-index:96;top:10px;bottom:auto;right:12px;box-shadow:none;background:rgba(255,255,255,.18);padding:8px}}

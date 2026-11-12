@@ -12,6 +12,8 @@ use App\Observers\PublicApiWebhookObserver;
 use App\Observers\TrainingScheduleObserver;
 use App\Services\AnalyticsService;
 use App\Services\NotificationEvents;
+use App\Support\Chatbot\AnthropicChatModel;
+use App\Support\Chatbot\ChatModel;
 use App\Support\Push\PushSender;
 use App\Support\Push\WebPushSender;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -31,6 +33,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->scoped(AnalyticsService::class);
         // Web Push (VAPID) — diganti FakePushSender di tes
         $this->app->singleton(PushSender::class, WebPushSender::class);
+        // Chatbot publik (Claude) — diganti FakeChatModel di tes
+        $this->app->singleton(ChatModel::class, fn () => new AnthropicChatModel);
     }
 
     /**
@@ -51,6 +55,12 @@ class AppServiceProvider extends ServiceProvider
         // Limiter bernama per pengguna (throttle:N,1 tanpa nama berbagi satu penghitung lintas route)
         RateLimiter::for('push-subscribe', fn (Request $request) => Limit::perMinute(20)->by('push-sub:'.($request->user()?->id ?: $request->ip())));
         RateLimiter::for('push-test', fn (Request $request) => Limit::perMinute(5)->by('push-test:'.($request->user()?->id ?: $request->ip())));
+        // Chatbot publik: batas per IP per menit & per hari (biaya API per token)
+        RateLimiter::for('chatbot', fn (Request $request) => [
+            Limit::perMinute(max(1, (int) config('chatbot.per_ip_per_minute')))->by('chat-m:'.$request->ip()),
+            Limit::perDay(max(1, (int) config('chatbot.per_ip_per_day')))->by('chat-d:'.$request->ip()),
+        ]);
+        RateLimiter::for('chatbot-feedback', fn (Request $request) => Limit::perMinute(30)->by('chat-fb:'.$request->ip()));
 
         // Notifikasi "materi baru" saat lesson terbit / mulai tersedia (PRD §5.12)
         Lesson::saved(function (Lesson $lesson): void {
