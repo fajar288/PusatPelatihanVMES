@@ -13,7 +13,7 @@ class EditNotificationTemplate extends EditRecord
 
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        $fields = ['title', 'body', 'mail_subject', 'mail_body', 'channels', 'is_active'];
+        $fields = ['version', 'title', 'body', 'mail_subject', 'mail_body', 'wa_body', 'channels', 'is_active'];
         $before = $record->only($fields);
         $record->update($data);
         AuditLog::record('notification_template.updated', $record, $before, $record->only($fields));

@@ -25,6 +25,7 @@ class EnrollmentService
     {
         return DB::transaction(function () use ($registration, $actor) {
             $created = [];
+            $new = [];
             $rejected = [];
             $corporate = $registration->type === Registration::TYPE_CORPORATE;
             $sponsor = $corporate ? $this->organizations->forRegistration($registration, $actor) : null;
@@ -70,9 +71,13 @@ class EnrollmentService
                     $this->identity->queueReview($match, $person, $enrollment, $sponsor, $schedule);
                 }
                 $created[] = $enrollment;
+                $new[] = $enrollment;
             }
 
             AuditLog::record('enrollment.created', $registration, null, ['count' => count($created), 'type' => $corporate ? 'corporate' : 'self', 'sponsor_organization_id' => $sponsor?->id, 'duplicates_rejected' => $rejected], $actor);
+            if ($corporate && $new) {
+                app(NotificationEvents::class)->sponsoredEnrollmentsCreated($new);
+            }
 
             return $created;
         });

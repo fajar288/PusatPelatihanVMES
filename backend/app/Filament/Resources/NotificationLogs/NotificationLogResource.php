@@ -16,7 +16,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use UnitEnum;
 
-/** Log notifikasi: status terkirim/gagal per kanal untuk semua notifikasi (hanya baca, PRD §5.12). */
+/** Log notifikasi: riwayat setiap percobaan kirim (terkirim/gagal) per kanal untuk semua notifikasi, termasuk email transaksional (hanya baca). */
 class NotificationLogResource extends Resource
 {
     protected static ?string $model = NotificationLog::class;
@@ -25,7 +25,7 @@ class NotificationLogResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = NavigationGroup::Notifications;
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 3;
 
     protected static ?string $navigationLabel = 'Log notifikasi';
 
@@ -53,6 +53,7 @@ class NotificationLogResource extends Resource
                 TextColumn::make('created_at')->label('Waktu')->dateTime('d M Y H:i:s')->sortable(),
                 TextColumn::make('notification')->label('Notifikasi')->searchable()->description(fn (NotificationLog $record) => $record->subject),
                 TextColumn::make('category')->label('Kategori')->formatStateUsing(fn ($state) => NotificationTemplate::CATEGORIES[$state][0] ?? ucfirst((string) $state))->toggleable(),
+                TextColumn::make('attempt')->label('Percobaan')->placeholder('-')->alignCenter()->toggleable(),
                 TextColumn::make('channel')->label('Kanal')->badge()->color('gray')->formatStateUsing(fn ($state) => NotificationTemplate::CHANNELS[$state] ?? $state),
                 TextColumn::make('recipient')->label('Penerima')->searchable()->placeholder('-'),
                 TextColumn::make('status')->label('Status')->badge()->formatStateUsing(fn ($state) => NotificationLog::STATUSES[$state] ?? $state)

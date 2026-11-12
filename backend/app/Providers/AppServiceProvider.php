@@ -16,6 +16,8 @@ use App\Support\Chatbot\AnthropicChatModel;
 use App\Support\Chatbot\ChatModel;
 use App\Support\Push\PushSender;
 use App\Support\Push\WebPushSender;
+use App\Support\WhatsApp\LogWhatsAppSender;
+use App\Support\WhatsApp\WhatsAppSender;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -33,6 +35,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->scoped(AnalyticsService::class);
         // Web Push (VAPID) — diganti FakePushSender di tes
         $this->app->singleton(PushSender::class, WebPushSender::class);
+        // WhatsApp (Roadmap 5 §6): penyedia ditunda → hanya driver `log`; diganti FakeWhatsAppSender di tes
+        $this->app->singleton(WhatsAppSender::class, LogWhatsAppSender::class);
         // Chatbot publik (Claude) — diganti FakeChatModel di tes
         $this->app->singleton(ChatModel::class, fn () => new AnthropicChatModel);
     }

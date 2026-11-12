@@ -149,12 +149,14 @@ export type AppNotification = {
   createdAt: string;
 };
 
-export type NotificationCategoryPref = { key: string; label: string; description: string; mail: boolean; push: boolean };
+export type NotificationCategoryPref = { key: string; label: string; description: string; mail: boolean; push: boolean; whatsapp: boolean };
 
 export type NotificationSettings = {
   categories: NotificationCategoryPref[];
   push: { available: boolean; publicKey: string | null; devices: number };
   emailEnabled: boolean;
+  /** Kanal WhatsApp (Roadmap 5D): `available` = diaktifkan server (WHATSAPP_ENABLED); penyedia masih ditunda. */
+  whatsapp?: { available: boolean; enabled: boolean; hasNumber: boolean };
 };
 
 export type EnrollmentInfo = {

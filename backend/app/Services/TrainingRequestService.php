@@ -126,9 +126,12 @@ class TrainingRequestService
         return DB::transaction(function () use ($r, $schedule, $actor) {
             $this->move($r, ['paid', 'scheduled'], 'scheduled', ['schedule_id' => $schedule->id, 'scheduled_at' => now()], $actor, notifyCorporate: true);
             $r->refresh();
+            $created = [];
             foreach ($r->requestSeats()->where('status', 'assigned')->get() as $seat) {
-                $this->assignments->enrollSeat($seat, $actor);
+                $created[] = $this->assignments->enrollSeat($seat, $actor, notify: false);
             }
+            // peserta diberi tahu; perusahaan sudah menerima TrainingRequestUpdated "dijadwalkan"
+            app(NotificationEvents::class)->sponsoredEnrollmentsCreated(array_filter($created), notifyCorporate: false);
 
             return $r->refresh();
         });

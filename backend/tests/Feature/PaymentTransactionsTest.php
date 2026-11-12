@@ -438,7 +438,7 @@ class PaymentTransactionsTest extends TestCase
     public function test_legacy_payments_are_migrated_to_invoices_and_transactions(): void
     {
         $reg = $this->waitingRegistration();
-        $this->artisan('migrate:rollback', ['--step' => 1])->assertSuccessful();
+        $this->artisan('migrate:rollback', ['--step' => 2])->assertSuccessful(); // 5D engine notifikasi + 5C invoice
         $this->assertTrue(DB::getSchemaBuilder()->hasTable('payments'));
         DB::table('payments')->delete();
         $row = fn (string $no, string $status, array $extra = []) => DB::table('payments')->insert($extra + [
