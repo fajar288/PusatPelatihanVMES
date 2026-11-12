@@ -1,6 +1,8 @@
 import Link from "next/link";
+import PaymentAccounts from "@/components/portal/PaymentAccounts";
 import { EmptyState, MetaList, PaymentPill, PortalCard } from "@/components/portal/ui";
 import { api, requireUser } from "@/lib/auth";
+import { getPaymentAccounts } from "@/lib/payment-accounts";
 import type { PaymentInfo } from "@/lib/portal-types";
 import { formatRupiah } from "@/lib/utils";
 
@@ -10,7 +12,10 @@ export const instant = false;
 /** /portal/pembayaran — riwayat tagihan & status verifikasi (Payment History). */
 export default async function PortalPaymentsPage() {
   const { token } = await requireUser("/portal/pembayaran");
-  const payments = (await api<{ data: PaymentInfo[] }>("/me/payments", { token })).data;
+  const [payments, accounts] = await Promise.all([
+    api<{ data: PaymentInfo[] }>("/me/payments", { token }).then((r) => r.data),
+    getPaymentAccounts(token),
+  ]);
   return (
     <PortalCard title="Riwayat Pembayaran">
       {payments.length ? (
@@ -38,9 +43,13 @@ export default async function PortalPaymentsPage() {
       ) : (
         <EmptyState text="Belum ada tagihan. Tagihan dibuat setelah pendaftaran disetujui admin." />
       )}
-      <p className="fh" style={{ marginTop: 16 }}>
-        Pembayaran melalui transfer bank ke rekening resmi PT. PPTI - VMES Training Center. Unggah bukti transfer dari halaman detail pendaftaran.
-      </p>
+      <div style={{ marginTop: 20 }}>
+        <h3 style={{ fontSize: 17, color: "var(--ink)" }}>Rekening Pembayaran</h3>
+        <PaymentAccounts accounts={accounts} intro="Bayar tagihan dengan transfer ke salah satu rekening resmi berikut." />
+        <p className="fh" style={{ marginTop: 10 }}>
+          Setelah membayar, unggah bukti transfer dari halaman detail pendaftaran. Tim finance akan memverifikasinya.
+        </p>
+      </div>
     </PortalCard>
   );
 }

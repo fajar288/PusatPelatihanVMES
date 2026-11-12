@@ -257,3 +257,9 @@
 /* Reset: butir metadata bisa berada di dalam .sp/.lres-l/.pnotif/.kj — jangan mewarisi gaya li/b/span daftar induk */
 .pmeta>li.pmi{display:inline-flex;align-items:center;justify-content:flex-start;gap:7px;min-width:0;margin:0;padding:0;border:0;border-radius:0;background:none;box-shadow:none;overflow:visible;font-size:inherit}
 .pmeta .pmi>span{display:inline;flex:none}
+/* Rekening pembayaran manual (portal) */
+.pacc{margin-top:12px}.pacc .spl>b{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.pacc-n{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:16px;letter-spacing:.5px;color:var(--ink);overflow-wrap:anywhere}
+.pacc-i{white-space:pre-line}
+.copyb{border:1px solid var(--ln);background:var(--w);border-radius:99px;padding:3px 12px;font:inherit;font-size:12px;font-weight:700;color:var(--p);cursor:pointer}
+.copyb:hover{border-color:currentColor}

@@ -11,6 +11,7 @@ use App\Http\Resources\UserResource;
 use App\Models\AuditLog;
 use App\Models\Enrollment;
 use App\Models\Payment;
+use App\Models\PaymentAccount;
 use App\Models\Registration;
 use App\Services\MemberService;
 use App\Services\MonitoringService;
@@ -114,6 +115,12 @@ class MeController extends Controller
         $ids = Registration::query()->ownedBy($request->user())->pluck('id');
 
         return PaymentResource::collection(Payment::query()->whereIn('registration_id', $ids)->with('registration')->latest()->get());
+    }
+
+    /** GET /me/payment-accounts — rekening/VA tujuan pembayaran manual yang aktif. */
+    public function paymentAccounts(): JsonResponse
+    {
+        return response()->json(['data' => PaymentAccount::query()->shown()->get()->map->toApi()->values()]);
     }
 
     /** GET /me/enrollments — "Pelatihan Saya": kelas, trainer, sesi, kehadiran */
