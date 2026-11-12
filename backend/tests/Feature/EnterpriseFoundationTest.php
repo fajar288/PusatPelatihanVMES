@@ -534,9 +534,11 @@ class EnterpriseFoundationTest extends TestCase
             'participants_count' => 1, 'participants' => [['name' => 'P1', 'email' => 'p1@abc.co.id']]])->assertCreated();
         $reg = Registration::query()->latest('id')->firstOrFail();
         $svc = app(RegistrationService::class);
-        foreach ([RegistrationStatus::UnderReview, RegistrationStatus::WaitingPayment, RegistrationStatus::PaymentVerification, RegistrationStatus::Confirmed] as $to) {
+        foreach ([RegistrationStatus::UnderReview, RegistrationStatus::WaitingPayment, RegistrationStatus::PaymentVerification] as $to) {
             $svc->transition($reg->fresh(), $to, $admin);
         }
+        $reg->update(['organization_id' => $this->abc->id]);   // 5B: admin menautkan organisasi sebelum konfirmasi
+        $svc->transition($reg->fresh(), RegistrationStatus::Confirmed, $admin);
         $this->assertSame($this->abc->id, $reg->fresh()->organization_id);
         $this->assertSame(1, Enrollment::query()->visibleToOrganization($this->abc)->count());
     }

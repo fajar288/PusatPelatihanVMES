@@ -9,6 +9,7 @@ use App\Models\WebhookDelivery;
 use App\Services\IdentityMatchingService;
 use App\Services\NotificationEvents;
 use App\Services\SponsorshipService;
+use App\Services\TrainingRequestService;
 use App\Support\Enterprise\IdentityMatch;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
@@ -63,3 +64,10 @@ Artisan::command('sponsorship:apply-due', function (SponsorshipService $sponsors
 })->purpose('Terapkan transfer sponsor yang disetujui dengan tanggal efektif hari ini atau lebih awal');
 
 Schedule::command('sponsorship:apply-due')->dailyAt('00:15');
+
+// Roadmap 5B: Corporate Training Request mengikuti jadwal batch (SCHEDULED → IN_PROGRESS → COMPLETED).
+Artisan::command('requests:sync-status', function (TrainingRequestService $requests) {
+    $this->info('Permintaan training diperbarui: '.$requests->syncWithSchedules());
+})->purpose('Sinkronkan status Corporate Training Request dengan jadwal batch');
+
+Schedule::command('requests:sync-status')->dailyAt('00:30');

@@ -4,14 +4,20 @@ namespace App\Filament\Resources\Registrations\Pages;
 
 use App\Enums\RegistrationStatus;
 use App\Filament\Resources\Registrations\RegistrationResource;
+use App\Filament\Support\EnterpriseFields;
+use App\Models\AuditLog;
+use App\Models\Organization;
 use App\Models\Registration;
 use App\Services\FinanceService;
+use App\Services\OrganizationService;
 use App\Services\RegistrationService;
+use App\Support\Enterprise\OrganizationName;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Validation\ValidationException;
@@ -55,6 +61,29 @@ class EditRegistration extends EditRecord
                     } catch (ValidationException $e) {
                         Notification::make()->title($e->getMessage())->danger()->send();
                     }
+                }),
+            Action::make('organisasi')->label(fn (Registration $record) => $record->organization_id ? 'Ganti organisasi' : 'Tautkan organisasi')
+                ->icon('heroicon-o-building-office-2')->color(fn (Registration $record) => $record->organization_id ? 'gray' : 'warning')
+                ->visible(fn (Registration $record) => $record->type === Registration::TYPE_CORPORATE && $record->status !== RegistrationStatus::Confirmed)
+                ->modalDescription(fn (Registration $record) => 'Nama perusahaan yang diisi pendaftar: "'.($record->company ?: '-').'". Enrollment peserta akan disponsori organisasi ini. Kolom nama perusahaan tidak dipakai untuk hak akses.')
+                ->fillForm(fn (Registration $record) => ['organization_id' => $record->organization_id ?? Organization::query()->where('normalized_name', OrganizationName::normalize($record->company))->value('id')])
+                ->schema([
+                    EnterpriseFields::organization()->helperText('Belum ada? Buat dulu di menu Korporat → Organisasi, atau pilih "Buat dari nama pendaftar".')->required(false),
+                    Toggle::make('create')->label('Buat organisasi baru dari nama perusahaan pendaftar')->inline(false),
+                ])
+                ->action(function (array $data, Registration $record, OrganizationService $orgs): void {
+                    $org = ! empty($data['create'])
+                        ? $orgs->create(['legal_name' => $record->company ?: $record->name, 'contact_name' => $record->name, 'contact_email' => $record->email, 'contact_phone' => $record->phone, 'source' => 'registration'], auth()->user())
+                        : Organization::query()->find($data['organization_id'] ?? null);
+                    if (! $org) {
+                        Notification::make()->title('Pilih organisasi atau buat baru')->danger()->send();
+
+                        return;
+                    }
+                    $before = $record->organization_id;
+                    $record->update(['organization_id' => $org->id]);
+                    AuditLog::record('registration.organization_linked', $record, ['organization_id' => $before], ['organization_id' => $org->id, 'auto' => false]);
+                    Notification::make()->title('Ditautkan ke '.$org->name())->success()->send();
                 }),
             Action::make('ubahStatus')
                 ->label('Ubah status')

@@ -25,6 +25,9 @@ export type PortalUser = {
   roles: string[];
   isAdmin: boolean;
   unreadNotifications?: number;
+  emailVerified?: boolean;
+  /** Organisasi tempat akun ini menjadi pengguna perusahaan aktif (Corporate Portal, Roadmap 5). */
+  corporate?: { code: string; name: string; role: string }[];
   member: MemberProfile | null;
 };
 

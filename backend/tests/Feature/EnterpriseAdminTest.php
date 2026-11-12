@@ -7,13 +7,17 @@ use App\Filament\Resources\Employments\Pages\ManageEmployments;
 use App\Filament\Resources\IdentityReviews\Pages\ManageIdentityReviews;
 use App\Filament\Resources\Organizations\Pages\CreateOrganization;
 use App\Filament\Resources\Organizations\Pages\EditOrganization;
+use App\Filament\Resources\Registrations\Pages\EditRegistration;
 use App\Filament\Resources\SponsorshipTransfers\Pages\ManageSponsorshipTransfers;
+use App\Filament\Resources\TrainingRequests\Pages\ViewTrainingRequest;
+use App\Filament\Resources\TrainingRequests\RelationManagers\SeatsRelationManager;
 use App\Models\CorporateUser;
 use App\Models\EmploymentRelationship;
 use App\Models\Enrollment;
 use App\Models\IdentityReview;
 use App\Models\Organization;
 use App\Models\OrganizationUnit;
+use App\Models\Registration;
 use App\Models\SponsorshipTransfer;
 use App\Models\TrainingSchedule;
 use App\Models\User;
@@ -21,6 +25,7 @@ use App\Services\EmploymentService;
 use App\Services\MemberService;
 use App\Services\OrganizationService;
 use App\Services\SponsorshipService;
+use App\Services\TrainingRequestService;
 use Database\Seeders\CmsSeeder;
 use Database\Seeders\RolesSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -80,6 +85,36 @@ class EnterpriseAdminTest extends TestCase
         foreach (['organizations', 'employments', 'corporate-users', 'identity-reviews', 'sponsorship-transfers'] as $slug) {
             $this->actingAs($finance)->get("/admin/$slug")->assertForbidden();
         }
+    }
+
+    public function test_training_request_admin_quote_pay_schedule_and_registration_link(): void
+    {
+        $cu = CorporateUser::query()->firstOrFail();
+        $schedule = TrainingSchedule::query()->firstOrFail();
+        $r = app(TrainingRequestService::class)->create($cu, ['package_id' => $schedule->package_id, 'seats' => 4, 'delivery' => 'onsite', 'target_date' => today()->addMonth()->toDateString()], submit: true);
+        $this->actingAs($this->admin);
+
+        $this->get('/admin/training-requests')->assertOk()->assertSee($r->code)->assertSee('0/4 terisi');
+        $this->get("/admin/training-requests/{$r->code}")->assertOk()->assertSee('Kebutuhan trainer')->assertSee('PT ABC Manufaktur');
+
+        Livewire::test(ViewTrainingRequest::class, ['record' => $r->code])
+            ->callAction('quote', ['price_per_seat' => 5000000, 'discount' => 0, 'valid_until' => today()->addWeek()->toDateString(), 'notes' => 'Termasuk modul'])->assertHasNoActionErrors();
+        $this->assertSame('quoted', $r->fresh()->status);
+        $this->assertSame(20000000.0, (float) $r->fresh()->quote_total);
+
+        Livewire::test(SeatsRelationManager::class, ['ownerRecord' => $r->fresh(), 'pageClass' => ViewTrainingRequest::class])
+            ->assertOk()->assertSee('Kosong (dipesan)')->assertCanSeeTableRecords($r->requestSeats);
+
+        // jadwal hanya bisa ditetapkan setelah lunas
+        Livewire::test(ViewTrainingRequest::class, ['record' => $r->code])->assertActionHidden('schedule');
+
+        // pendaftaran kolektif publik: tautkan organisasi lewat aksi admin
+        $this->postJson('/api/v1/registrations', ['schedule' => $schedule->code, 'type' => 'corporate', 'name' => 'HR Lain', 'email' => 'hr@lain.co.id', 'phone' => '0811', 'company' => 'CV Lain Sejahtera', 'consent' => true,
+            'participants_count' => 1, 'participants' => [['name' => 'P1']]])->assertCreated();
+        $reg = Registration::query()->latest('id')->firstOrFail();
+        $this->actingAs($this->admin);
+        Livewire::test(EditRegistration::class, ['record' => $reg->getRouteKey()])->callAction('organisasi', ['create' => true])->assertHasNoActionErrors();
+        $this->assertSame('CV Lain Sejahtera', $reg->fresh()->organization?->legal_name);
     }
 
     public function test_filament_actions_go_through_services(): void

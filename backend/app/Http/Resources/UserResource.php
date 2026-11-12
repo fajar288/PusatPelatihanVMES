@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\CorporateUser;
 use App\Models\User;
 use App\Support\Media;
 use Illuminate\Http\Request;
@@ -21,6 +22,9 @@ class UserResource extends JsonResource
             'role' => $this->role,
             'roles' => $this->roleSlugs(),
             'isAdmin' => $this->isAdmin(),
+            'emailVerified' => $this->hasVerifiedEmail(),
+            'corporate' => CorporateUser::query()->active()->where('user_id', $this->id)->whereHas('organization', fn ($q) => $q->active())
+                ->with('organization:id,code,legal_name,display_name')->get()->map(fn (CorporateUser $cu) => ['code' => $cu->organization->code, 'name' => $cu->organization->name(), 'role' => $cu->role])->values(),
             'unreadNotifications' => $this->unreadNotifications()->count(),
             'member' => $m ? [
                 'memberNumber' => $m->member_number,

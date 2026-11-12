@@ -7,8 +7,10 @@ use App\Http\Requests\Api\RegisterRequest;
 use App\Http\Resources\UserResource;
 use App\Models\AuditLog;
 use App\Models\User;
+use App\Services\IdentityMatchingService;
 use App\Services\MemberService;
 use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -30,6 +32,7 @@ class AuthController extends Controller
         $members->createForUser($user, $data);
         $token = $user->createToken($request->string('device', 'web')->toString())->plainTextToken;
         AuditLog::record('auth.registered', $user, null, ['email' => $user->email], $user);
+        $user->sendEmailVerificationNotification();
 
         return response()->json(['token' => $token, 'user' => new UserResource($user->load('member'))], 201);
     }
@@ -46,6 +49,38 @@ class AuthController extends Controller
         AuditLog::record('auth.login', $user, null, null, $user);
 
         return response()->json(['token' => $token, 'user' => new UserResource($user->load('member'))]);
+    }
+
+    /**
+     * GET /auth/email/verify/{id}/{hash}?expires=&signature= — tanda tangan relatif (middleware signed:relative),
+     * dipanggil halaman frontend /verifikasi-email. Tidak butuh login (tautan bisa dibuka di perangkat lain).
+     */
+    public function verifyEmail(Request $request, string $id, string $hash, IdentityMatchingService $identity): JsonResponse
+    {
+        $user = User::query()->findOrFail($id);
+        if (! hash_equals(sha1($user->getEmailForVerification()), $hash)) {
+            throw ValidationException::withMessages(['hash' => 'Tautan verifikasi tidak cocok dengan email akun ini.']);
+        }
+        if (! $user->hasVerifiedEmail()) {
+            $user->markEmailAsVerified();
+            event(new Verified($user));
+            AuditLog::record('auth.email_verified', $user, null, ['via' => 'link'], $user);
+            $identity->afterEmailVerified($user);
+        }
+
+        return response()->json(['ok' => true, 'message' => 'Email terverifikasi.']);
+    }
+
+    /** POST /auth/email/resend — kirim ulang tautan verifikasi. */
+    public function resendVerification(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        if ($user->hasVerifiedEmail()) {
+            return response()->json(['ok' => true, 'message' => 'Email sudah terverifikasi.']);
+        }
+        $user->sendEmailVerificationNotification();
+
+        return response()->json(['ok' => true, 'message' => "Tautan verifikasi dikirim ke {$user->email}."]);
     }
 
     /** POST /auth/logout — cabut token yang dipakai. */

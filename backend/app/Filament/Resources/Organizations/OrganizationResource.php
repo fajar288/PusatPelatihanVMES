@@ -94,6 +94,8 @@ class OrganizationResource extends Resource
                     ->helperText('Tidak aktif/ditangguhkan: seluruh pengguna perusahaan kehilangan akses. Histori enrollment tetap.'),
                 Select::make('settings.exit_access')->label('Akses setelah karyawan keluar')->options(Organization::EXIT_ACCESS)->default('summary')->native(false)
                     ->helperText('Berlaku untuk enrollment bersponsor milik peserta yang employment-nya sudah tidak aktif.'),
+                Toggle::make('settings.requires_approval')->label('Wajib persetujuan internal perusahaan')->inline(false)
+                    ->helperText('Penawaran yang diterima HR menunggu persetujuan Corporate Owner sebelum disetujui.'),
                 Toggle::make('needs_review')->label('Perlu diperiksa')->helperText('Dibuat otomatis dari pendaftaran/backfill. Matikan setelah data diverifikasi.')->inline(false),
                 Textarea::make('notes')->label('Catatan internal VMES')->rows(2)->helperText('Tidak pernah ditampilkan ke perusahaan.'),
             ]),

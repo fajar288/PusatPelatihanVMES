@@ -9,6 +9,7 @@ use App\Models\IdentityReview;
 use App\Models\Member;
 use App\Models\Organization;
 use App\Models\RegistrationParticipant;
+use App\Models\RequestSeat;
 use App\Models\TrainingSchedule;
 use App\Models\User;
 use App\Support\Enterprise\IdentityMatch;
@@ -148,6 +149,26 @@ class IdentityMatchingService
         return $result;
     }
 
+    /**
+     * Setelah email terverifikasi: tinjauan yang menunggu dengan email itu (enrollment tanpa member) dicocokkan ulang —
+     * kini kecocokan email menjadi yakin sehingga enrollment otomatis tertaut ke member tsb.
+     */
+    public function afterEmailVerified(User $user): int
+    {
+        $email = strtolower($user->email);
+        $n = 0;
+        IdentityReview::query()->pending()->where('subject_type', (new Enrollment)->getMorphClass())->get()
+            ->filter(fn (IdentityReview $r) => strtolower((string) ($r->input['email'] ?? '')) === $email)
+            ->each(function (IdentityReview $r) use (&$n, $user): void {
+                $e = $r->subject;
+                if ($e instanceof Enrollment && ! $e->member_id && $this->resolveEnrollment($e, $user)->outcome === IdentityMatch::USE_EXISTING) {
+                    $n++;
+                }
+            });
+
+        return $n;
+    }
+
     public function queueReview(IdentityMatch $result, array $input, ?Model $subject, ?Organization $organization, ?TrainingSchedule $schedule): IdentityReview
     {
         $reason = match ($result->outcome) {
@@ -173,7 +194,7 @@ class IdentityMatchingService
     {
         return DB::transaction(function () use ($review, $member, $actor, $note) {
             $this->assertPending($review);
-            $this->applyMember($review, $member);
+            $this->applyMember($review, $member, $actor);
             $review->update(['status' => 'resolved', 'resolution' => 'linked', 'resolved_member_id' => $member->id, 'resolved_by' => $actor->id, 'resolved_at' => now(), 'note' => $note]);
             AuditLog::record('identity.review_linked', $review, null, ['member_id' => $member->id, 'subject' => $review->subject_type.'#'.$review->subject_id], $actor);
 
@@ -200,7 +221,7 @@ class IdentityMatchingService
                 'role' => User::ROLE_STUDENT,
             ]);
             $member = $this->members->createForUser($user, ['phone' => $review->input['phone'] ?? null]);
-            $this->applyMember($review, $member);
+            $this->applyMember($review, $member, $actor);
             $review->update(['status' => 'resolved', 'resolution' => 'created', 'resolved_member_id' => $member->id, 'resolved_by' => $actor->id, 'resolved_at' => now(), 'note' => $note]);
             AuditLog::record('identity.review_member_created', $review, null, ['member_id' => $member->id, 'user_id' => $user->id], $actor);
 
@@ -283,7 +304,7 @@ class IdentityMatchingService
         ];
     }
 
-    private function applyMember(IdentityReview $review, Member $member): void
+    private function applyMember(IdentityReview $review, Member $member, User $actor): void
     {
         $subject = $review->subject;
         if ($subject instanceof Enrollment) {
@@ -294,6 +315,8 @@ class IdentityMatchingService
             $subject->registrationParticipant?->update(['member_id' => $member->id]);
         } elseif ($subject instanceof RegistrationParticipant) {
             $subject->update(['member_id' => $member->id]);
+        } elseif ($subject instanceof RequestSeat) {
+            app(ParticipantAssignmentService::class)->assignFromReview($subject, $member, $actor, $review->input ?? []);
         }
     }
 

@@ -227,7 +227,7 @@
 @media(max-width:640px){.nset-h,.nset-r{grid-template-columns:minmax(0,1fr) 52px 52px;padding:10px 12px}}
 /* Rapikan UI portal/trainer: metadata per butir (ganti teks disambung "•") & tombol kembali */
 .pmeta{list-style:none;display:flex;flex-wrap:wrap;align-items:center;gap:8px 22px;margin-top:10px;font-size:14px;line-height:1.45;color:var(--mut)}
-.pmeta li{display:inline-flex;align-items:center;gap:7px;min-width:0}
+.pmeta li{display:inline-flex;align-items:center;gap:7px;min-width:0;max-width:100%}.pmeta-v{min-width:0;overflow-wrap:anywhere}
 .pmeta .ic{width:16px;height:16px;color:var(--p)}
 .pmeta-l{font-weight:600}
 .pmeta-v{font-weight:700;color:var(--ink)}
@@ -253,7 +253,7 @@
 .spv small{font-size:13px;font-weight:600;color:var(--mut)}
 .att td .pmeta.sm{margin-top:2px}
 .pnotif .pmeta.sm .pmeta-v{font-weight:700}
-.spl{display:grid;gap:2px;min-width:0}.spl>b{color:var(--ink)}.spl small{font-size:13px;color:var(--mut);font-weight:500;line-height:1.45}
+.spl{display:grid;gap:2px;min-width:0}.spl>b{color:var(--ink);text-align:left}.spl small{font-size:13px;color:var(--mut);font-weight:500;line-height:1.45}
 /* Reset: butir metadata bisa berada di dalam .sp/.lres-l/.pnotif/.kj — jangan mewarisi gaya li/b/span daftar induk */
 .pmeta>li.pmi{display:inline-flex;align-items:center;justify-content:flex-start;gap:7px;min-width:0;margin:0;padding:0;border:0;border-radius:0;background:none;box-shadow:none;overflow:visible;font-size:inherit}
 .pmeta .pmi>span{display:inline;flex:none}
@@ -295,3 +295,9 @@
 @media(max-width:640px){.chatf{right:14px;bottom:72px;padding:12px}.chatf span{display:none}
 .chatp{inset:0;width:auto;height:auto;border-radius:0;z-index:95}.chatp header{padding-right:64px}
 .chatf.on{z-index:96;top:10px;bottom:auto;right:12px;box-shadow:none;background:rgba(255,255,255,.18);padding:8px}}
+/* Verifikasi email (Roadmap 5B) */
+.pverify{display:flex;align-items:center;justify-content:space-between;gap:12px 18px;flex-wrap:wrap;margin-bottom:18px;padding:14px 18px;border:1px solid #f1dc9b;border-radius:16px;background:#fff7e0;color:var(--ink)}
+.pverify b{color:var(--ink)}.pverify p{margin:4px 0 0;font-size:14px;line-height:1.5;color:var(--mut)}
+.pverify p.ok{color:#2f6a0a;font-weight:700}.pverify p.err{color:#b34200;font-weight:700}
+.pverify .kb2{padding:10px 18px;flex:none;cursor:pointer;font:inherit;font-size:13px;font-weight:800}
+.pmi{max-width:100%}.pmi>span.pmeta-v{flex:0 1 auto;min-width:0;overflow-wrap:anywhere}
