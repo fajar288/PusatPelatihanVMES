@@ -122,6 +122,7 @@
 .lles-ic{font-size:20px;flex:none;width:28px;text-align:center}
 .lles-t{flex:1;min-width:0}.lles-t b{display:block;font-size:14.5px}.lles-t small{display:block;color:var(--mut);font-size:12.5px}
 .lvideo{margin-top:16px}.lvideo video,.lvideo iframe{width:100%;aspect-ratio:16/9;border:0;border-radius:16px;background:#000}
+.lvideo-yt{aspect-ratio:16/9;border-radius:16px;background:#000;overflow:hidden}.lvideo-yt iframe{display:block;height:100%;border-radius:0}
 .lbody{margin-top:16px;font-size:16px}
 .lnav{display:flex;justify-content:space-between;gap:12px;margin-top:20px;flex-wrap:wrap}
 .lres-l{list-style:none;display:grid;gap:12px;margin-top:4px}

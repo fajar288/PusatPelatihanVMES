@@ -40,8 +40,8 @@ class LessonForm
                 DatePicker::make('available_from')->label('Tersedia mulai')->native(false)->helperText('Kosong = segera.'),
             ]),
             Section::make('Video')->columns(3)->visible(fn (Get $get) => $get('type') === 'video')->components([
-                TextInput::make('settings.video_url')->label('URL video')->url()->columnSpan(2)->helperText('YouTube, Vimeo, atau URL file MP4 (streaming).'),
-                TextInput::make('settings.duration_seconds')->label('Durasi (detik)')->numeric(),
+                TextInput::make('settings.video_url')->label('URL video')->url()->columnSpan(2)->helperText('YouTube (disarankan, boleh unlisted), Vimeo, atau URL file MP4.'),
+                TextInput::make('settings.duration_seconds')->label('Durasi (detik)')->numeric()->helperText('Wajib hanya untuk Vimeo. YouTube & MP4 dibaca otomatis.'),
                 Fields::image('settings.thumbnail', 'lms/video', 1280)->label('Thumbnail')->columnSpan(2),
                 TextInput::make('settings.min_watch_pct')->label('Minimal ditonton (%) untuk selesai')->numeric()->default(80)->minValue(1)->maxValue(100),
             ]),
