@@ -31,6 +31,11 @@ class AuditLog extends Model
         return $this->belongsTo(User::class, 'actor_id');
     }
 
+    public function apiClient(): BelongsTo
+    {
+        return $this->belongsTo(ApiClient::class);
+    }
+
     public function auditable(): MorphTo
     {
         return $this->morphTo();
@@ -41,10 +46,13 @@ class AuditLog extends Model
     {
         $actor ??= auth()->user();
         $request = request();
+        // aksi yang dipicu lewat API Publik ditandai klien API-nya (Roadmap 5E, §7.1 "Audit log")
+        $client = $request?->attributes->get('api_client');
 
         return static::query()->create([
             'actor_id' => $actor?->id,
-            'actor_name' => $actor?->name ?? 'system',
+            'actor_name' => $actor?->name ?? ($client instanceof ApiClient ? 'API: '.$client->name : 'system'),
+            'api_client_id' => $client instanceof ApiClient ? $client->id : null,
             'action' => $action,
             'auditable_type' => $model ? $model::class : null,
             'auditable_id' => $model?->getKey(),

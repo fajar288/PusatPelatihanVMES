@@ -18,8 +18,8 @@ final class PublicApiSpec
     /** @return array<string, mixed> */
     public static function toArray(): array
     {
-        $scopeList = collect(ApiClient::SCOPES)->map(fn ($d, $s) => "- `$s`: $d")->implode("\n");
-        $eventList = collect(ApiClient::WEBHOOK_EVENTS)->map(fn ($d, $e) => "- `$e`: $d")->implode("\n");
+        $scopeList = collect(ApiClient::allScopes())->map(fn ($d, $s) => "- `$s`: $d")->implode("\n");
+        $eventList = collect(ApiClient::allWebhookEvents())->map(fn ($d, $e) => "- `$e`: $d")->implode("\n");
 
         return [
             'openapi' => '3.1.0',
@@ -34,8 +34,9 @@ final class PublicApiSpec
                     '**Rate limit** — default 60 permintaan/menit per klien (dapat disesuaikan). Header `X-RateLimit-Limit` & `X-RateLimit-Remaining` dikirim di tiap respons; bila terlampaui → `429` + `Retry-After`.',
                     '**Galat** — selalu berbentuk `{"error": {"code": "...", "message": "...", "fields": {...}}}` (`fields` hanya untuk `validation_failed`).',
                     '**Paginasi** — endpoint daftar memakai `page` & `per_page` (maks. 100) dan mengembalikan `data`, `links`, `meta`.',
-                    '**Idempotensi** — `POST /registrations` dengan `external_ref` yang sama tidak membuat pendaftaran ganda; respons `200` + header `Idempotent-Replayed: true`.',
-                    "**Webhook** — bila URL webhook didaftarkan, PPTI mengirim `POST` JSON untuk event:\n$eventList\n\nHeader: `X-PPTI-Event`, `X-PPTI-Delivery` (UUID unik), `X-PPTI-Signature: t=<unix>,v1=<hex>` dengan `v1 = HMAC-SHA256(secret, \"<t>.<raw body>\")`. Balas `2xx` dalam 10 detik; kegagalan diulang hingga 5 kali (1 mnt, 5 mnt, 15 mnt, 1 jam). Tolak tanda tangan yang tidak cocok atau `t` lebih dari 5 menit.",
+                    '**Idempotensi** — `POST /registrations` dengan `external_ref` yang sama tidak membuat pendaftaran ganda; respons `200` + header `Idempotent-Replayed: true`. Header `Idempotency-Key` juga diterima di semua `POST` (wajib untuk endpoint enterprise, lihat di bawah).',
+                    "**Webhook** — bila URL webhook didaftarkan, PPTI mengirim `POST` JSON untuk event:\n$eventList\n\nHeader: `X-PPTI-Event`, `X-PPTI-Delivery` (UUID unik), `X-PPTI-Signature: t=<unix>,v1=<hex>` dengan `v1 = HMAC-SHA256(secret, \"<t>.<raw body>\")`. Balas `2xx` dalam 10 detik; kegagalan diulang hingga 5 kali (1 mnt, 5 mnt, 15 mnt, 1 jam). Tolak tanda tangan yang tidak cocok atau `t` lebih dari 5 menit. Event `[Enterprise]` hanya dikirim ke klien terikat organisasi yang juga punya scope baca terkait, dan pakai `X-PPTI-Delivery` untuk membuang kiriman ganda.",
+                    EnterpriseApiSpec::description(),
                 ]),
                 'contact' => ['name' => 'PPTI VMES', 'url' => rtrim((string) config('services.frontend.url'), '/').'/kontak'],
             ],
@@ -46,22 +47,26 @@ final class PublicApiSpec
                 ['name' => 'Katalog', 'description' => 'Program, kategori & jadwal kelas (scope `catalog.read`)'],
                 ['name' => 'Pendaftaran', 'description' => 'Pendaftaran atas nama peserta (scope `registrations.write` / `registrations.read`)'],
                 ['name' => 'Sertifikat', 'description' => 'Verifikasi sertifikat (scope `certificates.verify`)'],
+                ...EnterpriseApiSpec::TAGS,
             ],
-            'paths' => self::paths(),
+            'paths' => self::paths() + EnterpriseApiSpec::paths(),
             'webhooks' => self::webhooks(),
             'components' => [
                 'securitySchemes' => ['ApiKey' => ['type' => 'apiKey', 'in' => 'header', 'name' => 'X-Api-Key']],
-                'schemas' => self::schemas(),
+                'schemas' => self::schemas() + EnterpriseApiSpec::schemas(),
                 'parameters' => [
                     'page' => ['name' => 'page', 'in' => 'query', 'schema' => ['type' => 'integer', 'minimum' => 1, 'default' => 1]],
                     'per_page' => ['name' => 'per_page', 'in' => 'query', 'schema' => ['type' => 'integer', 'minimum' => 1, 'maximum' => 100, 'default' => 25]],
+                    'IdempotencyKey' => ['name' => 'Idempotency-Key', 'in' => 'header', 'required' => true, 'description' => 'Nilai unik per transaksi (mis. UUID v4). Diulang dengan isi sama → respons pertama diputar ulang.', 'schema' => ['type' => 'string', 'maxLength' => 255, 'pattern' => '^[A-Za-z0-9._:\\-]+$']],
                     'updated_since' => ['name' => 'updated_since', 'in' => 'query', 'description' => 'Hanya data yang berubah sejak waktu ini (sinkronisasi inkremental).', 'schema' => ['type' => 'string', 'format' => 'date-time']],
                 ],
                 'responses' => [
                     'Unauthenticated' => self::errorResponse('API key tidak ada, salah, atau kedaluwarsa (`unauthenticated`, `key_expired`).'),
-                    'Forbidden' => self::errorResponse('Klien nonaktif, IP tidak diizinkan, atau scope kurang (`client_disabled`, `ip_not_allowed`, `insufficient_scope`).'),
+                    'Forbidden' => self::errorResponse('Klien nonaktif, IP tidak diizinkan, scope/peran kurang, atau klien bukan klien organisasi (`client_disabled`, `ip_not_allowed`, `insufficient_scope`, `insufficient_role`, `organization_required`, `organization_inactive`, `acting_user_inactive`).'),
+                    'IdempotencyKeyMissing' => self::errorResponse('Header Idempotency-Key tidak ada atau formatnya salah (`idempotency_key_required`, `idempotency_key_invalid`).'),
+                    'IdempotencyInProgress' => self::errorResponse('Permintaan dengan Idempotency-Key yang sama masih diproses (`idempotency_in_progress`); coba lagi sesuai `Retry-After`.'),
                     'NotFound' => self::errorResponse('Data tidak ditemukan (`not_found`).'),
-                    'ValidationFailed' => self::errorResponse('Input tidak valid (`validation_failed`, `schedule_not_found`, `registration_closed`, `insufficient_seats`).'),
+                    'ValidationFailed' => self::errorResponse('Input tidak valid atau ditolak aturan bisnis (`validation_failed`, `schedule_not_found`, `registration_closed`, `insufficient_seats`, `idempotency_key_reused`, `identity_unresolved`).'),
                     'RateLimited' => self::errorResponse('Batas permintaan per menit terlampaui (`rate_limited`).'),
                 ],
             ],
@@ -124,6 +129,7 @@ final class PublicApiSpec
                 'post' => [
                     'tags' => ['Pendaftaran'], 'operationId' => 'createRegistration', 'summary' => 'Buat pendaftaran individu atau kolektif perusahaan',
                     'description' => 'Pendaftaran masuk dengan status `pending` dan diproses admin PPTI seperti pendaftaran website (verifikasi, tagihan, konfirmasi). Pantau perubahan lewat webhook `registration.status_changed` atau `GET /registrations/{number}`.',
+                    'parameters' => [['name' => 'Idempotency-Key', 'in' => 'header', 'required' => false, 'description' => 'Opsional (selain `external_ref`).', 'schema' => ['type' => 'string', 'maxLength' => 255]]],
                     'requestBody' => ['required' => true, 'content' => ['application/json' => ['schema' => ['$ref' => '#/components/schemas/RegistrationInput']]]],
                     'responses' => [
                         '201' => self::ok(['$ref' => '#/components/schemas/Registration'], 'Pendaftaran dibuat'),
@@ -161,8 +167,8 @@ final class PublicApiSpec
     private static function webhooks(): array
     {
         $hooks = [];
-        foreach (ApiClient::WEBHOOK_EVENTS as $event => $desc) {
-            $data = str_starts_with($event, 'certificate.') ? '#/components/schemas/CertificateEvent' : '#/components/schemas/RegistrationEvent';
+        foreach (ApiClient::allWebhookEvents() as $event => $desc) {
+            $data = str_starts_with($event, 'registration.') ? '#/components/schemas/RegistrationEvent' : EnterpriseApiSpec::webhookSchema($event);
             $hooks[$event] = ['post' => [
                 'summary' => $desc,
                 'parameters' => [
@@ -209,7 +215,9 @@ final class PublicApiSpec
                 'code' => $s(), 'message' => $s(), 'fields' => ['type' => 'object', 'additionalProperties' => $strings],
             ]]]],
             'Client' => ['type' => 'object', 'properties' => [
-                'api_version' => $s(), 'client' => $s(), 'organization' => $s(true), 'scopes' => ['type' => 'array', 'items' => ['type' => 'string', 'enum' => array_keys(ApiClient::SCOPES)]],
+                'api_version' => $s(), 'client' => $s(), 'organization' => $s(true),
+                'enterprise' => ['type' => ['object', 'null'], 'description' => 'Hanya klien terikat organisasi', 'properties' => ['organization_code' => $s(), 'organization_name' => $s(), 'acting_role' => $s(true), 'acting_user_active' => ['type' => 'boolean']]],
+                'scopes' => ['type' => 'array', 'items' => ['type' => 'string', 'enum' => array_keys(ApiClient::allScopes())]],
                 'rate_limit_per_minute' => $i(), 'webhook_events' => $strings, 'expires_at' => $dt(true), 'server_time' => $dt(),
             ]],
             'Category' => ['type' => 'object', 'properties' => ['slug' => $s(), 'name' => $s(), 'description' => $s(true), 'parent' => $s(true), 'programs_count' => $i()]],
@@ -269,7 +277,8 @@ final class PublicApiSpec
             'CertificateEvent' => ['type' => 'object', 'properties' => [
                 'number' => $s(), 'status' => ['type' => 'string', 'enum' => ['issued', 'revoked']], 'type' => $s(), 'recipient_name' => $s(), 'program' => $s(true), 'class_code' => $s(true),
                 'issued_at' => $date(true), 'valid_until' => $date(true), 'revoked_at' => $date(true), 'verification_url' => ['type' => 'string', 'format' => 'uri'],
-                'registration_number' => $s(), 'external_ref' => $s(true),
+                'registration_number' => $s(true), 'external_ref' => $s(true),
+                'enrollment_id' => array_merge($i(), ['description' => 'Hanya event untuk klien enterprise (enrollment bersponsor)']), 'member_number' => $s(true),
             ]],
             'PaginationLinks' => ['type' => 'object', 'properties' => ['first' => $s(true), 'last' => $s(true), 'prev' => $s(true), 'next' => $s(true)]],
             'PaginationMeta' => ['type' => 'object', 'properties' => ['current_page' => $i(), 'from' => $i(true), 'last_page' => $i(), 'per_page' => $i(), 'to' => $i(true), 'total' => $i(), 'path' => $s()]],

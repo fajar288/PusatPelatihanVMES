@@ -30,6 +30,13 @@ class CatalogController extends Controller
             'api_version' => 'v1',
             'client' => $client->name,
             'organization' => $client->organization,
+            // klien enterprise (Roadmap 5E): organisasi terikat + peran pengguna perusahaan yang diwakili
+            'enterprise' => $client->isEnterprise() ? [
+                'organization_code' => $client->boundOrganization?->code,
+                'organization_name' => $client->boundOrganization?->name(),
+                'acting_role' => $client->corporateUser?->role,
+                'acting_user_active' => (bool) $client->corporateUser?->isActive(),
+            ] : null,
             'scopes' => array_values($client->scopes ?? []),
             'rate_limit_per_minute' => $client->rate_limit,
             'webhook_events' => $client->webhook_url ? array_values($client->webhook_events ?? []) : [],

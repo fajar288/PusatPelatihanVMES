@@ -66,6 +66,12 @@ class Enrollment extends Model
         return $this->belongsTo(OrganizationUnit::class, 'sponsor_unit_id');
     }
 
+    /** Kursi Corporate Training Request yang menghasilkan enrollment ini (bila ada). */
+    public function requestSeat(): HasOne
+    {
+        return $this->hasOne(RequestSeat::class, 'enrollment_id');
+    }
+
     public function sponsorshipTransfers(): HasMany
     {
         return $this->hasMany(SponsorshipTransfer::class)->latest('id');

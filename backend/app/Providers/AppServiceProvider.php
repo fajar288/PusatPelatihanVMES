@@ -3,11 +3,16 @@
 namespace App\Providers;
 
 use App\Models\Certificate;
+use App\Models\EmploymentRelationship;
+use App\Models\Enrollment;
+use App\Models\Invoice;
 use App\Models\Lesson;
 use App\Models\Registration;
+use App\Models\TrainingRequest;
 use App\Models\TrainingSchedule;
 use App\Observers\AuditObserver;
 use App\Observers\CmsObserver;
+use App\Observers\EnterpriseWebhookObserver;
 use App\Observers\PublicApiWebhookObserver;
 use App\Observers\TrainingScheduleObserver;
 use App\Services\AnalyticsService;
@@ -77,6 +82,10 @@ class AppServiceProvider extends ServiceProvider
         // API Publik: webhook ke klien untuk pendaftaran yang dibuat lewat API (status, sertifikat)
         foreach ([Registration::class, Certificate::class] as $model) {
             $model::observe(PublicApiWebhookObserver::class);
+        }
+        // API enterprise (Roadmap 5E): webhook ke klien yang terikat organisasi
+        foreach ([TrainingRequest::class, Enrollment::class, EmploymentRelationship::class, Invoice::class, Certificate::class] as $model) {
+            $model::observe(EnterpriseWebhookObserver::class);
         }
     }
 }

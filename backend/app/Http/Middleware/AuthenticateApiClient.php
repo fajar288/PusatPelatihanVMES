@@ -20,6 +20,9 @@ class AuthenticateApiClient
 {
     public const ATTRIBUTE = 'api_client';
 
+    /** Versi kontrak API Publik (path /api/public/v1 + header respons API-Version). */
+    public const VERSION = '1';
+
     public function handle(Request $request, Closure $next): Response
     {
         $request->attributes->set('api_started_at', microtime(true));
@@ -56,6 +59,7 @@ class AuthenticateApiClient
         }
 
         $response = $next($request);
+        $response->headers->set('API-Version', self::VERSION);
         $response->headers->set('X-RateLimit-Limit', (string) $limit);
         $response->headers->set('X-RateLimit-Remaining', (string) max(0, RateLimiter::remaining($bucket, $limit)));
 

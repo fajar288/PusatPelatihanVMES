@@ -9,11 +9,9 @@ use App\Models\EmploymentRelationship;
 use App\Models\Enrollment;
 use App\Models\Organization;
 use App\Models\OrganizationUnit;
-use App\Models\RequestSeat;
-use App\Models\TrainingRequest;
 use App\Models\User;
 use App\Services\CorporateAccess;
-use App\Services\MonitoringService;
+use App\Services\CorporateReporting;
 use App\Services\OrganizationService;
 use App\Support\IdDate;
 use App\Support\Media;
@@ -32,7 +30,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
  */
 class CorporateController extends Controller
 {
-    public function __construct(private CorporateAccess $access) {}
+    public function __construct(private CorporateAccess $access, private CorporateReporting $reporting) {}
 
     /** GET /corporate/organizations — organisasi tempat user menjadi pengguna perusahaan aktif. */
     public function organizations(Request $request): JsonResponse
@@ -50,32 +48,11 @@ class CorporateController extends Controller
     public function summary(Request $request, Organization $organization): JsonResponse
     {
         $cu = $this->member($request, $organization);
-        $all = $this->access->sponsoredEnrollments($cu);
-        $active = (clone $all)->whereIn('status', ['enrolled', 'attending'])->count();
-        $done = (clone $all)->where('status', 'completed')->count();
-        $counted = (clone $all)->where('status', '!=', 'dropped')->count();
-        $attendance = $cu->allows('view_progress')
-            ? (clone $all)->whereIn('status', ['attending', 'completed', 'failed'])->with('schedule.sessions', 'attendances')->get()->map->attendancePercent()->filter(fn ($v) => $v !== null)
-            : collect();
-        $requests = $this->requestsQuery($cu)->get(['id', 'status', 'seats']);
-        $live = $requests->whereNotIn('status', ['cancelled', 'draft']);
-        $filled = $live->isEmpty() ? 0 : RequestSeat::query()->whereIn('training_request_id', $live->pluck('id'))->whereIn('status', ['assigned', 'enrolled'])->count();
 
         return response()->json(['data' => [
             'organization' => ['code' => $organization->code, 'name' => $organization->name(), 'legalName' => $organization->legal_name, 'logo' => Media::url($organization->logo), 'requiresApproval' => $organization->requiresApproval()],
             'me' => ['role' => $cu->role, 'roleLabel' => CorporateUser::ROLES[$cu->role], 'unit' => $cu->unit?->label(), 'capabilities' => CorporateUser::CAPABILITIES[$cu->role] ?? []],
-            'stats' => [
-                'participants' => (clone $all)->whereNotNull('member_id')->distinct()->count('member_id'),
-                'activeEnrollments' => $active,
-                'completed' => $done,
-                'completionRate' => $counted > 0 ? (int) round($done / $counted * 100) : null,
-                'attendanceAvg' => $attendance->isNotEmpty() ? (int) round($attendance->avg()) : null,
-                'certificates' => (clone $all)->whereHas('certificates', fn (Builder $q) => $q->where('status', 'issued'))->count(),
-                'activeEmployees' => $cu->allows('view_progress') || $cu->allows('manage_participants') ? $this->employeesQuery($cu)->count() : null,
-                'requests' => $requests->countBy('status')->all(),
-                'seatsBought' => (int) $live->sum('seats'),
-                'seatsFilled' => $filled,
-            ],
+            'stats' => $this->reporting->stats($cu),
         ]]);
     }
 
@@ -103,18 +80,11 @@ class CorporateController extends Controller
     }
 
     /** GET /corporate/organizations/{org}/enrollments/{enrollment} — ringkasan progres (§20.10) tanpa catatan privat trainer. */
-    public function enrollment(Request $request, Organization $organization, Enrollment $enrollment, MonitoringService $monitoring): JsonResponse
+    public function enrollment(Request $request, Organization $organization, Enrollment $enrollment): JsonResponse
     {
         $cu = $this->member($request, $organization);
         Gate::authorize('viewEnrollmentProgress', [$organization, $enrollment]);
-        $o = $monitoring->overview($enrollment, forParticipant: true);   // hanya logbook & penilaian tervalidasi
-        unset($o['enrollment']['email']);
-        $o['notes'] = collect($o['notes'])->map(fn ($n) => array_diff_key($n, ['observation' => true, 'trainer' => true]))->values()->all();
-        if (isset($o['competency']) && is_array($o['competency'])) {
-            // catatan penilai (ringkasan, rekomendasi, catatan per kriteria) adalah catatan privat trainer (§20.11)
-            $o['competency'] = array_diff_key($o['competency'], array_flip(['summary', 'recommendation', 'assessedBy', 'validatedBy']));
-            $o['competency']['criteria'] = collect($o['competency']['criteria'])->map(fn ($c) => array_diff_key((array) $c, ['note' => true, 'description' => true]))->values()->all();
-        }
+        $o = $this->reporting->progress($enrollment);   // hanya logbook & penilaian tervalidasi, tanpa catatan privat trainer
         $employment = EmploymentRelationship::query()->where('member_id', $enrollment->member_id)->where('organization_id', $organization->id)->latest('id')->first();
         AuditLog::record('corporate.participant_progress_viewed', $enrollment, null, ['organization_id' => $organization->id, 'corporate_user_id' => $cu->id], $request->user());
 
@@ -256,16 +226,12 @@ class CorporateController extends Controller
 
     public function requestsQuery(CorporateUser $cu): Builder
     {
-        $scope = $cu->unitScope();
-
-        return TrainingRequest::query()->where('organization_id', $cu->organization_id)->when($scope !== null, fn (Builder $q) => $q->whereIn('unit_id', $scope));
+        return $this->reporting->requestsQuery($cu);
     }
 
     private function employeesQuery(CorporateUser $cu): Builder
     {
-        $scope = $cu->unitScope();
-
-        return EmploymentRelationship::query()->active()->where('organization_id', $cu->organization_id)->when($scope !== null, fn (Builder $q) => $q->whereIn('unit_id', $scope));
+        return $this->reporting->employeesQuery($cu);
     }
 
     private function enrollmentRow(CorporateUser $cu, Enrollment $e, ?EmploymentRelationship $employment): array
@@ -277,7 +243,7 @@ class CorporateController extends Controller
             'name' => $e->member?->user?->name ?? $e->participant_name,
             'memberNumber' => $e->member?->member_number,
             'employeeId' => $employment?->employee_id,
-            'employment' => $employment ? 'active' : ($this->access->hasExited($e) ? 'inactive' : 'unknown'),
+            'employment' => $this->reporting->employmentStatus($e, $employment),
             'program' => $e->schedule?->package?->title ?? $e->schedule?->title,
             'schedule' => $e->schedule?->code,
             'dates' => $e->schedule ? IdDate::long($e->schedule->start_date).' – '.IdDate::long($e->schedule->end_date) : null,
