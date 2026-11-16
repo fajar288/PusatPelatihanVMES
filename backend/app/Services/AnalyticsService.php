@@ -608,7 +608,7 @@ class AnalyticsService
         $sales = app(SalesAnalyticsService::class)->dashboard($d['filters']);
         foreach ($sales['kpi_table'] as $k) {
             foreach (KpiService::SEGMENTS as $seg => $label) {
-                $rows[] = ['KPI §8.1', $k['label'].' — '.$label.($k['key'] === 'average_order_value' ? ' (Rp)' : ' (%)'), $k[$seg.'_value']];
+                $rows[] = ['KPI', $k['label'].' — '.$label.($k['key'] === 'average_order_value' ? ' (Rp)' : ' (%)'), $k[$seg.'_value']];
             }
         }
         foreach ($sales['funnel']['stages'] as $st) {

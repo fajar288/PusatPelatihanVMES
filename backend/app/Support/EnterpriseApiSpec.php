@@ -70,8 +70,8 @@ final class EnterpriseApiSpec
                 'responses' => ['200' => $ok($ref('Organization'))] + $common,
             ]],
             '/analytics' => ['get' => [
-                'tags' => $T('Organisasi'), 'operationId' => 'getAnalytics', 'summary' => 'KPI ringkas organisasi + KPI §8.1 per periode (enrollment bersponsor saja)',
-                'parameters' => [$q('from', 'Awal periode KPI §8.1 (default 12 bulan terakhir)', ['type' => 'string', 'format' => 'date']), $q('to', 'Akhir periode (default hari ini)', ['type' => 'string', 'format' => 'date'])],
+                'tags' => $T('Organisasi'), 'operationId' => 'getAnalytics', 'summary' => 'KPI ringkas organisasi + KPI utama per periode (objek kpi_8_1), hanya enrollment bersponsor',
+                'parameters' => [$q('from', 'Awal periode KPI (default 12 bulan terakhir)', ['type' => 'string', 'format' => 'date']), $q('to', 'Akhir periode (default hari ini)', ['type' => 'string', 'format' => 'date'])],
                 'responses' => ['200' => $ok($ref('Analytics'))] + $common,
             ]],
             '/corporate/requests' => [

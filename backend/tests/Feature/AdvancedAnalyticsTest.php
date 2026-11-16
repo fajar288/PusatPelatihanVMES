@@ -354,7 +354,7 @@ class AdvancedAnalyticsTest extends TestCase
 
         $svc = app(AnalyticsService::class);
         $rows = collect($svc->flatten($svc->dashboard(self::PERIOD)));
-        $this->assertSame(71.4, $rows->first(fn ($r) => $r[0] === 'KPI §8.1' && $r[1] === 'Training Conversion — Semua (%)')[2]);
+        $this->assertSame(71.4, $rows->first(fn ($r) => $r[0] === 'KPI' && $r[1] === 'Training Conversion — Semua (%)')[2]);
         $this->assertSame(4, $rows->first(fn ($r) => $r[0] === 'Funnel corporate' && str_starts_with($r[1], 'Lead'))[2]);
     }
 
