@@ -17,6 +17,7 @@ use App\Observers\PublicApiWebhookObserver;
 use App\Observers\TrainingScheduleObserver;
 use App\Services\AnalyticsService;
 use App\Services\NotificationEvents;
+use App\Services\SalesAnalyticsService;
 use App\Support\Chatbot\AnthropicChatModel;
 use App\Support\Chatbot\ChatModel;
 use App\Support\Push\PushSender;
@@ -40,6 +41,7 @@ class AppServiceProvider extends ServiceProvider
     {
         // Dashboard Eksekutif: hasil analitik di-memo per request (dipakai banyak widget sekaligus).
         $this->app->scoped(AnalyticsService::class);
+        $this->app->scoped(SalesAnalyticsService::class);
         // Web Push (VAPID) — diganti FakePushSender di tes
         $this->app->singleton(PushSender::class, WebPushSender::class);
         // WhatsApp (Roadmap 5 §6): driver dari WHATSAPP_DRIVER (`log` bawaan, `fonnte`); diganti FakeWhatsAppSender di tes

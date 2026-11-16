@@ -31,10 +31,11 @@ class LearningStats extends StatsOverviewWidget
         $t = $d['trainers'];
         $c = $d['certificates'];
         $risk = count($l['at_risk']);
+        $kc = $this->sales()['kpi']['all']['completion_rate'];
 
         return [
             Stat::make('Completion rate', self::pct($l['completion_rate']))
-                ->description(self::lines($l['completed'].' lulus', $l['failed'].' tidak lulus'))
+                ->description(self::lines($kc['numerator'].' lulus dari '.$kc['denominator'].' eligible (KPI §8.1)', $kc['failed'].' tidak lulus · '.$kc['pending_evaluation'].' belum dievaluasi'))
                 ->icon(Heroicon::OutlinedCheckBadge)->color(($l['completion_rate'] ?? 100) >= 80 ? 'success' : 'warning'),
             Stat::make('Rata-rata kehadiran', self::pct($l['avg_attendance']))
                 ->description(self::lines('Progres LMS '.self::pct($l['avg_lms_progress']), 'Rata-rata kuis '.($l['avg_quiz'] ?? '—')))

@@ -70,7 +70,8 @@ final class EnterpriseApiSpec
                 'responses' => ['200' => $ok($ref('Organization'))] + $common,
             ]],
             '/analytics' => ['get' => [
-                'tags' => $T('Organisasi'), 'operationId' => 'getAnalytics', 'summary' => 'KPI ringkas organisasi (enrollment bersponsor saja)',
+                'tags' => $T('Organisasi'), 'operationId' => 'getAnalytics', 'summary' => 'KPI ringkas organisasi + KPI §8.1 per periode (enrollment bersponsor saja)',
+                'parameters' => [$q('from', 'Awal periode KPI §8.1 (default 12 bulan terakhir)', ['type' => 'string', 'format' => 'date']), $q('to', 'Akhir periode (default hari ini)', ['type' => 'string', 'format' => 'date'])],
                 'responses' => ['200' => $ok($ref('Analytics'))] + $common,
             ]],
             '/corporate/requests' => [
@@ -256,6 +257,9 @@ final class EnterpriseApiSpec
                     'requests_by_status' => ['type' => 'object', 'additionalProperties' => ['type' => 'integer']],
                 ]),
                 'definitions' => ['type' => 'object', 'additionalProperties' => ['type' => 'string']],
+                'period' => $obj(['from' => $date(false), 'to' => $date(false)]),
+                'kpi_8_1' => ['type' => 'object', 'description' => 'completion_rate, attendance_rate, repeat_order_rate, average_order_value, training_conversion, at_risk_rate',
+                    'additionalProperties' => $obj(['value' => $n(true), 'numerator' => $n(), 'denominator' => $i(), 'definition' => $s()])],
             ]),
             'TrainingRequest' => $obj($request),
             'TrainingRequestDetail' => ['allOf' => [['$ref' => '#/components/schemas/TrainingRequest'], $obj([

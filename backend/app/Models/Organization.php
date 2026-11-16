@@ -94,6 +94,12 @@ class Organization extends Model
         return $this->hasMany(TrainingRequest::class);
     }
 
+    /** Target kompetensi per posisi (Roadmap 5F, §20.16). */
+    public function competencyTargets(): HasMany
+    {
+        return $this->hasMany(CompetencyTarget::class);
+    }
+
     public function exitAccess(): string
     {
         $v = $this->settings['exit_access'] ?? 'summary';

@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets\Executive;
 
 use App\Services\AnalyticsService;
+use App\Services\SalesAnalyticsService;
 use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Illuminate\Support\HtmlString;
 
@@ -25,6 +26,12 @@ trait ExecutiveWidget
     protected function analytics(): array
     {
         return app(AnalyticsService::class)->dashboard($this->pageFilters);
+    }
+
+    /** KPI §8.1 per segmen, corporate vs mandiri, funnel & cohort (Roadmap 5F). @return array<string, mixed> */
+    protected function sales(): array
+    {
+        return app(SalesAnalyticsService::class)->dashboard($this->pageFilters);
     }
 
     protected static function rupiah(float|int|null $v, bool $short = false): string

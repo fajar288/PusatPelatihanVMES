@@ -7,6 +7,7 @@ use App\Filament\Resources\AssessmentRubrics\Pages\CreateAssessmentRubric;
 use App\Filament\Resources\AssessmentRubrics\Pages\EditAssessmentRubric;
 use App\Filament\Resources\AssessmentRubrics\Pages\ListAssessmentRubrics;
 use App\Models\AssessmentRubric;
+use App\Models\Competency;
 use App\Models\RubricCriterion;
 use App\Models\TrainingPackage;
 use BackedEnum;
@@ -69,6 +70,9 @@ class AssessmentRubricResource extends Resource
                         Select::make('code')->label('Aspek')->options(RubricCriterion::CODES)->default('custom')->native(false),
                         TextInput::make('name')->label('Nama kriteria')->required()->maxLength(255)->columnSpan(2),
                         TextInput::make('competency')->label('Unit kompetensi')->maxLength(255),
+                        Select::make('competency_id')->label('Master kompetensi')->columnSpan(2)->native(false)->searchable()->nullable()
+                            ->options(fn () => Competency::query()->active()->orderBy('sort_order')->orderBy('name')->get()->mapWithKeys(fn (Competency $c) => [$c->id => $c->label()])->all())
+                            ->helperText('Skor kriteria ini menjadi bukti kompetensi untuk matriks gap perusahaan.'),
                         TextInput::make('weight')->label('Bobot')->numeric()->minValue(0)->default(1)->required(),
                         TextInput::make('max_score')->label('Skor maks.')->numeric()->minValue(1)->maxValue(100)->default(4)->required(),
                         Textarea::make('description')->label('Deskripsi')->rows(2)->columnSpanFull(),

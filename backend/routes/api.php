@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\CertificateController;
 use App\Http\Controllers\Api\V1\ChatController;
 use App\Http\Controllers\Api\V1\ContentController;
+use App\Http\Controllers\Api\V1\CorporateAnalyticsController;
 use App\Http\Controllers\Api\V1\CorporateController;
 use App\Http\Controllers\Api\V1\CorporateFinanceController;
 use App\Http\Controllers\Api\V1\CorporateRequestController;
@@ -140,6 +141,12 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
             Route::post('/requests/{trainingRequest}/seats/{seat}/release', [CorporateRequestController::class, 'release'])->name('seats.release');
             Route::post('/requests/{trainingRequest}/{action}', [CorporateRequestController::class, 'transition'])
                 ->whereIn('action', ['submit', 'accept-quote', 'approve', 'cancel'])->name('requests.transition');
+
+            // Analitik perusahaan & competency gap (Roadmap 5F, §20.15–§20.16)
+            Route::get('/analytics', [CorporateAnalyticsController::class, 'analytics'])->name('analytics');
+            Route::get('/competencies', [CorporateAnalyticsController::class, 'competencies'])->name('competencies');
+            Route::post('/competency-targets', [CorporateAnalyticsController::class, 'storeTarget'])->name('competency_targets.store');
+            Route::delete('/competency-targets/{competencyTarget}', [CorporateAnalyticsController::class, 'destroyTarget'])->name('competency_targets.destroy');
         });
         // Notifikasi aplikasi, preferensi & web push (PRD §5.12)
         Route::get('/me/notifications', [NotificationController::class, 'index'])->name('me.notifications');

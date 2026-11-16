@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -80,6 +81,13 @@ class TrainingPackage extends Model
     public function rubrics(): HasMany
     {
         return $this->hasMany(AssessmentRubric::class, 'package_id');
+    }
+
+    /** Kompetensi yang dibangun program ini (Roadmap 5F) + level yang dicapai lulusannya. */
+    public function competencyLinks(): BelongsToMany
+    {
+        return $this->belongsToMany(Competency::class, 'package_competencies', 'package_id', 'competency_id')
+            ->withPivot(['id', 'level'])->withTimestamps();
     }
 
     public function scopePublished(Builder $q): Builder

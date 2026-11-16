@@ -6,6 +6,7 @@ use App\Filament\NavigationGroup;
 use App\Filament\Resources\Organizations\Pages\CreateOrganization;
 use App\Filament\Resources\Organizations\Pages\EditOrganization;
 use App\Filament\Resources\Organizations\Pages\ListOrganizations;
+use App\Filament\Resources\Organizations\RelationManagers\CompetencyTargetsRelationManager;
 use App\Filament\Resources\Organizations\RelationManagers\SponsoredEnrollmentsRelationManager;
 use App\Filament\Resources\Organizations\RelationManagers\UnitsRelationManager;
 use App\Filament\Support\EnterpriseFields;
@@ -127,7 +128,7 @@ class OrganizationResource extends Resource
 
     public static function getRelations(): array
     {
-        return [UnitsRelationManager::class, SponsoredEnrollmentsRelationManager::class];
+        return [UnitsRelationManager::class, CompetencyTargetsRelationManager::class, SponsoredEnrollmentsRelationManager::class];
     }
 
     public static function getPages(): array
