@@ -120,7 +120,7 @@ final class EnterpriseApiPresenter
      * Enrollment bersponsor. `progress_visible=false` (peran tanpa view_progress / peserta sudah keluar & exit_access ≠ full)
      * → angka kehadiran disembunyikan.
      */
-    public static function enrollment(Enrollment $e, string $employmentStatus, ?EmploymentRelationship $employment, bool $progressVisible, bool $certificateVisible = true): array
+    public static function enrollment(Enrollment $e, string $employmentStatus, ?EmploymentRelationship $employment, bool $progressVisible, bool $certificateVisible = true, ?int $attendancePercent = null, bool $attendanceKnown = false): array
     {
         $seat = $e->relationLoaded('requestSeat') ? $e->requestSeat : null;
         $c = $certificateVisible ? $e->certificate : null;
@@ -140,7 +140,7 @@ final class EnterpriseApiPresenter
             'schedule' => self::schedule($e->schedule),
             'request' => $seat ? ['code' => $seat->request?->code, 'seat_no' => (int) $seat->seat_no] : null,
             'progress_visible' => $progressVisible,
-            'attendance_percent' => $progressVisible ? $e->attendancePercent() : null,
+            'attendance_percent' => $progressVisible ? ($attendanceKnown ? $attendancePercent : $e->attendancePercent()) : null,
             'final_score' => $progressVisible && $e->final_score !== null ? (float) $e->final_score : null,
             'certificate' => $c ? self::certificateStatus($c) : null,
             'enrolled_at' => $e->enrolled_at?->toIso8601String(),

@@ -110,9 +110,9 @@ class CorporateReporting
         return $o;
     }
 
-    /** Status hubungan kerja peserta di organisasi sponsor: active | inactive | unknown. */
-    public function employmentStatus(Enrollment $e, ?EmploymentRelationship $active): string
+    /** Status hubungan kerja peserta di organisasi sponsor: active | inactive | unknown. `$exited` dari CorporateAccess::rowAccess (batch). */
+    public function employmentStatus(Enrollment $e, ?EmploymentRelationship $active, ?bool $exited = null): string
     {
-        return $active ? 'active' : ($this->access->hasExited($e) ? 'inactive' : 'unknown');
+        return $active ? 'active' : (($exited ?? $this->access->hasExited($e)) ? 'inactive' : 'unknown');
     }
 }

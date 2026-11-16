@@ -50,7 +50,9 @@ return [
     |
     */
 
-    'expiration' => null,
+    // Roadmap 5H (§20.21): token login kedaluwarsa sama dengan umur cookie sesi frontend (30 hari); token lama
+    // dipangkas harian oleh `sanctum:prune-expired`. SANCTUM_EXPIRATION=0 = token tidak pernah kedaluwarsa (tidak disarankan).
+    'expiration' => env('SANCTUM_EXPIRATION') === null ? 60 * 24 * 30 : (((int) env('SANCTUM_EXPIRATION')) ?: null),
 
     /*
     |--------------------------------------------------------------------------
