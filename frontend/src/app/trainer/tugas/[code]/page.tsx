@@ -7,7 +7,7 @@ import { requireTrainer } from "@/lib/trainer";
 
 export const instant = false;
 
-/** /trainer/tugas/[code] — daftar pengumpulan tugas satu kelas + form penilaian. */
+/** /trainer/tugas/[code]: daftar pengumpulan tugas satu kelas + form penilaian. */
 export default async function TrainerClassAssignments({ params }: PageProps<"/trainer/tugas/[code]">) {
   const { code } = await params;
   const { token } = await requireTrainer(`/trainer/tugas/${code}`);

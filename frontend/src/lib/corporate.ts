@@ -1,4 +1,4 @@
-// Corporate Portal (Roadmap 5 tahap 5B) — tipe & helper. Semua data diambil di server dengan token sesi (cookie httpOnly);
+// Corporate Portal (Roadmap 5 tahap 5B): tipe & helper. Semua data diambil di server dengan token sesi (cookie httpOnly);
 // organisasi di URL selalu diverifikasi API terhadap keanggotaan aktif pengguna (organisasi lain → 404).
 import type { ParticipantOverview } from "./monitoring";
 import type { InvoiceInfo } from "./portal-types";
@@ -131,13 +131,13 @@ export function rupiah(n: number | null | undefined): string {
   return n === null || n === undefined ? "-" : "Rp " + Math.round(n).toLocaleString("id-ID");
 }
 
-/** GET .../invoices — invoice organisasi (peran view_finance) + ringkasan piutang. */
+/** GET .../invoices: invoice organisasi (peran view_finance) + ringkasan piutang. */
 export type CorporateInvoiceList = {
   data: InvoiceInfo[];
   summary: { outstanding: number; openCount: number; paid: number; awaiting: number };
 };
 
-// ---- Analitik perusahaan & kompetensi (Roadmap 5F, §20.15–§20.16; definisi KPI: docs/KPI.md) ----
+// ---- Analitik perusahaan & kompetensi (Roadmap 5F, §20.15-§20.16; definisi KPI: docs/KPI.md) ----
 
 export type KpiKey = "completion_rate" | "attendance_rate" | "repeat_order_rate" | "average_order_value" | "training_conversion" | "at_risk_rate";
 

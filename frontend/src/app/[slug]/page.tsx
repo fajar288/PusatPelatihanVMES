@@ -11,8 +11,8 @@ import { getPage, getPosts } from "@/lib/cms";
 
 /**
  * Route level-1 untuk dua jenis halaman website lama:
- *  - kategori postingan: /tutorial, /berita, /kegiatan, /dokumentasi (g-artikel) — GET /api/v1/posts?type=
- *  - halaman statis: /kebijakan-privasi, /syarat-ketentuan, /faq, /cara-pendaftaran — GET /api/v1/pages/{slug}
+ *  - kategori postingan: /tutorial, /berita, /kegiatan, /dokumentasi (g-artikel) - GET /api/v1/posts?type=
+ *  - halaman statis: /kebijakan-privasi, /syarat-ketentuan, /faq, /cara-pendaftaran - GET /api/v1/pages/{slug}
  */
 export const instant = false;
 
@@ -74,7 +74,7 @@ export default async function SlugPage({ params, searchParams }: PageProps<"/[sl
       <div className="single">
         <div className="wrap">
           <div className="in">
-            {/* HTML dari CMS (editor admin) — sama seperti WordPress lama merender konten ke .pb */}
+            {/* HTML dari CMS (editor admin): sama seperti WordPress lama merender konten ke .pb */}
             <div className="pb" dangerouslySetInnerHTML={{ __html: page.body }} />
           </div>
         </div>

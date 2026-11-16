@@ -6,7 +6,7 @@ import { corporateApi, getSummary } from "@/lib/corporate-server";
 
 export const instant = false;
 
-/** /corporate/[org]/pengguna — Corporate Owner mengelola pengguna perusahaan & perannya (§20.12). Semua perubahan diaudit. */
+/** /corporate/[org]/pengguna: Corporate Owner mengelola pengguna perusahaan & perannya (§20.12). Semua perubahan diaudit. */
 export default async function CorporateUsersPage({ params }: PageProps<"/corporate/[org]/pengguna">) {
   const { org } = await params;
   const s = await getSummary(org);

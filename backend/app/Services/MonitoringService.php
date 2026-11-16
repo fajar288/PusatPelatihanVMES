@@ -121,7 +121,7 @@ class MonitoringService
         return $logbook->refresh();
     }
 
-    /** Buka kunci logbook tervalidasi (admin) dengan alasan — tercatat di audit log. */
+    /** Buka kunci logbook tervalidasi (admin) dengan alasan: tercatat di audit log. */
     public function unlockLogbook(TrainingLogbook $logbook, User $actor, string $reason): TrainingLogbook
     {
         $logbook->update(['status' => 'draft', 'is_locked' => false]);

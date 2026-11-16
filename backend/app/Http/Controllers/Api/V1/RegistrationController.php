@@ -9,7 +9,7 @@ use App\Models\TrainingSchedule;
 use App\Services\RegistrationService;
 use Illuminate\Http\JsonResponse;
 
-/** POST /api/v1/registrations — pendaftaran publik (tamu atau member login). */
+/** POST /api/v1/registrations: pendaftaran publik (tamu atau member login). */
 class RegistrationController extends Controller
 {
     public function store(StoreRegistrationRequest $request, RegistrationService $service): JsonResponse

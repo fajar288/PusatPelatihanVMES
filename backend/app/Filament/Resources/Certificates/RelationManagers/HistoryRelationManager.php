@@ -7,7 +7,7 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-/** Riwayat penerbitan (audit log sertifikat) — hanya baca. */
+/** Riwayat penerbitan (audit log sertifikat): hanya baca. */
 class HistoryRelationManager extends RelationManager
 {
     protected static string $relationship = 'history';

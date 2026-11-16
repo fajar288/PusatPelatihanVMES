@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
-/** Phase 3 tahap 1 — LMS: akses materi, progres, kuis, tugas, forum, portal trainer. */
+/** Phase 3 tahap 1 - LMS: akses materi, progres, kuis, tugas, forum, portal trainer. */
 class LmsTest extends TestCase
 {
     use RefreshDatabase;
@@ -41,7 +41,7 @@ class LmsTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        Carbon::setTestNow('2026-11-18 09:00:00'); // kelas CCNA-2611 berlangsung 17–21 Nov 2026
+        Carbon::setTestNow('2026-11-18 09:00:00'); // kelas CCNA-2611 berlangsung 17-21 Nov 2026
         $this->seed([RolesSeeder::class, CmsSeeder::class]);
         Notification::fake();
         Storage::fake(config('filesystems.default'));

@@ -5,7 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * Phase 2 tahap 1 — operasional TMS (PRD §5.3, §5.4, §5.7):
+ * Phase 2 tahap 1 - operasional TMS (PRD §5.3, §5.4, §5.7):
  * jenis program & aturan kelulusan paket, trainer/assessor + penugasan kelas, sesi kelas, enrollment,
  * kehadiran, daftar tunggu, riwayat perubahan jadwal.
  */

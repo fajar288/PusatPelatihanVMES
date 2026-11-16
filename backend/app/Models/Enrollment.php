@@ -13,7 +13,7 @@ use Illuminate\Support\Collection;
 
 /**
  * Peserta resmi satu kelas (hasil konversi pendaftar → member → enrollment, PRD §5.5).
- * Roadmap 5: enrollment adalah unit sponsorship & visibilitas perusahaan (§4.4, §18) —
+ * Roadmap 5: enrollment adalah unit sponsorship & visibilitas perusahaan (§4.4, §18) -
  * CORPORATE wajib punya sponsor organisasi (R1), SELF tanpa sponsor (R2), sponsor lama hanya berubah lewat
  * SponsorshipService (R7/R8). Aturan ini juga dijaga constraint DB `enrollments_sponsor_rule`.
  */
@@ -93,7 +93,7 @@ class Enrollment extends Model
 
     /**
      * Batas data untuk pengguna perusahaan (server-side, §20.21): sponsor organisasi + batas unit pengguna.
-     * Kebijakan exit_access diterapkan di CorporateAccess (daftar/detail), bukan di sini — agregat tetap menghitung semua.
+     * Kebijakan exit_access diterapkan di CorporateAccess (daftar/detail), bukan di sini - agregat tetap menghitung semua.
      */
     public function scopeVisibleToCorporateUser(Builder $q, CorporateUser $cu): Builder
     {
@@ -145,7 +145,7 @@ class Enrollment extends Model
         return $this->hasMany(Certificate::class)->latest('id');
     }
 
-    /** Sertifikat aktif (bukan dicabut/diganti) — satu per enrollment. */
+    /** Sertifikat aktif (bukan dicabut/diganti): satu per enrollment. */
     public function certificate(): HasOne
     {
         return $this->hasOne(Certificate::class)->whereIn('status', ['draft', 'pending_validation', 'issued'])->latestOfMany();
@@ -209,7 +209,7 @@ class Enrollment extends Model
     }
 
     /**
-     * attendancePercent() untuk banyak enrollment sekaligus — dua kueri agregat per 1.000 baris, bukan dua kueri per
+     * attendancePercent() untuk banyak enrollment sekaligus: dua kueri agregat per 1.000 baris, bukan dua kueri per
      * baris (daftar & ekspor Corporate Portal, API enterprise; Roadmap 5H).
      *
      * @param  Collection<int, Enrollment>  $rows

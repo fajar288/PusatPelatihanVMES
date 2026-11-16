@@ -37,7 +37,7 @@ class CorporateAnalyticsController extends Controller
         return response()->json(['data' => $data]);
     }
 
-    /** GET /corporate/organizations/{org}/competencies — katalog, target per posisi, matriks gap. */
+    /** GET /corporate/organizations/{org}/competencies: katalog, target per posisi, matriks gap. */
     public function competencies(Request $request, Organization $organization, CompetencyGapService $gaps, CorporateReporting $reporting): JsonResponse
     {
         $cu = $this->corporate->member($request, $organization);
@@ -68,7 +68,7 @@ class CorporateAnalyticsController extends Controller
         ]]);
     }
 
-    /** POST /corporate/organizations/{org}/competency-targets — tambah/ubah target (posisi + kompetensi unik). */
+    /** POST /corporate/organizations/{org}/competency-targets: tambah/ubah target (posisi + kompetensi unik). */
     public function storeTarget(Request $request, Organization $organization, CompetencyGapService $gaps): JsonResponse
     {
         $cu = $this->corporate->member($request, $organization);

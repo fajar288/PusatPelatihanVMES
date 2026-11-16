@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-/** Portal trainer — Materials, Assignments (penilaian), Quiz Results, Progress LMS per kelas (PRD §5.7, §5.8). */
+/** Portal trainer: Materials, Assignments (penilaian), Quiz Results, Progress LMS per kelas (PRD §5.7, §5.8). */
 class TrainerLmsController extends Controller
 {
     use ResolvesTrainer;
@@ -33,7 +33,7 @@ class TrainerLmsController extends Controller
         return $sub;
     }
 
-    /** GET /trainer/classes/{code}/learning — course (pohon materi) + progres LMS tiap peserta. */
+    /** GET /trainer/classes/{code}/learning: course (pohon materi) + progres LMS tiap peserta. */
     public function learning(Request $request, string $code): JsonResponse
     {
         $s = $this->classOf($this->trainer($request), $code);
@@ -51,7 +51,7 @@ class TrainerLmsController extends Controller
         return response()->json(['data' => ['class' => ['code' => $s->code, 'title' => $s->title ?? $s->package?->title], 'courses' => $courses, 'participants' => $this->lms->classProgress($s)]]);
     }
 
-    /** GET /trainer/classes/{code}/submissions — pengumpulan tugas kelas (yang belum dinilai dulu). */
+    /** GET /trainer/classes/{code}/submissions: pengumpulan tugas kelas (yang belum dinilai dulu). */
     public function submissions(Request $request, string $code): JsonResponse
     {
         $s = $this->classOf($this->trainer($request), $code);
@@ -74,7 +74,7 @@ class TrainerLmsController extends Controller
         ]]);
     }
 
-    /** POST /trainer/submissions/{id}/grade — {score?, feedback?, status: graded|returned} */
+    /** POST /trainer/submissions/{id}/grade - {score?, feedback?, status: graded|returned} */
     public function grade(Request $request, int $id): JsonResponse
     {
         $sub = $this->submissionOf($request, $id);
@@ -84,7 +84,7 @@ class TrainerLmsController extends Controller
         return response()->json(['data' => LmsPresenter::submission($sub->load('grader'))]);
     }
 
-    /** GET /trainer/submissions/{id}/file — berkas tugas peserta. */
+    /** GET /trainer/submissions/{id}/file: berkas tugas peserta. */
     public function submissionFile(Request $request, int $id): StreamedResponse
     {
         $sub = $this->submissionOf($request, $id);
@@ -94,7 +94,7 @@ class TrainerLmsController extends Controller
         return $disk->download($sub->file_path, $sub->file_name ?: basename($sub->file_path));
     }
 
-    /** GET /trainer/classes/{code}/quiz-results — hasil kuis per soal-kuis per peserta (percobaan terbaik + jumlah percobaan). */
+    /** GET /trainer/classes/{code}/quiz-results: hasil kuis per soal-kuis per peserta (percobaan terbaik + jumlah percobaan). */
     public function quizResults(Request $request, string $code): JsonResponse
     {
         $s = $this->classOf($this->trainer($request), $code);

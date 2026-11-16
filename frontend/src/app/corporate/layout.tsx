@@ -7,7 +7,7 @@ export const metadata: Metadata = { title: `Corporate Portal | ${SITE.name}`, ro
 // Area per-pengguna (cookie sesi) → diblokir di server agar tamu mendapat redirect HTTP ke /login.
 export const instant = false;
 
-/** /corporate/* — workspace perusahaan (Roadmap 5 §4, §20). Login memakai akun yang sama dengan Portal Member. */
+/** /corporate/*: workspace perusahaan (Roadmap 5 §4, §20). Login memakai akun yang sama dengan Portal Member. */
 export default async function CorporateLayout({ children }: LayoutProps<"/corporate">) {
   await requireUser("/corporate");
   return (

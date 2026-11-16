@@ -14,7 +14,7 @@ use App\Models\RequestSeat;
 use App\Models\TrainingRequest;
 
 /**
- * Bagian OpenAPI untuk API enterprise (Roadmap 5E, PRD Roadmap 5 §7) — digabung oleh PublicApiSpec.
+ * Bagian OpenAPI untuk API enterprise (Roadmap 5E, PRD Roadmap 5 §7) - digabung oleh PublicApiSpec.
  * Tes PublicIntegrationApiTest memastikan setiap route terdokumentasi; EnterpriseApiTest mencocokkan bentuk respons.
  */
 final class EnterpriseApiSpec

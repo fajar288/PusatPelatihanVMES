@@ -3,7 +3,7 @@ import type { IconName } from "@/components/ui/icons";
 
 type Props = { icon: IconName; title: string; desc: string; index: number };
 
-/** div.wc — kartu "Mengapa PPTI" dengan nomor 01..06. */
+/** div.wc: kartu "Mengapa PPTI" dengan nomor 01..06. */
 export default function WhyCard({ icon, title, desc, index }: Props) {
   return (
     <div className="wc">

@@ -10,7 +10,7 @@ import { getPackage, getPackages } from "@/lib/cms";
 import { abs, JsonLd } from "@/lib/seo";
 
 // Route detail: `params` dibaca langsung (bukan di dalam <Suspense>) supaya slug asing menghasilkan status 404
-// yang benar. Konsekuensinya navigasi ke slug yang belum di-prerender tidak "instan" (cacheComponents) — dapat diterima
+// yang benar. Konsekuensinya navigasi ke slug yang belum di-prerender tidak "instan" (cacheComponents) - dapat diterima
 // karena slug yang dikenal sudah statis via generateStaticParams.
 export const instant = false;
 
@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: PageProps<"/kursus/[slug]">):
 }
 
 /**
- * /kursus/[slug] — detail training. Website lama belum punya halaman ini (semua "Lihat Detail" → #),
+ * /kursus/[slug]: detail training. Website lama belum punya halaman ini (semua "Lihat Detail" → #),
  * tetapi CSS-nya sudah ada (.kd .kic .kjl .kov .ksd .pcd .rcg). Data: GET /api/v1/packages/{slug}.
  */
 export default async function KursusDetailPage({ params }: PageProps<"/kursus/[slug]">) {

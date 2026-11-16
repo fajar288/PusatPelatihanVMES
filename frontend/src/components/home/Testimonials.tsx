@@ -22,7 +22,7 @@ function Avatar({ t, cls }: { t: Testimonial; cls?: string }) {
 }
 
 /**
- * section.ts — testimoni: 1 featured (.tf) + daftar kartu (.tc) yang bisa diklik untuk menukar featured.
+ * section.ts - testimoni: 1 featured (.tf) + daftar kartu (.tc) yang bisa diklik untuk menukar featured.
  * Port dari blok "Testimoni" theme.main.js.
  */
 export default function Testimonials({ items }: { items: Testimonial[] }) {

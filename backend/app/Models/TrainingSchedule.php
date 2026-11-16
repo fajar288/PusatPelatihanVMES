@@ -125,7 +125,7 @@ class TrainingSchedule extends Model
         return $f($this->start_time).($this->end_time ? ' - '.$f($this->end_time) : '').' WIB';
     }
 
-    /** @return array{0:string,1:string} [jst ok|wn|no, label] — identik dengan pill jadwal website lama. */
+    /** @return array{0:string,1:string} [jst ok|wn|no, label] - identik dengan pill jadwal website lama. */
     public function statusPill(): array
     {
         return match ($this->status) {

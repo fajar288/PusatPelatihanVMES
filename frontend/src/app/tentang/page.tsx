@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 };
 
 /**
- * /tentang — PRD §5.1: profil, visi-misi, fasilitas, trainer, layanan, kerja sama.
+ * /tentang - PRD §5.1: profil, visi-misi, fasilitas, trainer, layanan, kerja sama.
  * Website lama tidak punya halaman ini; dibangun dari section beranda (.tk, .wg/.wc, .ps, .cs) + gaya .kbx.
  */
 export default async function TentangPage() {

@@ -14,7 +14,7 @@ use Throwable;
 /**
  * Driver `fonnte`: WhatsApp API gateway Fonnte (https://docs.fonnte.com).
  * - Kirim: POST {base}/send, header `Authorization: <token>` (tanpa "Bearer"), body form-encoded.
- * - Profil device: POST {base}/device (status, paket, kuota, kedaluwarsa) — dipakai widget admin.
+ * - Profil device: POST {base}/device (status, paket, kuota, kedaluwarsa) - dipakai widget admin.
  * Galat sementara → RuntimeException (di-retry dispatcher); galat permanen → PermanentWhatsAppFailure (langsung gagal).
  * Token tidak pernah ditulis ke log maupun pesan exception.
  */

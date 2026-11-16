@@ -1,4 +1,4 @@
-# Backend Laravel — image pengembangan (php artisan serve). Untuk produksi ganti ke php-fpm + nginx.
+# Backend Laravel: image pengembangan (php artisan serve). Untuk produksi ganti ke php-fpm + nginx.
 FROM php:8.3-cli-alpine
 
 RUN apk add --no-cache bash git unzip icu-dev libzip-dev libpng-dev libjpeg-turbo-dev freetype-dev postgresql-dev oniguruma-dev \

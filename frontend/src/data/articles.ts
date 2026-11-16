@@ -1,4 +1,4 @@
-// Postingan (tutorial, berita, kegiatan, dokumentasi) — dummy. Website lama hanya punya 1 post
+// Postingan (tutorial, berita, kegiatan, dokumentasi) - dummy. Website lama hanya punya 1 post
 // bawaan WordPress ("Hello world!") plus konten contoh tema; judul & tanggal tutorial diambil apa adanya.
 // Nanti diganti GET /api/v1/posts?category= dan /api/v1/posts/{slug} (Laravel).
 
@@ -19,14 +19,14 @@ export type Article = {
   excerpt: string;
   category: PostCategory;
   dateLabel: string; // "10 Nov 2026" (format website lama)
-  publishedAt: number; // unix time (data-d di website lama) — urutan "Terbaru"
+  publishedAt: number; // unix time (data-d di website lama) - urutan "Terbaru"
   image?: string;
   author?: string;
   tags?: string[];
   body: PostBlock[];
 };
 
-/** Ringkasan post untuk kartu/list — bentuk sama antara data statis dan API. */
+/** Ringkasan post untuk kartu/list: bentuk sama antara data statis dan API. */
 export type PostSummary = Pick<Article, "slug" | "title" | "excerpt" | "category" | "dateLabel" | "publishedAt" | "image">;
 
 export const POST_CATEGORIES: { slug: string; category: PostCategory; title: string; desc: string }[] = [
@@ -178,7 +178,7 @@ export const ARTICLES: Article[] = [
     ],
   },
 
-  // ===== DOKUMENTASI (foto hotlink pihak ketiga — ganti dengan foto PPTI, lihat task.md §1.9) =====
+  // ===== DOKUMENTASI (foto hotlink pihak ketiga - ganti dengan foto PPTI, lihat task.md §1.9) =====
   {
     slug: "dokumentasi-training-within-industry", title: "Dokumentasi Training Within Industry Batch Oktober 2026", excerpt: "Suasana kelas Training Within Industry (TWI) untuk supervisor produksi.",
     category: "Dokumentasi", dateLabel: "9 Nov 2026", publishedAt: 1794182400, image: "https://merca.team/wp-content/uploads/2026/02/training-within-industry-1024x683.webp", tags: ["TWI", "Supervisor"],

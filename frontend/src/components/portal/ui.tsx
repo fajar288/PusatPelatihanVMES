@@ -77,7 +77,7 @@ export function EmptyState({ text, href, cta }: { text: string; href?: string; c
   );
 }
 
-/** Baris pendaftaran (list) — memakai gaya baris jadwal .jr tema. */
+/** Baris pendaftaran (list): memakai gaya baris jadwal .jr tema. */
 export function RegistrationRow({ r }: { r: RegistrationInfo }) {
   return (
     <div className="jr prow">

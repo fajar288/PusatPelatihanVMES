@@ -13,7 +13,7 @@ async function Body({ searchParams }: Pick<PageProps<"/reset-password">, "search
   return <ResetForm token={first(sp.token)} email={first(sp.email)} />;
 }
 
-/** /reset-password?token=&email= — tujuan tautan dari email reset (backend ResetPasswordNotification). */
+/** /reset-password?token=&email=: tujuan tautan dari email reset (backend ResetPasswordNotification). */
 export default function ResetPasswordPage({ searchParams }: PageProps<"/reset-password">) {
   return (
     <AuthShell title="Atur Ulang Sandi" subtitle="Buat sandi baru untuk akun Anda.">

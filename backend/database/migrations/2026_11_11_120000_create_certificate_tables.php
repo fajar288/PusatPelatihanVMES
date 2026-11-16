@@ -5,7 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * Phase 4 — Certificate Management & Alumni (PRD §5.10, §5.6):
+ * Phase 4 - Certificate Management & Alumni (PRD §5.10, §5.6):
  * template sertifikat (penerbit, penandatangan, masa berlaku, format nomor), sertifikat per enrollment
  * dengan nomor unik & status draft → pending_validation → issued → revoked/replaced, berkas PDF + payload QR.
  * Riwayat penerbitan dicatat di audit_logs (auditable = Certificate).

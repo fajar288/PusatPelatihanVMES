@@ -6,7 +6,7 @@ import { requireTrainer } from "@/lib/trainer";
 
 export const instant = false;
 
-/** /trainer/kuis/[code] — matriks hasil kuis: peserta × kuis (nilai terbaik, lulus, jumlah percobaan). */
+/** /trainer/kuis/[code] - matriks hasil kuis: peserta × kuis (nilai terbaik, lulus, jumlah percobaan). */
 export default async function TrainerClassQuizResults({ params }: PageProps<"/trainer/kuis/[code]">) {
   const { code } = await params;
   const { token } = await requireTrainer(`/trainer/kuis/${code}`);

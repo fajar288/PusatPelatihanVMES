@@ -8,7 +8,7 @@ export const metadata: Metadata = { title: `Portal Trainer | ${SITE.name}`, robo
 
 export const instant = false;
 
-/** /trainer/* — portal trainer & assessor (PRD §5.7): kelas yang ditugaskan, peserta, kehadiran, profil. */
+/** /trainer/* - portal trainer & assessor (PRD §5.7): kelas yang ditugaskan, peserta, kehadiran, profil. */
 export default async function TrainerLayout({ children }: LayoutProps<"/trainer">) {
   const { profile } = await requireTrainer();
   return (

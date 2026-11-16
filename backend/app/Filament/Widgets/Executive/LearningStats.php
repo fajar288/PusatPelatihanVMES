@@ -6,7 +6,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
-/** Pembelajaran, trainer & sertifikat (PRD §5.13 butir 3–5). */
+/** Pembelajaran, trainer & sertifikat (PRD §5.13 butir 3-5). */
 class LearningStats extends StatsOverviewWidget
 {
     use ExecutiveWidget;

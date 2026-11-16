@@ -8,7 +8,7 @@ import { formatRupiah } from "@/lib/utils";
 
 /**
  * Form unggah bukti transfer untuk satu invoice (portal member & portal perusahaan). Nominal bawaan = sisa tagihan;
- * pembayar boleh mengisi nominal yang benar-benar ditransfer — selisih dicatat finance saat verifikasi.
+ * pembayar boleh mengisi nominal yang benar-benar ditransfer: selisih dicatat finance saat verifikasi.
  */
 export default function InvoiceProofForm({
   scope,

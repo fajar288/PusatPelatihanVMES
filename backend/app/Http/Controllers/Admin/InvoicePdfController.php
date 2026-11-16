@@ -8,7 +8,7 @@ use App\Services\InvoiceService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
-/** PDF invoice dari panel admin (sesi web Filament) — izin payments.verify. */
+/** PDF invoice dari panel admin (sesi web Filament): izin payments.verify. */
 class InvoicePdfController extends Controller
 {
     public function __invoke(Request $request, Invoice $invoice, InvoiceService $invoices): Response

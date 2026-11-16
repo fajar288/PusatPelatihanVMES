@@ -7,7 +7,7 @@ import type { Course } from "@/data/courses";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 
 /**
- * section.sec "Kursus" — slider horizontal kartu .cc (port "Slider kursus" theme.main.js):
+ * section.sec "Kursus" - slider horizontal kartu .cc (port "Slider kursus" theme.main.js):
  * panah geser 1 kartu (lebar + gap 24), wrap awal/akhir, autoplay 4000ms, pause saat hover/focus/touch.
  */
 export default function CourseSlider({ courses }: { courses: Course[] }) {

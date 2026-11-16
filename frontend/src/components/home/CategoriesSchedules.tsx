@@ -5,7 +5,7 @@ import type { Schedule } from "@/data/schedules";
 import type { CategoryItem } from "@/lib/cms-types";
 import SchedulePanel from "./SchedulePanel";
 
-/** section.sec.alt > .jk — kiri kategori kompetensi (8 kartu), kanan jadwal terdekat. */
+/** section.sec.alt > .jk: kiri kategori kompetensi (8 kartu), kanan jadwal terdekat. */
 export default function CategoriesSchedules({ categories, schedules }: { categories: CategoryItem[]; schedules: Schedule[] }) {
   return (
     <section className="sec alt">

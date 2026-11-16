@@ -6,7 +6,7 @@ type Props = {
   desc: string;
 };
 
-/** section.cath — hero halaman kategori (katalog kursus, jadwal, tutorial, dst.). Markup identik dengan tema asli. */
+/** section.cath: hero halaman kategori (katalog kursus, jadwal, tutorial, dst.). Markup identik dengan tema asli. */
 export default function CatalogHero({ eyebrow, title, desc }: Props) {
   return (
     <section className="cath">

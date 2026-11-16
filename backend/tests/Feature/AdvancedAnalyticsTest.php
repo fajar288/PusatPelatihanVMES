@@ -52,7 +52,7 @@ use Livewire\Livewire;
 use Tests\TestCase;
 
 /**
- * Roadmap 5 tahap 5F — KPI §8.1 persis docs/KPI.md (angka dihitung manual di komentar), corporate vs self-funded,
+ * Roadmap 5 tahap 5F: KPI §8.1 persis docs/KPI.md (angka dihitung manual di komentar), corporate vs self-funded,
  * funnel & cohort, analitik perusahaan §20.15 dengan batas scope/peran, master kompetensi + target per posisi (gap §20.16).
  */
 class AdvancedAnalyticsTest extends TestCase
@@ -188,12 +188,12 @@ class AdvancedAnalyticsTest extends TestCase
     }
 
     /**
-     * Data uji (periode 1 Okt – 30 Nov 2026, hari ini 20 Nov):
-     * S1 PLC-OKT (5–6 Okt, selesai, 2 sesi 08–16): Ani ABC/ENG lulus 2/2 · Budi ABC/PROD tidak lulus 1/2 · Citra mandiri lulus (hadir+terlambat)
+     * Data uji (periode 1 Okt - 30 Nov 2026, hari ini 20 Nov):
+     * S1 PLC-OKT (5-6 Okt, selesai, 2 sesi 08-16): Ani ABC/ENG lulus 2/2 · Budi ABC/PROD tidak lulus 1/2 · Citra mandiri lulus (hadir+terlambat)
      *   · Dodi mandiri attending 0/2 (izin) · Eko mandiri dropped · Fira XYZ lulus 2/2.
      * S3 dibatalkan: Hana mandiri "completed" (dikecualikan).
-     * S2 PLC-NOV (18–25 Nov, berjalan, 4 sesi, tanpa jam → 16 JP ÷ 4 = 4 jam): Gita ABC/ENG attending 1/3 · Hadi mandiri 0/3 · Indra mandiri 3/3.
-     * S4 (2025, mandiri) Budi lulus + penilaian PLC 4/4 — bukti mandiri, TIDAK boleh dipakai perusahaan.
+     * S2 PLC-NOV (18-25 Nov, berjalan, 4 sesi, tanpa jam → 16 JP ÷ 4 = 4 jam): Gita ABC/ENG attending 1/3 · Hadi mandiri 0/3 · Indra mandiri 3/3.
+     * S4 (2025, mandiri) Budi lulus + penilaian PLC 4/4 - bukti mandiri, TIDAK boleh dipakai perusahaan.
      */
     private function fixture(): void
     {
@@ -229,7 +229,7 @@ class AdvancedAnalyticsTest extends TestCase
         $this->e['citra']->update(['registration_id' => $regCitra->id]);
         $this->e['dodi']->update(['registration_id' => $regDodi->id]);
 
-        // Corporate Training Request (satuan funnel) — R1 & R2 milik ABC (repeat), R3 XYZ, R4 draf ABC
+        // Corporate Training Request (satuan funnel): R1 & R2 milik ABC (repeat), R3 XYZ, R4 draf ABC
         $r1 = $this->request('REQ-T-1', $this->abc, 2, $this->eng, ['status' => 'completed', 'submitted' => '2026-10-01', 'quoted' => '2026-10-01', 'approved' => '2026-10-01', 'paid' => '2026-10-01'], [$this->e['ani'], $this->e['budi']]);
         $r2 = $this->request('REQ-T-2', $this->abc, 1, $this->prod, ['status' => 'in_progress', 'submitted' => '2026-11-01', 'quoted' => '2026-11-02', 'approved' => '2026-11-03', 'paid' => '2026-11-10'], [$this->e['gita']]);
         $r3 = $this->request('REQ-T-3', $this->xyz, 2, null, ['status' => 'completed', 'submitted' => '2026-10-10', 'quoted' => '2026-10-11', 'approved' => '2026-10-12', 'paid' => '2026-10-15'], [$this->e['fira']]);

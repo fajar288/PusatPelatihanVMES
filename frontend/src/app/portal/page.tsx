@@ -7,7 +7,7 @@ import type { EnrollmentInfo, RegistrationInfo } from "@/lib/portal-types";
 // Halaman per-pengguna (cookie sesi + API terautentikasi) → diblokir di server, tidak di-prerender.
 export const instant = false;
 
-/** /portal — dashboard: identitas member & status alumni, ringkasan pendaftaran, sertifikat, pendaftaran terbaru (PRD §5.6). */
+/** /portal - dashboard: identitas member & status alumni, ringkasan pendaftaran, sertifikat, pendaftaran terbaru (PRD §5.6). */
 export default async function PortalDashboard() {
   const { user, token } = await requireUser("/portal");
   const [regs, certs, enrollments] = await Promise.all([

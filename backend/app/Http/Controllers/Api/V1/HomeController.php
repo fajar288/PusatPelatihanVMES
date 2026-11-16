@@ -24,7 +24,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
-/** GET /api/v1/home — agregat beranda, urutan section identik dengan pusatpelatihan.id. Cache 5 menit. */
+/** GET /api/v1/home: agregat beranda, urutan section identik dengan pusatpelatihan.id. Cache 5 menit. */
 class HomeController extends Controller
 {
     public const CACHE_KEY = 'api.v1.home';

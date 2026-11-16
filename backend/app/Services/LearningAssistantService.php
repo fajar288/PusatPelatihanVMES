@@ -3,7 +3,7 @@
 namespace App\Services;
 
 /**
- * Asisten Belajar portal member — kerangka tahap 5G (keputusan mengikat nomor 4, `docs/PROMPT-Roadmap5.md`).
+ * Asisten Belajar portal member: kerangka tahap 5G (keputusan mengikat nomor 4, `docs/PROMPT-Roadmap5.md`).
  * Selalu "Belum tersedia": tidak memanggil API AI mana pun dan tidak menyimpan pertanyaan peserta.
  * `AI_CHATBOT_ENABLED` hanya dilaporkan; implementasi sungguhan (jawaban dari materi lesson + sitasi) ada di tahap 5I.5.
  */

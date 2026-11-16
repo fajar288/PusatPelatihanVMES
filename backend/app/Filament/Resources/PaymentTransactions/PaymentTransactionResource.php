@@ -107,7 +107,7 @@ class PaymentTransactionResource extends Resource
         ]));
     }
 
-    /** Aksi verifikasi/tolak — dipakai di antrean dan di halaman invoice. @return list<Action> */
+    /** Aksi verifikasi/tolak: dipakai di antrean dan di halaman invoice. @return list<Action> */
     public static function reviewActions(): array
     {
         return [

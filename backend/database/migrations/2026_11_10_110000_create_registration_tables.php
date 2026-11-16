@@ -5,7 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * Phase 1E — registrasi online, member, peran/izin, pembayaran awal, audit log (PRD §5.5, §5.6, §5.11, §9).
+ * Phase 1E: registrasi online, member, peran/izin, pembayaran awal, audit log (PRD §5.5, §5.6, §5.11, §9).
  *
  * - `users.role` (migrasi sebelumnya) tetap sebagai peran utama; `user_roles` memungkinkan multi-peran.
  * - `registrations` = pendaftar (individu/kolektif) dengan nomor otomatis & status PRD §5.5.
@@ -53,7 +53,7 @@ return new class extends Migration
             $table->string('phone', 30)->nullable();
             $table->date('birth_date')->nullable();
             $table->string('gender', 10)->nullable();
-            $table->string('id_number', 32)->nullable()->comment('NIK — hanya bila diperlukan sertifikasi (PRD §9 minimisasi data)');
+            $table->string('id_number', 32)->nullable()->comment('NIK - hanya bila diperlukan sertifikasi (PRD §9 minimisasi data)');
             $table->string('company')->nullable();
             $table->string('position')->nullable();
             $table->string('education', 60)->nullable();

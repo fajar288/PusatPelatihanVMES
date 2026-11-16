@@ -11,7 +11,7 @@ export const instant = false;
 
 const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v) ?? "";
 
-/** /verifikasi-email?id&hash&expires&signature — meneruskan tautan bertanda tangan ke API (Roadmap 5B). */
+/** /verifikasi-email?id&hash&expires&signature: meneruskan tautan bertanda tangan ke API (Roadmap 5B). */
 export default async function VerifyEmailPage({ searchParams }: PageProps<"/verifikasi-email">) {
   const sp = await searchParams;
   const [id, hash, expires, signature] = ["id", "hash", "expires", "signature"].map((k) => first(sp[k]));

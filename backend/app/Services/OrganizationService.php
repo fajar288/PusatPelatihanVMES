@@ -63,7 +63,7 @@ class OrganizationService
         });
     }
 
-    /** Ganti peran / batas unit — tidak menyentuh data peserta (§11 "Corporate admin berganti"). */
+    /** Ganti peran / batas unit: tidak menyentuh data peserta (§11 "Corporate admin berganti"). */
     public function changeRole(CorporateUser $cu, string $role, ?OrganizationUnit $unit = null, ?User $actor = null): CorporateUser
     {
         $this->assertRole($role);

@@ -5,7 +5,7 @@ import { CLASS_STATUS, requireTrainer, ROLE_LABEL, type TrainerClass } from "@/l
 
 export const instant = false;
 
-/** /trainer — dashboard: ringkasan kelas aktif & mendatang. */
+/** /trainer - dashboard: ringkasan kelas aktif & mendatang. */
 export default async function TrainerDashboard() {
   const { token, profile } = await requireTrainer("/trainer");
   const classes = (await api<{ data: TrainerClass[] }>("/trainer/classes", { token })).data;

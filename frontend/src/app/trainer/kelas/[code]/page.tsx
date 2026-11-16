@@ -6,7 +6,7 @@ import { CLASS_STATUS, requireTrainer, ROLE_LABEL, type TrainerClass } from "@/l
 
 export const instant = false;
 
-/** /trainer/kelas/[code] — detail kelas: info, sesi, peserta, pencatatan kehadiran. */
+/** /trainer/kelas/[code] - detail kelas: info, sesi, peserta, pencatatan kehadiran. */
 export default async function TrainerClassDetail({ params }: PageProps<"/trainer/kelas/[code]">) {
   const { code } = await params;
   const { token } = await requireTrainer(`/trainer/kelas/${code}`);

@@ -25,7 +25,7 @@ use Filament\Tables\Table;
 use Illuminate\Support\HtmlString;
 use UnitEnum;
 
-/** Monitoring — penilaian kompetensi individual per peserta berdasarkan rubrik program (PRD §5.9). */
+/** Monitoring: penilaian kompetensi individual per peserta berdasarkan rubrik program (PRD §5.9). */
 class CompetencyAssessmentResource extends Resource
 {
     protected static ?string $model = CompetencyAssessment::class;

@@ -5,7 +5,7 @@ import { corporateApi } from "@/lib/corporate-server";
 
 export const instant = false;
 
-/** /corporate/[org]/keuangan — invoice perusahaan (training request & pendaftaran kolektif), peran finance/owner. */
+/** /corporate/[org]/keuangan: invoice perusahaan (training request & pendaftaran kolektif), peran finance/owner. */
 export default async function FinancePage({ params }: PageProps<"/corporate/[org]/keuangan">) {
   const { org } = await params;
   const { data: rows, summary } = await corporateApi<CorporateInvoiceList>(orgPath(org, "/invoices"), `/corporate/${org}/keuangan`);

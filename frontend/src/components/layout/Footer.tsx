@@ -4,7 +4,7 @@ import Icon from "@/components/ui/Icon";
 import type { MenuData, SiteSettings } from "@/lib/cms-types";
 import { waLink } from "@/lib/utils";
 
-/** footer.ft — identik dengan website lama. */
+/** footer.ft: identik dengan website lama. */
 export default function Footer({ site, columns }: { site: SiteSettings; columns: MenuData["footer"] }) {
   return (
     <footer className="ft">

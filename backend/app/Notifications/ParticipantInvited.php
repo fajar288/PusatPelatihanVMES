@@ -8,7 +8,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-/** Email undangan peserta dari perusahaan (Roadmap 5 §20.4) — tautan /undangan/{token} di frontend. */
+/** Email undangan peserta dari perusahaan (Roadmap 5 §20.4): tautan /undangan/{token} di frontend. */
 class ParticipantInvited extends Notification
 {
     use Queueable;

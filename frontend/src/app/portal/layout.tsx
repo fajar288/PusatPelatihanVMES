@@ -13,7 +13,7 @@ export const metadata: Metadata = { title: `Portal Member | ${SITE.name}`, robot
  */
 export const instant = false;
 
-/** /portal/* — area member (PRD §5.6). */
+/** /portal/*: area member (PRD §5.6). */
 export default async function PortalLayout({ children }: LayoutProps<"/portal">) {
   const { user } = await requireUser();
   return (

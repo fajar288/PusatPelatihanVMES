@@ -10,7 +10,7 @@ type Page = { data: CorporateEnrollment[]; meta: { currentPage: number; lastPage
 
 const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v) ?? "";
 
-/** /corporate/[org]/peserta — enrollment yang disponsori perusahaan (R3) dalam batas unit; ekspor CSV sesuai izin. */
+/** /corporate/[org]/peserta: enrollment yang disponsori perusahaan (R3) dalam batas unit; ekspor CSV sesuai izin. */
 export default async function ParticipantsPage({ params, searchParams }: PageProps<"/corporate/[org]/peserta">) {
   const { org } = await params;
   const sp = await searchParams;

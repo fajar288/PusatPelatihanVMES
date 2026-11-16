@@ -11,7 +11,7 @@ export const instant = false;
 
 const SEAT_PILL: Record<string, "ok" | "wn" | "no"> = { enrolled: "ok", assigned: "ok", invited: "wn", reserved: "no" };
 
-/** /corporate/[org]/permintaan/[code] — detail permintaan, penawaran, persetujuan, kursi & penugasan peserta. */
+/** /corporate/[org]/permintaan/[code]: detail permintaan, penawaran, persetujuan, kursi & penugasan peserta. */
 export default async function RequestDetailPage({ params }: PageProps<"/corporate/[org]/permintaan/[code]">) {
   const { org, code } = await params;
   const next = `/corporate/${org}/permintaan/${code}`;

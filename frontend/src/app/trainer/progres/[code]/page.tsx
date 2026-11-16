@@ -7,7 +7,7 @@ import { requireTrainer } from "@/lib/trainer";
 
 export const instant = false;
 
-/** /trainer/progres/[code] — tabel progress overview seluruh peserta: kehadiran, materi, kuis, tugas, praktik, kompetensi, catatan. */
+/** /trainer/progres/[code] - tabel progress overview seluruh peserta: kehadiran, materi, kuis, tugas, praktik, kompetensi, catatan. */
 export default async function TrainerClassProgress({ params }: PageProps<"/trainer/progres/[code]">) {
   const { code } = await params;
   const { token } = await requireTrainer(`/trainer/progres/${code}`);

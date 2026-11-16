@@ -82,7 +82,7 @@ class User extends Authenticatable implements FilamentUser
         $this->notify(new VerifyEmailNotification);
     }
 
-    /** Keanggotaan sebagai pengguna perusahaan (Roadmap 5 §20.12) — aktif maupun dicabut. */
+    /** Keanggotaan sebagai pengguna perusahaan (Roadmap 5 §20.12): aktif maupun dicabut. */
     public function corporateMemberships(): HasMany
     {
         return $this->hasMany(CorporateUser::class);
@@ -99,7 +99,7 @@ class User extends Authenticatable implements FilamentUser
         return $this->whatsappNumber();
     }
 
-    /** Notifikasi untuk portal member/trainer/perusahaan — tanpa notifikasi lonceng panel admin (type `admin:*`). */
+    /** Notifikasi untuk portal member/trainer/perusahaan: tanpa notifikasi lonceng panel admin (type `admin:*`). */
     public function portalNotifications(): MorphMany
     {
         return $this->notifications()->where('type', 'not like', 'admin:%');

@@ -1,5 +1,5 @@
 // Lapisan data CMS: fetch API Laravel (/api/v1) dengan cache Next 16 ("use cache"), fallback ke data statis.
-// Semua halaman publik memanggil fungsi di sini — komponen tidak lagi mengimpor src/data secara langsung.
+// Semua halaman publik memanggil fungsi di sini: komponen tidak lagi mengimpor src/data secara langsung.
 //
 // Cache: cacheLife("hours") + cacheTag("cms", <bagian>). Backend memanggil POST /api/revalidate saat konten
 // dipublikasikan (lihat app/api/revalidate/route.ts) sehingga halaman statis diperbarui tanpa build ulang.

@@ -12,7 +12,7 @@ export const instant = false;
 
 const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v) ?? "";
 
-/** /register — buat akun member (satu akun = satu nomor member). */
+/** /register: buat akun member (satu akun = satu nomor member). */
 export default async function RegisterPage({ searchParams }: PageProps<"/register">) {
   const sp = await searchParams;
   const next = first(sp.next).startsWith("/") ? first(sp.next) : "/portal";

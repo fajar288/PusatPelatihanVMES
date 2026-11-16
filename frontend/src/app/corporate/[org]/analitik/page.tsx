@@ -20,7 +20,7 @@ const tanggal = (iso: string | null) =>
 const KPI_ORDER: KpiKey[] = ["completion_rate", "attendance_rate", "at_risk_rate", "training_conversion", "repeat_order_rate", "average_order_value"];
 
 /**
- * /corporate/[org]/analitik — analitik perusahaan (PRD Roadmap 5 §8.2, §20.15): KPI §8.1 untuk training yang disponsori,
+ * /corporate/[org]/analitik - analitik perusahaan (PRD Roadmap 5 §8.2, §20.15): KPI §8.1 untuk training yang disponsori,
  * pemakaian kursi, kehadiran & jam per batch/departemen, efektivitas program, pembelian ulang, biaya (peran finance),
  * peserta berisiko (peran progres). Semua angka dibatasi server pada data sponsor organisasi & batas unit pengguna.
  */

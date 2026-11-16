@@ -36,7 +36,7 @@ use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
 
 /**
- * Roadmap 5 tahap 5C — Transaksi dengan pembayaran MANUAL: invoice lengkap (item, diskon, pajak, jatuh tempo),
+ * Roadmap 5 tahap 5C - Transaksi dengan pembayaran MANUAL: invoice lengkap (item, diskon, pajak, jatuh tempo),
  * payment_transactions, idempotensi verifikasi, kurang/lebih bayar, kedaluwarsa, refund, rekonsiliasi mutasi, dan
  * keuangan di portal perusahaan.
  */

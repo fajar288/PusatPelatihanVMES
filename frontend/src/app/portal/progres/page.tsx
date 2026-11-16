@@ -8,7 +8,7 @@ import type { EnrollmentInfo } from "@/lib/portal-types";
 
 export const instant = false;
 
-/** /portal/progres — My Progress: kehadiran per kelas, progres per course & modul, nilai kuis/tugas, praktik & kompetensi, catatan trainer (yang sudah disahkan). */
+/** /portal/progres - My Progress: kehadiran per kelas, progres per course & modul, nilai kuis/tugas, praktik & kompetensi, catatan trainer (yang sudah disahkan). */
 export default async function PortalProgressPage() {
   const { token } = await requireUser("/portal/progres");
   const [enrollments, courses, results, overview] = await Promise.all([

@@ -14,7 +14,7 @@ use Illuminate\Validation\ValidationException;
 /**
  * Refund manual (PRD Roadmap 5 §5.1: reason, approver, timestamp, reference). Alur: diajukan (alasan) → disetujui orang
  * lain yang berizin `payments.refund.approve` → finance mencatat transfer balik (referensi + tanggal). Dana dikembalikan di
- * luar sistem. Refund TIDAK otomatis membatalkan pendaftaran/enrollment — itu keputusan terpisah.
+ * luar sistem. Refund TIDAK otomatis membatalkan pendaftaran/enrollment - itu keputusan terpisah.
  */
 class RefundService
 {

@@ -1,6 +1,6 @@
 import type { PostBlock } from "./articles";
 
-// Halaman statis — website lama hanya punya placeholder ("Silakan ubah konten ini").
+// Halaman statis: website lama hanya punya placeholder ("Silakan ubah konten ini").
 // Nanti GET /api/v1/pages/{slug} (CMS Laravel). Konten di bawah adalah draf untuk ditinjau tim PPTI.
 export type StaticPage = {
   slug: string;

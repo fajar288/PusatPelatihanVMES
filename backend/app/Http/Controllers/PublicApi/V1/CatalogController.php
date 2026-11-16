@@ -17,10 +17,10 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Carbon;
 
-/** API Publik v1 — identitas klien & katalog (scope catalog.read). */
+/** API Publik v1: identitas klien & katalog (scope catalog.read). */
 class CatalogController extends Controller
 {
-    /** GET / — cek koneksi: identitas klien, scope & batas permintaan. */
+    /** GET / - cek koneksi: identitas klien, scope & batas permintaan. */
     public function client(Request $request): JsonResponse
     {
         /** @var ApiClient $client */
@@ -83,7 +83,7 @@ class CatalogController extends Controller
         return ProgramResource::collection($q->orderBy('sort_order')->orderBy('title')->paginate($request->integer('per_page', 25))->withQueryString());
     }
 
-    /** GET /programs/{slug} — detail + silabus + jadwal mendatang. */
+    /** GET /programs/{slug}: detail + silabus + jadwal mendatang. */
     public function program(string $slug): JsonResponse
     {
         $pkg = TrainingPackage::query()->published()->with(['category', 'curricula'])->where('slug', $slug)->first();

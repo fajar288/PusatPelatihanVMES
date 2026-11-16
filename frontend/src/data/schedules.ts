@@ -1,4 +1,4 @@
-// Jadwal batch dummy — 8 baris pertama identik dengan "Jadwal Terdekat" website lama.
+// Jadwal batch dummy: 8 baris pertama identik dengan "Jadwal Terdekat" website lama.
 // Nanti GET /api/v1/schedules dan /api/v1/schedules/{id} (Laravel).
 export type ScheduleStatus = "ok" | "wn" | "no";
 

@@ -6,14 +6,14 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * Roadmap 5 tahap 5C — Transaksi (PRD Roadmap 5 §5, §13) dengan pembayaran MANUAL (tanpa payment gateway, keputusan 2026-11-12).
+ * Roadmap 5 tahap 5C: Transaksi (PRD Roadmap 5 §5, §13) dengan pembayaran MANUAL (tanpa payment gateway, keputusan 2026-11-12).
  *
  * - invoices: menggantikan tabel `payments` lama (satu baris = satu tagihan/termin). Item, subtotal, diskon, pajak
  *   (tarif dari pengaturan keuangan, bawaan 0%), total, jatuh tempo, terbayar, dikembalikan. Sumber: pendaftaran
  *   (individu/kolektif) ATAU Corporate Training Request. Status: pending|paid|failed|expired|refunded|cancelled.
  * - payment_transactions: setiap bukti transfer yang diunggah (pending) dan hasil verifikasi finance (paid) / penolakan
  *   (failed). Menyimpan rekening tujuan, tanggal transfer, nominal dinyatakan vs diterima, verifikator & waktu.
- * - payment_refunds: refund manual — alasan, penyetuju (orang lain), waktu, referensi transfer balik. Uang dikembalikan
+ * - payment_refunds: refund manual - alasan, penyetuju (orang lain), waktu, referensi transfer balik. Uang dikembalikan
  *   di luar sistem; sistem hanya mencatat.
  * - bank_statement_imports / bank_statement_lines: mutasi rekening CSV opsional untuk rekonsiliasi.
  *
@@ -138,7 +138,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->decimal('amount', 14, 2);
             $table->string('reference')->nullable();
-            $table->string('fingerprint', 64)->unique()->comment('sha256 tanggal|nominal|keterangan|referensi — baris yang sama tidak diimpor dua kali');
+            $table->string('fingerprint', 64)->unique()->comment('sha256 tanggal|nominal|keterangan|referensi - baris yang sama tidak diimpor dua kali');
             $table->string('status', 20)->default('unmatched')->comment('unmatched|matched|ignored');
             $table->foreignId('payment_transaction_id')->nullable()->constrained()->nullOnDelete();
             $table->string('match_method', 10)->nullable()->comment('auto|manual');

@@ -18,7 +18,7 @@ use Illuminate\Validation\ValidationException;
  * Competency gap dasar (PRD Roadmap 5 §4.6 "Competency Matrix", §8.2, §20.15, §20.16).
  *
  * Required = target level per posisi organisasi (competency_targets, posisi dicocokkan dengan employment aktif).
- * Actual   = bukti dari enrollment yang DISPONSORI organisasi ini saja (batas privasi §20.11 — hasil training mandiri
+ * Actual   = bukti dari enrollment yang DISPONSORI organisasi ini saja (batas privasi §20.11 - hasil training mandiri
  *            atau sponsor lain tidak pernah dipakai):
  *            1) assessment: skor kriteria rubrik yang ditautkan ke kompetensi pada penilaian TERVALIDASI terbaru (skor/maks × 100);
  *            2) training: bila tidak ada bukti assessment, level tertinggi dari program yang LULUS (package_competencies.level).

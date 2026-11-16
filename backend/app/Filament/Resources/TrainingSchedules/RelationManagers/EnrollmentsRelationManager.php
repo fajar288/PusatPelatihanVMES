@@ -25,7 +25,7 @@ use Filament\Tables\Table;
 use Illuminate\Support\HtmlString;
 use Illuminate\Validation\ValidationException;
 
-/** Peserta resmi kelas (enrollment) — otomatis dari pendaftaran terkonfirmasi, bisa ditambah manual. */
+/** Peserta resmi kelas (enrollment): otomatis dari pendaftaran terkonfirmasi, bisa ditambah manual. */
 class EnrollmentsRelationManager extends RelationManager
 {
     protected static string $relationship = 'enrollments';

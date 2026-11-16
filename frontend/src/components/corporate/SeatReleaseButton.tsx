@@ -3,7 +3,7 @@
 import { useTransition } from "react";
 import { releaseSeatAction } from "@/lib/actions/corporate";
 
-/** Batalkan peserta di satu kursi — hanya enrollment kursi itu yang berubah (§11). */
+/** Batalkan peserta di satu kursi: hanya enrollment kursi itu yang berubah (§11). */
 export default function SeatReleaseButton({ org, code, seat, label }: { org: string; code: string; seat: number; label: string }) {
   const [pending, start] = useTransition();
   return (

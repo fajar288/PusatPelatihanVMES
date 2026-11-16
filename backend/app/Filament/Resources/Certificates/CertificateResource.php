@@ -38,7 +38,7 @@ use Illuminate\Support\HtmlString;
 use Illuminate\Validation\ValidationException;
 use UnitEnum;
 
-/** Sertifikat — draf → validasi → terbit → cabut/ganti; PDF + QR; riwayat (PRD §5.10). */
+/** Sertifikat: draf → validasi → terbit → cabut/ganti; PDF + QR; riwayat (PRD §5.10). */
 class CertificateResource extends Resource
 {
     protected static ?string $model = Certificate::class;

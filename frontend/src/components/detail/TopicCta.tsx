@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { waLink } from "@/lib/utils";
 
-/** div.kbx.pcd "Tertarik dengan topik ini?" — kotak CTA sidebar single post, teks identik website lama. */
+/** div.kbx.pcd "Tertarik dengan topik ini?": kotak CTA sidebar single post, teks identik website lama. */
 export default function TopicCta({ topic }: { topic: string }) {
   return (
     <div className="kbx pcd" id="kd-sc">

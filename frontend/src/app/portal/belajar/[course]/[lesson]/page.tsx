@@ -12,7 +12,7 @@ import { type DiscussionPostInfo, LESSON_ICON, type LessonDetail, type ResourceI
 
 export const instant = false;
 
-/** /portal/belajar/[course]/[lesson] — konten lesson: materi/dokumen/video/tautan/kuis/tugas + berkas + diskusi. */
+/** /portal/belajar/[course]/[lesson] - konten lesson: materi/dokumen/video/tautan/kuis/tugas + berkas + diskusi. */
 export default async function LessonPage({ params }: PageProps<"/portal/belajar/[course]/[lesson]">) {
   const { course, lesson } = await params;
   const back = `/portal/belajar/${course}/${lesson}`;

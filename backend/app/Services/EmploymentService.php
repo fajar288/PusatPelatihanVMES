@@ -14,8 +14,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 /**
- * Siklus hubungan kerja (PRD Roadmap 5 §4.5, §20.6–§20.8). Resign/pindah tidak menghapus Member, enrollment,
- * maupun sertifikat (R4, R9) — hanya employment menjadi INACTIVE dan akses corporate orang itu di organisasi tsb dicabut.
+ * Siklus hubungan kerja (PRD Roadmap 5 §4.5, §20.6-§20.8). Resign/pindah tidak menghapus Member, enrollment,
+ * maupun sertifikat (R4, R9) - hanya employment menjadi INACTIVE dan akses corporate orang itu di organisasi tsb dicabut.
  */
 class EmploymentService
 {

@@ -18,7 +18,7 @@ const STATUS_LABEL: Record<RequestStatus, string> = {
   cancelled: "Dibatalkan",
 };
 
-/** /corporate/[org] — ringkasan: peserta bersponsor, training aktif, completion, kehadiran, sertifikat, kursi, permintaan. */
+/** /corporate/[org] - ringkasan: peserta bersponsor, training aktif, completion, kehadiran, sertifikat, kursi, permintaan. */
 export default async function CorporateOverview({ params }: PageProps<"/corporate/[org]">) {
   const { org } = await params;
   const s = await getSummary(org);

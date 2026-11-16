@@ -1,4 +1,4 @@
-// Bentuk data API portal member (/api/v1/me/*, /auth/*, /registrations) — lihat backend App\Http\Resources\{User,Registration,Invoice,AuditLog}Resource.
+// Bentuk data API portal member (/api/v1/me/*, /auth/*, /registrations) - lihat backend App\Http\Resources\{User,Registration,Invoice,AuditLog}Resource.
 import type { EnrollmentCertificate } from "./certificates";
 
 export type MemberProfile = {
@@ -33,7 +33,7 @@ export type PortalUser = {
 
 export type RegistrationStatus = "pending" | "under_review" | "waiting_payment" | "payment_verification" | "confirmed" | "rejected" | "cancelled";
 
-/** Invoice (Roadmap 5C) — backend App\Http\Resources\InvoiceResource. Pembayaran manual: status berubah hanya lewat verifikasi finance. */
+/** Invoice (Roadmap 5C) - backend App\Http\Resources\InvoiceResource. Pembayaran manual: status berubah hanya lewat verifikasi finance. */
 export type InvoiceStatus = "pending" | "paid" | "failed" | "expired" | "refunded" | "cancelled";
 
 export type InvoiceTransaction = {
@@ -207,7 +207,7 @@ export const INVOICE_PILL: Record<InvoiceStatus | "awaiting", { label: string; c
   cancelled: { label: "Dibatalkan", cls: "no" },
 };
 
-/** GET /me/assistant — Asisten Belajar (kerangka Roadmap 5 tahap 5G): selalu "Belum tersedia", tanpa panggilan AI. */
+/** GET /me/assistant - Asisten Belajar (kerangka Roadmap 5 tahap 5G): selalu "Belum tersedia", tanpa panggilan AI. */
 export type AssistantStatus = {
   enabled: boolean;
   available: boolean;

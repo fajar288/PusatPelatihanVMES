@@ -18,7 +18,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 /**
- * API enterprise — direktori karyawan (Employment Relationship, §4.5, §20.6) & sinkron HRIS.
+ * API enterprise: direktori karyawan (Employment Relationship, §4.5, §20.6) & sinkron HRIS.
  * Mencatat karyawan hanya menautkan Member yang SUDAH ada dan teridentifikasi yakin (email terverifikasi / nomor member);
  * API tidak pernah membuat akun (§20.5). Mengakhiri hubungan kerja tidak menghapus member, enrollment, maupun sertifikat (R4, R9).
  */
@@ -57,7 +57,7 @@ class EmployeeController extends EnterpriseController
     }
 
     /**
-     * POST /corporate/employees — catat hubungan kerja untuk member yang sudah ada (sumber `api`).
+     * POST /corporate/employees: catat hubungan kerja untuk member yang sudah ada (sumber `api`).
      * Sudah aktif → 200 dengan data yang ada (aman diulang). Identitas tidak yakin → 422 `identity_unresolved`.
      */
     public function store(Request $request, IdentityMatchingService $identity, MemberService $members, EmploymentService $employment): JsonResponse
@@ -98,7 +98,7 @@ class EmployeeController extends EnterpriseController
         return response()->json(['data' => EnterpriseApiPresenter::employee($e->load(['member.user', 'unit']))], 201);
     }
 
-    /** POST /corporate/employees/{code}/end — resign / kontrak berakhir / pindah: employment INACTIVE, akses corporate orang itu dicabut. */
+    /** POST /corporate/employees/{code}/end - resign / kontrak berakhir / pindah: employment INACTIVE, akses corporate orang itu dicabut. */
     public function end(Request $request, string $code, EmploymentService $employment): JsonResponse
     {
         $cu = $this->cu($request);

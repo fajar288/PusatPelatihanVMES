@@ -7,7 +7,7 @@ import { corporateApi, getSummary } from "@/lib/corporate-server";
 
 export const instant = false;
 
-/** /corporate/[org]/permintaan/baru — ajukan kebutuhan training (jumlah kursi; nama peserta menyusul). */
+/** /corporate/[org]/permintaan/baru: ajukan kebutuhan training (jumlah kursi; nama peserta menyusul). */
 export default async function NewRequestPage({ params }: PageProps<"/corporate/[org]/permintaan/baru">) {
   const { org } = await params;
   const s = await getSummary(org);

@@ -25,7 +25,7 @@ async function FormStatic() {
   return <RegisterForm schedules={await getSchedules()} />;
 }
 
-/** /daftar?jadwal= — formulir pendaftaran online (PRD §5.5) → POST /api/v1/registrations. */
+/** /daftar?jadwal=: formulir pendaftaran online (PRD §5.5) → POST /api/v1/registrations. */
 export default function DaftarPage({ searchParams }: PageProps<"/daftar">) {
   return (
     <>

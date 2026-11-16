@@ -264,7 +264,7 @@ class PaymentService
         }
     }
 
-    /** Efek bisnis setelah invoice lunas — hanya dipanggil sekali (di dalam transaksi verifikasi yang mengubah status). */
+    /** Efek bisnis setelah invoice lunas: hanya dipanggil sekali (di dalam transaksi verifikasi yang mengubah status). */
     private function onInvoicePaid(Invoice $invoice, PaymentTransaction $tx, User $actor): void
     {
         $reg = $invoice->registration;

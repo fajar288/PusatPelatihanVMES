@@ -7,7 +7,7 @@ import { requireTrainer } from "@/lib/trainer";
 
 export const instant = false;
 
-/** /trainer/penilaian/[code] — rubrik program + penilaian kompetensi tiap peserta kelas. */
+/** /trainer/penilaian/[code]: rubrik program + penilaian kompetensi tiap peserta kelas. */
 export default async function TrainerClassAssessments({ params }: PageProps<"/trainer/penilaian/[code]">) {
   const { code } = await params;
   const { token } = await requireTrainer(`/trainer/penilaian/${code}`);

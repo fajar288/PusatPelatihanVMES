@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-/** Portal peserta — My Learning / My Progress / Assignments / Results (PRD §5.8). Semua endpoint di bawah /me/learning. */
+/** Portal peserta: My Learning / My Progress / Assignments / Results (PRD §5.8). Semua endpoint di bawah /me/learning. */
 class LearningController extends Controller
 {
     public function __construct(private readonly LmsService $lms) {}
@@ -34,7 +34,7 @@ class LearningController extends Controller
             ->with(['module', 'resources'])->firstOrFail();
     }
 
-    /** GET /me/learning — course per enrollment dengan progres. */
+    /** GET /me/learning: course per enrollment dengan progres. */
     public function index(Request $request): JsonResponse
     {
         $enrollments = Enrollment::query()->ownedBy($request->user())->with('schedule.package')->latest('enrolled_at')->get()->filter(fn (Enrollment $e) => $e->canLearn());
@@ -53,7 +53,7 @@ class LearningController extends Controller
         return response()->json(['data' => $items]);
     }
 
-    /** GET /me/learning/{course} — pohon modul/lesson + progres. */
+    /** GET /me/learning/{course}: pohon modul/lesson + progres. */
     public function show(Request $request, Course $course): JsonResponse
     {
         $e = $this->lms->authorize($request->user(), $course);
@@ -70,7 +70,7 @@ class LearningController extends Controller
         ]]);
     }
 
-    /** GET /me/learning/{course}/lessons/{lesson} — konten lesson; mencatat "dibuka". */
+    /** GET /me/learning/{course}/lessons/{lesson}: konten lesson; mencatat "dibuka". */
     public function lesson(Request $request, Course $course, int $lesson): JsonResponse
     {
         $e = $this->lms->authorize($request->user(), $course);
@@ -81,7 +81,7 @@ class LearningController extends Controller
         return response()->json(['data' => LmsPresenter::lesson($l, $course, $e, $p, $this->lms)]);
     }
 
-    /** POST /me/learning/{course}/lessons/{lesson}/progress — {action: complete|video, position?, percent?, spent?} */
+    /** POST /me/learning/{course}/lessons/{lesson}/progress - {action: complete|video, position?, percent?, spent?} */
     public function progress(Request $request, Course $course, int $lesson): JsonResponse
     {
         $e = $this->lms->authorize($request->user(), $course);
@@ -109,7 +109,7 @@ class LearningController extends Controller
         return response()->json(['data' => LmsPresenter::quizState($l, $e, $this->lms)]);
     }
 
-    /** POST /me/learning/{course}/lessons/{lesson}/quiz/submit — {answers: {question_id: jawaban}} */
+    /** POST /me/learning/{course}/lessons/{lesson}/quiz/submit - {answers: {question_id: jawaban}} */
     public function submitQuiz(Request $request, Course $course, int $lesson): JsonResponse
     {
         $e = $this->lms->authorize($request->user(), $course);
@@ -122,7 +122,7 @@ class LearningController extends Controller
         return response()->json(['data' => LmsPresenter::quizState($l, $e, $this->lms) + ['result' => LmsPresenter::attempt($attempt, $l, (bool) ($l->config()['show_answers'] ?? true))]]);
     }
 
-    /** POST /me/learning/{course}/lessons/{lesson}/assignment — multipart: text?, file? */
+    /** POST /me/learning/{course}/lessons/{lesson}/assignment - multipart: text?, file? */
     public function submitAssignment(Request $request, Course $course, int $lesson): JsonResponse
     {
         $e = $this->lms->authorize($request->user(), $course);
@@ -133,7 +133,7 @@ class LearningController extends Controller
         return response()->json(['data' => LmsPresenter::submission($sub->load('grader'))], 201);
     }
 
-    /** GET /me/learning/assignments — semua tugas lintas course beserta status pengumpulan. */
+    /** GET /me/learning/assignments: semua tugas lintas course beserta status pengumpulan. */
     public function assignments(Request $request): JsonResponse
     {
         $rows = [];
@@ -153,7 +153,7 @@ class LearningController extends Controller
         return response()->json(['data' => $rows]);
     }
 
-    /** GET /me/learning/results — nilai kuis (percobaan terbaik) & tugas yang dinilai. */
+    /** GET /me/learning/results: nilai kuis (percobaan terbaik) & tugas yang dinilai. */
     public function results(Request $request): JsonResponse
     {
         $quizzes = [];
@@ -174,7 +174,7 @@ class LearningController extends Controller
         return response()->json(['data' => ['quizzes' => $quizzes, 'assignments' => $tasks]]);
     }
 
-    /** GET /me/learning/{course}/discussions?lesson= — forum/tanya jawab (peserta, trainer kelas, admin). */
+    /** GET /me/learning/{course}/discussions?lesson=: forum/tanya jawab (peserta, trainer kelas, admin). */
     public function discussions(Request $request, Course $course): JsonResponse
     {
         $this->authorizeDiscussion($request, $course);
@@ -185,7 +185,7 @@ class LearningController extends Controller
         return response()->json(['data' => $q->get()->map(fn ($p) => LmsPresenter::post($p))->values()]);
     }
 
-    /** POST /me/learning/{course}/discussions — {body, lesson_id?, parent_id?} */
+    /** POST /me/learning/{course}/discussions: {body, lesson_id?, parent_id?} */
     public function storeDiscussion(Request $request, Course $course): JsonResponse
     {
         $isTrainer = $this->authorizeDiscussion($request, $course);
@@ -202,7 +202,7 @@ class LearningController extends Controller
         return response()->json(['data' => LmsPresenter::post($post->load('user'))], 201);
     }
 
-    /** GET /me/learning/resources/{resource} — unduh/lihat berkas materi (butuh akses course; unduh hanya bila diizinkan). */
+    /** GET /me/learning/resources/{resource}: unduh/lihat berkas materi (butuh akses course; unduh hanya bila diizinkan). */
     public function resource(Request $request, LessonResource $resource): StreamedResponse
     {
         $lesson = $resource->lesson()->with('module.course')->firstOrFail();
@@ -220,7 +220,7 @@ class LearningController extends Controller
         return $disk->response($resource->file_path, $name, ['Content-Type' => $resource->mime ?: 'application/octet-stream'], $inline ? 'inline' : 'attachment');
     }
 
-    /** GET /me/learning/submissions/{submission}/file — berkas tugas milik sendiri. */
+    /** GET /me/learning/submissions/{submission}/file: berkas tugas milik sendiri. */
     public function submissionFile(Request $request, AssignmentSubmission $submission): StreamedResponse
     {
         $e = Enrollment::query()->ownedBy($request->user())->whereKey($submission->enrollment_id)->exists();

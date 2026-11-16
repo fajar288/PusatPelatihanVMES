@@ -5,10 +5,10 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * Roadmap 5 tahap 5B — Corporate Portal MVP (PRD Roadmap 5 §4.2, §4.3, §20.3, §20.4, §20.13).
+ * Roadmap 5 tahap 5B: Corporate Portal MVP (PRD Roadmap 5 §4.2, §4.3, §20.3, §20.4, §20.13).
  * - training_requests: permintaan training perusahaan berbasis kebutuhan (bukan daftar nama), status §4.2.
  * - request_seats: kursi 01..N. Kursi yang dipesan TIDAK membuat Member (§20.3, AC §20.22).
- * - participant_invitations: tautan undangan bertoken (hash) — peserta melengkapi data sendiri, verifikasi email + consent.
+ * - participant_invitations: tautan undangan bertoken (hash) - peserta melengkapi data sendiri, verifikasi email + consent.
  */
 return new class extends Migration
 {
@@ -49,7 +49,7 @@ return new class extends Migration
             $table->timestamp('cancelled_at')->nullable();
             $table->foreignId('cancelled_by')->nullable()->constrained('users')->nullOnDelete();
             $table->text('cancel_reason')->nullable();
-            $table->text('internal_notes')->nullable()->comment('catatan internal VMES — tidak tampil ke perusahaan');
+            $table->text('internal_notes')->nullable()->comment('catatan internal VMES - tidak tampil ke perusahaan');
             $table->timestamps();
             $table->index(['organization_id', 'status']);
         });

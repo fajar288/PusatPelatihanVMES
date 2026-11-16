@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
 /**
- * API enterprise — status pembayaran (invoice + transaksi manual, scope payments.read, peran view_finance) dan status
+ * API enterprise: status pembayaran (invoice + transaksi manual, scope payments.read, peran view_finance) dan status
  * pengiriman notifikasi ke pengguna perusahaan (scope notifications.read). Pembayaran tetap manual: status invoice
  * hanya berubah lewat verifikasi finance VMES, API ini hanya membaca.
  */
@@ -31,7 +31,7 @@ class AccountController extends EnterpriseController
         return $this->paginate($request, $q, fn (Invoice $i) => EnterpriseApiPresenter::invoice($i));
     }
 
-    /** GET /payments/{number} — invoice + item + transaksi (tanpa berkas bukti transfer). */
+    /** GET /payments/{number}: invoice + item + transaksi (tanpa berkas bukti transfer). */
     public function payment(Request $request, string $number): JsonResponse
     {
         $i = $this->reporting->invoicesQuery($this->cu($request))->where('invoice_number', $number)
@@ -40,7 +40,7 @@ class AccountController extends EnterpriseController
         return $i ? response()->json(['data' => EnterpriseApiPresenter::invoice($i, true)]) : $this->notFound('Invoice tidak ditemukan.');
     }
 
-    /** GET /notifications?status=&channel=&event=&updated_since= — pengiriman ke pengguna perusahaan organisasi ini. */
+    /** GET /notifications?status=&channel=&event=&updated_since=: pengiriman ke pengguna perusahaan organisasi ini. */
     public function notifications(Request $request): JsonResponse
     {
         $cu = $this->cu($request);

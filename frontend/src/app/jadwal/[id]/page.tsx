@@ -50,7 +50,7 @@ function OtherSchedules({ items, variant }: { items: Schedule[]; variant: "rt-d"
   );
 }
 
-/** /jadwal/[id] — detail batch (PRD §5.4). `id` = kode kelas. Data: GET /api/v1/schedules/{code}. */
+/** /jadwal/[id] - detail batch (PRD §5.4). `id` = kode kelas. Data: GET /api/v1/schedules/{code}. */
 export default async function JadwalDetailPage({ params }: PageProps<"/jadwal/[id]">) {
   const { id } = await params;
   const d = await getSchedule(id);

@@ -10,7 +10,7 @@ import type { InvoiceInfo } from "@/lib/portal-types";
 
 export const instant = false;
 
-/** /corporate/[org]/keuangan/[number] — rincian invoice perusahaan, riwayat transaksi, unggah bukti transfer. */
+/** /corporate/[org]/keuangan/[number]: rincian invoice perusahaan, riwayat transaksi, unggah bukti transfer. */
 export default async function CorporateInvoicePage({ params }: PageProps<"/corporate/[org]/keuangan/[number]">) {
   const { org, number } = await params;
   const next = `/corporate/${org}/keuangan/${number}`;

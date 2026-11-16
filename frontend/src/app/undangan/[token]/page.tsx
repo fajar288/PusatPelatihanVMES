@@ -23,7 +23,7 @@ type Invitation = {
   expiresAt: string | null;
 };
 
-/** /undangan/[token] — undangan peserta dari perusahaan (Roadmap 5 §20.4): masuk dengan email yang diundang, consent, terima. */
+/** /undangan/[token] - undangan peserta dari perusahaan (Roadmap 5 §20.4): masuk dengan email yang diundang, consent, terima. */
 export default async function InvitationPage({ params }: PageProps<"/undangan/[token]">) {
   const { token } = await params;
   let inv: Invitation;

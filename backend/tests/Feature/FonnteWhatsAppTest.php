@@ -28,7 +28,7 @@ use Tests\TestCase;
 /**
  * Driver WhatsApp Fonnte: kirim (form-encoded, Authorization tanpa Bearer, countryCode string), galat sementara → retry,
  * galat permanen → langsung gagal, binding driver, webhook status pesan & device (secret di path), widget status,
- * kirim WA uji. Semua lewat Http::fake() — tidak ada request ke internet.
+ * kirim WA uji. Semua lewat Http::fake() - tidak ada request ke internet.
  */
 class FonnteWhatsAppTest extends TestCase
 {

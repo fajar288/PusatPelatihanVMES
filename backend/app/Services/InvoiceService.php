@@ -261,7 +261,7 @@ class InvoiceService
         ])->setPaper('a4')->setOption('isRemoteEnabled', false)->setOption('isFontSubsettingEnabled', true)->output();
     }
 
-    /** Logo kecil (lebar 360 px) untuk PDF — logo asli 1600 px membuat tiap PDF ±1 MB. Disimpan sekali di storage. */
+    /** Logo kecil (lebar 360 px) untuk PDF: logo asli 1600 px membuat tiap PDF ±1 MB. Disimpan sekali di storage. */
     private function pdfLogo(): ?string
     {
         $src = public_path('images/logo.jpeg');

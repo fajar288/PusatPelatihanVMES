@@ -1,7 +1,7 @@
 import WhyCard from "@/components/cards/WhyCard";
 import type { WhyData } from "@/lib/cms-types";
 
-/** section.ms — "Mengapa PPTI" 6 kartu. */
+/** section.ms: "Mengapa PPTI" 6 kartu. */
 export default function WhyUs({ why }: { why: WhyData }) {
   return (
     <section className="ms">

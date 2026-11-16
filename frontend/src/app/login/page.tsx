@@ -13,7 +13,7 @@ export const instant = false;
 
 const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v) ?? "";
 
-/** /login — masuk portal member (cookie sesi httpOnly via server action). */
+/** /login: masuk portal member (cookie sesi httpOnly via server action). */
 export default async function LoginPage({ searchParams }: PageProps<"/login">) {
   const sp = await searchParams;
   const next = first(sp.next).startsWith("/") ? first(sp.next) : "/portal";

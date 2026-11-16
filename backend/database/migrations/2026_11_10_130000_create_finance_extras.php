@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-/** Phase 2 tahap 2 — finance lanjutan (PRD §5.11): kode promo, diskon, termin pembayaran. */
+/** Phase 2 tahap 2 - finance lanjutan (PRD §5.11): kode promo, diskon, termin pembayaran. */
 return new class extends Migration
 {
     public function up(): void

@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useRef } from "react";
 import type { PartnerLogo } from "@/lib/cms-types";
 
-/** section.ps — logo partner grid 2 baris scroll horizontal, panah geser 80% lebar (fungsi slide() theme.main.js). */
+/** section.ps: logo partner grid 2 baris scroll horizontal, panah geser 80% lebar (fungsi slide() theme.main.js). */
 export default function Partners({ partners }: { partners: PartnerLogo[] }) {
   const pt = useRef<HTMLDivElement>(null);
   const go = (d: number) => pt.current?.scrollBy({ left: d * pt.current.clientWidth * 0.8, behavior: "smooth" });

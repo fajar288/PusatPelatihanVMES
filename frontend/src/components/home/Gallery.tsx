@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { GalleryItem } from "@/lib/cms-types";
 
-/** section.gs — mosaic galeri 6 foto + lightbox .lb (Esc / klik untuk tutup). */
+/** section.gs: mosaic galeri 6 foto + lightbox .lb (Esc / klik untuk tutup). */
 export default function Gallery({ items }: { items: GalleryItem[] }) {
   const [lb, setLb] = useState<string | null>(null);
 

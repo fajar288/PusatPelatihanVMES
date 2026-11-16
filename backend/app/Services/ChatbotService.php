@@ -80,7 +80,7 @@ class ChatbotService
         return ['id' => $log->id, 'reply' => $text, 'status' => $log->status];
     }
 
-    /** Umpan balik pengunjung (👍/👎) — hanya untuk log milik percakapan yang sama. */
+    /** Umpan balik pengunjung (👍/👎): hanya untuk log milik percakapan yang sama. */
     public function feedback(int $id, string $conversationId, string $value): bool
     {
         return ChatLog::query()->whereKey($id)->where('conversation_id', $conversationId)->update(['feedback' => $value]) > 0;

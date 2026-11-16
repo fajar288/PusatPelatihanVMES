@@ -260,7 +260,7 @@
 .att td .pmeta.sm{margin-top:2px}
 .pnotif .pmeta.sm .pmeta-v{font-weight:700}
 .spl{display:grid;gap:2px;min-width:0}.spl>b{color:var(--ink);text-align:left}.spl small{font-size:13px;color:var(--mut);font-weight:500;line-height:1.45}
-/* Reset: butir metadata bisa berada di dalam .sp/.lres-l/.pnotif/.kj — jangan mewarisi gaya li/b/span daftar induk */
+/* Reset: butir metadata bisa berada di dalam .sp/.lres-l/.pnotif/.kj - jangan mewarisi gaya li/b/span daftar induk */
 .pmeta>li.pmi{display:inline-flex;align-items:center;justify-content:flex-start;gap:7px;min-width:0;margin:0;padding:0;border:0;border-radius:0;background:none;box-shadow:none;overflow:visible;font-size:inherit}
 .pmeta .pmi>span{display:inline;flex:none}
 /* Rekening pembayaran manual (portal) */
@@ -269,7 +269,7 @@
 .pacc-i{white-space:pre-line}
 .copyb{border:1px solid var(--ln);background:var(--w);border-radius:99px;padding:3px 12px;font:inherit;font-size:12px;font-weight:700;color:var(--p);cursor:pointer}
 .copyb:hover{border-color:currentColor}
-/* Asisten virtual (chatbot AI) — tombol di atas tombol WhatsApp, panel melayang; layar penuh di ponsel */
+/* Asisten virtual (chatbot AI): tombol di atas tombol WhatsApp, panel melayang; layar penuh di ponsel */
 .chatf{position:fixed;right:20px;bottom:84px;z-index:91;display:inline-flex;align-items:center;gap:8px;border:0;cursor:pointer;background:var(--p);color:var(--w);border-radius:99px;padding:11px 16px 11px 13px;font:inherit;font-weight:800;font-size:14px;box-shadow:0 10px 26px rgba(0,75,35,.35);transition:transform .2s,box-shadow .2s}
 .chatf:hover{transform:translateY(-2px)}.chatf.on{background:var(--pd)}
 .chatf svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}

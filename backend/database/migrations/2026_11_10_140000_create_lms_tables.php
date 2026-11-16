@@ -5,7 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * Phase 3 tahap 1 — LMS (PRD §5.8):
+ * Phase 3 tahap 1 - LMS (PRD §5.8):
  * Program (paket) → Kelas (jadwal) → Course → Module → Lesson → Resource, kuis & soal, tugas & pengumpulan,
  * learning progress per enrollment, forum diskusi.
  */

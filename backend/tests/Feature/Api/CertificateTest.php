@@ -26,7 +26,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
 
-/** Phase 4 — aturan kelulusan, sertifikat (draf → validasi → terbit → cabut/ganti), PDF + QR, verifikasi publik, dashboard alumni. */
+/** Phase 4: aturan kelulusan, sertifikat (draf → validasi → terbit → cabut/ganti), PDF + QR, verifikasi publik, dashboard alumni. */
 class CertificateTest extends TestCase
 {
     use RefreshDatabase;
@@ -38,7 +38,7 @@ class CertificateTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        Carbon::setTestNow('2026-11-22 09:00:00'); // kelas CCNA-2611 (17–21 Nov 2026) sudah selesai
+        Carbon::setTestNow('2026-11-22 09:00:00'); // kelas CCNA-2611 (17-21 Nov 2026) sudah selesai
         $this->seed([RolesSeeder::class, CmsSeeder::class]);
         Notification::fake();
         Storage::fake(config('filesystems.default'));

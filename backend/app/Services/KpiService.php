@@ -15,7 +15,7 @@ use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
- * KPI PRD Roadmap 5 §8.1 — implementasi PERSIS definisi di docs/KPI.md (perubahan rumus wajib mengubah dokumen itu juga).
+ * KPI PRD Roadmap 5 §8.1: implementasi PERSIS definisi di docs/KPI.md (perubahan rumus wajib mengubah dokumen itu juga).
  *
  * Lingkup (scope) satu perhitungan:
  * - from/to      : periode (Y-m-d, inklusif).
@@ -23,7 +23,7 @@ use Illuminate\Database\Eloquent\Builder;
  * - schedule_ids : batas kelas dari filter program Dashboard Eksekutif (null = semua kelas).
  * - package_ids  : paket dari kelas terfilter (untuk request/invoice yang belum punya kelas; null = semua).
  * - corporate_user: bila diisi, semua populasi dibatasi data yang boleh dilihat pengguna perusahaan itu
- *                   (enrollment bersponsor + batas unit, invoice & request organisasi) — dipakai Corporate Portal & API.
+ *                   (enrollment bersponsor + batas unit, invoice & request organisasi) - dipakai Corporate Portal & API.
  */
 class KpiService
 {
@@ -40,7 +40,7 @@ class KpiService
         'at_risk_rate' => 'At-Risk Rate',
     ];
 
-    /** Definisi operasional ringkas (sama dengan docs/KPI.md) — ditampilkan di dashboard & API. */
+    /** Definisi operasional ringkas (sama dengan docs/KPI.md): ditampilkan di dashboard & API. */
     public const DEFINITIONS = [
         'completion_rate' => 'Enrollment lulus (completed) / enrollment yang eligible: bukan dropped, kelas tidak dibatalkan, tanggal selesai kelas dalam periode dan kelas sudah berakhir (atau hasil akhirnya sudah ditetapkan).',
         'attendance_rate' => 'Kehadiran (hadir/terlambat) / sesi terjadwal yang sudah berlangsung dalam periode, dijumlahkan untuk setiap enrollment bukan dropped di kelas yang tidak dibatalkan.',

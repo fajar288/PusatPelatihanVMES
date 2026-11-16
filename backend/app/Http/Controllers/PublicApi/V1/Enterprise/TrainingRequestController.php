@@ -19,7 +19,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 /**
- * API enterprise — Corporate Training Request (§4.2, §20.3, §20.13) & penugasan peserta ke kursi (§4.3, §20.4).
+ * API enterprise: Corporate Training Request (§4.2, §20.3, §20.13) & penugasan peserta ke kursi (§4.3, §20.4).
  * Memakai service yang sama dengan Corporate Portal: identity matching, aturan status, audit, notifikasi.
  */
 class TrainingRequestController extends EnterpriseController
@@ -54,7 +54,7 @@ class TrainingRequestController extends EnterpriseController
         return $r ? $this->detail($cu, $r) : $this->notFound('Request tidak ditemukan.');
     }
 
-    /** POST /corporate/requests — kursi dibuat tanpa membuat Member (§20.22). `submit=true` langsung dikirim ke VMES. */
+    /** POST /corporate/requests: kursi dibuat tanpa membuat Member (§20.22). `submit=true` langsung dikirim ke VMES. */
     public function store(Request $request): JsonResponse
     {
         $cu = $this->cu($request);
@@ -77,7 +77,7 @@ class TrainingRequestController extends EnterpriseController
         return $this->detail($cu, $r->refresh(), 201);
     }
 
-    /** POST /corporate/requests/{code}/{action} — submit | accept-quote | approve | cancel */
+    /** POST /corporate/requests/{code}/{action}: submit | accept-quote | approve | cancel */
     public function transition(Request $request, string $code, string $action): JsonResponse
     {
         $cu = $this->cu($request);
@@ -97,7 +97,7 @@ class TrainingRequestController extends EnterpriseController
     }
 
     /**
-     * POST /corporate/requests/{code}/participants — tetapkan peserta ke kursi kosong (atau `seat` tertentu).
+     * POST /corporate/requests/{code}/participants: tetapkan peserta ke kursi kosong (atau `seat` tertentu).
      * `employment` (kode EMP-…) = karyawan aktif yang sudah tertaut; selain itu data orang → identity matching:
      * member terverifikasi dipakai ulang, kandidat diundang lewat email, data meragukan ke review VMES.
      */
@@ -140,7 +140,7 @@ class TrainingRequestController extends EnterpriseController
         ]], $result['status'] === 'review' ? 202 : 201);
     }
 
-    /** POST /corporate/requests/{code}/seats/{no}/release — batalkan satu peserta; hanya enrollment kursi itu yang berubah (§11). */
+    /** POST /corporate/requests/{code}/seats/{no}/release: batalkan satu peserta; hanya enrollment kursi itu yang berubah (§11). */
     public function release(Request $request, string $code, int $no): JsonResponse
     {
         $cu = $this->cu($request);

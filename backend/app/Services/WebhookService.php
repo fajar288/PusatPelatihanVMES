@@ -34,7 +34,7 @@ class WebhookService
         return $delivery;
     }
 
-    /** Scope baca yang wajib dimiliki klien untuk menerima tiap kelompok event enterprise — webhook tidak memberi lebih dari API. */
+    /** Scope baca yang wajib dimiliki klien untuk menerima tiap kelompok event enterprise - webhook tidak memberi lebih dari API. */
     public const ENTERPRISE_EVENT_SCOPES = [
         'training_request' => 'corporate.requests.read',
         'enrollment' => 'enrollments.read',
@@ -76,7 +76,7 @@ class WebhookService
         return $sent;
     }
 
-    /** Event uji `ping` dari panel admin — dikirim langsung (tanpa antrean) agar hasilnya terlihat seketika. */
+    /** Event uji `ping` dari panel admin: dikirim langsung (tanpa antrean) agar hasilnya terlihat seketika. */
     public function ping(ApiClient $client): WebhookDelivery
     {
         $uuid = (string) Str::uuid();

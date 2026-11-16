@@ -6,7 +6,7 @@ import { requireTrainer, type TrainerClass } from "@/lib/trainer";
 
 export const instant = false;
 
-/** /trainer/tugas — Assignments: per kelas, jumlah pengumpulan yang menunggu penilaian. */
+/** /trainer/tugas - Assignments: per kelas, jumlah pengumpulan yang menunggu penilaian. */
 export default async function TrainerAssignmentsPage() {
   const { token } = await requireTrainer("/trainer/tugas");
   const classes = (await api<{ data: TrainerClass[] }>("/trainer/classes", { token })).data;

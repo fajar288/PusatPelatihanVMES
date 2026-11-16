@@ -1,6 +1,6 @@
 import { proxyFile } from "@/lib/file-proxy";
 
-/** /portal/sertifikat/unduh/[number]?inline=1 — PDF sertifikat via API terautentikasi (token di cookie httpOnly). */
+/** /portal/sertifikat/unduh/[number]?inline=1: PDF sertifikat via API terautentikasi (token di cookie httpOnly). */
 export async function GET(request: Request, { params }: RouteContext<"/portal/sertifikat/unduh/[number]">) {
   const { number } = await params;
   const inline = new URL(request.url).searchParams.get("inline") === "1";

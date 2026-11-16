@@ -5,7 +5,7 @@ import Icon from "@/components/ui/Icon";
 import type { StatItem } from "@/lib/cms-types";
 
 /**
- * div.sb > div.sg — bar statistik dengan counter animasi (port "Counter statistik" theme.main.js):
+ * div.sb > div.sg - bar statistik dengan counter animasi (port "Counter statistik" theme.main.js):
  * 1800ms ease-out-cubic, mulai saat 40% elemen terlihat, format angka id-ID.
  */
 export default function StatsBar({ stats }: { stats: StatItem[] }) {

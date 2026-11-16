@@ -100,7 +100,7 @@ export const PARTNERS: { name: string; logo: string; w: number; h: number }[] = 
   { name: "PLN", logo: "/images/partners/pln.png", w: 2480, h: 3397 },
 ];
 
-// ===== GALERI (hotlink pihak ketiga — ganti dengan foto PPTI) =====
+// ===== GALERI (hotlink pihak ketiga - ganti dengan foto PPTI) =====
 export const GALLERY: { src: string; alt: string }[] = [
   { src: "https://merca.team/wp-content/uploads/2026/02/training-within-industry-1024x683.webp", alt: "Dokumentasi training PPTI" },
   { src: "https://images.unsplash.com/photo-1780034766312-73825064806c?w=1024&q=80&auto=format&fit=crop", alt: "Dokumentasi training PPTI" },

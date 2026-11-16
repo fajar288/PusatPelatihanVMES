@@ -8,7 +8,7 @@ import type { CourseDetail, DiscussionPostInfo } from "@/lib/lms";
 
 export const instant = false;
 
-/** /portal/belajar/[course] — daftar modul & lesson dengan status progres + forum course. */
+/** /portal/belajar/[course]: daftar modul & lesson dengan status progres + forum course. */
 export default async function CoursePage({ params }: PageProps<"/portal/belajar/[course]">) {
   const { course } = await params;
   const { token } = await requireUser(`/portal/belajar/${course}`);

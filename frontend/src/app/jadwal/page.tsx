@@ -25,7 +25,7 @@ async function Static() {
   return <ScheduleCatalog schedules={schedules} categories={categoriesOf(schedules)} />;
 }
 
-/** /jadwal — clone `/category/jadwal/` (g-jadwal): hero, bar cari/kategori/urut, list baris + kalender bulanan. Data: GET /api/v1/schedules. */
+/** /jadwal - clone `/category/jadwal/` (g-jadwal): hero, bar cari/kategori/urut, list baris + kalender bulanan. Data: GET /api/v1/schedules. */
 export default function JadwalPage({ searchParams }: PageProps<"/jadwal">) {
   return (
     <div className="g-jadwal">

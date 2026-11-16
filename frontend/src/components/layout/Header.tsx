@@ -8,7 +8,7 @@ import type { SiteSettings } from "@/lib/cms-types";
 import { waLink } from "@/lib/utils";
 
 /**
- * Header sticky — port dari header.hd + JS fitNav/onSc di theme.main.js:
+ * Header sticky - port dari header.hd + JS fitNav/onSc di theme.main.js:
  *  - scroll > 24px → class "shr" (tinggi 56px, logo 36px, shadow)
  *  - nav overflow → "ns" (sembunyikan search), masih overflow → "cp" (hamburger + dropdown)
  */

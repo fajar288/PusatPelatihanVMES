@@ -7,7 +7,7 @@ use App\Support\Media;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-/** API Publik v1 — program (paket training). Detail menambah silabus & jadwal mendatang. @mixin TrainingPackage */
+/** API Publik v1: program (paket training). Detail menambah silabus & jadwal mendatang. @mixin TrainingPackage */
 class ProgramResource extends JsonResource
 {
     public bool $detail = false;

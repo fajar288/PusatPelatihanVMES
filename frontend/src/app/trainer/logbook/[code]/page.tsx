@@ -9,7 +9,7 @@ import { requireTrainer } from "@/lib/trainer";
 
 export const instant = false;
 
-/** /trainer/logbook/[code] — daftar logbook kelas + form pertemuan baru. */
+/** /trainer/logbook/[code]: daftar logbook kelas + form pertemuan baru. */
 export default async function TrainerClassLogbook({ params }: PageProps<"/trainer/logbook/[code]">) {
   const { code } = await params;
   const { token } = await requireTrainer(`/trainer/logbook/${code}`);

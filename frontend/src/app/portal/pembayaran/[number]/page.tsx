@@ -9,7 +9,7 @@ import type { InvoiceInfo } from "@/lib/portal-types";
 
 export const instant = false;
 
-/** /portal/pembayaran/[number] — rincian invoice, riwayat transaksi, unggah bukti transfer. */
+/** /portal/pembayaran/[number]: rincian invoice, riwayat transaksi, unggah bukti transfer. */
 export default async function InvoicePage({ params }: PageProps<"/portal/pembayaran/[number]">) {
   const { number } = await params;
   const { token, user } = await requireUser(`/portal/pembayaran/${number}`);

@@ -244,7 +244,7 @@ class CorporateAnalyticsService
         })->sortByDesc('participants')->values()->all();
     }
 
-    /** Pembelian ulang (§20.15 Repeat Training) — order lunas organisasi sepanjang waktu (dalam batas unit pengguna). */
+    /** Pembelian ulang (§20.15 Repeat Training): order lunas organisasi sepanjang waktu (dalam batas unit pengguna). */
     private function repeat(CorporateUser $cu): array
     {
         $orders = $this->reporting->invoicesQuery($cu)->whereNotNull('paid_at')->whereColumn('amount_paid', '>', 'amount_refunded')
@@ -285,7 +285,7 @@ class CorporateAnalyticsService
         ];
     }
 
-    /** Daftar peserta berisiko yang boleh dibuka per nama (tanpa email — §20.11). */
+    /** Daftar peserta berisiko yang boleh dibuka per nama (tanpa email - §20.11). */
     private function riskRows(CorporateUser $cu, array $flagged): array
     {
         if ($flagged === []) {

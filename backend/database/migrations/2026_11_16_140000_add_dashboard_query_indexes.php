@@ -5,7 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * Roadmap 5 tahap 5H — indeks untuk kueri dashboard & laporan (Dashboard Eksekutif, KPI §8.1, Corporate Portal,
+ * Roadmap 5 tahap 5H: indeks untuk kueri dashboard & laporan (Dashboard Eksekutif, KPI §8.1, Corporate Portal,
  * API enterprise, rekonsiliasi). PostgreSQL TIDAK membuat indeks otomatis untuk foreign key, jadi kolom yang sering
  * difilter/di-join (member, sponsor, invoice, organisasi, tanggal bayar) diberi indeks eksplisit. MySQL sudah membuat
  * indeks untuk foreign key; indeks yang kolomnya sudah tercakup dilewati (Schema::hasIndex) agar migrasi aman diulang.

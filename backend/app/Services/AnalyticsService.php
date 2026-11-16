@@ -120,7 +120,7 @@ class AnalyticsService
         ];
     }
 
-    /** Completion Rate sesuai definisi KPI §8.1 (docs/KPI.md) — satu angka completion di seluruh dashboard. */
+    /** Completion Rate sesuai definisi KPI §8.1 (docs/KPI.md): satu angka completion di seluruh dashboard. */
     private function kpiCompletion(array $f): ?float
     {
         $kpi = app(KpiService::class);

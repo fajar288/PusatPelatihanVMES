@@ -1,4 +1,4 @@
-// Data kursus dummy — identik dengan konten contoh tema pusatpelatihan.id.
+// Data kursus dummy: identik dengan konten contoh tema pusatpelatihan.id.
 // Nanti diganti dengan GET /api/v1/packages dan /api/v1/packages/{slug} (Laravel).
 export type CourseStatus = "ok" | "no";
 
@@ -22,7 +22,7 @@ export type Course = {
   price: number;
   popular?: boolean;
   image?: string; // kosong → .noimg gradien hijau
-  /** Unix time publikasi (data-d di website lama) — dipakai urutan "Terbaru". */
+  /** Unix time publikasi (data-d di website lama): dipakai urutan "Terbaru". */
   publishedAt: number;
   // ---- detail (halaman /kursus/[slug]; website lama belum punya datanya) ----
   level: string;

@@ -5,7 +5,7 @@ import type { RegistrationInfo } from "@/lib/portal-types";
 // Halaman per-pengguna (cookie sesi + API terautentikasi) → diblokir di server, tidak di-prerender.
 export const instant = false;
 
-/** /portal/pendaftaran — riwayat semua pendaftaran (Registration History). */
+/** /portal/pendaftaran: riwayat semua pendaftaran (Registration History). */
 export default async function PortalRegistrationsPage() {
   const { token } = await requireUser("/portal/pendaftaran");
   const regs = (await api<{ data: RegistrationInfo[] }>("/me/registrations", { token })).data;

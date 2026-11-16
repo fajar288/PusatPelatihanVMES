@@ -35,7 +35,7 @@ class CorporateAccess
             ->whereHas('organization', fn (Builder $q) => $q->active())->with(['organization', 'unit'])->get();
     }
 
-    /** Semua enrollment bersponsor dalam scope pengguna (dipakai juga untuk agregat — exit tetap dihitung). */
+    /** Semua enrollment bersponsor dalam scope pengguna (dipakai juga untuk agregat - exit tetap dihitung). */
     public function sponsoredEnrollments(CorporateUser $cu): Builder
     {
         return Enrollment::query()->visibleToCorporateUser($cu);

@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\IpUtils;
  * Klien API Publik (integrasi pihak ketiga: mitra, korporasi, principal, agregator).
  * Autentikasi memakai API key `ppti_<prefix>_<rahasia>` yang hanya disimpan sebagai hash sha256.
  *
- * Roadmap 5E — klien ENTERPRISE terikat satu organisasi dan bertindak atas nama satu pengguna perusahaan aktif
+ * Roadmap 5E: klien ENTERPRISE terikat satu organisasi dan bertindak atas nama satu pengguna perusahaan aktif
  * organisasi itu: data selalu dibatasi organisasi tsb (tidak ada parameter organisasi di URL/API, §20.21), dan
  * peran + batas unit pengguna perusahaan itu ikut membatasi scope. Menonaktifkan pengguna perusahaan (mis. karena
  * resign) otomatis memutus akses klien.
@@ -30,7 +30,7 @@ class ApiClient extends Model
         'certificates.verify' => 'Memverifikasi keaslian sertifikat',
     ];
 
-    /** Scope enterprise (PRD Roadmap 5 §7) — hanya untuk klien yang terikat organisasi. */
+    /** Scope enterprise (PRD Roadmap 5 §7): hanya untuk klien yang terikat organisasi. */
     public const ENTERPRISE_SCOPES = [
         'organization.read' => 'Profil organisasi, unit & peran klien',
         'corporate.requests.read' => 'Membaca Corporate Training Request & kursinya',
@@ -49,7 +49,7 @@ class ApiClient extends Model
     ];
 
     /**
-     * Kemampuan peran perusahaan (CorporateUser::CAPABILITIES) yang dibutuhkan tiap scope enterprise — salah satu cukup.
+     * Kemampuan peran perusahaan (CorporateUser::CAPABILITIES) yang dibutuhkan tiap scope enterprise - salah satu cukup.
      * Daftar kosong = semua peran.
      */
     public const SCOPE_CAPABILITIES = [
@@ -77,7 +77,7 @@ class ApiClient extends Model
         'certificate.revoked' => 'Sertifikat dicabut (peserta dari pendaftaran klien, atau enrollment bersponsor organisasi klien)',
     ];
 
-    /** Event webhook enterprise — hanya untuk klien terikat organisasi, berisi data organisasi itu saja. */
+    /** Event webhook enterprise: hanya untuk klien terikat organisasi, berisi data organisasi itu saja. */
     public const ENTERPRISE_WEBHOOK_EVENTS = [
         'training_request.status_changed' => 'Status Corporate Training Request berubah',
         'enrollment.created' => 'Enrollment bersponsor organisasi dibuat',
@@ -189,7 +189,7 @@ class ApiClient extends Model
         return $this->organization_id !== null;
     }
 
-    /** Buat key baru (mengganti yang lama bila ada). Mengembalikan key asli — tampilkan sekali saja. */
+    /** Buat key baru (mengganti yang lama bila ada). Mengembalikan key asli - tampilkan sekali saja. */
     public function generateKey(): string
     {
         $prefix = strtolower(Str::random(8));

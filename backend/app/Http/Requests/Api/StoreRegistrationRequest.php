@@ -6,7 +6,7 @@ use App\Models\Registration;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-/** POST /api/v1/registrations — pendaftaran individu atau kolektif (PRD §5.5). */
+/** POST /api/v1/registrations: pendaftaran individu atau kolektif (PRD §5.5). */
 class StoreRegistrationRequest extends FormRequest
 {
     public function rules(): array

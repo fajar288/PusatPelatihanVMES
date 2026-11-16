@@ -28,7 +28,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use UnitEnum;
 
-/** Monitoring — rubrik penilaian kompetensi per program (PRD §5.9): kriteria, bobot, skala & deskriptor level. */
+/** Monitoring - rubrik penilaian kompetensi per program (PRD §5.9): kriteria, bobot, skala & deskriptor level. */
 class AssessmentRubricResource extends Resource
 {
     protected static ?string $model = AssessmentRubric::class;

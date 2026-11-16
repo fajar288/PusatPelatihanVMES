@@ -9,13 +9,13 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Ekspor laporan admin (CSV/XLSX) — dilindungi sesi panel Filament (redirect ke /admin/login bila belum masuk)
+// Ekspor laporan admin (CSV/XLSX): dilindungi sesi panel Filament (redirect ke /admin/login bila belum masuk)
 Route::get('/admin/export/{type}.{format}', ReportExportController::class)
     ->middleware(['web', 'auth'])
     ->where(['type' => '[a-z_-]+', 'format' => 'csv|xlsx'])
     ->name('admin.export');
 
-// PDF sertifikat (pratinjau/unduh) & contoh template — sesi panel admin
+// PDF sertifikat (pratinjau/unduh) & contoh template: sesi panel admin
 Route::middleware(['web', 'auth'])->group(function (): void {
     Route::get('/admin/certificates/{certificate}/pdf', [CertificatePdfController::class, 'certificate'])->whereNumber('certificate')->name('admin.certificates.pdf');
     Route::get('/admin/invoices/{invoice}/pdf', InvoicePdfController::class)->name('admin.invoices.pdf');

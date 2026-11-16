@@ -8,7 +8,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
-/** Chatbot informasi publik — GET /chat/status, POST /chat, POST /chat/feedback. */
+/** Chatbot informasi publik: GET /chat/status, POST /chat, POST /chat/feedback. */
 class ChatController extends Controller
 {
     public function __construct(private ChatbotService $chatbot) {}

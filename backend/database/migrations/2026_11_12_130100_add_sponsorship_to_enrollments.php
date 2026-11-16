@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * Roadmap 5 tahap 5A — Enrollment Sponsorship (PRD Roadmap 5 §4.4, §20.19 R1/R2).
+ * Roadmap 5 tahap 5A: Enrollment Sponsorship (PRD Roadmap 5 §4.4, §20.19 R1/R2).
  * - enrollments.type self|corporate + sponsor_organization_id (+ sponsor_unit_id untuk batas departemen).
  * - registrations.organization_id: pendaftaran kolektif ditautkan ke organisasi.
  * - Backfill: enrollment individu → SELF; enrollment dari pendaftaran kolektif → CORPORATE dengan organisasi

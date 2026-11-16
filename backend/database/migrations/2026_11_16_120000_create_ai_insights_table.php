@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 /**
  * Kerangka tata kelola AI (PRD Roadmap 5 §9.1, tahap 5G): setiap keluaran AI nanti dicatat sebagai insight dengan use case,
- * versi model, versi prompt, referensi data (ID + hash, bukan salinan data pribadi), dan peninjau. Tabel sengaja kosong —
+ * versi model, versi prompt, referensi data (ID + hash, bukan salinan data pribadi), dan peninjau. Tabel sengaja kosong -
  * belum ada fitur AI yang menulis ke sini. Tahap 5I.1 melengkapinya (subjek, keluaran, status, alasan penolakan).
  */
 return new class extends Migration

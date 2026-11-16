@@ -40,7 +40,7 @@ use Livewire\Livewire;
 use Tests\TestCase;
 
 /**
- * Roadmap 5 tahap 5E — API enterprise (PRD Roadmap 5 §7, §7.1, §11, §20.21): klien terikat organisasi, scope + peran,
+ * Roadmap 5 tahap 5E - API enterprise (PRD Roadmap 5 §7, §7.1, §11, §20.21): klien terikat organisasi, scope + peran,
  * isolasi antar perusahaan, Idempotency-Key, endpoint §7, webhook domain baru, OpenAPI, admin.
  */
 class EnterpriseApiTest extends TestCase

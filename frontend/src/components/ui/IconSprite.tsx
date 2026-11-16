@@ -1,6 +1,6 @@
 import { ICON_SYMBOLS } from "./icons";
 
-/** Sprite SVG inline — dipasang sekali di awal <body>, persis seperti website lama. */
+/** Sprite SVG inline: dipasang sekali di awal <body>, persis seperti website lama. */
 export default function IconSprite() {
   return (
     <svg

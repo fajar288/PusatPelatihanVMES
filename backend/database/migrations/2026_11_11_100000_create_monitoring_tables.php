@@ -5,7 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * Phase 3 tahap 2 — Training Logbook & Progress Monitoring (PRD §5.9):
+ * Phase 3 tahap 2 - Training Logbook & Progress Monitoring (PRD §5.9):
  * rubrik penilaian per program, logbook per pertemuan (+ catatan per peserta & dokumentasi),
  * penilaian kompetensi individual per enrollment. Catatan tervalidasi dikunci; perubahan tercatat di audit_logs.
  */

@@ -5,7 +5,7 @@ import { requireUser } from "@/lib/auth";
 // Halaman per-pengguna (cookie sesi + API terautentikasi) → diblokir di server, tidak di-prerender.
 export const instant = false;
 
-/** /portal/profil — data member (PRD §5.6). */
+/** /portal/profil: data member (PRD §5.6). */
 export default async function PortalProfilePage() {
   const { user } = await requireUser("/portal/profil");
   return (

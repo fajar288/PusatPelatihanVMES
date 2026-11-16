@@ -9,7 +9,7 @@ type Props = {
   title?: string;
 };
 
-/** div.rt > .rcg > a.rc — kartu "Training Terkait" di halaman detail (CSS .rc/.rci/.rcb dari tema asli). */
+/** div.rt > .rcg > a.rc: kartu "Training Terkait" di halaman detail (CSS .rc/.rci/.rcb dari tema asli). */
 export default function RelatedCourses({ courses, variant, title = "Training Terkait" }: Props) {
   if (!courses.length) return null;
   return (

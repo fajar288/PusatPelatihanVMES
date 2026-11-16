@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Schedule } from "@/data/schedules";
 import { formatRupiah, waLink, waRegisterText } from "@/lib/utils";
 
-/** div.jr — baris jadwal terdekat. Tombol "Daftar" membuka WA dengan prefill nama + tanggal. */
+/** div.jr: baris jadwal terdekat. Tombol "Daftar" membuka WA dengan prefill nama + tanggal. */
 export default function ScheduleRow({ s, hidden }: { s: Schedule; hidden?: boolean }) {
   return (
     <div className="jr" hidden={hidden}>

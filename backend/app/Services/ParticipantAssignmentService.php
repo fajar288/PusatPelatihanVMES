@@ -167,7 +167,7 @@ class ParticipantAssignmentService
         });
     }
 
-    /** Batalkan peserta pada satu kursi — hanya enrollment kursi ini yang berubah (§11). Kursi kembali kosong. */
+    /** Batalkan peserta pada satu kursi: hanya enrollment kursi ini yang berubah (§11). Kursi kembali kosong. */
     public function releaseSeat(RequestSeat $seat, User $actor, string $reason, ?CorporateUser $cu = null): RequestSeat
     {
         if ($cu) {

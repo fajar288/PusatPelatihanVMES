@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| API Publik v1 (Phase 5) — /api/public/v1
+| API Publik v1 (Phase 5) - /api/public/v1
 |--------------------------------------------------------------------------
 |
 | Kontrak integrasi untuk pihak ketiga (mitra, korporasi, principal, agregator), terpisah dari API
@@ -44,7 +44,7 @@ Route::middleware('api.client')->group(function (): void {
     Route::get('/certificates/{number}', [CertificateController::class, 'verify'])->middleware('api.scope:certificates.verify')->name('certificates.verify');
 
     /*
-    | API enterprise (Roadmap 5E, PRD Roadmap 5 §7) — hanya klien terikat organisasi. Organisasi & pengguna perusahaan
+    | API enterprise (Roadmap 5E, PRD Roadmap 5 §7) - hanya klien terikat organisasi. Organisasi & pengguna perusahaan
     | yang diwakili berasal dari klien (bukan URL); peran & batas unitnya ikut membatasi. POST penting wajib Idempotency-Key.
     */
     Route::middleware('api.organization')->group(function (): void {

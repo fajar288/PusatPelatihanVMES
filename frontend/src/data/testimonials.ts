@@ -1,4 +1,4 @@
-// Testimoni — salinan persis dari JSON #ppti-testi website lama (docs/reference/testimonials.json).
+// Testimoni: salinan persis dari JSON #ppti-testi website lama (docs/reference/testimonials.json).
 export type Testimonial = {
   name: string;
   role: string;

@@ -8,7 +8,7 @@ use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-/** Peserta berisiko tertinggal (PRD §5.13 butir 3) — kehadiran, progres LMS, nilai kuis, aktivitas. */
+/** Peserta berisiko tertinggal (PRD §5.13 butir 3): kehadiran, progres LMS, nilai kuis, aktivitas. */
 class AtRiskTable extends TableWidget
 {
     use ExecutiveWidget;

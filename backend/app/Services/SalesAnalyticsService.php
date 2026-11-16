@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
 /**
- * Analitik lanjutan Dashboard Eksekutif (PRD Roadmap 5 §8 — layer Executive, Sales Funnel, Customer):
+ * Analitik lanjutan Dashboard Eksekutif (PRD Roadmap 5 §8 - layer Executive, Sales Funnel, Customer):
  * KPI §8.1 per segmen (corporate vs self-funded), funnel penjualan corporate, dan cohort/repeat order + AOV.
  * Memakai filter yang sama dengan AnalyticsService; hasil di-memo per kombinasi filter selama satu request.
  */

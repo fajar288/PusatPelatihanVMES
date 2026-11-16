@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { PostSummary } from "@/data/articles";
 
-/** a.card — kartu artikel (grid beranda "Artikel terbaru" & list kategori). */
+/** a.card: kartu artikel (grid beranda "Artikel terbaru" & list kategori). */
 export default function ArticleCard({ article }: { article: PostSummary }) {
   return (
     <Link className="card" href={`/artikel/${article.slug}`}>

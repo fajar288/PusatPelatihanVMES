@@ -15,7 +15,7 @@ class CertificateController extends Controller
 {
     public function __construct(private readonly CertificateService $certificates) {}
 
-    /** GET /verify/{number}?k=kode — publik, AC-10. */
+    /** GET /verify/{number}?k=kode: publik, AC-10. */
     public function verify(Request $request, string $number): JsonResponse
     {
         $c = Certificate::query()->where('number', $number)->orWhere('number', str_replace('/', '-', $number))->first();
@@ -26,7 +26,7 @@ class CertificateController extends Controller
         return response()->json(['data' => $this->certificates->verify($c, $request->query('k'))]);
     }
 
-    /** GET /me/certificates — semua sertifikat milik akun (terbit, dicabut, diganti; draf tidak ditampilkan). */
+    /** GET /me/certificates: semua sertifikat milik akun (terbit, dicabut, diganti; draf tidak ditampilkan). */
     public function index(Request $request): JsonResponse
     {
         $items = Certificate::query()->ownedBy($request->user())->whereIn('status', ['issued', 'revoked', 'replaced'])
@@ -44,7 +44,7 @@ class CertificateController extends Controller
         return response()->json(['data' => CertificateService::toArray($certificate) + ['history' => CertificateService::history($certificate)->filter(fn ($h) => in_array($h['action'], ['certificate.issued', 'certificate.revoked', 'certificate.replaced'], true))->values()]]);
     }
 
-    /** GET /me/certificates/{certificate}/pdf — unduh PDF (hanya yang terbit). */
+    /** GET /me/certificates/{certificate}/pdf: unduh PDF (hanya yang terbit). */
     public function pdf(Request $request, Certificate $certificate): Response
     {
         abort_unless(Certificate::query()->ownedBy($request->user())->whereKey($certificate->id)->exists(), 404);

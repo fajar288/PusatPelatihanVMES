@@ -6,7 +6,7 @@ use App\Models\TrainingSchedule;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-/** API Publik v1 — jadwal kelas. @mixin TrainingSchedule */
+/** API Publik v1: jadwal kelas. @mixin TrainingSchedule */
 class ScheduleResource extends JsonResource
 {
     public function toArray(Request $request): array

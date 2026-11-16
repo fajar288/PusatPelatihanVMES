@@ -10,10 +10,10 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
-/** API Publik v1 — verifikasi sertifikat (scope certificates.verify), mis. untuk HR/rekruter atau principal vendor. */
+/** API Publik v1: verifikasi sertifikat (scope certificates.verify), mis. untuk HR/rekruter atau principal vendor. */
 class CertificateController extends Controller
 {
-    /** GET /certificates/{number}?code= — `code` = kode verifikasi pada sertifikat (opsional, dicocokkan bila dikirim). */
+    /** GET /certificates/{number}?code=: `code` = kode verifikasi pada sertifikat (opsional, dicocokkan bila dikirim). */
     public function verify(Request $request, string $number, CertificateService $certificates): JsonResponse
     {
         $request->validate(['code' => ['nullable', 'string', 'max:40']]);

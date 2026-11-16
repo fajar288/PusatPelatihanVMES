@@ -60,7 +60,7 @@ final class EnterpriseFields
 
     /**
      * Jalankan aksi service; penolakan aturan bisnis (ValidationException) ditampilkan sebagai notifikasi merah
-     * dan aksi dihentikan (modal tetap terbuka) — galat dengan kunci non-field tidak akan terlihat di form.
+     * dan aksi dihentikan (modal tetap terbuka): galat dengan kunci non-field tidak akan terlihat di form.
      */
     public static function attempt(Action $action, callable $fn, ?string $success = null): mixed
     {

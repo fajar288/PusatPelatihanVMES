@@ -3,7 +3,7 @@ import Icon from "@/components/ui/Icon";
 import type { CtaData } from "@/lib/cms-types";
 import { waLink } from "@/lib/utils";
 
-/** section.cs > .ctw — banner CTA hijau gelap dengan glass panel 4 poin. */
+/** section.cs > .ctw: banner CTA hijau gelap dengan glass panel 4 poin. */
 export default function CtaBanner({ cta }: { cta: CtaData }) {
   return (
     <section className="cs">

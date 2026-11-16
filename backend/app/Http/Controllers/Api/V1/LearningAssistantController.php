@@ -8,7 +8,7 @@ use Illuminate\Http\JsonResponse;
 
 /**
  * Asisten Belajar portal member (kerangka 5G): GET /me/assistant (status), POST /me/assistant/messages (selalu 503).
- * Isi permintaan sengaja tidak dibaca, divalidasi, maupun disimpan — tidak ada data peserta yang diproses.
+ * Isi permintaan sengaja tidak dibaca, divalidasi, maupun disimpan - tidak ada data peserta yang diproses.
  */
 class LearningAssistantController extends Controller
 {

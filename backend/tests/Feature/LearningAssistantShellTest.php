@@ -15,7 +15,7 @@ use Tests\Fakes\FakeChatModel;
 use Tests\TestCase;
 
 /**
- * Roadmap 5 tahap 5G — kerangka Asisten Belajar (keputusan mengikat nomor 4): panel "Belum tersedia", flag
+ * Roadmap 5 tahap 5G - kerangka Asisten Belajar (keputusan mengikat nomor 4): panel "Belum tersedia", flag
  * AI_CHATBOT_ENABLED terpisah dari chatbot publik, endpoint 503 ai_unavailable, tabel ai_insights kosong,
  * dan tidak ada panggilan API AI / data peserta yang terkirim.
  */

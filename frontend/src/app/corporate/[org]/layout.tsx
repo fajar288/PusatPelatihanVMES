@@ -5,7 +5,7 @@ import { getSummary } from "@/lib/corporate-server";
 
 export const instant = false;
 
-/** /corporate/[org]/* — workspace satu organisasi. API memverifikasi keanggotaan aktif; organisasi lain → 404. */
+/** /corporate/[org]/*: workspace satu organisasi. API memverifikasi keanggotaan aktif; organisasi lain → 404. */
 export default async function OrgLayout({ children, params }: LayoutProps<"/corporate/[org]">) {
   const { org } = await params;
   const { token } = await requireUser(`/corporate/${org}`);

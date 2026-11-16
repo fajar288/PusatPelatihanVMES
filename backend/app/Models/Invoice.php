@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Invoice (PRD Roadmap 5 §5, §13): tagihan untuk pendaftaran (individu/kolektif) atau Corporate Training Request.
- * Pembayaran MANUAL — status hanya berubah lewat verifikasi finance (PaymentService), bukan klaim pembayar.
+ * Pembayaran MANUAL: status hanya berubah lewat verifikasi finance (PaymentService), bukan klaim pembayar.
  */
 class Invoice extends Model
 {

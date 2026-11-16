@@ -27,7 +27,7 @@ function save(key: string, value: unknown) {
   try {
     window.sessionStorage.setItem(key, JSON.stringify(value));
   } catch {
-    /* penyimpanan tidak tersedia (mode privat) — abaikan */
+    /* penyimpanan tidak tersedia (mode privat): abaikan */
   }
 }
 

@@ -31,7 +31,7 @@ use Filament\Tables\Table;
 use Illuminate\Support\HtmlString;
 use UnitEnum;
 
-/** Monitoring — logbook per pertemuan (PRD §5.9). Dokumentasi diunggah trainer lewat portal; admin memvalidasi/membuka kunci. */
+/** Monitoring: logbook per pertemuan (PRD §5.9). Dokumentasi diunggah trainer lewat portal; admin memvalidasi/membuka kunci. */
 class TrainingLogbookResource extends Resource
 {
     protected static ?string $model = TrainingLogbook::class;

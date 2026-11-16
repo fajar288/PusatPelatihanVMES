@@ -1,6 +1,6 @@
 import { SITE } from "@/data/site";
 
-/** URL publik situs — set NEXT_PUBLIC_SITE_URL di produksi; default domain lama. */
+/** URL publik situs: set NEXT_PUBLIC_SITE_URL di produksi; default domain lama. */
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://pusatpelatihan.id").replace(/\/$/, "");
 
 export const abs = (path: string) => `${SITE_URL}${path.startsWith("/") ? path : "/" + path}`;
@@ -19,7 +19,7 @@ export function organizationJsonLd() {
   };
 }
 
-/** <script type="application/ld+json"> — dipakai di layout & halaman detail. */
+/** <script type="application/ld+json">: dipakai di layout & halaman detail. */
 export function JsonLd({ data }: { data: object }) {
   return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }} />;
 }

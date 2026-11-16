@@ -7,7 +7,7 @@ import { waLink } from "@/lib/utils";
 // Halaman per-pengguna (cookie sesi + API terautentikasi) → diblokir di server, tidak di-prerender.
 export const instant = false;
 
-/** /portal/bantuan — Support: kontak admin, tautan panduan. */
+/** /portal/bantuan - Support: kontak admin, tautan panduan. */
 export default async function PortalSupportPage() {
   const { user } = await requireUser("/portal/bantuan");
   return (

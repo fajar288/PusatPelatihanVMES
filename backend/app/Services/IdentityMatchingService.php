@@ -150,7 +150,7 @@ class IdentityMatchingService
     }
 
     /**
-     * Setelah email terverifikasi: tinjauan yang menunggu dengan email itu (enrollment tanpa member) dicocokkan ulang —
+     * Setelah email terverifikasi: tinjauan yang menunggu dengan email itu (enrollment tanpa member) dicocokkan ulang -
      * kini kecocokan email menjadi yakin sehingga enrollment otomatis tertaut ke member tsb.
      */
     public function afterEmailVerified(User $user): int

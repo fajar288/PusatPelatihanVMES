@@ -5,7 +5,7 @@ import type { CourseCard } from "@/lib/lms";
 
 export const instant = false;
 
-/** /portal/belajar — My Learning: course yang bisa diakses dari kelas terdaftar (GET /me/learning). */
+/** /portal/belajar - My Learning: course yang bisa diakses dari kelas terdaftar (GET /me/learning). */
 export default async function PortalLearningPage() {
   const { token } = await requireUser("/portal/belajar");
   const courses = (await api<{ data: CourseCard[] }>("/me/learning", { token })).data;

@@ -11,7 +11,7 @@ import WhyUs from "@/components/home/WhyUs";
 import { getHome } from "@/lib/cms";
 
 /**
- * Beranda — urutan section identik dengan pusatpelatihan.id:
+ * Beranda - urutan section identik dengan pusatpelatihan.id:
  * hero(+stats) → tentang → kursus → kategori+jadwal → partner → mengapa → testimoni → galeri → artikel → CTA
  * (kontak & footer ada di layout). Data dari GET /api/v1/home (cache "use cache", fallback src/data).
  */

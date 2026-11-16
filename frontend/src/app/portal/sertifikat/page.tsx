@@ -6,7 +6,7 @@ import { CERT_PILL, type CertificateInfo, MEMBER_STATUS } from "@/lib/certificat
 // Halaman per-pengguna (cookie sesi + API terautentikasi) → diblokir di server, tidak di-prerender.
 export const instant = false;
 
-/** /portal/sertifikat — My Certificates (PRD §5.6, §5.10): unduh PDF, tautan verifikasi, status (terbit/dicabut/diganti). */
+/** /portal/sertifikat - My Certificates (PRD §5.6, §5.10): unduh PDF, tautan verifikasi, status (terbit/dicabut/diganti). */
 export default async function PortalCertificatesPage() {
   const { user, token } = await requireUser("/portal/sertifikat");
   const items = (await api<{ data: CertificateInfo[] }>("/me/certificates", { token })).data;
