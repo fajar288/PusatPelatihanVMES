@@ -267,7 +267,7 @@ class CorporateController extends Controller
             'employment' => $this->reporting->employmentStatus($e, $employment, $access['exited']),
             'program' => $e->schedule?->package?->title ?? $e->schedule?->title,
             'schedule' => $e->schedule?->code,
-            'dates' => $e->schedule ? IdDate::long($e->schedule->start_date).' – '.IdDate::long($e->schedule->end_date) : null,
+            'dates' => $e->schedule ? IdDate::long($e->schedule->start_date).' - '.IdDate::long($e->schedule->end_date) : null,
             'unit' => $e->sponsorUnit?->label(),
             'status' => $e->status,
             'attendancePercent' => $progress ? $ctx['attendance'][$e->id] : null,

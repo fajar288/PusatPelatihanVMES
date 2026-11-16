@@ -35,9 +35,9 @@ class AtRiskTable extends TableWidget
                 TextColumn::make('name')->label('Peserta')->description(fn (array $record) => $record['email']),
                 TextColumn::make('class')->label('Kelas')->description(fn (array $record) => $record['program'])
                     ->url(fn (array $record) => TrainingScheduleResource::getUrl('edit', ['record' => $record['class']])),
-                TextColumn::make('attendance')->label('Kehadiran')->formatStateUsing(fn ($state) => $state === null ? '—' : $state.'%')->placeholder('—'),
-                TextColumn::make('lms')->label('Progres LMS')->formatStateUsing(fn ($state) => $state === null ? '—' : $state.'%')->placeholder('—'),
-                TextColumn::make('quiz')->label('Kuis')->placeholder('—'),
+                TextColumn::make('attendance')->label('Kehadiran')->formatStateUsing(fn ($state) => $state === null ? '-' : $state.'%')->placeholder('-'),
+                TextColumn::make('lms')->label('Progres LMS')->formatStateUsing(fn ($state) => $state === null ? '-' : $state.'%')->placeholder('-'),
+                TextColumn::make('quiz')->label('Kuis')->placeholder('-'),
                 TextColumn::make('reasons')->label('Alasan')->badge()->color('danger')->wrap(),
             ])
             ->paginated([10, 25, 50])

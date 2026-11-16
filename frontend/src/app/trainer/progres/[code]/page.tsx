@@ -48,7 +48,7 @@ export default async function TrainerClassProgress({ params }: PageProps<"/train
         </div>
       </div>
       <PortalCard
-        title={`Progres — ${d.class.title}`}
+        title={`Progres: ${d.class.title}`}
         action={
           <span style={{ display: "flex", gap: 8 }}>
             <Link className="jb" href={`/trainer/logbook/${code}`}>

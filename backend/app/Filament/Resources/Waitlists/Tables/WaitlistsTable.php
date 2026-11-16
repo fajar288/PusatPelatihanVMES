@@ -42,7 +42,7 @@ class WaitlistsTable
                     ->action(function (Waitlist $w): void {
                         $w->update(['status' => 'offered', 'offered_at' => now()]);
                         AuditLog::record('waitlist.offered', $w);
-                        Notification::make()->title('Ditandai ditawari — hubungi pendaftar untuk konfirmasi')->success()->send();
+                        Notification::make()->title('Ditandai ditawari, hubungi pendaftar untuk konfirmasi')->success()->send();
                     }),
                 Action::make('konversi')->label('Jadikan pendaftaran')->icon('heroicon-o-arrow-right-circle')->color('success')
                     ->requiresConfirmation()

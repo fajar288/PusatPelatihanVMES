@@ -26,7 +26,7 @@ class CertificateIssued extends Notification
         $base = rtrim((string) explode(',', (string) config('services.frontend.url'))[0], '/');
 
         return (new MailMessage)
-            ->subject("Sertifikat Anda telah terbit — {$c->program_title}")
+            ->subject("Sertifikat Anda telah terbit: {$c->program_title}")
             ->greeting("Halo {$c->recipient_name},")
             ->line("Selamat! {$c->typeLabel()} Anda untuk program **{$c->program_title}** (kelas {$c->class_code}) telah diterbitkan.")
             ->line("Nomor sertifikat: **{$c->number}**")

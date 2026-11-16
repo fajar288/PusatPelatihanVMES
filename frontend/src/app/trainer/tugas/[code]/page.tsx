@@ -24,7 +24,7 @@ export default async function TrainerClassAssignments({ params }: PageProps<"/tr
   return (
     <>
       <BackLink href="/trainer/tugas">Kembali ke Penilaian tugas</BackLink>
-      <PortalCard title={`Tugas — ${d.class.title}`} action={<span className={"jst " + (pending.length ? "wn" : "ok")}>{pending.length} menunggu penilaian</span>}>
+      <PortalCard title={`Tugas: ${d.class.title}`} action={<span className={"jst " + (pending.length ? "wn" : "ok")}>{pending.length} menunggu penilaian</span>}>
         {d.assignments.length === 0 ? (
           <p className="fh">Belum ada lesson bertipe tugas pada course kelas ini.</p>
         ) : (

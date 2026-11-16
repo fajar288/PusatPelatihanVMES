@@ -301,7 +301,7 @@ class KpiService
     public static function format(string $key, array $kpi): string
     {
         if ($kpi['value'] === null) {
-            return '—';
+            return '-';
         }
         if ($key === 'average_order_value') {
             return 'Rp '.number_format((float) $kpi['value'], 0, ',', '.');

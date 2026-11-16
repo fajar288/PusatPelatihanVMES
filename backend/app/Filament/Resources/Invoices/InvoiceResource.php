@@ -159,7 +159,7 @@ class InvoiceResource extends Resource
                 ])
                 ->action(fn (array $data, Invoice $record, Action $action) => EnterpriseFields::attempt($action,
                     fn () => app(RefundService::class)->request($record, auth()->user(), (float) $data['amount'], $data['reason'],
-                        ! empty($data['payment_transaction_id']) ? PaymentTransaction::query()->find($data['payment_transaction_id']) : null), 'Refund diajukan — menunggu persetujuan')),
+                        ! empty($data['payment_transaction_id']) ? PaymentTransaction::query()->find($data['payment_transaction_id']) : null), 'Refund diajukan, menunggu persetujuan')),
             Action::make('cancel')->label('Batalkan invoice')->icon('heroicon-o-x-circle')->color('danger')
                 ->visible(fn (Invoice $record) => $open($record) && (float) $record->amount_paid <= 0)
                 ->schema([Textarea::make('reason')->label('Alasan')->required()->rows(2)])

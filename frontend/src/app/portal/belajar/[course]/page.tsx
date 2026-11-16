@@ -39,7 +39,7 @@ export default async function CoursePage({ params }: PageProps<"/portal/belajar/
           items={[
             { icon: "grad", value: c.class.title },
             { icon: "code", label: "Kode", value: c.class.code },
-            { icon: "cal", value: `${c.class.dateLabel} – ${c.class.endLabel}` },
+            { icon: "cal", value: `${c.class.dateLabel} - ${c.class.endLabel}` },
           ]}
         />
         {c.description && <p style={{ marginTop: 10 }}>{c.description}</p>}

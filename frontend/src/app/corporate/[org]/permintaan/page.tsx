@@ -23,7 +23,7 @@ export default async function RequestsPage({ params }: PageProps<"/corporate/[or
     >
       {rows.length === 0 ? (
         <EmptyState
-          text="Belum ada permintaan training. Ajukan berdasarkan kebutuhan dan jumlah kursi — daftar peserta bisa diisi kemudian."
+          text="Belum ada permintaan training. Ajukan berdasarkan kebutuhan dan jumlah kursi; daftar peserta bisa diisi kemudian."
           href={can(s, "manage_requests") ? `/corporate/${org}/permintaan/baru` : undefined}
           cta="Buat permintaan"
         />

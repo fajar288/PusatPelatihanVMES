@@ -258,7 +258,7 @@ class ParticipantAssignmentService
             }
             $seat = $r->requestSeats()->where('status', 'reserved')->orderBy('seat_no')->first();
             if (! $seat) {
-                $report[] = $base + ['status' => 'error', 'message' => 'Kursi habis — tambah kursi lewat VMES atau batalkan peserta lain.'];
+                $report[] = $base + ['status' => 'error', 'message' => 'Kursi habis. Tambah kursi lewat VMES atau batalkan peserta lain.'];
 
                 continue;
             }
@@ -372,7 +372,7 @@ class ParticipantAssignmentService
             throw ValidationException::withMessages(['role' => 'Permintaan ini di luar batas unit Anda.']);
         }
         if (! $allowClosed && ! $r->isAssignable()) {
-            throw ValidationException::withMessages(['status' => "Permintaan berstatus \"{$r->label()}\" — peserta tidak bisa diubah."]);
+            throw ValidationException::withMessages(['status' => "Permintaan berstatus \"{$r->label()}\", peserta tidak bisa diubah."]);
         }
     }
 

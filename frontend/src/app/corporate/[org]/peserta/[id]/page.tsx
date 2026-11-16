@@ -23,7 +23,7 @@ export default async function ParticipantProgressPage({ params }: PageProps<"/co
         <MetaList
           items={[
             { icon: "grad", label: "Program", value: p.class.title },
-            { icon: "cal", label: "Kelas", value: `${p.class.code} · ${p.class.dateLabel} – ${p.class.endLabel}` },
+            { icon: "cal", label: "Kelas", value: `${p.class.code} · ${p.class.dateLabel} - ${p.class.endLabel}` },
             { label: "Nomor member", value: p.participant.memberNumber },
             { label: "Employee ID", value: p.participant.employeeId },
             { label: "Jabatan", value: p.participant.position },

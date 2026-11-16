@@ -194,7 +194,7 @@ class CorporateRequestController extends Controller
             'seats' => $r->seats,
             'filled' => $r->filled_count ?? $r->requestSeats()->whereIn('status', ['assigned', 'enrolled'])->count(),
             'invited' => $r->invited_count ?? $r->requestSeats()->where('status', 'invited')->count(),
-            'schedule' => $r->schedule ? ['code' => $r->schedule->code, 'dates' => IdDate::long($r->schedule->start_date).' – '.IdDate::long($r->schedule->end_date)] : null,
+            'schedule' => $r->schedule ? ['code' => $r->schedule->code, 'dates' => IdDate::long($r->schedule->start_date).' - '.IdDate::long($r->schedule->end_date)] : null,
             'createdAt' => IdDate::long($r->created_at),
             'quote' => $finance && $r->quote_total !== null ? [
                 'pricePerSeat' => (float) $r->price_per_seat, 'discount' => (float) $r->quote_discount, 'total' => (float) $r->quote_total,

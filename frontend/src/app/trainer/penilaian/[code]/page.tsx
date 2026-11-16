@@ -25,7 +25,7 @@ export default async function TrainerClassAssessments({ params }: PageProps<"/tr
     <>
       <BackLink href="/trainer/penilaian">Kembali ke Penilaian</BackLink>
       <PortalCard
-        title={`Penilaian — ${d.class.title}`}
+        title={`Penilaian: ${d.class.title}`}
         action={
           <span className={"jst " + (validated === d.participants.length && d.participants.length > 0 ? "ok" : "wn")}>
             {validated}/{d.participants.length} tervalidasi, {competent} kompeten

@@ -108,7 +108,7 @@ class PaymentService
         $tx = DB::transaction(function () use ($invoice, $actor, $data, $path) {
             $invoice = Invoice::query()->lockForUpdate()->findOrFail($invoice->id);
             if (! in_array($invoice->status, ['pending', 'failed', 'expired'], true)) {
-                throw ValidationException::withMessages(['invoice' => "Invoice berstatus \"{$invoice->statusLabel()}\" — tidak bisa menerima pembayaran baru."]);
+                throw ValidationException::withMessages(['invoice' => "Invoice berstatus \"{$invoice->statusLabel()}\", tidak bisa menerima pembayaran baru."]);
             }
             if ($invoice->hasPendingTransaction()) {
                 throw ValidationException::withMessages(['invoice' => 'Ada bukti pembayaran yang menunggu verifikasi. Verifikasi atau tolak bukti itu dulu.']);
@@ -151,7 +151,7 @@ class PaymentService
                 return $tx;   // idempoten: verifikasi ganda tidak memicu efek apa pun
             }
             if ($tx->status !== 'pending') {
-                throw ValidationException::withMessages(['status' => "Transaksi {$tx->code} berstatus \"{$tx->statusLabel()}\" — tidak bisa diverifikasi."]);
+                throw ValidationException::withMessages(['status' => "Transaksi {$tx->code} berstatus \"{$tx->statusLabel()}\", tidak bisa diverifikasi."]);
             }
             /** @var Invoice $invoice */
             $invoice = Invoice::query()->lockForUpdate()->findOrFail($tx->invoice_id);
@@ -194,7 +194,7 @@ class PaymentService
             if ($paid) {
                 $this->onInvoicePaid($invoice, $tx, $actor);
             } elseif ($reg && $reg->status === RegistrationStatus::PaymentVerification) {
-                $this->registrations->transition($reg, RegistrationStatus::WaitingPayment, $actor, 'Pembayaran diterima sebagian — kurang '.self::rupiah(-$difference).'. Silakan lunasi sisanya.');
+                $this->registrations->transition($reg, RegistrationStatus::WaitingPayment, $actor, 'Pembayaran diterima sebagian, kurang '.self::rupiah(-$difference).'. Silakan lunasi sisanya.');
             }
 
             return $tx;
@@ -213,7 +213,7 @@ class PaymentService
                 return $tx;
             }
             if ($tx->status !== 'pending') {
-                throw ValidationException::withMessages(['status' => "Transaksi {$tx->code} berstatus \"{$tx->statusLabel()}\" — tidak bisa ditolak."]);
+                throw ValidationException::withMessages(['status' => "Transaksi {$tx->code} berstatus \"{$tx->statusLabel()}\", tidak bisa ditolak."]);
             }
             $tx->update(['status' => 'failed', 'review_note' => $reason, 'verified_by' => $actor->id, 'verified_at' => now()]);
             AuditLog::record('payment.rejected', $tx, ['status' => 'pending'], ['status' => 'failed', 'reason' => $reason], $actor);
@@ -248,9 +248,9 @@ class PaymentService
         }
         if (! $invoice->isPayable()) {
             $msg = match ($invoice->status) {
-                'paid' => 'Invoice ini sudah lunas — tidak menerima bukti pembayaran baru.',
+                'paid' => 'Invoice ini sudah lunas dan tidak menerima bukti pembayaran baru.',
                 'expired' => 'Invoice ini sudah lewat jatuh tempo. Hubungi tim VMES untuk memperpanjang tagihan.',
-                default => "Invoice berstatus \"{$invoice->statusLabel()}\" — tidak menerima bukti pembayaran.",
+                default => "Invoice berstatus \"{$invoice->statusLabel()}\", tidak menerima bukti pembayaran.",
             };
             throw ValidationException::withMessages(['invoice' => $msg]);
         }

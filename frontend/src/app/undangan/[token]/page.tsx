@@ -49,7 +49,7 @@ export default async function InvitationPage({ params }: PageProps<"/undangan/[t
       <MetaList
         items={[
           { icon: "grad", label: "Program", value: inv.program },
-          !!inv.schedule && { icon: "cal", label: "Jadwal", value: `${inv.schedule.start} – ${inv.schedule.end}${inv.schedule.city ? `, ${inv.schedule.city}` : ""}` },
+          !!inv.schedule && { icon: "cal", label: "Jadwal", value: `${inv.schedule.start} - ${inv.schedule.end}${inv.schedule.city ? `, ${inv.schedule.city}` : ""}` },
           !inv.schedule && !!inv.targetDate && { icon: "cal", label: "Target", value: inv.targetDate },
           { icon: "msg", label: "Untuk email", value: inv.emailHint },
           inv.usable && { label: "Berlaku sampai", value: inv.expiresAt },
@@ -60,7 +60,7 @@ export default async function InvitationPage({ params }: PageProps<"/undangan/[t
           <FormMessage ok={false} message={inv.status === "accepted" ? "Undangan ini sudah diterima." : "Undangan ini sudah tidak berlaku. Hubungi HR perusahaan Anda untuk undangan baru."} />
         ) : !user ? (
           <>
-            <p className="fh">Masuk dengan akun yang memakai email undangan. Belum punya akun? Daftar dengan email tersebut — satu akun dipakai untuk seluruh histori training Anda.</p>
+            <p className="fh">Masuk dengan akun yang memakai email undangan. Belum punya akun? Daftar dengan email tersebut. Satu akun dipakai untuk seluruh histori training Anda.</p>
             <div className="ff" style={{ marginTop: 14 }}>
               <Link className="kb1" href={`/login?next=${encodeURIComponent(next)}`}>
                 Masuk

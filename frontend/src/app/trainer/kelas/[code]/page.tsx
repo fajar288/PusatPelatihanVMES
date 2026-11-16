@@ -31,7 +31,7 @@ export default async function TrainerClassDetail({ params }: PageProps<"/trainer
           <li>
             <span>Jadwal</span>
             <b className="spv">
-              {cls.dateLabel} – {cls.endLabel}
+              {cls.dateLabel} - {cls.endLabel}
               {cls.time && <small>{cls.time}</small>}
             </b>
           </li>
@@ -63,7 +63,7 @@ export default async function TrainerClassDetail({ params }: PageProps<"/trainer
               <li key={s.no}>
                 <span>
                   <b style={{ color: "var(--ink)" }}>Sesi {s.no}</b>
-                  {s.topic ? ` — ${s.topic}` : ""}
+                  {s.topic ? `: ${s.topic}` : ""}
                   <MetaList
                     compact
                     style={{ marginTop: 2 }}

@@ -62,7 +62,7 @@ export default async function PortalTrainingPage() {
                   <li key={s.no}>
                     <span>
                       <b>Sesi {s.no}</b>
-                      {s.topic ? ` — ${s.topic}` : ""}
+                      {s.topic ? `: ${s.topic}` : ""}
                       <MetaList
                         compact
                         items={[

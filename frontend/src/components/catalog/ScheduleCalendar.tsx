@@ -39,7 +39,7 @@ export default function ScheduleCalendar({ schedules }: { schedules: Schedule[] 
           &#8592; Sebelumnya
         </button>
         <h2>
-          Kalender Training — {MONTHS_ID[ym.m]} {ym.y}
+          Kalender Training: {MONTHS_ID[ym.m]} {ym.y}
         </h2>
         <button className="pn" type="button" onClick={() => shift(1)}>
           Berikutnya &#8594;

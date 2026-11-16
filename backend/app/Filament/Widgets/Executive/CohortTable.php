@@ -36,9 +36,9 @@ class CohortTable extends TableWidget
                 TextColumn::make('customers')->label('Pelanggan')->numeric(),
                 TextColumn::make('repeat')->label('Repeat')->numeric(),
                 TextColumn::make('repeat_rate')->label('Repeat rate')->formatStateUsing(fn ($state) => self::pct($state)),
-                TextColumn::make('avg_days_to_repeat')->label('Hari ke order ke-2')->placeholder('—'),
+                TextColumn::make('avg_days_to_repeat')->label('Hari ke order ke-2')->placeholder('-'),
                 TextColumn::make('orders')->label('Order')->numeric(),
-                TextColumn::make('aov')->label('AOV')->formatStateUsing(fn ($state) => $state === null ? '—' : self::rupiah($state)),
+                TextColumn::make('aov')->label('AOV')->formatStateUsing(fn ($state) => $state === null ? '-' : self::rupiah($state)),
             ])
             ->paginated([10, 25, 50])
             ->defaultPaginationPageOption(10)

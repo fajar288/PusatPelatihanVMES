@@ -124,7 +124,7 @@ export const ARTICLES: Article[] = [
     slug: "ppti-mitra-resmi-pearson-vue", title: "PPTI - VMES Resmi Menjadi Authorized Test Center Pearson VUE", excerpt: "Peserta kini dapat mengikuti ujian sertifikasi internasional Cisco, AWS, dan CompTIA langsung di lab PPTI - VMES Training Center Batam.",
     category: "Berita", dateLabel: "8 Nov 2026", publishedAt: 1794096000, author: "Humas PPTI", tags: ["Sertifikasi", "Pearson VUE"],
     body: [
-      { type: "p", text: "Batam — PPTI - VMES Training Center resmi ditunjuk sebagai Pearson VUE Authorized Test Center. Dengan status ini, peserta training tidak perlu lagi menempuh perjalanan ke kota lain untuk mengikuti ujian sertifikasi internasional." },
+      { type: "p", text: "Batam, PPTI - VMES Training Center resmi ditunjuk sebagai Pearson VUE Authorized Test Center. Dengan status ini, peserta training tidak perlu lagi menempuh perjalanan ke kota lain untuk mengikuti ujian sertifikasi internasional." },
       { type: "p", text: "Ujian yang tersedia mencakup Cisco (CCNA, CCNP), AWS Certified, CompTIA, dan vendor lain yang bermitra dengan Pearson VUE. Pendaftaran ujian dapat dilakukan melalui tim admin PPTI atau langsung di portal Pearson VUE dengan memilih lokasi Batam." },
       { type: "h2", text: "Fasilitas Ruang Ujian" },
       { type: "ul", items: ["8 workstation dengan pengawasan CCTV sesuai standar Pearson VUE", "Ruang tunggu dan loker peserta", "Jadwal ujian Senin sampai Sabtu"] },

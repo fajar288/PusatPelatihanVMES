@@ -33,7 +33,7 @@ export default function AttendanceForm({ cls }: { cls: TrainerClass }) {
           <select id="att-session" value={sessionNo} onChange={(e) => setSessionNo(Number(e.target.value))}>
             {cls.sessions.map((s) => (
               <option key={s.no} value={s.no}>
-                Sesi {s.no} — {s.dateLabel}
+                Sesi {s.no}: {s.dateLabel}
                 {s.topic ? ` · ${s.topic}` : ""} ({s.marked ?? 0}/{participants.length} dicatat)
               </option>
             ))}
@@ -74,7 +74,7 @@ export default function AttendanceForm({ cls }: { cls: TrainerClass }) {
               </td>
               <td>
                 <select name={`att_${p.id}`} defaultValue={p.attendance[String(sessionNo)] ?? ""} key={`${p.id}-${sessionNo}`}>
-                  <option value="">— belum —</option>
+                  <option value="">(belum)</option>
                   {OPTIONS.map(([v, l]) => (
                     <option key={v} value={v}>
                       {l}

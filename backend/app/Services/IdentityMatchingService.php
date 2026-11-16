@@ -212,7 +212,7 @@ class IdentityMatchingService
                 throw ValidationException::withMessages(['email' => 'Email peserta wajib ada untuk membuat akun baru. Lengkapi data atau tautkan ke member yang ada.']);
             }
             if (User::query()->whereRaw('LOWER(email) = ?', [strtolower($email)])->exists()) {
-                throw ValidationException::withMessages(['email' => 'Email ini sudah dipakai akun lain — tautkan ke member yang ada.']);
+                throw ValidationException::withMessages(['email' => 'Email ini sudah dipakai akun lain. Tautkan ke member yang ada.']);
             }
             $user = User::query()->create([
                 'name' => $review->input['name'] ?: Str::before($email, '@'),
@@ -309,7 +309,7 @@ class IdentityMatchingService
         $subject = $review->subject;
         if ($subject instanceof Enrollment) {
             if ($this->alreadyEnrolled($member, $subject->schedule, $subject->id)) {
-                throw ValidationException::withMessages(['member' => 'Member ini sudah terdaftar di batch yang sama — duplikat enrollment ditolak.']);
+                throw ValidationException::withMessages(['member' => 'Member ini sudah terdaftar di batch yang sama, duplikat enrollment ditolak.']);
             }
             $subject->update(['member_id' => $member->id]);
             $subject->registrationParticipant?->update(['member_id' => $member->id]);

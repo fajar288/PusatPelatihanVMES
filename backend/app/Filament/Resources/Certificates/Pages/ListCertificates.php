@@ -22,7 +22,7 @@ class ListCertificates extends ListRecords
             Action::make('generateForClass')->label('Buat draf untuk kelas')->icon('heroicon-o-users')->color('gray')
                 ->schema([
                     Select::make('schedule_id')->label('Kelas')->required()->searchable()
-                        ->options(fn () => TrainingSchedule::query()->withCount('enrollments')->orderByDesc('start_date')->limit(300)->get()->mapWithKeys(fn ($s) => [$s->id => "{$s->code} — ".($s->title ?: $s->package?->title).' ('.$s->enrollments_count.' peserta)'])),
+                        ->options(fn () => TrainingSchedule::query()->withCount('enrollments')->orderByDesc('start_date')->limit(300)->get()->mapWithKeys(fn ($s) => [$s->id => "{$s->code} - ".($s->title ?: $s->package?->title).' ('.$s->enrollments_count.' peserta)'])),
                     Select::make('type')->label('Jenis sertifikat')->options(Certificate::TYPES)->native(false)->helperText('Kosong = jenis sertifikat paket.'),
                 ])
                 ->action(function (array $data, CertificateService $svc): void {

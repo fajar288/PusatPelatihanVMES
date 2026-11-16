@@ -97,7 +97,7 @@ export default async function JadwalDetailPage({ params }: PageProps<"/jadwal/[i
           </div>
           <h1>{title}</h1>
           <div className="dmeta">
-            {s.dateLabel} – {shortDate(s.endDate)}
+            {s.dateLabel} - {shortDate(s.endDate)}
           </div>
           <p className="rs" id="kd-rs">
             {course?.desc ?? `Batch ${s.title} oleh PPTI - VMES Training Center.`}
@@ -108,7 +108,7 @@ export default async function JadwalDetailPage({ params }: PageProps<"/jadwal/[i
               <Icon name="cal" />
               <small>Tanggal</small>
               <b>
-                {shortDate(s.startDate)} – {shortDate(s.endDate)}
+                {shortDate(s.startDate)} - {shortDate(s.endDate)}
               </b>
             </div>
             <div className="kic1">
@@ -146,7 +146,7 @@ export default async function JadwalDetailPage({ params }: PageProps<"/jadwal/[i
                   <li>
                     <span>Tanggal</span>
                     <b>
-                      {s.dateLabel} – {shortDate(s.endDate)} ({s.durationDays} hari)
+                      {s.dateLabel} - {shortDate(s.endDate)} ({s.durationDays} hari)
                     </b>
                   </li>
                   <li>

@@ -30,7 +30,7 @@ class ParticipantInvited extends Notification
             ->subject("Undangan training {$inv->request->package?->title} dari {$inv->organization->name()}")
             ->greeting('Halo'.($inv->name ? " {$inv->name}" : '').',')
             ->line("{$inv->organization->name()} menugaskan Anda mengikuti training **{$inv->request->package?->title}** di PPTI - VMES Training Center.")
-            ->when($schedule, fn (MailMessage $m) => $m->line('Jadwal: '.IdDate::long($schedule->start_date).' – '.IdDate::long($schedule->end_date).'.'))
+            ->when($schedule, fn (MailMessage $m) => $m->line('Jadwal: '.IdDate::long($schedule->start_date).' s.d. '.IdDate::long($schedule->end_date).'.'))
             ->line('Masuk atau buat akun dengan email ini, lalu terima undangan. Anda tetap memiliki satu akun peserta untuk seluruh histori training Anda; perusahaan hanya melihat progres training yang mereka sponsori.')
             ->action('Terima undangan', "$base/undangan/{$this->token}")
             ->line('Tautan berlaku sampai '.IdDate::long($inv->expires_at).'. Abaikan email ini bila Anda tidak mengenal pengirimnya.')

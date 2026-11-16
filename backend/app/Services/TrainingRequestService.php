@@ -211,7 +211,7 @@ class TrainingRequestService
         }
         $seats = (int) ($out['seats'] ?? 0);
         if ($seats < 1 || $seats > 500) {
-            throw ValidationException::withMessages(['seats' => 'Jumlah kursi 1–500.']);
+            throw ValidationException::withMessages(['seats' => 'Jumlah kursi 1-500.']);
         }
         if (! array_key_exists($out['delivery'] ?? 'onsite', TrainingRequest::DELIVERY)) {
             throw ValidationException::withMessages(['delivery' => 'Metode delivery tidak dikenal.']);
@@ -249,7 +249,7 @@ class TrainingRequestService
     private function assertStatus(TrainingRequest $r, array $allowed): void
     {
         if (! in_array($r->status, $allowed, true)) {
-            throw ValidationException::withMessages(['status' => "Permintaan berstatus \"{$r->label()}\" — aksi ini tidak diizinkan."]);
+            throw ValidationException::withMessages(['status' => "Permintaan berstatus \"{$r->label()}\", aksi ini tidak diizinkan."]);
         }
     }
 

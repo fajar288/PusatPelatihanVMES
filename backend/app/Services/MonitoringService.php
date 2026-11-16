@@ -174,7 +174,7 @@ class MonitoringService
             }
             $val = $s['score'] ?? null;
             if ($val !== null && $val !== '' && ((float) $val < 0 || (float) $val > $c->max_score)) {
-                throw ValidationException::withMessages(["scores.$i.score" => ["Skor {$c->name} harus 0–{$c->max_score}."]]);
+                throw ValidationException::withMessages(["scores.$i.score" => ["Skor {$c->name} harus 0-{$c->max_score}."]]);
             }
         }
 

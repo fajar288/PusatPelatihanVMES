@@ -51,7 +51,7 @@ export default async function TrainerDashboard() {
                     compact
                     items={[
                       { icon: "code", value: c.code },
-                      { icon: "cal", value: `${c.dateLabel} – ${c.endLabel}` },
+                      { icon: "cal", value: `${c.dateLabel} - ${c.endLabel}` },
                       { icon: "pin", value: c.city },
                       { icon: "monitor", value: c.mode },
                       { icon: "users", value: `${c.participantsCount} peserta` },

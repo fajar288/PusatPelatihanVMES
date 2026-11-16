@@ -24,7 +24,7 @@ export default async function TrainerMaterialsPage() {
                   compact
                   items={[
                     { icon: "code", value: c.code },
-                    { icon: "cal", value: `${c.dateLabel} – ${c.endLabel}` },
+                    { icon: "cal", value: `${c.dateLabel} - ${c.endLabel}` },
                     { icon: "users", value: `${c.participantsCount} peserta` },
                   ]}
                 />

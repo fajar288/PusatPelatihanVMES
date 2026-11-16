@@ -65,8 +65,8 @@ export default function KontakPage() {
               </span>
               <div>
                 <b>Jam Operasional</b>
-                <em>Senin – Jumat, 08.00 – 17.00 WIB</em>
-                <small>Sabtu 08.00 – 13.00 WIB (kelas & ujian sesuai jadwal)</small>
+                <em>Senin - Jumat, 08.00 - 17.00 WIB</em>
+                <small>Sabtu 08.00 - 13.00 WIB (kelas & ujian sesuai jadwal)</small>
               </div>
             </div>
             <div className="kmap">

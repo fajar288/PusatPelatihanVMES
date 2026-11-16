@@ -1,6 +1,6 @@
 // Identitas situs — diambil apa adanya dari pusatpelatihan.id
 export const SITE = {
-  name: "PPTI – VMES Training Center",
+  name: "PPTI - VMES Training Center",
   shortName: "VMES Training Center",
   company: "PT. PPTI - VMES Training Center",
   description:

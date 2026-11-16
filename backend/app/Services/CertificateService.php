@@ -50,7 +50,7 @@ class CertificateService
             $reasons[] = 'Peserta belum ditetapkan lulus (status: '.$e->status.').';
             foreach ($eval['checks'] as $c) {
                 if ($c['required'] && ! $c['ok']) {
-                    $reasons[] = $c['label'].' — '.$c['detail'];
+                    $reasons[] = $c['label'].': '.$c['detail'];
                 }
             }
         }

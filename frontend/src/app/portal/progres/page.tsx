@@ -135,7 +135,7 @@ export default async function PortalProgressPage() {
       {overview.map((o) => (
         <PortalCard
           key={o.enrollment.id}
-          title={`Praktik, kompetensi & catatan trainer — ${o.class.title}`}
+          title={`Praktik, kompetensi & catatan trainer: ${o.class.title}`}
           action={
             o.competency ? (
               <span className={"jst " + (o.competency.isCompetent ? "ok" : o.competency.isCompetent === false ? "no" : "wn")}>

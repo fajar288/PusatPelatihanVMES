@@ -177,7 +177,7 @@ class CompetencyGapService
             throw ValidationException::withMessages(['position' => 'Nama posisi wajib diisi (maks. 150 karakter).']);
         }
         if ($level < 1 || $level > 100) {
-            throw ValidationException::withMessages(['required_level' => 'Level target harus 1–100.']);
+            throw ValidationException::withMessages(['required_level' => 'Level target harus 1-100.']);
         }
         if (! $competency->is_active) {
             throw ValidationException::withMessages(['competency' => 'Kompetensi tidak aktif.']);

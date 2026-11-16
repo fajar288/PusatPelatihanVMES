@@ -20,7 +20,7 @@ export default async function NewRequestPage({ params }: PageProps<"/corporate/[
       <BackLink href={`/corporate/${org}/permintaan`}>Kembali ke Permintaan Training</BackLink>
       <PortalCard title="Permintaan training baru">
         <p className="fh">
-          Tentukan program dan jumlah kursi. Sistem membuat kursi 01–N tanpa membuat akun peserta; nama peserta diisi kemudian lewat input manual, unggah Excel/CSV, atau undangan email.
+          Tentukan program dan jumlah kursi. Sistem membuat kursi 01 s.d. N tanpa membuat akun peserta; nama peserta diisi kemudian lewat input manual, unggah Excel/CSV, atau undangan email.
         </p>
         <NewRequestForm org={org} packages={packages} units={units} />
       </PortalCard>

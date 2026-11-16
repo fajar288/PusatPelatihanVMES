@@ -79,7 +79,7 @@ export default function RegisterForm({ schedules, selectedId, prefill }: Props) 
         <select id="r-jadwal" name="schedule" value={jadwal} onChange={(e) => setJadwal(e.target.value)}>
           {schedules.map((x) => (
             <option key={x.id} value={x.id} disabled={x.status === "no"}>
-              {scheduleBatchTitle(x)} — {x.dateLabel} ({x.city}, {x.mode}){x.status === "no" ? " — Penuh" : ""}
+              {scheduleBatchTitle(x)} - {x.dateLabel} ({x.city}, {x.mode}){x.status === "no" ? " (Penuh)" : ""}
             </option>
           ))}
         </select>
@@ -150,7 +150,7 @@ export default function RegisterForm({ schedules, selectedId, prefill }: Props) 
       {type === "corporate" && (
         <div>
           <label htmlFor="r-participants">
-            Daftar peserta <small>(satu per baris: Nama, email, jabatan — opsional, bisa dilengkapi admin)</small>
+            Daftar peserta <small>(opsional, satu per baris: Nama, email, jabatan; bisa dilengkapi admin)</small>
           </label>
           <textarea id="r-participants" name="participants" placeholder={"Andi Pratama, andi@perusahaan.com, Teknisi\nBudi Santoso"} style={{ minHeight: 100 }} />
         </div>

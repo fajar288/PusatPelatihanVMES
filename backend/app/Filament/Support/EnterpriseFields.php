@@ -39,8 +39,8 @@ final class EnterpriseFields
     {
         return Select::make($name)->label('Akun pengguna')->searchable()->required()
             ->getSearchResultsUsing(fn (string $search) => User::query()->where(fn ($q) => $q->where('name', 'like', "%{$search}%")->orWhere('email', 'like', "%{$search}%"))
-                ->limit(20)->get()->mapWithKeys(fn (User $u) => [$u->id => "{$u->name} — {$u->email}"])->all())
-            ->getOptionLabelUsing(fn ($value) => ($u = User::query()->find($value)) ? "{$u->name} — {$u->email}" : null)
+                ->limit(20)->get()->mapWithKeys(fn (User $u) => [$u->id => "{$u->name} ({$u->email})"])->all())
+            ->getOptionLabelUsing(fn ($value) => ($u = User::query()->find($value)) ? "{$u->name} ({$u->email})" : null)
             ->helperText('Akun harus sudah terdaftar (login dengan akun yang sama seperti peserta).');
     }
 
@@ -81,6 +81,6 @@ final class EnterpriseFields
 
     public static function memberLabel(Member $m): string
     {
-        return $m->member_number.' — '.($m->user?->name ?? '?').' ('.($m->user?->email ?? '-').')';
+        return $m->member_number.' - '.($m->user?->name ?? '?').' ('.($m->user?->email ?? '-').')';
     }
 }

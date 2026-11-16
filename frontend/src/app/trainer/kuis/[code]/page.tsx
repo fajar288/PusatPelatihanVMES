@@ -25,7 +25,7 @@ export default async function TrainerClassQuizResults({ params }: PageProps<"/tr
   return (
     <>
       <BackLink href="/trainer/kuis">Kembali ke Hasil kuis</BackLink>
-      <PortalCard title={`Hasil kuis — ${d.class.title}`}>
+      <PortalCard title={`Hasil kuis: ${d.class.title}`}>
         {d.quizzes.length === 0 ? (
           <p className="fh">Belum ada kuis pada course kelas ini.</p>
         ) : (

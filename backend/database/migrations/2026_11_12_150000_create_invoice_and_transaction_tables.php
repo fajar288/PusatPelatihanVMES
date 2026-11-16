@@ -236,7 +236,7 @@ return new class extends Migration
             ]);
             DB::table('invoice_items')->insert([
                 'invoice_id' => $invoiceId,
-                'description' => $p->description ?: 'Biaya pelatihan'.($reg ? ' — '.$reg->registration_number : ''),
+                'description' => $p->description ?: 'Biaya pelatihan'.($reg ? ' - '.$reg->registration_number : ''),
                 'quantity' => 1, 'unit_price' => $p->amount, 'amount' => $p->amount, 'sort' => 0,
                 'created_at' => $p->created_at, 'updated_at' => $p->updated_at,
             ]);

@@ -24,10 +24,10 @@ export default function LogbookForm({ d, logbook, onDone }: { d: LogbooksData; l
             Sesi / pertemuan <small>(opsional)</small>
           </label>
           <select id="lb-session" name="session_id" defaultValue={defaultSession} disabled={logbook?.isLocked}>
-            <option value="">— tanpa sesi —</option>
+            <option value="">(tanpa sesi)</option>
             {d.sessions.map((s) => (
               <option key={s.id} value={s.id} disabled={s.hasLogbook && s.id !== logbook?.sessionId}>
-                Sesi {s.no} — {s.dateLabel}
+                Sesi {s.no}: {s.dateLabel}
                 {s.topic ? ` · ${s.topic}` : ""}
                 {s.hasLogbook && s.id !== logbook?.sessionId ? " (sudah ada logbook)" : ""}
               </option>
@@ -74,7 +74,7 @@ export default function LogbookForm({ d, logbook, onDone }: { d: LogbooksData; l
 
       <div>
         <label>
-          Catatan per peserta <small>(status praktik &amp; observasi individual — tampil di progres peserta setelah logbook divalidasi)</small>
+          Catatan per peserta <small>(status praktik &amp; observasi individual; tampil di progres peserta setelah logbook divalidasi)</small>
         </label>
         {d.participants.length ? (
           <table className="att">
@@ -96,7 +96,7 @@ export default function LogbookForm({ d, logbook, onDone }: { d: LogbooksData; l
                     </td>
                     <td>
                       <select name={`ps_${p.id}`} defaultValue={e?.practiceStatus ?? ""}>
-                        <option value="">—</option>
+                        <option value="">-</option>
                         {(Object.keys(d.practiceLabels) as (keyof typeof d.practiceLabels)[]).map((k) => (
                           <option key={k} value={k}>
                             {d.practiceLabels[k]}

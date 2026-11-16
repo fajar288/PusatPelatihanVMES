@@ -83,7 +83,7 @@ export default function CompetencyTargetsManager({ org, data }: { org: string; d
                   </select>
                 </div>
                 <div>
-                  <label htmlFor="ct-level">Level minimal (1–100)</label>
+                  <label htmlFor="ct-level">Level minimal (1-100)</label>
                   <input id="ct-level" name="required_level" type="number" min={1} max={100} required defaultValue={75} />
                 </div>
               </div>

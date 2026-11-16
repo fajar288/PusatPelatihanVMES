@@ -35,7 +35,7 @@ class ApiClientForm
                 ->description('Klien enterprise hanya dapat membaca/mengubah data organisasi ini dan bertindak atas nama satu pengguna perusahaan aktif: peran & batas unit pengguna itu ikut membatasi scope. Bila pengguna itu dinonaktifkan (mis. resign), akses klien otomatis terputus.')
                 ->components([
                     Select::make('organization_id')->label('Organisasi terikat')->searchable()->preload()->live()
-                        ->options(fn () => Organization::query()->orderBy('legal_name')->get()->mapWithKeys(fn (Organization $o) => [$o->id => $o->code.' — '.$o->name()])->all())
+                        ->options(fn () => Organization::query()->orderBy('legal_name')->get()->mapWithKeys(fn (Organization $o) => [$o->id => $o->code.' - '.$o->name()])->all())
                         ->afterStateUpdated(fn (Set $set) => $set('corporate_user_id', null))
                         ->helperText('Kosongkan untuk klien mitra/agregator (hanya scope umum).'),
                     Select::make('corporate_user_id')->label('Bertindak atas nama')->searchable()
