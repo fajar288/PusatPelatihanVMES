@@ -12,6 +12,7 @@ const ITEMS: { href: string; label: string; icon: IconName }[] = [
   { href: "/portal/profil", label: "Profil", icon: "users" },
   { href: "/portal/pelatihan", label: "Pelatihan Saya", icon: "grad" },
   { href: "/portal/belajar", label: "Belajar", icon: "laptop" },
+  { href: "/portal/asisten", label: "Asisten Belajar", icon: "bot" },
   { href: "/portal/progres", label: "Progres Saya", icon: "chart" },
   { href: "/portal/tugas", label: "Tugas", icon: "code" },
   { href: "/portal/hasil", label: "Hasil", icon: "trophy" },
@@ -59,6 +60,9 @@ export default function PortalNav({
             <Link key={it.href} href={it.href} className={active ? "on" : undefined} aria-current={active ? "page" : undefined}>
               <Icon name={it.icon} />
               {it.label}
+              {it.href === "/portal/asisten" && (
+                <span className="ml-auto! rounded-full border border-[var(--ln)] px-2! py-px! text-[11px] font-bold whitespace-nowrap text-[var(--mut)]">Belum tersedia</span>
+              )}
               {it.href === "/portal/notifikasi" && unread > 0 && (
                 <span className="pnav-badge" aria-label={`${unread} belum dibaca`}>
                   {unread > 99 ? "99+" : unread}

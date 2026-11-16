@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\V1\CorporateFinanceController;
 use App\Http\Controllers\Api\V1\CorporateRequestController;
 use App\Http\Controllers\Api\V1\HomeController;
 use App\Http\Controllers\Api\V1\InvitationController;
+use App\Http\Controllers\Api\V1\LearningAssistantController;
 use App\Http\Controllers\Api\V1\LearningController;
 use App\Http\Controllers\Api\V1\MeController;
 use App\Http\Controllers\Api\V1\NotificationController;
@@ -159,6 +160,9 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
         Route::post('/me/push-subscriptions/test', [NotificationController::class, 'test'])->middleware('throttle:push-test')->name('me.push.test');
         Route::get('/me/enrollments', [MeController::class, 'enrollments'])->name('me.enrollments');
         Route::get('/me/progress', [MeController::class, 'progress'])->name('me.progress');
+        // Asisten Belajar (kerangka Roadmap 5 tahap 5G): selalu "Belum tersedia", POST selalu 503 ai_unavailable.
+        Route::get('/me/assistant', [LearningAssistantController::class, 'status'])->name('me.assistant');
+        Route::post('/me/assistant/messages', [LearningAssistantController::class, 'send'])->middleware('throttle:30,1')->name('me.assistant.send');
         // Sertifikat & dashboard alumni (PRD §5.10, §5.6)
         Route::get('/me/certificates', [CertificateController::class, 'index'])->name('me.certificates');
         Route::get('/me/certificates/{certificate}', [CertificateController::class, 'show'])->name('me.certificate');

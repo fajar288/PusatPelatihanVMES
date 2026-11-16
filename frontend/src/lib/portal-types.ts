@@ -207,3 +207,11 @@ export const INVOICE_PILL: Record<InvoiceStatus | "awaiting", { label: string; c
   cancelled: { label: "Dibatalkan", cls: "no" },
 };
 
+/** GET /me/assistant — Asisten Belajar (kerangka Roadmap 5 tahap 5G): selalu "Belum tersedia", tanpa panggilan AI. */
+export type AssistantStatus = {
+  enabled: boolean;
+  available: boolean;
+  status: "unavailable";
+  label: string;
+  message: string;
+};
