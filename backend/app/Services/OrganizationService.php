@@ -87,6 +87,19 @@ class OrganizationService
         return $cu;
     }
 
+    /**
+     * Keluarkan user dari SEMUA sesi login (hapus seluruh token Sanctum), mis. saat akun perusahaan disalahgunakan
+     * (PRD Roadmap 5 §20.21 "Session dan token corporate harus dapat dicabut"). Akses corporate sendiri sudah tercabut
+     * seketika lewat status corporate_users; ini menambah logout paksa di semua perangkat (portal peserta ikut keluar).
+     */
+    public function revokeSessions(User $user, string $reason, ?User $actor = null): int
+    {
+        $count = $user->tokens()->delete();
+        AuditLog::record('auth.sessions_revoked', $user, null, ['tokens' => $count, 'reason' => $reason], $actor);
+
+        return $count;
+    }
+
     public function setStatus(Organization $org, string $status, ?User $actor = null): Organization
     {
         if (! array_key_exists($status, Organization::STATUSES)) {

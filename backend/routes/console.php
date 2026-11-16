@@ -67,6 +67,9 @@ Schedule::command('notifications:risk')->dailyAt('08:00');
 // Pangkas log permintaan API Publik, riwayat webhook & log notifikasi lama (API_LOG_RETENTION_DAYS, default 90 hari)
 Schedule::command('model:prune', ['--model' => [ApiRequestLog::class, WebhookDelivery::class, NotificationLog::class, ChatLog::class, ApiIdempotencyKey::class]])->daily();
 
+// Roadmap 5H: hapus token login yang sudah kedaluwarsa (SANCTUM_EXPIRATION) lebih dari 24 jam lalu.
+Schedule::command('sanctum:prune-expired', ['--hours' => 24])->daily();
+
 // Roadmap 5 (5A): cocokkan peserta enrollment yang belum punya member ke Member yang ada (PRD Roadmap 5 §20.5).
 // Hanya hasil yakin (email terverifikasi / nomor member) yang ditautkan; sisanya masuk Review identitas. Aman diulang.
 Artisan::command('identity:backfill', function (IdentityMatchingService $identity) {

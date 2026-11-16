@@ -91,6 +91,15 @@ class CorporateUserResource extends Resource
                         app(OrganizationService::class)->disableCorporateUser($record, $data['reason'], auth()->user());
                         Notification::make()->title('Akses dicabut')->success()->send();
                     }),
+                // §20.21: logout paksa di semua perangkat (hapus semua token login akun ini, portal peserta ikut keluar).
+                Action::make('sessions')->label('Keluarkan dari semua sesi')->icon('heroicon-o-arrow-left-end-on-rectangle')->color('danger')
+                    ->visible(fn (CorporateUser $record) => $record->user !== null)
+                    ->modalDescription('Semua token login akun ini dihapus sehingga ia harus login ulang di semua perangkat, termasuk portal peserta. Akses perusahaan yang sudah dicabut berlaku seketika tanpa langkah ini.')
+                    ->schema([TextInput::make('reason')->label('Alasan')->required()->maxLength(255)])
+                    ->action(function (array $data, CorporateUser $record): void {
+                        $n = app(OrganizationService::class)->revokeSessions($record->user, $data['reason'], auth()->user());
+                        Notification::make()->title("$n sesi login dicabut")->success()->send();
+                    }),
                 Action::make('enable')->label('Aktifkan lagi')->icon('heroicon-o-arrow-path')->color('gray')
                     ->visible(fn (CorporateUser $record) => ! $record->isActive())->requiresConfirmation()
                     ->action(fn (CorporateUser $record) => app(OrganizationService::class)->addCorporateUser($record->organization, $record->user, $record->role, $record->unit, auth()->user())),

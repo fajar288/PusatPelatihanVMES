@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Collection;
 
 /**
  * Peserta resmi satu kelas (hasil konversi pendaftar → member → enrollment, PRD §5.5).
@@ -205,5 +206,32 @@ class Enrollment extends Model
         $present = $this->attendances()->whereIn('status', ['present', 'late'])->count();
 
         return (int) round($present / $sessions * 100);
+    }
+
+    /**
+     * attendancePercent() untuk banyak enrollment sekaligus — dua kueri agregat per 1.000 baris, bukan dua kueri per
+     * baris (daftar & ekspor Corporate Portal, API enterprise; Roadmap 5H).
+     *
+     * @param  Collection<int, Enrollment>  $rows
+     * @return array<int, int|null> enrollment_id => persen hadir (null bila belum ada sesi berlangsung)
+     */
+    public static function attendancePercents(Collection $rows): array
+    {
+        $held = [];
+        foreach ($rows->pluck('schedule_id')->filter()->unique()->chunk(1000) as $ids) {
+            $held += ClassSession::query()->whereIn('schedule_id', $ids->values())->whereDate('date', '<=', today())
+                ->groupBy('schedule_id')->selectRaw('schedule_id, COUNT(*) AS n')->pluck('n', 'schedule_id')->all();
+        }
+        $present = [];
+        foreach ($rows->pluck('id')->chunk(1000) as $ids) {
+            $present += Attendance::query()->whereIn('enrollment_id', $ids->values())->whereIn('status', ['present', 'late'])
+                ->groupBy('enrollment_id')->selectRaw('enrollment_id, COUNT(*) AS n')->pluck('n', 'enrollment_id')->all();
+        }
+
+        return $rows->mapWithKeys(function (Enrollment $e) use ($held, $present) {
+            $sessions = (int) ($held[$e->schedule_id] ?? 0);
+
+            return [$e->id => $sessions === 0 ? null : (int) round((int) ($present[$e->id] ?? 0) / $sessions * 100)];
+        })->all();
     }
 }

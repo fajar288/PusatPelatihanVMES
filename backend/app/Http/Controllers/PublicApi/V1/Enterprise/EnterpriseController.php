@@ -43,12 +43,16 @@ abstract class EnterpriseController extends Controller
     }
 
     /** Daftar berhalaman berbentuk `data` + `links` + `meta` (sama dengan endpoint API Publik lain). */
-    protected function paginate(Request $request, Builder $query, Closure $map, int $default = 25, bool $applySince = true): JsonResponse
+    /** `$prepare` menerima koleksi satu halaman sebelum dipetakan (untuk menghitung data pendukung secara batch). */
+    protected function paginate(Request $request, Builder $query, Closure $map, int $default = 25, bool $applySince = true, ?Closure $prepare = null): JsonResponse
     {
         if ($applySince && ($since = $request->query('updated_since'))) {
             $query->where($query->getModel()->qualifyColumn('updated_at'), '>=', Carbon::parse($since));
         }
         $page = $query->paginate(max(1, (int) $request->integer('per_page', $default)))->withQueryString();
+        if ($prepare) {
+            $prepare($page->getCollection());
+        }
 
         return JsonResource::collection($page->through($map))->response();
     }

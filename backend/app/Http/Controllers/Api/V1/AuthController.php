@@ -43,6 +43,10 @@ class AuthController extends Controller
         $data = $request->validate(['email' => ['required', 'email'], 'password' => ['required'], 'device' => ['nullable', 'string', 'max:80']]);
         $user = User::query()->where('email', $data['email'])->first();
         if (! $user || ! Hash::check($data['password'], $user->password)) {
+            if ($user) {
+                // §20.21: percobaan login gagal ke akun yang ada ikut diaudit (email asing tidak disimpan).
+                AuditLog::record('auth.login_failed', $user, null, null, null);
+            }
             throw ValidationException::withMessages(['email' => 'Email atau sandi salah.']);
         }
         $token = $user->createToken($data['device'] ?? 'web')->plainTextToken;
@@ -83,10 +87,12 @@ class AuthController extends Controller
         return response()->json(['ok' => true, 'message' => "Tautan verifikasi dikirim ke {$user->email}."]);
     }
 
-    /** POST /auth/logout — cabut token yang dipakai. */
+    /** POST /auth/logout — cabut token yang dipakai (diaudit, PRD Roadmap 5 §20.21). */
     public function logout(Request $request): JsonResponse
     {
-        $request->user()->currentAccessToken()?->delete();
+        $user = $request->user();
+        $user->currentAccessToken()?->delete();
+        AuditLog::record('auth.logout', $user, null, null, $user);
 
         return response()->json(['ok' => true]);
     }

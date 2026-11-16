@@ -18,6 +18,7 @@ use App\Support\Media;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -73,8 +74,10 @@ class CorporateController extends Controller
 
         AuditLog::record('corporate.participants_viewed', $organization, null, ['corporate_user_id' => $cu->id, 'page' => $rows->currentPage(), 'count' => $rows->count()], $request->user());
 
+        $ctx = $this->rowContext($cu, $rows->getCollection());
+
         return response()->json([
-            'data' => $rows->getCollection()->map(fn (Enrollment $e) => $this->enrollmentRow($cu, $e, $active->get($e->member_id)))->values(),
+            'data' => $rows->getCollection()->map(fn (Enrollment $e) => $this->enrollmentRow($cu, $e, $active->get($e->member_id), $ctx))->values(),
             'meta' => ['currentPage' => $rows->currentPage(), 'lastPage' => $rows->lastPage(), 'total' => $rows->total()],
         ]);
     }
@@ -104,12 +107,14 @@ class CorporateController extends Controller
         $active = EmploymentRelationship::query()->active()->where('organization_id', $organization->id)->get()->keyBy('member_id');
         AuditLog::record('corporate.exported', $organization, null, ['corporate_user_id' => $cu->id, 'rows' => $rows->count(), 'type' => 'participants'], $request->user());
 
-        return response()->streamDownload(function () use ($rows, $cu, $active) {
+        $ctx = $this->rowContext($cu, $rows);
+
+        return response()->streamDownload(function () use ($rows, $cu, $active, $ctx) {
             $out = fopen('php://output', 'w');
             fwrite($out, "\xEF\xBB\xBF");
             fputcsv($out, ['Nama', 'Nomor member', 'Employee ID', 'Unit', 'Program', 'Kelas', 'Status', 'Kehadiran (%)', 'Status sertifikat', 'Status karyawan']);
             foreach ($rows as $e) {
-                $r = $this->enrollmentRow($cu, $e, $e->member_id ? $active->get($e->member_id) : null);
+                $r = $this->enrollmentRow($cu, $e, $e->member_id ? $active->get($e->member_id) : null, $ctx);
                 fputcsv($out, [$r['name'], $r['memberNumber'], $r['employeeId'], $r['unit'], $r['program'], $r['schedule'], $r['status'], $r['attendancePercent'], $r['certificateStatus'], $r['employment']]);
             }
             fclose($out);
@@ -121,6 +126,7 @@ class CorporateController extends Controller
     {
         $cu = $this->member($request, $organization);
         $rows = $this->access->listableEnrollments($cu)->whereHas('certificates')->with(['member.user:id,name', 'schedule.package:id,title', 'certificate'])->latest('id')->get();
+        AuditLog::record('corporate.certificates_viewed', $organization, null, ['corporate_user_id' => $cu->id, 'count' => $rows->count()], $request->user());
 
         return response()->json(['data' => $rows->map(fn (Enrollment $e) => [
             'enrollmentId' => $e->id,
@@ -142,6 +148,7 @@ class CorporateController extends Controller
             ->when($request->filled('q'), fn (Builder $q) => $q->where(fn (Builder $w) => $w->where('employee_id', 'like', '%'.$request->string('q').'%')
                 ->orWhereHas('member.user', fn (Builder $u) => $u->where('name', 'like', '%'.$request->string('q').'%'))))
             ->orderBy('id')->limit(200)->get();
+        AuditLog::record('corporate.employees_viewed', $organization, null, ['corporate_user_id' => $cu->id, 'count' => $rows->count()], $request->user());
 
         return response()->json(['data' => $rows->map(fn (EmploymentRelationship $e) => [
             'id' => $e->id, 'name' => $e->member?->user?->name, 'employeeId' => $e->employee_id, 'position' => $e->position, 'unit' => $e->unit?->label(), 'since' => IdDate::long($e->start_date),
@@ -207,8 +214,9 @@ class CorporateController extends Controller
             throw ValidationException::withMessages(['user' => 'Anda tidak bisa mencabut akses sendiri.']);
         }
         $this->keepOneOwner($corporateUser, null);
+        // Berlaku seketika untuk token yang sedang dipakai: setiap request corporate memeriksa status keanggotaan.
+        // Token login tidak dihapus karena dipakai juga untuk portal peserta; logout paksa hanya lewat admin VMES.
         $orgs->disableCorporateUser($corporateUser, 'Dicabut oleh Corporate Owner', $request->user());
-        $corporateUser->user?->tokens()->where('name', 'like', 'corporate%')->delete();
 
         return response()->json(['ok' => true]);
     }
@@ -234,24 +242,37 @@ class CorporateController extends Controller
         return $this->reporting->employeesQuery($cu);
     }
 
-    private function enrollmentRow(CorporateUser $cu, Enrollment $e, ?EmploymentRelationship $employment): array
+    /**
+     * Hak lihat & kehadiran untuk satu halaman/ekspor sekaligus (bukan kueri per baris — Roadmap 5H).
+     *
+     * @param  Collection<int, Enrollment>  $rows
+     * @return array{access: array<int, array{exited: bool, view: bool, progress: bool}>, attendance: array<int, int|null>}
+     */
+    private function rowContext(CorporateUser $cu, Collection $rows): array
     {
-        $progress = $this->access->canViewProgress($cu, $e);
+        return ['access' => $this->access->rowAccess($cu, $rows), 'attendance' => Enrollment::attendancePercents($rows)];
+    }
+
+    /** @param  array{access: array<int, array{exited: bool, view: bool, progress: bool}>, attendance: array<int, int|null>}  $ctx */
+    private function enrollmentRow(CorporateUser $cu, Enrollment $e, ?EmploymentRelationship $employment, array $ctx): array
+    {
+        $access = $ctx['access'][$e->id];
+        $progress = $access['progress'];
 
         return [
             'id' => $e->id,
             'name' => $e->member?->user?->name ?? $e->participant_name,
             'memberNumber' => $e->member?->member_number,
             'employeeId' => $employment?->employee_id,
-            'employment' => $this->reporting->employmentStatus($e, $employment),
+            'employment' => $this->reporting->employmentStatus($e, $employment, $access['exited']),
             'program' => $e->schedule?->package?->title ?? $e->schedule?->title,
             'schedule' => $e->schedule?->code,
             'dates' => $e->schedule ? IdDate::long($e->schedule->start_date).' – '.IdDate::long($e->schedule->end_date) : null,
             'unit' => $e->sponsorUnit?->label(),
             'status' => $e->status,
-            'attendancePercent' => $progress ? $e->attendancePercent() : null,
+            'attendancePercent' => $progress ? $ctx['attendance'][$e->id] : null,
             'progressVisible' => $progress,
-            'certificateStatus' => $this->access->canViewCertificateStatus($cu, $e) ? $e->certificate?->status : null,
+            'certificateStatus' => $access['view'] ? $e->certificate?->status : null,
         ];
     }
 

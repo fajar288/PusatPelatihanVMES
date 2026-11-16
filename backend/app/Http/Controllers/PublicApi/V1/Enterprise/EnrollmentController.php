@@ -35,7 +35,12 @@ class EnrollmentController extends EnterpriseController
         $p = $this->listParams($request, $this->filterRules());
         $q = $this->filtered($this->access->listableEnrollments($cu), $p, $cu)->with(self::WITH)->latest('id');
         $active = $this->activeEmployments($cu);
-        $response = $this->paginate($request, $q, fn (Enrollment $e) => $this->row($cu, $e, $active));
+        $ctx = [];
+        $response = $this->paginate($request, $q, function (Enrollment $e) use ($cu, $active, &$ctx) {
+            return $this->row($cu, $e, $active, $ctx);
+        }, prepare: function (Collection $rows) use ($cu, &$ctx): void {
+            $ctx = $this->rowContext($cu, $rows);
+        });
         $this->auditAccess($request, 'api.participants_viewed', null, ['count' => count($response->getData(true)['data'])]);
 
         return $response;
@@ -51,7 +56,7 @@ class EnrollmentController extends EnterpriseController
         }
         $this->auditAccess($request, 'api.participant_viewed', $e);
 
-        return response()->json(['data' => $this->row($cu, $e, $this->activeEmployments($cu))]);
+        return response()->json(['data' => $this->row($cu, $e, $this->activeEmployments($cu), $this->rowContext($cu, collect([$e])))]);
     }
 
     /** GET /certificates — status sertifikat enrollment bersponsor (nomor hanya bila terbit). */
@@ -194,17 +199,37 @@ class EnrollmentController extends EnterpriseController
         return EmploymentRelationship::query()->active()->where('organization_id', $cu->organization_id)->get()->keyBy('member_id');
     }
 
-    private function row(CorporateUser $cu, Enrollment $e, Collection $active): array
+    /**
+     * Hak lihat, employment terakhir & kehadiran untuk satu halaman sekaligus (bukan kueri per baris — Roadmap 5H).
+     *
+     * @param  Collection<int, Enrollment>  $rows
+     */
+    private function rowContext(CorporateUser $cu, Collection $rows): array
+    {
+        $members = $rows->pluck('member_id')->filter()->unique()->values();
+
+        return [
+            'access' => $this->access->rowAccess($cu, $rows),
+            'attendance' => Enrollment::attendancePercents($rows),
+            'latest' => $members->isEmpty() ? collect() : EmploymentRelationship::query()->where('organization_id', $cu->organization_id)
+                ->whereIn('member_id', $members)->orderBy('id')->get()->keyBy('member_id'),   // id terbesar menang = terbaru
+        ];
+    }
+
+    private function row(CorporateUser $cu, Enrollment $e, Collection $active, array $ctx): array
     {
         $employment = $e->member_id ? $active->get($e->member_id) : null;
-        $employment ??= $e->member_id ? EmploymentRelationship::query()->where('organization_id', $cu->organization_id)->where('member_id', $e->member_id)->latest('id')->first() : null;
+        $employment ??= $e->member_id ? $ctx['latest']->get($e->member_id) : null;
+        $access = $ctx['access'][$e->id];
 
         return EnterpriseApiPresenter::enrollment(
             $e,
-            $this->reporting->employmentStatus($e, $employment?->isActive() ? $employment : null),
+            $this->reporting->employmentStatus($e, $employment?->isActive() ? $employment : null, $access['exited']),
             $employment,
-            $this->access->canViewProgress($cu, $e),
-            $this->access->canViewCertificateStatus($cu, $e),
+            $access['progress'],
+            $access['view'],
+            $ctx['attendance'][$e->id] ?? null,
+            attendanceKnown: true,
         );
     }
 }
