@@ -6,12 +6,16 @@ use App\Filament\NavigationGroup;
 use App\Filament\Widgets\Executive\AtRiskTable;
 use App\Filament\Widgets\Executive\CertificateStatusChart;
 use App\Filament\Widgets\Executive\ClassStatusChart;
+use App\Filament\Widgets\Executive\CohortTable;
+use App\Filament\Widgets\Executive\CorporateFunnelChart;
 use App\Filament\Widgets\Executive\FinanceStats;
+use App\Filament\Widgets\Executive\KpiTable;
 use App\Filament\Widgets\Executive\LearningStats;
 use App\Filament\Widgets\Executive\ParticipantStats;
 use App\Filament\Widgets\Executive\PopularProgramsChart;
 use App\Filament\Widgets\Executive\RevenueByProgramChart;
 use App\Filament\Widgets\Executive\RevenueChart;
+use App\Filament\Widgets\Executive\SegmentStats;
 use App\Filament\Widgets\Executive\TrainerPerformanceTable;
 use App\Filament\Widgets\Executive\TrendChart;
 use App\Services\AnalyticsService;
@@ -74,14 +78,18 @@ class ExecutiveDashboard extends Dashboard
             ParticipantStats::class,
             FinanceStats::class,
             LearningStats::class,
+            KpiTable::class,
+            SegmentStats::class,
             TrendChart::class,
             RevenueChart::class,
             PopularProgramsChart::class,
             RevenueByProgramChart::class,
             ClassStatusChart::class,
             CertificateStatusChart::class,
+            CorporateFunnelChart::class,
             AtRiskTable::class,
             TrainerPerformanceTable::class,
+            CohortTable::class,
         ];
     }
 

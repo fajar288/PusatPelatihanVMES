@@ -114,10 +114,18 @@ class AnalyticsService
             'participants' => $this->participants($f, $schedules, $programIds, $enrollments),
             'classes' => $this->classes($schedules),
             'finance' => $this->finance($f, $programIds),
-            'learning' => $this->learning($schedules, $enrollments),
+            'learning' => ['completion_rate' => $this->kpiCompletion($f)] + $this->learning($schedules, $enrollments),
             'trainers' => $this->trainers($f, $schedules, $enrollments),
             'certificates' => $this->certificates($f, $programIds),
         ];
+    }
+
+    /** Completion Rate sesuai definisi KPI §8.1 (docs/KPI.md) — satu angka completion di seluruh dashboard. */
+    private function kpiCompletion(array $f): ?float
+    {
+        $kpi = app(KpiService::class);
+
+        return $kpi->completionRate($kpi->scopeFromDashboard($f))['value'];
     }
 
     /** Kueri kelas sesuai filter; $withPeriod membatasi pada kelas yang beririsan dengan periode. */
@@ -284,28 +292,68 @@ class AnalyticsService
         ];
     }
 
-    /** @return array<string, mixed> */
-    private function learning(Collection $schedules, Collection $enrollments): array
+    /** Persentase kehadiran per enrollment (bukan dropped) terhadap sesi yang sudah lewat. @return Collection<int, ?int> */
+    private function attendanceMap(Collection $enrollments): Collection
     {
         $ids = $enrollments->pluck('id');
-        $held = ClassSession::query()->whereIn('schedule_id', $schedules->pluck('id'))->whereDate('date', '<=', today())
+        $held = ClassSession::query()->whereIn('schedule_id', $enrollments->pluck('schedule_id')->unique()->values())->whereDate('date', '<=', today())
             ->select('schedule_id', DB::raw('count(*) as n'))->groupBy('schedule_id')->pluck('n', 'schedule_id');
         $present = Attendance::query()->whereIn('enrollment_id', $ids)->whereIn('status', ['present', 'late'])
             ->select('enrollment_id', DB::raw('count(*) as n'))->groupBy('enrollment_id')->pluck('n', 'enrollment_id');
-        $attendance = $enrollments->where('status', '!=', 'dropped')->mapWithKeys(function ($e) use ($held, $present) {
+
+        return $enrollments->where('status', '!=', 'dropped')->mapWithKeys(function ($e) use ($held, $present) {
             $h = (int) ($held[$e->schedule_id] ?? 0);
 
             return [$e->id => $h > 0 ? (int) round(min(1, ((int) ($present[$e->id] ?? 0)) / $h) * 100) : null];
         });
-        $attendanceKnown = $attendance->filter(fn ($v) => $v !== null);
+    }
 
-        // Progres LMS per peserta (hanya kelas yang punya enrollment).
+    /** Progres LMS per enrollment (hanya kelas yang punya enrollment). @return Collection<int, array<string, mixed>> */
+    private function lmsMap(Collection $schedules, Collection $enrollments): Collection
+    {
         $lms = collect();
         foreach ($schedules->whereIn('id', $enrollments->pluck('schedule_id')->unique()) as $s) {
             foreach ($this->lms->classProgress($s) as $row) {
                 $lms[$row['enrollment_id']] = $row;
             }
         }
+
+        return $lms;
+    }
+
+    /**
+     * Evaluasi aturan peserta berisiko pada sekumpulan enrollment (dipakai KPI At-Risk Rate, docs/KPI.md).
+     *
+     * @return array{active: int, flagged: array<int, array<string, mixed>>}
+     */
+    public function riskFor(Collection $enrollments): array
+    {
+        $schedules = TrainingSchedule::query()->whereIn('id', $enrollments->pluck('schedule_id')->unique()->values())
+            ->with('package:id,title,category_id,completion_rule')->get();
+        $byId = $schedules->keyBy('id');
+        $active = $enrollments->filter(fn ($e) => self::riskEligible($e, $byId[$e->schedule_id] ?? null));
+
+        return [
+            'active' => $active->count(),
+            'flagged' => $this->atRisk($schedules, $active, $this->attendanceMap($active), $this->lmsMap($schedules, $active)),
+        ];
+    }
+
+    /** Peserta aktif yang dinilai aturan risiko: enrolled/attending di kelas yang sudah mulai, bukan draf/batal. */
+    public static function riskEligible(Enrollment $e, ?TrainingSchedule $s): bool
+    {
+        return $s !== null && in_array($e->status, ['enrolled', 'attending'], true)
+            && ! $s->start_date->gt(CarbonImmutable::today()) && ! in_array($s->status, ['cancelled', 'draft'], true);
+    }
+
+    /** @return array<string, mixed> */
+    private function learning(Collection $schedules, Collection $enrollments): array
+    {
+        $ids = $enrollments->pluck('id');
+        $attendance = $this->attendanceMap($enrollments);
+        $attendanceKnown = $attendance->filter(fn ($v) => $v !== null);
+
+        $lms = $this->lmsMap($schedules, $enrollments);
         $withLessons = $lms->filter(fn ($r) => $r['lessons_total'] > 0);
         $quiz = $lms->pluck('quiz_avg')->filter(fn ($v) => $v !== null);
 
@@ -320,7 +368,6 @@ class AnalyticsService
             'completed' => $completed,
             'failed' => $failed,
             'dropped' => $enrollments->where('status', 'dropped')->count(),
-            'completion_rate' => $completed + $failed > 0 ? round($completed / ($completed + $failed) * 100, 1) : null,
             'avg_final_score' => $scores->isNotEmpty() ? round($scores->avg(), 1) : null,
             'avg_attendance' => $attendanceKnown->isNotEmpty() ? round($attendanceKnown->avg(), 1) : null,
             'avg_lms_progress' => $withLessons->isNotEmpty() ? round($withLessons->avg('percent'), 1) : null,
@@ -345,9 +392,9 @@ class AnalyticsService
         $today = CarbonImmutable::today();
         $byId = $schedules->keyBy('id');
         $out = [];
-        foreach ($enrollments->whereIn('status', ['enrolled', 'attending']) as $e) {
+        foreach ($enrollments as $e) {
             $s = $byId[$e->schedule_id] ?? null;
-            if (! $s || $s->start_date->gt($today) || in_array($s->status, ['cancelled', 'draft'], true)) {
+            if (! self::riskEligible($e, $s)) {
                 continue;
             }
             $minAtt = (int) ($s->package?->completionRule()['min_attendance_pct'] ?? 0) ?: self::RISK_MIN_ATTENDANCE;
@@ -556,6 +603,16 @@ class AnalyticsService
         );
         foreach ($ce['by_status'] as $st) {
             $rows[] = ['Sertifikat', 'Status: '.$st['label'], $st['count']];
+        }
+        // KPI resmi §8.1 per segmen (docs/KPI.md) + funnel corporate
+        $sales = app(SalesAnalyticsService::class)->dashboard($d['filters']);
+        foreach ($sales['kpi_table'] as $k) {
+            foreach (KpiService::SEGMENTS as $seg => $label) {
+                $rows[] = ['KPI §8.1', $k['label'].' — '.$label.($k['key'] === 'average_order_value' ? ' (Rp)' : ' (%)'), $k[$seg.'_value']];
+            }
+        }
+        foreach ($sales['funnel']['stages'] as $st) {
+            $rows[] = ['Funnel corporate', $st['label'], $st['count']];
         }
 
         return $rows;

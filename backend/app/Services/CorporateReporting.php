@@ -69,10 +69,11 @@ class CorporateReporting
         $all = $this->access->sponsoredEnrollments($cu);
         $active = (clone $all)->whereIn('status', ['enrolled', 'attending'])->count();
         $done = (clone $all)->where('status', 'completed')->count();
-        $counted = (clone $all)->where('status', '!=', 'dropped')->count();
-        $attendance = $cu->allows('view_progress')
-            ? (clone $all)->whereIn('status', ['attending', 'completed', 'failed'])->with('schedule.sessions', 'attendances')->get()->map->attendancePercent()->filter(fn ($v) => $v !== null)
-            : collect();
+        // Completion & kehadiran mengikuti definisi KPI §8.1 (docs/KPI.md), sepanjang waktu sampai hari ini.
+        $kpi = app(KpiService::class);
+        $scope = ['from' => '2000-01-01', 'to' => today()->toDateString(), 'segment' => 'corporate', 'corporate_user' => $cu];
+        $completion = $kpi->completionRate($scope)['value'];
+        $attendance = $cu->allows('view_progress') ? $kpi->attendanceRate($scope)['value'] : null;
         $requests = $this->requestsQuery($cu)->get(['id', 'status', 'seats']);
         $live = $requests->whereNotIn('status', ['cancelled', 'draft']);
         $filled = $live->isEmpty() ? 0 : RequestSeat::query()->whereIn('training_request_id', $live->pluck('id'))->whereIn('status', ['assigned', 'enrolled'])->count();
@@ -81,8 +82,8 @@ class CorporateReporting
             'participants' => (clone $all)->whereNotNull('member_id')->distinct()->count('member_id'),
             'activeEnrollments' => $active,
             'completed' => $done,
-            'completionRate' => $counted > 0 ? (int) round($done / $counted * 100) : null,
-            'attendanceAvg' => $attendance->isNotEmpty() ? (int) round($attendance->avg()) : null,
+            'completionRate' => $completion === null ? null : (int) round($completion),
+            'attendanceAvg' => $attendance === null ? null : (int) round($attendance),
             'certificates' => (clone $all)->whereHas('certificates', fn (Builder $q) => $q->where('status', 'issued'))->count(),
             'activeEmployees' => $cu->allows('view_progress') || $cu->allows('manage_participants') ? $this->employeesQuery($cu)->count() : null,
             'requests' => $requests->countBy('status')->all(),

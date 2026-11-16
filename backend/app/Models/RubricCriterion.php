@@ -22,6 +22,12 @@ class RubricCriterion extends Model
         return $this->belongsTo(AssessmentRubric::class, 'rubric_id');
     }
 
+    /** Master kompetensi yang diukur kriteria ini (bukti assessment untuk competency gap, Roadmap 5F). */
+    public function competencyRef(): BelongsTo
+    {
+        return $this->belongsTo(Competency::class, 'competency_id');
+    }
+
     /** Label level untuk skor tertentu (bila deskriptor diisi). */
     public function levelLabel(?float $score): ?string
     {

@@ -160,6 +160,34 @@ export async function disableCorporateUserAction(org: string, id: number): Promi
   return { ok: true, message: "Akses dicabut." };
 }
 
+// ---- target kompetensi per posisi (Roadmap 5F) ----
+
+/** Tambah/ubah target: posisi + kompetensi yang sama memperbarui level (posisi tidak peka huruf besar/kecil). */
+export async function saveCompetencyTargetAction(_prev: CorpState, form: FormData): Promise<CorpState> {
+  const org = String(form.get("org"));
+  try {
+    await call(`${base(org)}/competency-targets`, {
+      json: { position: val(form, "position"), competency: val(form, "competency"), required_level: Number(form.get("required_level")) },
+    });
+  } catch (e) {
+    return fail(e);
+  }
+  revalidatePath(`/corporate/${org}/kompetensi`);
+  revalidatePath(`/corporate/${org}/analitik`);
+  return { ok: true, message: "Target kompetensi disimpan." };
+}
+
+export async function deleteCompetencyTargetAction(org: string, id: number): Promise<CorpState> {
+  try {
+    await call(`${base(org)}/competency-targets/${id}`, { method: "DELETE" });
+  } catch (e) {
+    return fail(e);
+  }
+  revalidatePath(`/corporate/${org}/kompetensi`);
+  revalidatePath(`/corporate/${org}/analitik`);
+  return { ok: true, message: "Target dihapus." };
+}
+
 // ---- verifikasi email & undangan (akun peserta) ----
 
 export async function resendVerificationAction(): Promise<CorpState> {
