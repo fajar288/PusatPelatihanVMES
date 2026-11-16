@@ -55,7 +55,7 @@ class AssessmentRubric extends Model
         if ($rubric) {
             return $rubric;
         }
-        $rubric = static::query()->create(['package_id' => $package->id, 'name' => 'Rubrik '.$package->title, 'description' => 'Rubrik bawaan (PRD §5.9); sesuaikan kriteria dengan kompetensi program.']);
+        $rubric = static::query()->create(['package_id' => $package->id, 'name' => 'Rubrik '.$package->title, 'description' => 'Rubrik bawaan PPTI; sesuaikan kriteria dengan kompetensi program.']);
         foreach (self::DEFAULT_CRITERIA as $i => $c) {
             $rubric->criteria()->create($c + ['weight' => 1, 'max_score' => 4, 'levels' => self::DEFAULT_LEVELS, 'sort_order' => $i + 1]);
         }

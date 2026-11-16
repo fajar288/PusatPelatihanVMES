@@ -27,8 +27,8 @@ class KpiTable extends TableWidget
             ->description(fn (array $record) => $record[$seg.'_detail'])->weight('bold');
 
         return $table
-            ->heading('KPI Roadmap 5 §8.1')
-            ->description('Definisi operasional di docs/KPI.md. Repeat order hanya berlaku untuk akun corporate; At-Risk Rate memakai aturan peserta berisiko di bawah.')
+            ->heading('Indikator Kinerja Utama (KPI)')
+            ->description('Repeat order hanya dihitung untuk akun perusahaan. At-Risk Rate memakai aturan peserta berisiko di bawah.')
             ->records(fn (): LengthAwarePaginator => new LengthAwarePaginator(
                 collect($this->sales()['kpi_table'])->keyBy('key')->all(), count(KpiService::KEYS), count(KpiService::KEYS), 1,
             ))

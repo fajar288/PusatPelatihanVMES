@@ -41,7 +41,7 @@ class WhatsAppStatusWidget extends StatsOverviewWidget
         $active = (bool) config('notifications.whatsapp.enabled');
         if (! $sender->configured()) {
             return [Stat::make('Status WhatsApp', 'Belum dikonfigurasi')
-                ->description('Isi FONNTE_TOKEN di .env (lihat docs/whatsapp-fonnte.md).')
+                ->description('Token Fonnte belum diisi. Hubungi tim teknis untuk mengaktifkan pengiriman WhatsApp.')
                 ->color('gray')->icon(Heroicon::OutlinedChatBubbleLeftEllipsis)];
         }
         try {

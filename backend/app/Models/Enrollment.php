@@ -160,13 +160,13 @@ class Enrollment extends Model
                 throw new DomainException("Tipe enrollment tidak dikenal: {$e->type}");
             }
             if ($e->type === self::TYPE_CORPORATE && ! $e->sponsor_organization_id) {
-                throw new DomainException('R1: enrollment CORPORATE wajib memiliki sponsor organisasi.');
+                throw new DomainException('Enrollment perusahaan wajib memiliki organisasi sponsor.');
             }
             if ($e->type === self::TYPE_SELF && ($e->sponsor_organization_id || $e->sponsor_unit_id)) {
-                throw new DomainException('R2: enrollment SELF tidak boleh memiliki sponsor organisasi.');
+                throw new DomainException('Enrollment mandiri tidak boleh memiliki organisasi sponsor.');
             }
             if ($e->exists && $e->isDirty(['type', 'sponsor_organization_id']) && ! self::$sponsorChangeAuthorized) {
-                throw new DomainException('R7/R8: sponsor enrollment hanya bisa diubah lewat transfer sponsor resmi.');
+                throw new DomainException('Sponsor enrollment hanya bisa diubah lewat transfer sponsor resmi.');
             }
         });
 
