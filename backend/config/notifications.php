@@ -17,12 +17,21 @@ return [
         'stale_lock_minutes' => 10,
     ],
 
-    // WhatsApp: penyedia DITUNDA (keputusan atasan). Hanya driver `log` (pesan ditulis ke log aplikasi). Mati bawaan.
+    // WhatsApp: mati bawaan. Driver `log` (pesan hanya ditulis ke log) atau `fonnte` (WhatsApp API gateway Fonnte).
+    // Kanal aktif hanya bila WHATSAPP_ENABLED=true (driver fonnte: FONNTE_TOKEN juga wajib terisi). Panduan: docs/whatsapp-fonnte.md.
     'whatsapp' => [
         'enabled' => (bool) env('WHATSAPP_ENABLED', false),
         'driver' => env('WHATSAPP_DRIVER', 'log'),
         'log_channel' => env('WHATSAPP_LOG_CHANNEL'),
         'country_code' => '62',
+
+        'fonnte' => [
+            'token' => env('FONNTE_TOKEN'),
+            'base_url' => env('FONNTE_BASE_URL', 'https://api.fonnte.com'),
+            // secret acak di path URL webhook (Fonnte tidak menandatangani webhook). Kosong = webhook menolak semua (404).
+            'webhook_secret' => env('FONNTE_WEBHOOK_SECRET'),
+            'timeout' => (int) env('FONNTE_TIMEOUT', 15),
+        ],
     ],
 
     // Peringatan progres berisiko (PRD §6 "Progress Risk"): satu peringatan per enrollment per N hari.

@@ -3,9 +3,9 @@
 namespace App\Support\WhatsApp;
 
 /**
- * Pengirim WhatsApp (PRD Roadmap 5 §6). Penyedia WA DITUNDA: hanya driver `log` (LogWhatsAppSender).
- * Penyedia nyata nanti cukup mengimplementasikan antarmuka ini dan melapor status lewat
- * NotificationDispatcher::receipt($provider, $messageId, 'delivered'|'read'|'failed').
+ * Pengirim WhatsApp (PRD Roadmap 5 §6). Driver: `log` (LogWhatsAppSender, bawaan) dan `fonnte` (FonnteWhatsAppSender),
+ * dipilih lewat WHATSAPP_DRIVER. Penyedia lain cukup mengimplementasikan antarmuka ini dan melapor status lewat
+ * NotificationDispatcher::receipt($provider, $messageId, 'delivered'|'read'|'failed') dari controller webhook-nya sendiri.
  */
 interface WhatsAppSender
 {
@@ -20,7 +20,8 @@ interface WhatsAppSender
      *
      * @return string ID pesan dari penyedia
      *
-     * @throws \RuntimeException bila gagal (akan di-retry sesuai kebijakan)
+     * @throws PermanentWhatsAppFailure bila gagal permanen (tidak di-retry, mis. nomor/token tidak valid)
+     * @throws \RuntimeException bila gagal sementara (akan di-retry sesuai kebijakan)
      */
     public function send(string $to, string $text): string;
 }

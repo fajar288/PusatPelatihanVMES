@@ -21,6 +21,7 @@ use App\Http\Controllers\Api\V1\TrainerController;
 use App\Http\Controllers\Api\V1\TrainerLmsController;
 use App\Http\Controllers\Api\V1\TrainerMonitoringController;
 use App\Http\Controllers\Api\V1\WaitlistController;
+use App\Http\Controllers\Webhooks\FonnteWebhookController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -199,4 +200,10 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
             Route::get('/classes/{code}/progress/{enrollment}', [TrainerMonitoringController::class, 'participantProgress'])->name('classes.progress.participant');
         });
     });
+});
+
+// ---- Webhook penyedia WhatsApp (Fonnte) — tanpa auth/CSRF; diamankan secret acak di path (FONNTE_WEBHOOK_SECRET) ----
+Route::prefix('webhooks/fonnte/{secret}')->name('webhooks.fonnte.')->middleware('throttle:fonnte-webhook')->group(function (): void {
+    Route::post('/status', [FonnteWebhookController::class, 'status'])->name('status');
+    Route::post('/device', [FonnteWebhookController::class, 'device'])->name('device');
 });

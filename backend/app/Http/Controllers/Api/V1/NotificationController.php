@@ -9,7 +9,7 @@ use App\Models\Trainer;
 use App\Services\NotificationCenter;
 use App\Services\NotificationDispatcher;
 use App\Support\Push\PushSender;
-use App\Support\WhatsApp\LogWhatsAppSender;
+use App\Support\WhatsApp\PhoneNumber;
 use App\Support\WhatsApp\WhatsAppSender;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -145,7 +145,7 @@ class NotificationController extends Controller
             'whatsapp' => [
                 'available' => $whatsapp->enabled(),
                 'enabled' => ($user->member?->communication_pref['whatsapp'] ?? true) !== false,
-                'hasNumber' => LogWhatsAppSender::normalize($user->whatsappNumber()) !== null,
+                'hasNumber' => PhoneNumber::normalize($user->whatsappNumber()) !== null,
             ],
         ];
     }
