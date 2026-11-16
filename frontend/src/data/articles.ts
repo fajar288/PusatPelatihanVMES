@@ -189,9 +189,9 @@ export const ARTICLES: Article[] = [
   },
   {
     slug: "dokumentasi-plc-scada-batch-oktober", title: "Dokumentasi Kelas PLC & SCADA Batch Oktober 2026", excerpt: "Praktik pemrograman PLC dan integrasi SCADA di lab otomasi PPTI - VMES.",
-    category: "Dokumentasi", dateLabel: "2 Nov 2026", publishedAt: 1793577600, image: "https://livewireindia.com/blog/wp-content/uploads/2019/03/plc-scada-training-740x414.jpeg", tags: ["PLC", "SCADA"],
+    category: "Dokumentasi", dateLabel: "2 Nov 2026", publishedAt: 1793577600, image: "https://images.unsplash.com/photo-1780034766312-73825064806c?w=1024&q=80&auto=format&fit=crop", tags: ["PLC", "SCADA"],
     body: [
-      { type: "img", src: "https://livewireindia.com/blog/wp-content/uploads/2019/03/plc-scada-training-740x414.jpeg", alt: "Dokumentasi training PPTI", caption: "Peserta mengonfigurasi HMI dan SCADA." },
+      { type: "img", src: "https://images.unsplash.com/photo-1780034766312-73825064806c?w=1024&q=80&auto=format&fit=crop", alt: "Dokumentasi training PPTI", caption: "Peserta mengonfigurasi HMI dan SCADA." },
       { type: "p", text: "Peserta menyelesaikan proyek akhir berupa simulasi lini pengisian botol otomatis yang dikendalikan PLC dan dipantau lewat SCADA." },
     ],
   },

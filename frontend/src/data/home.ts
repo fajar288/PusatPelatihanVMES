@@ -103,7 +103,7 @@ export const PARTNERS: { name: string; logo: string; w: number; h: number }[] = 
 // ===== GALERI (hotlink pihak ketiga — ganti dengan foto PPTI) =====
 export const GALLERY: { src: string; alt: string }[] = [
   { src: "https://merca.team/wp-content/uploads/2026/02/training-within-industry-1024x683.webp", alt: "Dokumentasi training PPTI" },
-  { src: "https://livewireindia.com/blog/wp-content/uploads/2019/03/plc-scada-training-740x414.jpeg", alt: "Dokumentasi training PPTI" },
+  { src: "https://images.unsplash.com/photo-1780034766312-73825064806c?w=1024&q=80&auto=format&fit=crop", alt: "Dokumentasi training PPTI" },
   { src: "https://agile4training.com/assets/images/courses/course_2283_1757248573.webp", alt: "Dokumentasi training PPTI" },
   { src: "https://www.arghajata.com/wp-content/uploads/2024/11/human-resources-management-software-computer-screen-helping-employee-to-manage-recruitment-payroll-staff-searching-kpi-319722581.webp", alt: "Dokumentasi training PPTI" },
   { src: "https://agile4training.com/assets/images/courses/course_2016_1743934487.webp", alt: "Dokumentasi training PPTI" },
