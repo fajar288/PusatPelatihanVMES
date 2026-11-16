@@ -25,7 +25,7 @@ class NotificationTemplate extends Model
         'announcement' => ['Pengumuman', 'Informasi penting dari PPTI untuk peserta.'],
         'corporate' => ['Peserta disponsori perusahaan', 'Untuk pengguna perusahaan: pendaftaran, pembayaran, jadwal, progres berisiko, kelulusan & sertifikat peserta yang disponsori.'],
         'teaching' => ['Kelas yang saya ajar', 'Untuk trainer: pengingat H-7/H-1 dan perubahan jadwal kelas yang diajar.'],
-        'operations' => ['Operasional admin', 'Untuk staf VMES: pendaftaran baru, pembayaran, peserta berisiko, kelulusan & sertifikat.'],
+        'operations' => ['Operasional admin', 'Untuk staf VMES: pendaftaran baru, pembayaran, peserta berisiko, kelulusan & sertifikat, device WhatsApp terputus.'],
     ];
 
     public const CHANNELS = ['database' => 'Aplikasi (portal)', 'mail' => 'Email', 'webpush' => 'Push (perangkat)', 'whatsapp' => 'WhatsApp'];
@@ -287,6 +287,11 @@ class NotificationTemplate extends Model
                 'title' => '{title}', 'body' => '{message}', 'mail_subject' => '{title}', 'placeholders' => ['name', 'title', 'message']]),
             $p('push.test', 'announcement', 'Uji notifikasi push', ['webpush'], [
                 'title' => 'Notifikasi push aktif', 'body' => 'Perangkat ini akan menerima notifikasi dari PPTI VMES.', 'placeholders' => ['name']]),
+
+            // ---------------------------------------------------------------- Gateway WhatsApp (webhook penyedia)
+            $a('whatsapp.device_disconnected', 'Device WhatsApp terputus (admin)', [
+                'title' => 'Device WhatsApp {device} terputus', 'body' => 'Notifikasi WA tertunda sampai device tersambung lagi. Alasan: {reason}. Scan ulang QR di dashboard penyedia WA.',
+                'placeholders' => ['device', 'reason', 'provider']]),
         ];
     }
 }

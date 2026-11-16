@@ -44,7 +44,7 @@ class NotificationDeliveryStats extends StatsOverviewWidget
                 ->icon(Heroicon::OutlinedExclamationTriangle),
             Stat::make('Terjadwal', (string) $scheduled)->description('Antre untuk dikirim nanti')->icon(Heroicon::OutlinedClock),
             Stat::make('Dibaca (aplikasi)', $inAppTotal > 0 ? round($read / $inAppTotal * 100, 1).'%' : '-')
-                ->description(app(WhatsAppSender::class)->enabled() ? 'WhatsApp aktif (driver '.app(WhatsAppSender::class)->provider().')' : 'WhatsApp nonaktif (penyedia ditunda)')
+                ->description(app(WhatsAppSender::class)->enabled() ? 'WhatsApp aktif (driver '.app(WhatsAppSender::class)->provider().')' : 'WhatsApp nonaktif')
                 ->icon(Heroicon::OutlinedEye),
         ];
     }

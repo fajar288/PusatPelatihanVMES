@@ -12,7 +12,7 @@ use App\Models\User;
 use App\Notifications\SystemNotification;
 use App\Support\Notify\Recipient;
 use App\Support\Push\PushSender;
-use App\Support\WhatsApp\LogWhatsAppSender;
+use App\Support\WhatsApp\PhoneNumber;
 use App\Support\WhatsApp\WhatsAppSender;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
@@ -205,7 +205,7 @@ class NotificationCenter
     {
         return match ($channel) {
             'mail' => $r->email ?? $r->user?->email,
-            'whatsapp' => LogWhatsAppSender::normalize($r->phone ?? $r->user?->whatsappNumber()),
+            'whatsapp' => PhoneNumber::normalize($r->phone ?? $r->user?->whatsappNumber()),
             default => $r->user ? 'user#'.$r->user->id : null,
         };
     }

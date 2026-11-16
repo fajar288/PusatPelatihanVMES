@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Notifications\Channels\WebPushChannel;
 use App\Notifications\Channels\WhatsAppChannel;
 use App\Notifications\SystemNotification;
+use App\Support\WhatsApp\PermanentWhatsAppFailure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\ChannelManager;
@@ -56,6 +57,9 @@ class NotificationDispatcher
 
         try {
             $response = $this->deliver($d, $n);
+        } catch (PermanentWhatsAppFailure $e) {
+            // mis. token salah / nomor tidak valid / kuota habis: mencoba ulang tidak akan berhasil
+            return $this->failAttempt($d, $e->getMessage(), permanent: true);
         } catch (Throwable $e) {
             return $this->failAttempt($d, $e->getMessage());
         }
@@ -107,7 +111,7 @@ class NotificationDispatcher
     }
 
     /**
-     * Tanda terima dari penyedia (WhatsApp/email) — dipakai webhook penyedia nanti. Status hanya maju
+     * Tanda terima dari penyedia (WhatsApp/email) — dipakai webhook penyedia (mis. FonnteWebhookController). Status hanya maju
      * (sent → delivered → read); "failed" setelah terkirim mencatat galat penyedia.
      */
     public function receipt(string $provider, string $messageId, string $status, ?Carbon $at = null, ?string $error = null): ?NotificationDelivery
@@ -201,11 +205,12 @@ class NotificationDispatcher
         return $manager->driver($driver)->send($notifiable, $n);
     }
 
-    private function failAttempt(NotificationDelivery $d, string $error): NotificationDelivery
+    /** @param bool $permanent galat yang tidak akan pulih → langsung "failed" tanpa jadwal retry */
+    private function failAttempt(NotificationDelivery $d, string $error, bool $permanent = false): NotificationDelivery
     {
         $error = Str::limit($error, 1000, '');
         $this->log($d, 'failed', $error);
-        if ($d->attempts >= $d->max_attempts) {
+        if ($permanent || $d->attempts >= $d->max_attempts) {
             $d->update(['status' => 'failed', 'failed_at' => now(), 'last_error' => $error, 'locked_at' => null, 'next_attempt_at' => null]);
         } else {
             $backoff = (array) config('notifications.retry.backoff_minutes', [1, 5, 30, 120]);

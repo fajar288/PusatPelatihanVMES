@@ -21,11 +21,13 @@ use App\Support\Chatbot\AnthropicChatModel;
 use App\Support\Chatbot\ChatModel;
 use App\Support\Push\PushSender;
 use App\Support\Push\WebPushSender;
+use App\Support\WhatsApp\FonnteWhatsAppSender;
 use App\Support\WhatsApp\LogWhatsAppSender;
 use App\Support\WhatsApp\WhatsAppSender;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 
@@ -40,8 +42,16 @@ class AppServiceProvider extends ServiceProvider
         $this->app->scoped(AnalyticsService::class);
         // Web Push (VAPID) — diganti FakePushSender di tes
         $this->app->singleton(PushSender::class, WebPushSender::class);
-        // WhatsApp (Roadmap 5 §6): penyedia ditunda → hanya driver `log`; diganti FakeWhatsAppSender di tes
-        $this->app->singleton(WhatsAppSender::class, LogWhatsAppSender::class);
+        // WhatsApp (Roadmap 5 §6): driver dari WHATSAPP_DRIVER (`log` bawaan, `fonnte`); diganti FakeWhatsAppSender di tes
+        $this->app->singleton(WhatsAppSender::class, function ($app): WhatsAppSender {
+            $driver = (string) config('notifications.whatsapp.driver', 'log');
+
+            return match ($driver) {
+                'fonnte' => $app->make(FonnteWhatsAppSender::class),
+                'log' => $app->make(LogWhatsAppSender::class),
+                default => tap($app->make(LogWhatsAppSender::class), fn () => Log::warning('[whatsapp] WHATSAPP_DRIVER tidak dikenal, memakai driver log.', ['driver' => $driver])),
+            };
+        });
         // Chatbot publik (Claude) — diganti FakeChatModel di tes
         $this->app->singleton(ChatModel::class, fn () => new AnthropicChatModel);
     }
@@ -72,6 +82,8 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('verify-resend', fn (Request $request) => Limit::perMinute(3)->by('verify-resend:'.($request->user()?->id ?: $request->ip())));
         RateLimiter::for('payment-proof', fn (Request $request) => Limit::perMinute(10)->by('payment-proof:'.($request->user()?->id ?: $request->ip())));
         RateLimiter::for('chatbot-feedback', fn (Request $request) => Limit::perMinute(30)->by('chat-fb:'.$request->ip()));
+        // Webhook Fonnte (status pesan & device): tanpa auth → batasi per IP
+        RateLimiter::for('fonnte-webhook', fn (Request $request) => Limit::perMinute(120)->by('fonnte-wh:'.$request->ip()));
 
         // Notifikasi "materi baru" saat lesson terbit / mulai tersedia (PRD §5.12)
         Lesson::saved(function (Lesson $lesson): void {
