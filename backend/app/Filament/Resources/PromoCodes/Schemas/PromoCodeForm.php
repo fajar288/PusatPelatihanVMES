@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\PromoCodes\Schemas;
 
+use App\Filament\Support\Layout;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -14,10 +15,10 @@ class PromoCodeForm
     public static function configure(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make('Kode promo')->columns(3)->components([
+            Section::make('Kode promo')->columns(Layout::cols(3))->components([
                 TextInput::make('code')->label('Kode')->required()->maxLength(40)->unique('promo_codes', 'code', ignoreRecord: true)
                     ->dehydrateStateUsing(fn ($state) => strtoupper(trim((string) $state))),
-                TextInput::make('name')->label('Nama / keterangan')->required()->maxLength(255)->columnSpan(2),
+                TextInput::make('name')->label('Nama / keterangan')->required()->maxLength(255)->columnSpan(Layout::span(2)),
                 Select::make('type')->label('Jenis')->options(['percent' => 'Persen (%)', 'fixed' => 'Nominal (Rp)'])->default('percent')->required()->native(false),
                 TextInput::make('value')->label('Nilai')->numeric()->minValue(0)->required(),
                 TextInput::make('max_discount')->label('Diskon maks. (Rp)')->numeric()->minValue(0),

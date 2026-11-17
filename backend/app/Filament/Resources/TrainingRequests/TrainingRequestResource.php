@@ -9,6 +9,7 @@ use App\Filament\Resources\TrainingRequests\Pages\ViewTrainingRequest;
 use App\Filament\Resources\TrainingRequests\RelationManagers\SeatsRelationManager;
 use App\Filament\Support\EnterpriseFields;
 use App\Filament\Support\FinanceFields;
+use App\Filament\Support\Layout;
 use App\Models\TrainingRequest;
 use App\Models\TrainingSchedule;
 use App\Services\InvoiceService;
@@ -80,7 +81,7 @@ class TrainingRequestResource extends Resource
         $rupiah = fn ($v) => $v === null ? '-' : 'Rp '.number_format((float) $v, 0, ',', '.');
 
         return $schema->components([
-            Section::make('Permintaan')->columns(3)->components([
+            Section::make('Permintaan')->columns(Layout::cols(3))->components([
                 TextEntry::make('code')->label('Kode'),
                 TextEntry::make('status')->label('Status')->badge()->formatStateUsing(fn ($state) => TrainingRequest::STATUSES[$state] ?? $state),
                 TextEntry::make('organization.legal_name')->label('Organisasi'),
@@ -93,7 +94,7 @@ class TrainingRequestResource extends Resource
                 TextEntry::make('trainer_requirements')->label('Kebutuhan trainer')->placeholder('-')->columnSpanFull(),
                 TextEntry::make('notes')->label('Catatan perusahaan')->placeholder('-')->columnSpanFull(),
             ]),
-            Section::make('Penawaran, pembayaran & jadwal')->columns(3)->components([
+            Section::make('Penawaran, pembayaran & jadwal')->columns(Layout::cols(3))->components([
                 TextEntry::make('price_per_seat')->label('Harga / kursi')->formatStateUsing($rupiah)->placeholder('-'),
                 TextEntry::make('quote_discount')->label('Diskon')->formatStateUsing($rupiah),
                 TextEntry::make('quote_total')->label('Total')->formatStateUsing($rupiah)->placeholder('-'),

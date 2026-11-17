@@ -6,6 +6,7 @@ use App\Filament\NavigationGroup;
 use App\Filament\Resources\NotificationTemplates\Pages\EditNotificationTemplate;
 use App\Filament\Resources\NotificationTemplates\Pages\ListNotificationTemplates;
 use App\Filament\Resources\NotificationTemplates\RelationManagers\VersionsRelationManager;
+use App\Filament\Support\Layout;
 use App\Models\NotificationTemplate;
 use BackedEnum;
 use Filament\Actions\EditAction;
@@ -62,7 +63,7 @@ class NotificationTemplateResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make('Peristiwa')->columns(3)->components([
+            Section::make('Peristiwa')->columns(Layout::cols(3))->components([
                 TextEntry::make('key')->label('Kunci')->fontFamily('mono'),
                 TextEntry::make('audience')->label('Audiens')->badge()->formatStateUsing(fn ($state) => NotificationTemplate::AUDIENCES[$state] ?? $state),
                 TextEntry::make('version')->label('Versi')->formatStateUsing(fn ($state, ?NotificationTemplate $record) => 'v'.$state.($record?->editor ? ' - diubah '.$record->editor->name : '')),

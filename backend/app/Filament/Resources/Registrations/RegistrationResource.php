@@ -6,6 +6,7 @@ use App\Enums\RegistrationStatus;
 use App\Filament\NavigationGroup;
 use App\Filament\Resources\Registrations\Pages\EditRegistration;
 use App\Filament\Resources\Registrations\Pages\ListRegistrations;
+use App\Filament\Support\Layout;
 use App\Models\Registration;
 use BackedEnum;
 use Filament\Actions\EditAction;
@@ -41,7 +42,7 @@ class RegistrationResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make('Pendaftaran')->columns(3)->components([
+            Section::make('Pendaftaran')->columns(Layout::cols(3))->components([
                 TextInput::make('registration_number')->label('Nomor')->disabled()->dehydrated(false),
                 TextInput::make('status')->label('Status')->disabled()->dehydrated(false)
                     ->formatStateUsing(fn ($state) => $state instanceof RegistrationStatus ? $state->label() : $state),

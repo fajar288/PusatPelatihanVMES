@@ -5,12 +5,14 @@ namespace App\Filament\Resources\CompetencyAssessments;
 use App\Filament\NavigationGroup;
 use App\Filament\Resources\CompetencyAssessments\Pages\EditCompetencyAssessment;
 use App\Filament\Resources\CompetencyAssessments\Pages\ListCompetencyAssessments;
+use App\Filament\Support\Layout;
 use App\Models\CompetencyAssessment;
 use App\Models\TrainingSchedule;
 use BackedEnum;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -52,7 +54,7 @@ class CompetencyAssessmentResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make('Peserta')->columns(3)->components([
+            Section::make('Peserta')->columns(Layout::cols(3))->components([
                 Placeholder::make('participant')->label('Peserta')->content(fn (?CompetencyAssessment $record) => $record?->enrollment?->participant_name ?? '-'),
                 Placeholder::make('class')->label('Kelas')->content(fn (?CompetencyAssessment $record) => ($record?->enrollment?->schedule?->code ?? '-').' - '.($record?->enrollment?->schedule?->title ?? $record?->enrollment?->schedule?->package?->title ?? '')),
                 Placeholder::make('rubric_name')->label('Rubrik')->content(fn (?CompetencyAssessment $record) => ($record?->rubric?->name ?? '-').' (ambang '.($record?->rubric?->competent_threshold ?? 70).'%)'),
@@ -62,12 +64,18 @@ class CompetencyAssessmentResource extends Resource
                         : 'Draf. Total saat ini: <b>'.($record?->total_percent !== null ? (float) $record->total_percent.'%' : '-').'</b>')),
             ]),
             Section::make('Skor per kriteria')->components([
-                Repeater::make('scores')->relationship()->label('')->addable(false)->deletable(false)->reorderable(false)->columns(6)
+                Repeater::make('scores')->relationship()->hiddenLabel()->addable(false)->deletable(false)->reorderable(false)
+                    // Satu kriteria per baris: Kriteria | Skor | Catatan (menumpuk di bawah 1024 px)
+                    ->table([
+                        TableColumn::make('Kriteria'),
+                        TableColumn::make('Skor')->width('7rem'),
+                        TableColumn::make('Catatan'),
+                    ])
                     ->schema([
-                        Select::make('criterion_id')->label('Kriteria')->disabled()->dehydrated()->columnSpan(3)
+                        Select::make('criterion_id')->label('Kriteria')->disabled()->dehydrated()
                             ->options(fn ($livewire) => $livewire->getRecord()?->rubric?->criteria->mapWithKeys(fn ($c) => [$c->id => $c->name.' (maks. '.$c->max_score.', bobot '.(float) $c->weight.')']) ?? []),
                         TextInput::make('score')->label('Skor')->numeric()->minValue(0)->maxValue(100),
-                        TextInput::make('note')->label('Catatan')->maxLength(255)->columnSpan(2),
+                        TextInput::make('note')->label('Catatan')->maxLength(255),
                     ]),
             ]),
             Section::make('Catatan trainer')->columns(2)->components([

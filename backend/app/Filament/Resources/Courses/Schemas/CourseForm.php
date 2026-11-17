@@ -28,7 +28,7 @@ class CourseForm
                 Textarea::make('description')->label('Deskripsi')->rows(3)->columnSpanFull(),
                 Fields::image('thumbnail', 'lms/courses', 1200)->label('Thumbnail'),
             ]),
-            Section::make('Akses & publikasi')->columns(4)->components([
+            Section::make('Akses & publikasi')->columns(2)->components([
                 Toggle::make('is_published')->label('Dipublikasikan')->inline(false),
                 Toggle::make('available_before_class')->label('Bisa dibuka sebelum kelas mulai')->inline(false),
                 TextInput::make('access_days_after')->label('Akses setelah kelas (hari)')->numeric()->minValue(0)->helperText('Kosong = selamanya.'),

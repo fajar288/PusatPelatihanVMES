@@ -4,6 +4,7 @@ namespace App\Filament\Resources\NotificationDeliveries;
 
 use App\Filament\NavigationGroup;
 use App\Filament\Resources\NotificationDeliveries\Pages\ListNotificationDeliveries;
+use App\Filament\Support\Layout;
 use App\Models\NotificationDelivery;
 use App\Models\NotificationLog;
 use App\Models\NotificationTemplate;
@@ -120,7 +121,7 @@ class NotificationDeliveryResource extends Resource
                             TextEntry::make('content.url')->label('Tautan')->placeholder('-'),
                             TextEntry::make('template_version')->label('Versi template')->formatStateUsing(fn ($state) => $state ? 'v'.$state : '-'),
                         ]),
-                        Section::make('Status')->columns(3)->components([
+                        Section::make('Status')->columns(Layout::cols(3))->components([
                             TextEntry::make('event.dedupe_key')->label('Kunci event')->placeholder('-')->fontFamily('mono'),
                             TextEntry::make('event.actor.name')->label('Dipicu oleh')->placeholder('Sistem'),
                             TextEntry::make('provider_message_id')->label('ID penyedia')->placeholder('-')->fontFamily('mono'),
@@ -128,7 +129,7 @@ class NotificationDeliveryResource extends Resource
                             TextEntry::make('delivered_at')->label('Diterima')->dateTime('d M Y H:i:s')->placeholder('-'),
                             TextEntry::make('read_at')->label('Dibaca')->dateTime('d M Y H:i:s')->placeholder('-'),
                         ]),
-                        RepeatableEntry::make('logs')->label('Riwayat percobaan')->columns(3)->placeholder('Belum ada percobaan')->schema([
+                        RepeatableEntry::make('logs')->label('Riwayat percobaan')->columns(Layout::cols(3))->placeholder('Belum ada percobaan')->schema([
                             TextEntry::make('created_at')->label('Waktu')->dateTime('d M Y H:i:s'),
                             TextEntry::make('status')->label('Hasil')->badge()->formatStateUsing(fn ($state) => NotificationLog::STATUSES[$state] ?? $state)
                                 ->color(fn ($state) => $state === 'sent' ? 'success' : 'danger'),

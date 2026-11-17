@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ApiClients\Schemas;
 
+use App\Filament\Support\Layout;
 use App\Models\ApiClient;
 use App\Models\CorporateUser;
 use App\Models\Organization;
@@ -88,7 +89,7 @@ class ApiClientForm
                     })
                     ->helperText('Event enterprise hanya dikirim bila klien juga punya scope baca yang sesuai (mis. enrollments.read untuk enrollment.*) dan subjeknya dalam batas unit pengguna yang diwakili.'),
             ]),
-            Section::make('Kredensial & pemakaian')->columns(3)->visibleOn('edit')->components([
+            Section::make('Kredensial & pemakaian')->columns(Layout::cols(3))->visibleOn('edit')->components([
                 TextEntry::make('key_prefix')->label('API key')->state(fn (?ApiClient $record) => $record?->maskedKey())->fontFamily('mono'),
                 TextEntry::make('key_rotated_at')->label('Key terakhir diganti')->dateTime('d M Y H:i')->placeholder('Belum pernah'),
                 TextEntry::make('webhook_secret_state')->label('Secret webhook')->state(fn (?ApiClient $record) => filled($record?->webhook_secret) ? 'Sudah dibuat' : 'Belum ada'),
