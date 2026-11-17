@@ -327,3 +327,7 @@
 .spv .jst{align-self:start;max-width:100%;white-space:normal;text-align:right;border-radius:12px}
 .sp li>b.spv,.sp li>b:has(>.spv){flex:0 0 auto;max-width:45%}
 .calh{flex-wrap:wrap}
+/* Laporan trainer: filter grid responsif, tabel lebar dengan kolom kelas minimal 240px (geser di ScrollX); di layar sempit tiap sel diberi label */
+.rpt-f{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr));gap:12px;align-items:end}
+.rpt{min-width:900px}.att .rpt-kls{min-width:240px}
+@media(max-width:640px){.rpt{min-width:0}.att .rpt-kls{min-width:0}.rpt td[data-l]::before{content:attr(data-l);display:block;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);margin-bottom:2px}}
