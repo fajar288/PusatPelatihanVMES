@@ -32,5 +32,15 @@
         <env name="PULSE_ENABLED" value="false"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="NIGHTWATCH_ENABLED" value="false"/>
+        <!-- Fitur AI selalu mati di tes (tidak bergantung .env lokal); tes yang butuh menyalakannya lewat config(). -->
+        <env name="AI_ENABLED" value="false" force="true"/>
+        <env name="AI_EARLY_WARNING_ENABLED" value="false" force="true"/>
+        <env name="AI_RECOMMENDATION_ENABLED" value="false" force="true"/>
+        <env name="AI_FEEDBACK_ENABLED" value="false" force="true"/>
+        <env name="AI_CORPORATE_INSIGHT_ENABLED" value="false" force="true"/>
+        <env name="AI_DEMAND_FORECAST_ENABLED" value="false" force="true"/>
+        <env name="AI_CHATBOT_ENABLED" value="false" force="true"/>
+        <env name="CHATBOT_ENABLED" value="false" force="true"/>
+        <env name="ANTHROPIC_API_KEY" value="" force="true"/>
     </php>
 </phpunit>

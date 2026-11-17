@@ -350,19 +350,24 @@ class AiGovernanceTest extends TestCase
 
         $this->assertSame([], $writes, 'layanan AI tidak boleh menulis ke tabel data resmi');
 
-        // Secara statis: kode AI tidak memakai model atau service yang mengubah data resmi.
+        // Secara statis: kode AI boleh MEMBACA data resmi (fitur early warning, dsb.), tetapi tidak memakai service yang
+        // mengubahnya dan tidak memanggil metode tulis pada model resmi. Bukti utama tetap log kueri di atas.
         $files = array_merge(
             glob(app_path('Services/Ai*.php')),
             glob(app_path('Support/Ai/*.php')),
-            glob(app_path('Support/Ai/Evaluators/*.php')),
+            glob(app_path('Support/Ai/*/*.php')),
             glob(app_path('Filament/Resources/Ai*/*.php')),
             glob(app_path('Filament/Resources/Ai*/Pages/*.php')),
+            glob(app_path('Filament/Widgets/Executive/EarlyWarning*.php')),
             [app_path('Filament/Pages/AiStatus.php')],
         );
         $this->assertGreaterThan(10, count($files));
-        $forbidden = '/use App\\\\(Models\\\\(Enrollment|Registration|Attendance|Certificate|CompetencyAssessment|QuizAttempt|AssignmentSubmission|LessonProgress|Invoice|PaymentTransaction|PaymentRefund|Member)|Services\\\\(Completion|Certificate|Payment|Invoice|Refund|Enrollment|Member|Monitoring|Lms)Service);/';
+        $writerServices = '/use App\\\\Services\\\\(Completion|Certificate|Payment|Invoice|Refund|Enrollment|Member|Monitoring|Sponsorship|Registration)Service;/';
+        $officialWrite = '/\b(Enrollment|Registration|Attendance|Certificate|CompetencyAssessment|QuizAttempt|AssignmentSubmission|LessonProgress|Invoice|PaymentTransaction|PaymentRefund|Member|LogbookEntry|TrainingLogbook)::(create|insert|update|upsert|destroy|updateOrCreate|firstOrCreate)\(/';
         foreach ($files as $file) {
-            $this->assertDoesNotMatchRegularExpression($forbidden, (string) file_get_contents($file), basename($file));
+            $src = (string) file_get_contents($file);
+            $this->assertDoesNotMatchRegularExpression($writerServices, $src, basename($file));
+            $this->assertDoesNotMatchRegularExpression($officialWrite, $src, basename($file));
         }
     }
 

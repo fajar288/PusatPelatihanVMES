@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BackLink, MetaList, PortalCard } from "@/components/portal/ui";
 import ParticipantOverview from "@/components/trainer/ParticipantOverview";
+import EarlyWarningCell from "@/components/portal/EarlyWarningCell";
 import { api, ApiRequestError } from "@/lib/auth";
 import { ENROLLMENT_STATUS, type ParticipantOverview as Overview } from "@/lib/monitoring";
 import { requireTrainer } from "@/lib/trainer";
@@ -50,6 +51,14 @@ export default async function TrainerParticipantProgress({ params }: PageProps<"
           ]}
         />
       </PortalCard>
+      {o.earlyWarning && (
+        <PortalCard title="Peringatan dini">
+          <EarlyWarningCell ew={o.earlyWarning} />
+          <p className="fh" style={{ marginTop: 10, fontSize: 13 }}>
+            Skor dibuat AI dari data belajar peserta dan hanya bahan pertimbangan untuk pendampingan. Skor tidak mengubah status, nilai, atau kelulusan.
+          </p>
+        </PortalCard>
+      )}
       <ParticipantOverview o={o} forTrainer />
     </>
   );

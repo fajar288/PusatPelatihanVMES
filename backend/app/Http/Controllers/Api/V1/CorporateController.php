@@ -10,6 +10,7 @@ use App\Models\Enrollment;
 use App\Models\Organization;
 use App\Models\OrganizationUnit;
 use App\Models\User;
+use App\Services\AiEarlyWarningService;
 use App\Services\CorporateAccess;
 use App\Services\CorporateReporting;
 use App\Services\OrganizationService;
@@ -31,7 +32,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
  */
 class CorporateController extends Controller
 {
-    public function __construct(private CorporateAccess $access, private CorporateReporting $reporting) {}
+    public function __construct(private CorporateAccess $access, private CorporateReporting $reporting, private AiEarlyWarningService $earlyWarning) {}
 
     /** GET /corporate/organizations: organisasi tempat user menjadi pengguna perusahaan aktif. */
     public function organizations(Request $request): JsonResponse
@@ -95,6 +96,9 @@ class CorporateController extends Controller
             'participant' => ['name' => $enrollment->member?->user?->name ?? $enrollment->participant_name, 'memberNumber' => $enrollment->member?->member_number,
                 'employeeId' => $employment?->employee_id, 'position' => $employment?->position, 'unit' => $enrollment->sponsorUnit?->label(), 'employment' => $employment?->status],
             'certificate' => ($c = $enrollment->certificate) ? ['status' => $c->status, 'number' => $c->status === 'issued' ? $c->number : null, 'issuedAt' => IdDate::long($c->issued_at)] : null,
+            // Skor early warning (dibuat AI): hanya untuk enrollment yang disponsori organisasi ini (insight dicatat dengan organisasi sponsor).
+            'earlyWarning' => $enrollment->sponsor_organization_id === $organization->id
+                ? ($this->earlyWarning->latestFor([$enrollment->id], $request->user(), $organization->id)[$enrollment->id] ?? null) : null,
         ]]);
     }
 

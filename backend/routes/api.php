@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\AiInsightController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\CertificateController;
 use App\Http\Controllers\Api\V1\ChatController;
@@ -184,6 +185,9 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
             Route::post('/{course}/lessons/{lesson}/quiz/submit', [LearningController::class, 'submitQuiz'])->name('lesson.quiz.submit');
             Route::post('/{course}/lessons/{lesson}/assignment', [LearningController::class, 'submitAssignment'])->name('lesson.assignment');
         });
+
+        // Umpan balik keluaran AI (membantu / tidak): hanya untuk insight yang boleh dilihat pengguna ini
+        Route::post('/ai-insights/{id}/feedback', [AiInsightController::class, 'feedback'])->whereNumber('id')->middleware('throttle:ai-feedback')->name('ai_insights.feedback');
 
         // Portal trainer (PRD §5.7): akun dengan profil trainer aktif
         Route::prefix('trainer')->name('trainer.')->group(function (): void {

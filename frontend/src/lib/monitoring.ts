@@ -79,7 +79,24 @@ export type AssessmentsData = {
   participants: { participant: { id: number; name: string; email: string | null; status: string }; assessment: AssessmentInfo }[];
 };
 
+/** Skor peringatan dini (dibuat AI, model statistik): hanya untuk staf, trainer kelas, dan perusahaan sponsor. */
+export type EarlyWarning = {
+  insightId: number;
+  score: number;
+  level: "high" | "medium" | "low";
+  levelLabel: string;
+  reasons: string[];
+  threshold: number;
+  model: string | null;
+  computedAt: string | null;
+  aiGenerated: true;
+  myFeedback: boolean | null;
+};
+
+export type EarlyWarningStatus = { available: boolean; label: string; reason: string | null };
+
 export type OverviewRow = ClassProgressRow & {
+  early_warning?: EarlyWarning | null;
   practice_completed: number;
   practice_partial: number;
   practice_not_done: number;
@@ -89,7 +106,7 @@ export type OverviewRow = ClassProgressRow & {
   is_competent: boolean | null;
 };
 
-export type ClassOverview = { class: ClassInfo; participants: OverviewRow[] };
+export type ClassOverview = { class: ClassInfo; participants: OverviewRow[]; earlyWarning?: EarlyWarningStatus };
 
 export type ParticipantOverview = {
   enrollment: { id: number; name: string; email: string | null; status: string; finalScore: number | null };
@@ -101,6 +118,7 @@ export type ParticipantOverview = {
   competency: AssessmentInfo | null;
   notes: { logbookId: number; date: string; dateLabel: string; topic: string; status: string; trainer: string | null; practiceStatus: PracticeStatus | null; practiceLabel: string | null; observation: string | null }[];
   logbooks: { id: number; date: string; dateLabel: string; topic: string; competencies: string[]; status: string }[];
+  earlyWarning?: EarlyWarning | null;
 };
 
 export const PRACTICE_PILL: Record<PracticeStatus, "ok" | "wn" | "no"> = { completed: "ok", partial: "wn", not_done: "no" };

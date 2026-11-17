@@ -79,6 +79,16 @@ class AiInsightService
         return $this->decide($insight, $reviewer, AiInsight::STATUS_REJECTED, trim($reason), [AiInsight::STATUS_DRAFT, AiInsight::STATUS_APPROVED]);
     }
 
+    /** Insight lama (draft/approved) untuk subjek yang sama digantikan hasil baru: ditandai kedaluwarsa. */
+    public function supersede(string $useCase, Model $subject, ?int $exceptId = null): int
+    {
+        return AiInsight::query()->where('use_case', $useCase)
+            ->where('subject_type', $subject->getMorphClass())->where('subject_id', $subject->getKey())
+            ->whereIn('status', [AiInsight::STATUS_DRAFT, AiInsight::STATUS_APPROVED])
+            ->when($exceptId, fn ($q) => $q->whereKeyNot($exceptId))
+            ->update(['status' => AiInsight::STATUS_EXPIRED, 'updated_at' => now()]);
+    }
+
     /** Draft yang tidak ditinjau dalam N hari dan insight yang lewat expires_at menjadi kedaluwarsa. */
     public function expireDue(): int
     {

@@ -9,6 +9,7 @@ use App\Models\Enrollment;
 use App\Models\LogbookEntry;
 use App\Models\TrainingLogbook;
 use App\Models\TrainingSchedule;
+use App\Services\AiEarlyWarningService;
 use App\Services\MonitoringService;
 use App\Support\IdDate;
 use Illuminate\Http\JsonResponse;
@@ -23,7 +24,7 @@ class TrainerMonitoringController extends Controller
 {
     use ResolvesTrainer;
 
-    public function __construct(private readonly MonitoringService $monitoring) {}
+    public function __construct(private readonly MonitoringService $monitoring, private readonly AiEarlyWarningService $earlyWarning) {}
 
     private function logbookOf(Request $request, int $id): TrainingLogbook
     {
@@ -190,7 +191,15 @@ class TrainerMonitoringController extends Controller
     {
         $s = $this->classOf($this->trainer($request), $code)->load('package');
 
-        return response()->json(['data' => ['class' => $this->classInfo($s), 'participants' => $this->monitoring->classOverview($s)]]);
+        $rows = $this->monitoring->classOverview($s);
+        // Skor early warning (dibuat AI) hanya untuk trainer kelas ini; kosong bila fitur belum dinyalakan.
+        $risk = $this->earlyWarning->latestFor($rows->pluck('enrollment_id'), $request->user());
+
+        return response()->json(['data' => [
+            'class' => $this->classInfo($s),
+            'participants' => $rows->map(fn (array $r) => $r + ['early_warning' => $risk[$r['enrollment_id']] ?? null])->values(),
+            'earlyWarning' => $this->earlyWarning->status(),
+        ]]);
     }
 
     /** GET /trainer/classes/{code}/progress/{enrollment}: overview lengkap satu peserta. */
@@ -198,6 +207,8 @@ class TrainerMonitoringController extends Controller
     {
         $s = $this->classOf($this->trainer($request), $code);
 
-        return response()->json(['data' => $this->monitoring->overview($this->enrollmentOf($s, $enrollment))]);
+        $e = $this->enrollmentOf($s, $enrollment);
+
+        return response()->json(['data' => $this->monitoring->overview($e) + ['earlyWarning' => $this->earlyWarning->latestFor([$e->id], $request->user())[$e->id] ?? null]]);
     }
 }
