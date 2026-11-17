@@ -27,8 +27,7 @@ class AiReadiness
             'repeat_members' => ['Member yang ikut 2 pelatihan atau lebih', fn () => DB::query()->fromSub(
                 DB::table('enrollments')->whereNotNull('member_id')->where('status', '!=', 'dropped')
                     ->groupBy('member_id')->havingRaw('COUNT(*) >= 2')->select('member_id'), 'r')->count()],
-            'survey_comments' => ['Komentar survei evaluasi pelatihan', fn () => Schema::hasTable('survey_answers')
-                ? DB::table('survey_answers')->whereNotNull('comment')->where('comment', '!=', '')->count() : 0],
+            'survey_comments' => ['Komentar survei evaluasi pelatihan', fn () => Schema::hasTable('survey_responses') ? AiFeedbackService::commentCount() : 0],
             'published_lessons' => ['Lesson terbit yang berisi materi teks', fn () => DB::table('lessons')->where('is_published', true)
                 ->whereNotNull('body')->where('body', '!=', '')->count()],
             'organizations_with_targets' => ['Organisasi dengan target kompetensi', fn () => DB::table('competency_targets')->distinct()->count('organization_id')],

@@ -94,6 +94,7 @@ class AiGovernance
         ?int $latencyMs = null,
         ?string $error = null,
         ?int $insightId = null,
+        float $priceFactor = 1.0,
     ): AiUsageRecord {
         $uc = AiUseCases::get($useCase);
         $model = $reply?->model ?? $uc['model'];
@@ -108,7 +109,8 @@ class AiGovernance
             'output_tokens' => $reply?->outputTokens ?? 0,
             'cache_read_tokens' => $reply?->cacheReadTokens ?? 0,
             'cache_write_tokens' => $reply?->cacheWriteTokens ?? 0,
-            'cost_usd' => $reply ? $this->cost($model, $reply->inputTokens, $reply->outputTokens, $reply->cacheReadTokens, $reply->cacheWriteTokens) : 0,
+            // priceFactor 0,5 untuk Message Batches (harga batch setengah harga normal).
+            'cost_usd' => $reply ? round($this->cost($model, $reply->inputTokens, $reply->outputTokens, $reply->cacheReadTokens, $reply->cacheWriteTokens) * $priceFactor, 6) : 0,
             'latency_ms' => $latencyMs,
             'error' => $error ? Str::limit($error, 250) : null,
         ]);

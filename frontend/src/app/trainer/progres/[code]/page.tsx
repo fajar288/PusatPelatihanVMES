@@ -67,6 +67,9 @@ export default async function TrainerClassProgress({ params }: PageProps<"/train
             <Link className="jb" href={`/trainer/penilaian/${code}`}>
               Penilaian
             </Link>
+            <Link className="jb" href={`/trainer/survei/${code}`}>
+              Survei
+            </Link>
           </span>
         }
       >

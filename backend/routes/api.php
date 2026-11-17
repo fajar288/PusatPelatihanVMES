@@ -20,6 +20,7 @@ use App\Http\Controllers\Api\V1\PostController;
 use App\Http\Controllers\Api\V1\RegistrationController;
 use App\Http\Controllers\Api\V1\ScheduleController;
 use App\Http\Controllers\Api\V1\SearchController;
+use App\Http\Controllers\Api\V1\SurveyController;
 use App\Http\Controllers\Api\V1\TrainerController;
 use App\Http\Controllers\Api\V1\TrainerLmsController;
 use App\Http\Controllers\Api\V1\TrainerMonitoringController;
@@ -189,6 +190,10 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
 
         // Umpan balik keluaran AI (membantu / tidak): hanya untuk insight yang boleh dilihat pengguna ini
         Route::get('/me/recommendations', [AiInsightController::class, 'myRecommendations'])->name('me.recommendations');
+        // Survei evaluasi pasca-kelas (diisi peserta)
+        Route::get('/me/surveys', [SurveyController::class, 'index'])->name('me.surveys');
+        Route::get('/me/surveys/{id}', [SurveyController::class, 'show'])->whereNumber('id')->name('me.surveys.show');
+        Route::post('/me/surveys/{id}', [SurveyController::class, 'submit'])->whereNumber('id')->middleware('throttle:ai-feedback')->name('me.surveys.submit');
         Route::post('/ai-insights/{id}/click', [AiInsightController::class, 'click'])->whereNumber('id')->middleware('throttle:ai-feedback')->name('ai_insights.click');
         Route::post('/ai-insights/{id}/feedback', [AiInsightController::class, 'feedback'])->whereNumber('id')->middleware('throttle:ai-feedback')->name('ai_insights.feedback');
 
@@ -215,6 +220,7 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
             Route::post('/classes/{code}/assessments/{enrollment}', [TrainerMonitoringController::class, 'saveAssessment'])->name('classes.assessments.save');
             Route::post('/assessments/{id}/validate', [TrainerMonitoringController::class, 'validateAssessment'])->name('assessments.validate');
             Route::get('/classes/{code}/progress', [TrainerMonitoringController::class, 'progress'])->name('classes.progress');
+            Route::get('/classes/{code}/survey', [SurveyController::class, 'trainerReport'])->name('classes.survey');
             Route::get('/classes/{code}/progress/{enrollment}', [TrainerMonitoringController::class, 'participantProgress'])->name('classes.progress.participant');
         });
     });

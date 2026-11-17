@@ -250,6 +250,14 @@ class NotificationTemplate extends Model
                 'title' => '{count} peserta berisiko tertinggal', 'body' => '{participants}',
                 'placeholders' => ['count', 'participants']]),
 
+            // ---------------------------------------------------------------- Survei evaluasi
+            $p('survey.invite', 'learning', 'Undangan survei evaluasi', $allWa, [
+                'title' => 'Isi survei evaluasi {program}', 'body' => 'Bagaimana pengalaman Anda di kelas {class}? Survei singkat ini membantu kami memperbaiki pelatihan.',
+                'mail_subject' => 'Survei evaluasi pelatihan {program}',
+                'mail_body' => "Terima kasih telah mengikuti **{program}** ({class}).\n\nMohon luangkan 2-3 menit untuk mengisi survei evaluasi di portal. Masukan Anda membantu kami memperbaiki materi, trainer, dan fasilitas.",
+                'wa_body' => 'Halo {name}, terima kasih telah mengikuti *{program}* ({class}). Mohon isi survei evaluasi singkat: {link}',
+                'placeholders' => ['name', 'program', 'class', 'link']]),
+
             // ---------------------------------------------------------------- Training Completed
             $p('training.completed', 'learning', 'Pelatihan selesai', $allWa, [
                 'title' => 'Pelatihan {program}: {result}', 'body' => 'Kelas {class} selesai. {detail}',

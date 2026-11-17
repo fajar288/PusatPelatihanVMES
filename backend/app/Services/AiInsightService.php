@@ -37,10 +37,13 @@ class AiInsightService
         ?string $modelVersion = null,
         ?AiUsageRecord $usage = null,
         ?\DateTimeInterface $expiresAt = null,
+        bool $internal = false,
     ): AiInsight {
         $uc = AiUseCases::get($useCase);
 
-        return DB::transaction(function () use ($uc, $output, $reference, $subject, $score, $confidence, $organizationId, $modelVersion, $usage, $expiresAt) {
+        // $internal: keluaran antara yang hanya dilihat staf VMES (mis. klasifikasi per komentar). Tinjauan wajib
+        // berlaku untuk keluaran yang dibagikan ke luar staf (ringkasan untuk trainer), jadi yang internal langsung approved.
+        return DB::transaction(function () use ($uc, $output, $reference, $subject, $score, $confidence, $organizationId, $modelVersion, $usage, $expiresAt, $internal) {
             $insight = AiInsight::query()->create([
                 'use_case' => $uc['key'],
                 'organization_id' => $organizationId,
@@ -52,7 +55,7 @@ class AiInsightService
                 'output' => self::normalize($output),
                 'score' => $score,
                 'confidence' => $confidence,
-                'status' => $uc['review'] === 'required' ? AiInsight::STATUS_DRAFT : AiInsight::STATUS_APPROVED,
+                'status' => $uc['review'] === 'required' && ! $internal ? AiInsight::STATUS_DRAFT : AiInsight::STATUS_APPROVED,
                 'expires_at' => $expiresAt,
             ]);
             $usage?->update(['ai_insight_id' => $insight->id]);
@@ -80,11 +83,11 @@ class AiInsightService
     }
 
     /** Insight lama (draft/approved) untuk subjek yang sama digantikan hasil baru: ditandai kedaluwarsa. */
-    public function supersede(string $useCase, Model $subject, ?int $exceptId = null): int
+    public function supersede(string $useCase, Model $subject, ?int $exceptId = null, array $statuses = [AiInsight::STATUS_DRAFT, AiInsight::STATUS_APPROVED]): int
     {
         return AiInsight::query()->where('use_case', $useCase)
             ->where('subject_type', $subject->getMorphClass())->where('subject_id', $subject->getKey())
-            ->whereIn('status', [AiInsight::STATUS_DRAFT, AiInsight::STATUS_APPROVED])
+            ->whereIn('status', $statuses)
             ->when($exceptId, fn ($q) => $q->whereKeyNot($exceptId))
             ->update(['status' => AiInsight::STATUS_EXPIRED, 'updated_at' => now()]);
     }
