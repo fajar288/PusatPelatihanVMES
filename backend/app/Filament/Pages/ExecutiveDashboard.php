@@ -8,6 +8,7 @@ use App\Filament\Widgets\Executive\CertificateStatusChart;
 use App\Filament\Widgets\Executive\ClassStatusChart;
 use App\Filament\Widgets\Executive\CohortTable;
 use App\Filament\Widgets\Executive\CorporateFunnelChart;
+use App\Filament\Widgets\Executive\DemandForecastTable;
 use App\Filament\Widgets\Executive\EarlyWarningTable;
 use App\Filament\Widgets\Executive\FinanceStats;
 use App\Filament\Widgets\Executive\KpiTable;
@@ -90,6 +91,7 @@ class ExecutiveDashboard extends Dashboard
             CorporateFunnelChart::class,
             AtRiskTable::class,
             EarlyWarningTable::class,
+            DemandForecastTable::class,
             TrainerPerformanceTable::class,
             CohortTable::class,
         ];

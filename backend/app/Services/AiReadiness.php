@@ -32,7 +32,8 @@ class AiReadiness
                 ->whereNotNull('body')->where('body', '!=', '')->count()],
             'organizations_with_targets' => ['Organisasi dengan target kompetensi', fn () => DB::table('competency_targets')->distinct()->count('organization_id')],
             'competency_assessments' => ['Penilaian kompetensi tervalidasi', fn () => DB::table('competency_assessments')->where('status', 'validated')->count()],
-            'registration_months' => ['Bulan dengan data pendaftaran', fn () => DB::table('registrations')->pluck('created_at')
+            // Prakiraan permintaan memakai riwayat enrollment per bulan (bulan yang punya data).
+            'enrollment_months' => ['Bulan dengan data peserta terdaftar', fn () => DB::table('enrollments')->whereNotNull('enrolled_at')->pluck('enrolled_at')
                 ->map(fn ($d) => substr((string) $d, 0, 7))->unique()->count()],
         ];
     }

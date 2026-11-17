@@ -383,13 +383,13 @@ class AiLearningAssistantTest extends TestCase
         $m = (new LmsAssistantEvaluator)->evaluate();
         $this->assertSame(3, $m['metrics']['questions']);
         $this->assertSame(1, $m['metrics']['resolved']);
-        $this->assertEquals(66.7, $m['metrics']['unresolved_rate']);
-        $this->assertEquals(50.0, $m['metrics']['citation_coverage']);
+        $this->assertEquals(0.6667, $m['metrics']['unresolved_rate']);
+        $this->assertEquals(0.5, $m['metrics']['citation_coverage']);
         $this->assertSame(1, $m['metrics']['uncited_hidden']);
         $this->assertSame(1, $m['metrics']['model_failures']);
-        $this->assertEquals(100.0, $m['metrics']['helpful_rate']);
+        $this->assertEquals(1.0, $m['metrics']['helpful_rate']);
         $this->assertSame(2, $m['baseline']['questions']);
-        $this->assertEquals(50.0, $m['baseline']['answered_rate']);
+        $this->assertEquals(0.5, $m['baseline']['answered_rate']);
         $this->assertEquals(4.0, $m['baseline']['median_hours_to_answer']);
         $this->assertNotEmpty(array_filter($m['notes'], fn ($n) => str_contains($n, 'Umpan balik peserta baru 1')));
 
