@@ -147,6 +147,7 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
             // Analitik perusahaan & competency gap (Roadmap 5F, §20.15-§20.16)
             Route::get('/analytics', [CorporateAnalyticsController::class, 'analytics'])->name('analytics');
             Route::get('/competencies', [CorporateAnalyticsController::class, 'competencies'])->name('competencies');
+            Route::get('/recommendations', [AiInsightController::class, 'corporateRecommendations'])->name('recommendations');
             Route::post('/competency-targets', [CorporateAnalyticsController::class, 'storeTarget'])->name('competency_targets.store');
             Route::delete('/competency-targets/{competencyTarget}', [CorporateAnalyticsController::class, 'destroyTarget'])->name('competency_targets.destroy');
         });
@@ -187,6 +188,8 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
         });
 
         // Umpan balik keluaran AI (membantu / tidak): hanya untuk insight yang boleh dilihat pengguna ini
+        Route::get('/me/recommendations', [AiInsightController::class, 'myRecommendations'])->name('me.recommendations');
+        Route::post('/ai-insights/{id}/click', [AiInsightController::class, 'click'])->whereNumber('id')->middleware('throttle:ai-feedback')->name('ai_insights.click');
         Route::post('/ai-insights/{id}/feedback', [AiInsightController::class, 'feedback'])->whereNumber('id')->middleware('throttle:ai-feedback')->name('ai_insights.feedback');
 
         // Portal trainer (PRD §5.7): akun dengan profil trainer aktif

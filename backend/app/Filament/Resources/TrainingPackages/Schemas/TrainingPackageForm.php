@@ -37,6 +37,9 @@ class TrainingPackageForm
                     TagsInput::make('learning_outcomes')->label('Yang akan dipelajari')->placeholder('Tambah poin, Enter'),
                     TagsInput::make('audience')->label('Untuk siapa')->placeholder('Tambah poin, Enter'),
                     TagsInput::make('requirements')->label('Persyaratan peserta')->placeholder('Tambah poin, Enter'),
+                    Select::make('prerequisites')->label('Program prasyarat')->multiple()->searchable()->preload()
+                        ->relationship('prerequisites', 'title', fn ($query, $record) => $query->when($record, fn ($q) => $q->whereKeyNot($record->getKey())))
+                        ->helperText('Program yang sebaiknya sudah diluluskan peserta. Dipakai rekomendasi training ("program lanjutan").'),
                 ])->collapsible(),
                 Section::make('Durasi, metode & harga')->columns(3)->components([
                     TextInput::make('duration_days')->label('Durasi (hari)')->numeric()->minValue(1)->default(1)->required(),

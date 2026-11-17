@@ -8,8 +8,11 @@ import { corporateApi, getSummary } from "@/lib/corporate-server";
 export const instant = false;
 
 /** /corporate/[org]/permintaan/baru: ajukan kebutuhan training (jumlah kursi; nama peserta menyusul). */
-export default async function NewRequestPage({ params }: PageProps<"/corporate/[org]/permintaan/baru">) {
+export default async function NewRequestPage({ params, searchParams }: PageProps<"/corporate/[org]/permintaan/baru">) {
   const { org } = await params;
+  // ?paket=<slug>: program terpilih dari rekomendasi training (halaman Kompetensi).
+  const paket = (await searchParams).paket;
+  const defaultPackage = typeof paket === "string" ? paket : "";
   const s = await getSummary(org);
   if (!can(s, "manage_requests")) notFound();
   const [catalog, units] = await Promise.all([getPackages(), corporateApi<{ data: Unit[] }>(orgPath(org, "/units"), `/corporate/${org}/permintaan/baru`).then((r) => r.data)]);
@@ -22,7 +25,7 @@ export default async function NewRequestPage({ params }: PageProps<"/corporate/[
         <p className="fh">
           Tentukan program dan jumlah kursi. Sistem membuat kursi 01 s.d. N tanpa membuat akun peserta; nama peserta diisi kemudian lewat input manual, unggah Excel/CSV, atau undangan email.
         </p>
-        <NewRequestForm org={org} packages={packages} units={units} />
+        <NewRequestForm org={org} packages={packages} units={units} defaultPackage={defaultPackage} />
       </PortalCard>
     </>
   );

@@ -3,7 +3,9 @@
 namespace App\Services;
 
 use App\Models\AiInsight;
+use App\Models\CorporateUser;
 use App\Models\Enrollment;
+use App\Models\Member;
 use App\Models\Organization;
 use App\Models\Trainer;
 use App\Models\User;
@@ -28,6 +30,9 @@ class AiInsightAccess
         if ($user->hasPermission('ai.review') || $user->hasPermission('ai.manage') || $user->hasPermission('analytics.view')) {
             return true;
         }
+        if ($insight->use_case === AiRecommendationService::USE_CASE) {
+            return $this->isRecipient($user, $insight);
+        }
         if ($insight->use_case !== AiEarlyWarningService::USE_CASE || $insight->subject_type !== (new Enrollment)->getMorphClass()) {
             return false;
         }
@@ -43,5 +48,19 @@ class AiInsightAccess
         $cu = $org ? $this->corporate->membership($user, $org) : null;
 
         return $cu !== null && $e->sponsor_organization_id === $org->id && $this->corporate->canViewProgress($cu, $e);
+    }
+
+    /**
+     * Penerima langsung insight (rekomendasi): member pemilik akun, atau pengguna perusahaan aktif yang menjadi subjeknya.
+     * Hanya penerima yang klik dan umpan baliknya dicatat sebagai metrik.
+     */
+    public function isRecipient(User $user, AiInsight $insight): bool
+    {
+        return match ($insight->subject_type) {
+            (new Member)->getMorphClass() => Member::query()->whereKey($insight->subject_id)->where('user_id', $user->id)->exists(),
+            (new CorporateUser)->getMorphClass() => ($cu = CorporateUser::query()->with('organization')->find($insight->subject_id)) !== null
+                && $cu->user_id === $user->id && $this->corporate->membership($user, $cu->organization)?->id === $cu->id,
+            default => false,
+        };
     }
 }

@@ -1,8 +1,10 @@
 import Link from "next/link";
 import CompetencyTargetsManager from "@/components/corporate/CompetencyTargetsManager";
 import { EmptyState, PortalCard } from "@/components/portal/ui";
-import { type CorporateCompetencies, orgPath, pct } from "@/lib/corporate";
-import { corporateApi } from "@/lib/corporate-server";
+import { can, type CorporateCompetencies, orgPath, pct } from "@/lib/corporate";
+import { corporateApi, getSummary } from "@/lib/corporate-server";
+import RecommendationList, { RecommendationFooter } from "@/components/portal/RecommendationList";
+import type { RecommendationResponse } from "@/lib/recommendations";
 import { ScrollX } from "@/components/ui/ScrollX";
 
 export const instant = false;
@@ -19,7 +21,16 @@ const SOURCE: Record<string, string> = {
  */
 export default async function CompetencyPage({ params }: PageProps<"/corporate/[org]/kompetensi">) {
   const { org } = await params;
-  const d = (await corporateApi<{ data: CorporateCompetencies }>(orgPath(org, "/competencies"), `/corporate/${org}/kompetensi`)).data;
+  const [d, rec, summary] = await Promise.all([
+    corporateApi<{ data: CorporateCompetencies }>(orgPath(org, "/competencies"), `/corporate/${org}/kompetensi`).then((r) => r.data),
+    // Rekomendasi (dibuat AI) bersifat tambahan: gagal atau belum tersedia → bagian tidak ditampilkan.
+    corporateApi<{ data: RecommendationResponse }>(orgPath(org, "/recommendations"), `/corporate/${org}/kompetensi`)
+      .then((r) => r.data.recommendations)
+      .catch(() => null),
+    getSummary(org),
+  ]);
+  const canRequest = can(summary, "manage_requests");
+  const groups = rec?.groups?.filter((g) => g.items.length > 0) ?? [];
 
   return (
     <>
@@ -107,6 +118,26 @@ export default async function CompetencyPage({ params }: PageProps<"/corporate/[
           </ScrollX>
         )}
       </PortalCard>
+
+      {rec && groups.length > 0 && (
+        <PortalCard title="Rekomendasi training per posisi">
+          <p className="fh">Disusun AI dari gap kompetensi di atas (angka gabungan per posisi, tanpa nama karyawan) dan program yang membangun kompetensi tersebut.</p>
+          {groups.map((g) => (
+            <div key={g.position} style={{ marginTop: 16 }}>
+              <b>
+                {g.position} <small className="fh">({g.employees} karyawan dengan gap)</small>
+              </b>
+              <RecommendationList
+                insightId={rec.insightId}
+                items={g.items}
+                target={(it) => (canRequest ? `/corporate/${org}/permintaan/baru?paket=${encodeURIComponent(it.slug)}` : `/kursus/${it.slug}`)}
+                cta={canRequest ? "Ajukan permintaan training" : "Lihat program"}
+              />
+            </div>
+          ))}
+          <RecommendationFooter insightId={rec.insightId} myFeedback={rec.myFeedback} note="Saran ini bahan pertimbangan; keputusan dan jumlah peserta tetap di tangan perusahaan." />
+        </PortalCard>
+      )}
 
       <PortalCard title="Target kompetensi per posisi">
         <CompetencyTargetsManager org={org} data={d} />
