@@ -2,6 +2,7 @@ import Link from "next/link";
 import { EmptyState, MetaList, PortalCard } from "@/components/portal/ui";
 import { type CorporateAnalytics, type KpiKey, orgPath, pct, rupiah } from "@/lib/corporate";
 import { corporateApi } from "@/lib/corporate-server";
+import { ScrollX } from "@/components/ui/ScrollX";
 
 export const instant = false;
 
@@ -110,7 +111,7 @@ export default async function AnalyticsPage({ params, searchParams }: PageProps<
         {d.byBatch.length === 0 ? (
           <EmptyState text="Belum ada training bersponsor pada periode ini." />
         ) : (
-          <div style={{ overflowX: "auto" }}>
+          <ScrollX label="Tabel analitik per batch">
             <table className="att" style={{ marginTop: 4 }}>
               <thead>
                 <tr>
@@ -141,7 +142,7 @@ export default async function AnalyticsPage({ params, searchParams }: PageProps<
                 ))}
               </tbody>
             </table>
-          </div>
+          </ScrollX>
         )}
       </PortalCard>
 
@@ -149,7 +150,7 @@ export default async function AnalyticsPage({ params, searchParams }: PageProps<
         {d.byUnit.length === 0 ? (
           <EmptyState text="Belum ada data departemen." />
         ) : (
-          <div style={{ overflowX: "auto" }}>
+          <ScrollX label="Tabel analitik per departemen atau unit">
             <table className="att" style={{ marginTop: 4 }}>
               <thead>
                 <tr>
@@ -178,7 +179,7 @@ export default async function AnalyticsPage({ params, searchParams }: PageProps<
                 ))}
               </tbody>
             </table>
-          </div>
+          </ScrollX>
         )}
       </PortalCard>
 

@@ -10,6 +10,7 @@ import { getCategorySlug, POST_CATEGORIES } from "@/data/articles";
 import { SITE } from "@/data/site";
 import { getPost, getPosts } from "@/lib/cms";
 import { abs, JsonLd } from "@/lib/seo";
+import { scrollableHtml } from "@/lib/scrollable-html";
 
 export const instant = false;
 
@@ -87,7 +88,7 @@ export default async function ArtikelPage({ params }: PageProps<"/artikel/[slug]
                 <h2 id="kd-oh">Detail</h2>
                 <div className="kov" id="kd-ov">
                   {/* HTML dari CMS: dirender ke .pb persis seperti konten WordPress di website lama */}
-                  <div className="pb" dangerouslySetInnerHTML={{ __html: post.body ?? "" }} />
+                  <div className="pb" dangerouslySetInnerHTML={{ __html: scrollableHtml(post.body ?? "") }} />
                 </div>
               </section>
               <RelatedPosts posts={related} variant="rt-d" />

@@ -5,6 +5,7 @@ import { FormMessage } from "@/components/auth/AuthShell";
 import { type FormState } from "@/lib/actions/auth";
 import { markAttendanceAction } from "@/lib/actions/trainer";
 import type { TrainerClass } from "@/lib/trainer";
+import { ScrollX } from "@/components/ui/ScrollX";
 
 const OPTIONS = [
   ["present", "Hadir"],
@@ -56,40 +57,42 @@ export default function AttendanceForm({ cls }: { cls: TrainerClass }) {
           </div>
         </div>
       </div>
-      <table className="att">
-        <thead>
-          <tr>
-            <th>Peserta</th>
-            <th>Kehadiran ({session ? `sesi ${session.no}` : ""})</th>
-            <th>Catatan</th>
-            <th>Total %</th>
-          </tr>
-        </thead>
-        <tbody>
-          {participants.map((p) => (
-            <tr key={p.id}>
-              <td>
-                <b>{p.name}</b>
-                <small>{p.email ?? ""}</small>
-              </td>
-              <td>
-                <select name={`att_${p.id}`} defaultValue={p.attendance[String(sessionNo)] ?? ""} key={`${p.id}-${sessionNo}`}>
-                  <option value="">(belum)</option>
-                  {OPTIONS.map(([v, l]) => (
-                    <option key={v} value={v}>
-                      {l}
-                    </option>
-                  ))}
-                </select>
-              </td>
-              <td>
-                <input name={`note_${p.id}`} placeholder="opsional" />
-              </td>
-              <td>{p.attendancePercent === null ? "-" : `${p.attendancePercent}%`}</td>
+      <ScrollX label="Tabel kehadiran peserta">
+        <table className="att">
+          <thead>
+            <tr>
+              <th>Peserta</th>
+              <th>Kehadiran ({session ? `sesi ${session.no}` : ""})</th>
+              <th>Catatan</th>
+              <th>Total %</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {participants.map((p) => (
+              <tr key={p.id}>
+                <td>
+                  <b>{p.name}</b>
+                  <small>{p.email ?? ""}</small>
+                </td>
+                <td>
+                  <select name={`att_${p.id}`} defaultValue={p.attendance[String(sessionNo)] ?? ""} key={`${p.id}-${sessionNo}`}>
+                    <option value="">(belum)</option>
+                    {OPTIONS.map(([v, l]) => (
+                      <option key={v} value={v}>
+                        {l}
+                      </option>
+                    ))}
+                  </select>
+                </td>
+                <td>
+                  <input name={`note_${p.id}`} placeholder="opsional" />
+                </td>
+                <td>{p.attendancePercent === null ? "-" : `${p.attendancePercent}%`}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </ScrollX>
       <FormMessage ok={state.ok} message={state.message} />
       <button className="kb1" type="submit" disabled={pending}>
         {pending ? "Menyimpan…" : "Simpan Kehadiran"}

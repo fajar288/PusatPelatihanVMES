@@ -6,6 +6,7 @@ import { validateLogbookAction } from "@/lib/actions/monitoring";
 import { type LogbookInfo, type LogbooksData, PRACTICE_PILL } from "@/lib/monitoring";
 import { MetaList } from "@/components/portal/ui";
 import LogbookForm from "./LogbookForm";
+import { ScrollX } from "@/components/ui/ScrollX";
 
 /** Satu logbook: ringkasan isi, catatan peserta, dokumentasi, aksi Ubah (bila belum dikunci) & Validasi. */
 export default function LogbookCard({ d, l }: { d: LogbooksData; l: LogbookInfo }) {
@@ -111,26 +112,28 @@ export default function LogbookCard({ d, l }: { d: LogbooksData; l: LogbookInfo 
             )}
           </dl>
           {l.entries.length > 0 && (
-            <table className="att" style={{ marginTop: 10 }}>
-              <thead>
-                <tr>
-                  <th>Peserta</th>
-                  <th>Praktik</th>
-                  <th>Observasi</th>
-                </tr>
-              </thead>
-              <tbody>
-                {l.entries.map((e) => (
-                  <tr key={e.enrollmentId}>
-                    <td>
-                      <b>{names.get(e.enrollmentId) ?? `#${e.enrollmentId}`}</b>
-                    </td>
-                    <td>{e.practiceStatus ? <span className={"jst " + PRACTICE_PILL[e.practiceStatus]}>{e.practiceLabel}</span> : <span className="fh">-</span>}</td>
-                    <td>{e.observation ?? <span className="fh">-</span>}</td>
+            <ScrollX label="Tabel catatan per peserta" style={{ marginTop: 10 }}>
+              <table className="att">
+                <thead>
+                  <tr>
+                    <th>Peserta</th>
+                    <th>Praktik</th>
+                    <th>Observasi</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {l.entries.map((e) => (
+                    <tr key={e.enrollmentId}>
+                      <td>
+                        <b>{names.get(e.enrollmentId) ?? `#${e.enrollmentId}`}</b>
+                      </td>
+                      <td>{e.practiceStatus ? <span className={"jst " + PRACTICE_PILL[e.practiceStatus]}>{e.practiceLabel}</span> : <span className="fh">-</span>}</td>
+                      <td>{e.observation ?? <span className="fh">-</span>}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </ScrollX>
           )}
           <FormMessage ok={msg?.ok} message={msg?.text} />
           <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 12 }}>

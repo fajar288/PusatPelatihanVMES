@@ -3,6 +3,7 @@ import { BackLink, MetaList, PortalCard } from "@/components/portal/ui";
 import { api, ApiRequestError } from "@/lib/auth";
 import type { TrainerQuizResults } from "@/lib/lms";
 import { requireTrainer } from "@/lib/trainer";
+import { ScrollX } from "@/components/ui/ScrollX";
 
 export const instant = false;
 
@@ -56,7 +57,7 @@ export default async function TrainerClassQuizResults({ params }: PageProps<"/tr
                 </li>
               ))}
             </ul>
-            <div style={{ overflowX: "auto" }}>
+            <ScrollX label="Tabel hasil kuis peserta">
               <table className="att lqm">
                 <thead>
                   <tr>
@@ -93,7 +94,7 @@ export default async function TrainerClassQuizResults({ params }: PageProps<"/tr
                   ))}
                 </tbody>
               </table>
-            </div>
+            </ScrollX>
           </>
         )}
       </PortalCard>

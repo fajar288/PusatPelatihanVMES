@@ -2,6 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Models\Registration;
+use App\Models\TrainingPackage;
+use App\Models\TrainingSchedule;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -58,5 +61,22 @@ class AdminPanelTest extends TestCase
         foreach (['registrations', 'invoices', 'payment-transactions', 'payment-refunds', 'reconciliation', 'audit-logs', 'trainers', 'waitlists', 'attendances', 'promo-codes', 'laporan', 'certificates', 'certificates/create', 'certificate-templates', 'certificate-templates/create', 'dashboard-eksekutif', 'api-clients', 'api-clients/create'] as $slug) {
             $this->actingAs($admin)->get("/admin/$slug")->assertOk();
         }
+    }
+
+    public function test_laporan_preview_table_scrolls_inside_its_card(): void
+    {
+        $admin = User::factory()->create(['role' => User::ROLE_SUPER_ADMIN]);
+        $package = TrainingPackage::query()->create(['slug' => 'uji-lebar', 'title' => 'Uji Lebar', 'status' => 'published']);
+        $schedule = TrainingSchedule::query()->create(['package_id' => $package->id, 'code' => 'UJI-LBR', 'start_date' => '2026-12-01', 'end_date' => '2026-12-03', 'status' => 'open', 'quota' => 20]);
+        Registration::query()->create([
+            'registration_number' => 'REG-TEST-LBR', 'schedule_id' => $schedule->id, 'package_id' => $package->id, 'type' => 'individual',
+            'status' => 'pending', 'name' => 'Peserta Lebar', 'email' => 'lebar@example.com', 'phone' => '0812', 'participants_count' => 1, 'consent' => true, 'total' => 1000000,
+        ]);
+
+        $this->actingAs($admin)->get('/admin/laporan')->assertOk()
+            // Kolom grid dibatasi agar wadah tabel memotong dan menampilkan scrollbar, bukan ikut melebar.
+            ->assertSee('.ppti-lp { display: grid; grid-template-columns: minmax(0, 1fr);', false)
+            ->assertSee('class="ppti-lp-tablewrap" tabindex="0" role="region" aria-label="Pratinjau Pendaftaran, geser ke samping untuk kolom lainnya"', false)
+            ->assertSee('REG-TEST-LBR');
     }
 }

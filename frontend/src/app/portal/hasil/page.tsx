@@ -3,6 +3,7 @@ import { EmptyState, MetaList, PortalCard } from "@/components/portal/ui";
 import { api, requireUser } from "@/lib/auth";
 import type { ResultsInfo } from "@/lib/lms";
 import type { EnrollmentInfo } from "@/lib/portal-types";
+import { ScrollX } from "@/components/ui/ScrollX";
 
 export const instant = false;
 
@@ -21,40 +22,42 @@ export default async function PortalResultsPage() {
         {results.quizzes.length === 0 ? (
           <p className="fh">Belum ada kuis.</p>
         ) : (
-          <table className="att" style={{ marginTop: 12 }}>
-            <thead>
-              <tr>
-                <th>Kuis</th>
-                <th>Course</th>
-                <th>Percobaan</th>
-                <th>Nilai terbaik</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {results.quizzes.map((q) => (
-                <tr key={q.lessonId}>
-                  <td>
-                    <Link href={`/portal/belajar/${q.course.slug}/${q.lessonId}`}>
-                      <b>{q.title}</b>
-                    </Link>
-                    <MetaList
-                      compact
-                      style={{ marginTop: 2 }}
-                      items={[
-                        { value: q.kindLabel },
-                        { label: "Lulus ≥", value: `${q.passingScore}%` },
-                      ]}
-                    />
-                  </td>
-                  <td>{q.course.title}</td>
-                  <td>{q.attempts}</td>
-                  <td>{q.best ? `${q.best.percent}% (${q.best.score}/${q.best.maxScore})` : "-"}</td>
-                  <td>{q.best ? <span className={"jst " + (q.best.passed ? "ok" : "no")}>{q.best.passed ? "Lulus" : "Belum lulus"}</span> : <span className="jst wn">Belum</span>}</td>
+          <ScrollX label="Tabel nilai kuis" style={{ marginTop: 12 }}>
+            <table className="att">
+              <thead>
+                <tr>
+                  <th>Kuis</th>
+                  <th>Course</th>
+                  <th>Percobaan</th>
+                  <th>Nilai terbaik</th>
+                  <th>Status</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {results.quizzes.map((q) => (
+                  <tr key={q.lessonId}>
+                    <td>
+                      <Link href={`/portal/belajar/${q.course.slug}/${q.lessonId}`}>
+                        <b>{q.title}</b>
+                      </Link>
+                      <MetaList
+                        compact
+                        style={{ marginTop: 2 }}
+                        items={[
+                          { value: q.kindLabel },
+                          { label: "Lulus ≥", value: `${q.passingScore}%` },
+                        ]}
+                      />
+                    </td>
+                    <td>{q.course.title}</td>
+                    <td>{q.attempts}</td>
+                    <td>{q.best ? `${q.best.percent}% (${q.best.score}/${q.best.maxScore})` : "-"}</td>
+                    <td>{q.best ? <span className={"jst " + (q.best.passed ? "ok" : "no")}>{q.best.passed ? "Lulus" : "Belum lulus"}</span> : <span className="jst wn">Belum</span>}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </ScrollX>
         )}
       </PortalCard>
 
@@ -62,33 +65,35 @@ export default async function PortalResultsPage() {
         {results.assignments.length === 0 ? (
           <p className="fh">Belum ada tugas.</p>
         ) : (
-          <table className="att" style={{ marginTop: 12 }}>
-            <thead>
-              <tr>
-                <th>Tugas</th>
-                <th>Course</th>
-                <th>Status</th>
-                <th>Nilai</th>
-                <th>Umpan balik</th>
-              </tr>
-            </thead>
-            <tbody>
-              {results.assignments.map((a) => (
-                <tr key={a.lessonId}>
-                  <td>
-                    <Link href={`/portal/belajar/${a.course.slug}/${a.lessonId}`}>
-                      <b>{a.title}</b>
-                    </Link>
-                    {a.submission && <small>{a.submission.submittedLabel}</small>}
-                  </td>
-                  <td>{a.course.title}</td>
-                  <td>{a.submission ? <span className={"jst " + (a.submission.status === "graded" ? "ok" : a.submission.status === "returned" ? "no" : "wn")}>{a.submission.statusLabel}</span> : <span className="jst wn">Belum</span>}</td>
-                  <td>{a.submission?.score != null ? `${a.submission.score}/${a.maxScore}` : "-"}</td>
-                  <td>{a.submission?.feedback ?? "-"}</td>
+          <ScrollX label="Tabel nilai tugas" style={{ marginTop: 12 }}>
+            <table className="att">
+              <thead>
+                <tr>
+                  <th>Tugas</th>
+                  <th>Course</th>
+                  <th>Status</th>
+                  <th>Nilai</th>
+                  <th>Umpan balik</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {results.assignments.map((a) => (
+                  <tr key={a.lessonId}>
+                    <td>
+                      <Link href={`/portal/belajar/${a.course.slug}/${a.lessonId}`}>
+                        <b>{a.title}</b>
+                      </Link>
+                      {a.submission && <small>{a.submission.submittedLabel}</small>}
+                    </td>
+                    <td>{a.course.title}</td>
+                    <td>{a.submission ? <span className={"jst " + (a.submission.status === "graded" ? "ok" : a.submission.status === "returned" ? "no" : "wn")}>{a.submission.statusLabel}</span> : <span className="jst wn">Belum</span>}</td>
+                    <td>{a.submission?.score != null ? `${a.submission.score}/${a.maxScore}` : "-"}</td>
+                    <td>{a.submission?.feedback ?? "-"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </ScrollX>
         )}
       </PortalCard>
 

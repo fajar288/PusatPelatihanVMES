@@ -3,6 +3,7 @@ import CompetencyTargetsManager from "@/components/corporate/CompetencyTargetsMa
 import { EmptyState, PortalCard } from "@/components/portal/ui";
 import { type CorporateCompetencies, orgPath, pct } from "@/lib/corporate";
 import { corporateApi } from "@/lib/corporate-server";
+import { ScrollX } from "@/components/ui/ScrollX";
 
 export const instant = false;
 
@@ -57,7 +58,7 @@ export default async function CompetencyPage({ params }: PageProps<"/corporate/[
             <EmptyState text="Belum ada karyawan dengan posisi yang punya target kompetensi." />
           </div>
         ) : (
-          <div style={{ overflowX: "auto", marginTop: 14 }}>
+          <ScrollX label="Matriks kompetensi" style={{ marginTop: 14 }}>
             <table className="att">
               <thead>
                 <tr>
@@ -103,7 +104,7 @@ export default async function CompetencyPage({ params }: PageProps<"/corporate/[
                 ))}
               </tbody>
             </table>
-          </div>
+          </ScrollX>
         )}
       </PortalCard>
 

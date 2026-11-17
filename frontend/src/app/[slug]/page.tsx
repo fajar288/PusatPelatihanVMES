@@ -8,6 +8,7 @@ import { getCategoryBySlug, POST_CATEGORIES } from "@/data/articles";
 import { STATIC_PAGES } from "@/data/pages";
 import { SITE } from "@/data/site";
 import { getPage, getPosts } from "@/lib/cms";
+import { scrollableHtml } from "@/lib/scrollable-html";
 
 /**
  * Route level-1 untuk dua jenis halaman website lama:
@@ -75,7 +76,7 @@ export default async function SlugPage({ params, searchParams }: PageProps<"/[sl
         <div className="wrap">
           <div className="in">
             {/* HTML dari CMS (editor admin): sama seperti WordPress lama merender konten ke .pb */}
-            <div className="pb" dangerouslySetInnerHTML={{ __html: page.body }} />
+            <div className="pb" dangerouslySetInnerHTML={{ __html: scrollableHtml(page.body) }} />
           </div>
         </div>
       </div>
