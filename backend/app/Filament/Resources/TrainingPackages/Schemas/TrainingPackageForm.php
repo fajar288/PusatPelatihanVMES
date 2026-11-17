@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\TrainingPackages\Schemas;
 
 use App\Filament\Support\Fields;
+use App\Filament\Support\Layout;
 use App\Models\TrainingPackage;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Repeater;
@@ -41,7 +42,7 @@ class TrainingPackageForm
                         ->relationship('prerequisites', 'title', fn ($query, $record) => $query->when($record, fn ($q) => $q->whereKeyNot($record->getKey())))
                         ->helperText('Program yang sebaiknya sudah diluluskan peserta. Dipakai rekomendasi training ("program lanjutan").'),
                 ])->collapsible(),
-                Section::make('Durasi, metode & harga')->columns(3)->components([
+                Section::make('Durasi, metode & harga')->columns(Layout::cols(3))->components([
                     TextInput::make('duration_days')->label('Durasi (hari)')->numeric()->minValue(1)->default(1)->required(),
                     TextInput::make('duration_hours')->label('Jam pelajaran (JP)')->numeric()->minValue(0),
                     Fields::mode()->label('Metode'),
@@ -51,17 +52,17 @@ class TrainingPackageForm
                     Select::make('program_type')->label('Jenis program')->options(TrainingPackage::PROGRAM_TYPES)->default('regular')->required()->native(false),
                     Select::make('certificate_type')->label('Jenis sertifikat')->options(TrainingPackage::CERTIFICATE_TYPES)->default('participation')->required()->native(false),
                 ]),
-                Section::make('Aturan kelulusan (completion rule)')->columns(4)->components([
+                Section::make('Aturan kelulusan (completion rule)')->columns(Layout::cols(4))->components([
                     TextInput::make('completion_rule.min_attendance_pct')->label('Kehadiran min. (%)')->numeric()->minValue(0)->maxValue(100)->default(80),
                     TextInput::make('completion_rule.min_score')->label('Nilai min.')->numeric()->minValue(0)->maxValue(100),
                     Toggle::make('completion_rule.require_assignment')->label('Wajib tugas')->inline(false),
                     Toggle::make('completion_rule.require_posttest')->label('Wajib post-test')->inline(false),
                 ])->collapsible(),
-                Section::make('Publikasi')->columns(3)->components([
+                Section::make('Publikasi')->columns(Layout::cols(3))->components([
                     Fields::status(),
                     Select::make('availability')->label('Ketersediaan')->options(['available' => 'Tersedia', 'coming_soon' => 'Segera dibuka', 'closed' => 'Ditutup'])->default('available')->required()->native(false),
                     DateTimePicker::make('published_at')->label('Tanggal terbit')->seconds(false)->native(false),
-                    Toggle::make('is_popular')->label('Tandai Populer'),
+                    Toggle::make('is_popular')->label('Tandai Populer')->inline(false),
                     TextInput::make('sort_order')->label('Urutan')->numeric()->default(0),
                     TextInput::make('seo_title')->maxLength(255),
                     Textarea::make('seo_description')->rows(2)->maxLength(320)->columnSpanFull(),

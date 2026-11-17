@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Trainers\Schemas;
 
 use App\Filament\Support\Fields;
+use App\Filament\Support\Layout;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
@@ -33,7 +34,7 @@ class TrainerForm
                 Textarea::make('portfolio')->label('Portofolio / tautan')->rows(2),
                 Textarea::make('bio')->label('Bio singkat (tampil di web)')->rows(3),
             ])->collapsible(),
-            Section::make('Status')->columns(4)->components([
+            Section::make('Status')->columns(Layout::cols(4))->components([
                 Toggle::make('is_assessor')->label('Assessor')->inline(false),
                 Toggle::make('is_active')->label('Aktif')->default(true)->inline(false),
                 Toggle::make('show_on_site')->label('Tampil di web')->default(true)->inline(false),

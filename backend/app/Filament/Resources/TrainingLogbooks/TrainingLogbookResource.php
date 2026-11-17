@@ -7,6 +7,7 @@ use App\Filament\Resources\TrainingLogbooks\Pages\CreateTrainingLogbook;
 use App\Filament\Resources\TrainingLogbooks\Pages\EditTrainingLogbook;
 use App\Filament\Resources\TrainingLogbooks\Pages\ListTrainingLogbooks;
 use App\Filament\Resources\TrainingLogbooks\RelationManagers\EntriesRelationManager;
+use App\Filament\Support\Layout;
 use App\Models\ClassSession;
 use App\Models\Trainer;
 use App\Models\TrainingLogbook;
@@ -58,14 +59,14 @@ class TrainingLogbookResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make('Pertemuan')->columns(3)->components([
+            Section::make('Pertemuan')->columns(Layout::cols(3))->components([
                 Select::make('schedule_id')->label('Kelas')->required()->searchable()->live()
                     ->options(fn () => TrainingSchedule::query()->with('package')->orderByDesc('start_date')->limit(300)->get()->mapWithKeys(fn ($s) => [$s->id => $s->code.' - '.($s->title ?? $s->package?->title)])),
                 Select::make('session_id')->label('Sesi')->searchable()
                     ->options(fn (Get $get) => ClassSession::query()->where('schedule_id', $get('schedule_id') ?? 0)->orderBy('session_no')->get()->mapWithKeys(fn ($s) => [$s->id => $s->label()])),
                 Select::make('trainer_id')->label('Trainer')->searchable()->options(fn () => Trainer::query()->active()->pluck('name', 'id')),
                 DatePicker::make('date')->label('Tanggal')->required()->native(false),
-                TextInput::make('topic')->label('Topik')->required()->maxLength(255)->columnSpan(2),
+                TextInput::make('topic')->label('Topik')->required()->maxLength(255)->columnSpan(Layout::span(2)),
                 Placeholder::make('status_info')->label('Status')->columnSpanFull()
                     ->content(fn (?TrainingLogbook $record) => new HtmlString($record?->is_locked
                         ? '<span class="text-warning-600 font-semibold">Tervalidasi & terkunci</span> oleh '.e($record->validator?->name ?? '-').' pada '.($record->validated_at?->format('d M Y H:i') ?? '-').'. Perubahan akan tercatat sebagai perubahan pasca-validasi di audit log.'

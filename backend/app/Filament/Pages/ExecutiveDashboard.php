@@ -111,7 +111,7 @@ class ExecutiveDashboard extends Dashboard
                 ->columnSpanFull()
                 ->description('Periode berlaku untuk pendaftaran, invoice, pendapatan & sertifikat terbit; kelas dihitung bila jadwalnya beririsan dengan periode.')
                 ->collapsible()
-                ->columns(['md' => 3, 'xl' => 7])
+                ->columns(['default' => 1, 'md' => 3, 'xl' => 4, '2xl' => 7])
                 ->schema([
                     DatePicker::make('from')->label('Dari')->native(false)->displayFormat('d/m/Y')
                         ->default(fn () => today()->subMonths(11)->startOfMonth()->toDateString()),

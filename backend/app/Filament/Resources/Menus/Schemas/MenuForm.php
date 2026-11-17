@@ -22,8 +22,8 @@ class MenuForm
                     TextInput::make('label')->required()->maxLength(255),
                     TextInput::make('url')->label('URL')->required()->maxLength(255)->helperText('Path internal (/kursus), URL penuh, atau "wa" untuk tautan WhatsApp'),
                     Select::make('parent_id')->label('Induk')->relationship('parent', 'label')->searchable()->preload(),
-                    Toggle::make('is_external')->label('Buka di tab baru'),
-                    Toggle::make('is_active')->label('Aktif')->default(true),
+                    Toggle::make('is_external')->label('Buka di tab baru')->inline(false),
+                    Toggle::make('is_active')->label('Aktif')->default(true)->inline(false),
                     TextInput::make('sort_order')->label('Urutan')->numeric()->default(0),
                 ]),
             ]);

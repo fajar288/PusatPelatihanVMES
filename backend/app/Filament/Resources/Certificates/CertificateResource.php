@@ -7,6 +7,7 @@ use App\Filament\Resources\Certificates\Pages\CreateCertificate;
 use App\Filament\Resources\Certificates\Pages\EditCertificate;
 use App\Filament\Resources\Certificates\Pages\ListCertificates;
 use App\Filament\Resources\Certificates\RelationManagers\HistoryRelationManager;
+use App\Filament\Support\Layout;
 use App\Models\Certificate;
 use App\Models\CertificateTemplate;
 use App\Models\Enrollment;
@@ -86,8 +87,8 @@ class CertificateResource extends Resource
         $locked = fn (?Certificate $record) => $record !== null && ! $record->isEditable();
 
         return $schema->components([
-            Section::make('Peserta & kelas')->columns(3)->visibleOn('create')->components([
-                Select::make('enrollment_id')->label('Peserta (enrollment)')->required()->searchable()->columnSpan(2)
+            Section::make('Peserta & kelas')->columns(Layout::cols(3))->visibleOn('create')->components([
+                Select::make('enrollment_id')->label('Peserta (enrollment)')->required()->searchable()->columnSpan(Layout::span(2))
                     ->getSearchResultsUsing(fn (string $search) => Enrollment::query()->with('schedule')->where('participant_name', 'like', "%{$search}%")
                         ->orWhereHas('schedule', fn ($query) => $query->where('code', 'like', "%{$search}%"))->limit(50)->get()
                         ->mapWithKeys(fn (Enrollment $e) => [$e->id => self::enrollmentLabel($e)]))
@@ -120,10 +121,10 @@ class CertificateResource extends Resource
 
                         return new HtmlString($head.$rows);
                     }),
-                Toggle::make('force')->label('Paksa buat draf meski belum memenuhi syarat (admin)')->live()->columnSpan(2),
+                Toggle::make('force')->label('Paksa buat draf meski belum memenuhi syarat (admin)')->live()->columnSpan(Layout::span(2)),
                 TextInput::make('force_reason')->label('Alasan')->visible(fn (Get $get) => (bool) $get('force'))->required(fn (Get $get) => (bool) $get('force'))->maxLength(255),
             ]),
-            Section::make('Status')->columns(4)->visibleOn('edit')->components([
+            Section::make('Status')->columns(Layout::cols(4))->visibleOn('edit')->components([
                 Placeholder::make('number_info')->label('Nomor')->content(fn (?Certificate $record) => $record?->number ?? '-'),
                 Placeholder::make('status_info')->label('Status')->content(fn (?Certificate $record) => $record ? new HtmlString('<b>'.e($record->statusLabel()).'</b>'.($record->isExpired() ? ' (kedaluwarsa)' : '')) : '-'),
                 Placeholder::make('class_info')->label('Kelas')->content(fn (?Certificate $record) => new HtmlString(e($record?->class_code ?? '-').(filled($record?->enrollment?->participant_name) ? '<br>'.e($record->enrollment->participant_name) : ''))),
@@ -137,9 +138,9 @@ class CertificateResource extends Resource
                     $record->replaces ? 'Menggantikan '.e($record->replaces->number) : null,
                 ]))) : '-'),
             ]),
-            Section::make('Isi sertifikat')->columns(3)->visibleOn('edit')->disabled($locked)->components([
+            Section::make('Isi sertifikat')->columns(Layout::cols(3))->visibleOn('edit')->disabled($locked)->components([
                 TextInput::make('recipient_name')->label('Nama penerima (sesuai sertifikat)')->required()->maxLength(255),
-                TextInput::make('program_title')->label('Program')->required()->maxLength(255)->columnSpan(2),
+                TextInput::make('program_title')->label('Program')->required()->maxLength(255)->columnSpan(Layout::span(2)),
                 DatePicker::make('issued_at')->label('Tanggal sertifikat')->native(false)->required(),
                 DatePicker::make('valid_until')->label('Berlaku hingga')->native(false)->helperText('Kosong = tanpa batas.'),
                 TextInput::make('hours')->label('Jam pelajaran')->numeric()->minValue(0),

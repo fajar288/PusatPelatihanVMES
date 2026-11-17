@@ -10,6 +10,7 @@ use App\Filament\Resources\Invoices\RelationManagers\RefundsRelationManager;
 use App\Filament\Resources\Invoices\RelationManagers\TransactionsRelationManager;
 use App\Filament\Support\EnterpriseFields;
 use App\Filament\Support\FinanceFields;
+use App\Filament\Support\Layout;
 use App\Models\Invoice;
 use App\Models\PaymentTransaction;
 use App\Services\InvoiceService;
@@ -71,7 +72,7 @@ class InvoiceResource extends Resource
         $rp = fn ($v) => FinanceFields::rupiah($v);
 
         return $schema->components([
-            Section::make('Invoice')->columns(3)->components([
+            Section::make('Invoice')->columns(Layout::cols(3))->components([
                 TextEntry::make('invoice_number')->label('Nomor'),
                 TextEntry::make('status')->label('Status')->badge()->formatStateUsing(fn ($state) => Invoice::STATUSES[$state] ?? $state)->color(fn ($state) => FinanceFields::invoiceColor($state)),
                 TextEntry::make('source')->label('Sumber')->state(fn (Invoice $record) => $record->registration ? 'Pendaftaran '.$record->registration->registration_number : ($record->trainingRequest ? 'Permintaan training '.$record->trainingRequest->code : '-')),
@@ -82,7 +83,7 @@ class InvoiceResource extends Resource
                 TextEntry::make('due_date')->label('Jatuh tempo')->date('d M Y')->placeholder('-'),
                 TextEntry::make('installment')->label('Termin')->state(fn (Invoice $record) => $record->installment_total > 1 ? "{$record->installment_no} dari {$record->installment_total}" : 'Penuh'),
             ]),
-            Section::make('Nilai')->columns(4)->components([
+            Section::make('Nilai')->columns(Layout::cols(4))->components([
                 TextEntry::make('subtotal')->label('Subtotal')->formatStateUsing($rp),
                 TextEntry::make('discount')->label('Diskon')->formatStateUsing($rp)->helperText(fn (Invoice $record) => $record->discount_note),
                 TextEntry::make('tax_amount')->label(fn (Invoice $record) => ($record->tax_label ?: 'Pajak').' '.rtrim(rtrim(number_format((float) $record->tax_rate, 2, ',', '.'), '0'), ',').'%')->formatStateUsing($rp),

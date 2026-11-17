@@ -7,6 +7,7 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
@@ -37,10 +38,11 @@ class QuestionsRelationManager extends RelationManager
             TextInput::make('points')->label('Poin')->numeric()->default(1)->minValue(0),
             Textarea::make('question')->label('Pertanyaan')->required()->rows(3)->columnSpanFull(),
             Repeater::make('options')->label('Pilihan jawaban')->visible(fn (Get $get) => in_array($get('type'), ['single', 'multiple'], true))->columnSpanFull()
+                ->table([TableColumn::make('Kode')->markAsRequired()->width('6rem'), TableColumn::make('Teks pilihan')->markAsRequired()])
                 ->schema([
                     TextInput::make('key')->label('Kode')->required()->maxLength(5)->placeholder('a'),
-                    TextInput::make('text')->label('Teks pilihan')->required()->maxLength(500)->columnSpan(3),
-                ])->columns(4)->defaultItems(4)->addActionLabel('Tambah pilihan')->reorderable(false),
+                    TextInput::make('text')->label('Teks pilihan')->required()->maxLength(500),
+                ])->defaultItems(4)->addActionLabel('Tambah pilihan')->reorderable(false),
             TagsInput::make('answer')->label('Kunci jawaban')->required()->columnSpanFull()
                 ->helperText(fn (Get $get) => match ($get('type')) {
                     'multiple' => 'Masukkan semua kode pilihan yang benar (mis. a, c).',

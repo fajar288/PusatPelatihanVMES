@@ -34,7 +34,7 @@ class ResourcesRelationManager extends RelationManager
                 ->acceptedFileTypes(['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'image/*', 'video/mp4', 'video/webm', 'audio/*', 'application/zip', 'text/plain'])
                 ->helperText('PDF, Office, gambar, MP4/WebM, ZIP; maks. 100 MB.')->columnSpanFull(),
             TextInput::make('url')->label('URL')->url()->visible(fn (Get $get) => $get('type') === 'link')->required(fn (Get $get) => $get('type') === 'link')->columnSpanFull(),
-            Toggle::make('allow_download')->label('Boleh diunduh')->default(true)->helperText('Nonaktif = hanya dibaca di aplikasi (viewer).'),
+            Toggle::make('allow_download')->label('Boleh diunduh')->default(true)->inline(false)->helperText('Nonaktif = hanya dibaca di aplikasi (viewer).'),
             TextInput::make('sort_order')->label('Urutan')->numeric()->default(fn () => ($this->getOwnerRecord()->resources()->max('sort_order') ?? 0) + 1),
         ]);
     }

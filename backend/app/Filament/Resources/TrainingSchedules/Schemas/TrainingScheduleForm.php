@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\TrainingSchedules\Schemas;
 
 use App\Filament\Support\Fields;
+use App\Filament\Support\Layout;
 use App\Models\TrainingSchedule;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
@@ -38,7 +39,7 @@ class TrainingScheduleForm
                     TextInput::make('city')->label('Kota')->maxLength(80),
                     TextInput::make('location')->label('Lokasi / tautan kelas')->maxLength(255)->columnSpanFull(),
                 ]),
-                Section::make('Kuota, harga & status')->columns(3)->components([
+                Section::make('Kuota, harga & status')->columns(Layout::cols(3))->components([
                     TextInput::make('quota')->label('Kuota')->numeric()->minValue(0),
                     TextInput::make('registered_count')->label('Terdaftar')->numeric()->minValue(0)->default(0),
                     TextInput::make('price')->label('Harga (override)')->numeric()->minValue(0)->prefix('Rp')->helperText('Kosong = harga paket'),

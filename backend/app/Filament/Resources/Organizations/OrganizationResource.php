@@ -11,6 +11,7 @@ use App\Filament\Resources\Organizations\RelationManagers\SponsoredEnrollmentsRe
 use App\Filament\Resources\Organizations\RelationManagers\UnitsRelationManager;
 use App\Filament\Support\EnterpriseFields;
 use App\Filament\Support\Fields;
+use App\Filament\Support\Layout;
 use App\Models\Organization;
 use BackedEnum;
 use Filament\Actions\EditAction;
@@ -79,7 +80,7 @@ class OrganizationResource extends Resource
                 TextInput::make('website')->label('Website')->url(),
                 Fields::image('logo', 'organizations', 600)->label('Logo'),
             ]),
-            Section::make('Kontak PIC')->columns(3)->components([
+            Section::make('Kontak PIC')->columns(Layout::cols(3))->components([
                 TextInput::make('contact_name')->label('Nama'),
                 TextInput::make('contact_email')->label('Email')->email(),
                 TextInput::make('contact_phone')->label('HP')->tel()->maxLength(30),

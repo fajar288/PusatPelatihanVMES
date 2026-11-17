@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Filament\Support\Layout;
 use App\Models\Certificate;
 use App\Models\EmploymentRelationship;
 use App\Models\Enrollment;
@@ -67,6 +68,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Admin: Section/Grid/Fieldset/Tabs selebar form (Filament 5 tidak lagi melakukannya otomatis)
+        Layout::configureDefaults();
+
         // Perubahan konten CMS → flush cache API + webhook revalidasi frontend
         /** @var class-string<Model> $model */
         foreach (CmsObserver::MODELS as $model) {

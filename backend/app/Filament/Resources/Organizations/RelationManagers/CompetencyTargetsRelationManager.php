@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Organizations\RelationManagers;
 
+use App\Filament\Support\Layout;
 use App\Models\Competency;
 use App\Models\CompetencyTarget;
 use App\Services\CompetencyGapService;
@@ -34,7 +35,7 @@ class CompetencyTargetsRelationManager extends RelationManager
 
     public function form(Schema $schema): Schema
     {
-        return $schema->columns(3)->components([
+        return $schema->columns(Layout::cols(3))->components([
             TextInput::make('position')->label('Posisi')->required()->maxLength(150)
                 ->datalist(fn () => $this->getOwnerRecord()->employments()->whereNotNull('position')->distinct()->orderBy('position')->pluck('position')->all())
                 ->helperText('Sama dengan jabatan di data karyawan.'),

@@ -21,7 +21,7 @@ class GalleryForm
                     Fields::image('image', 'galleries')->label('Foto')->required()->columnSpanFull(),
                     TextInput::make('caption')->label('Keterangan')->maxLength(255),
                     DatePicker::make('event_date')->label('Tanggal kegiatan')->native(false),
-                    Toggle::make('is_active')->label('Aktif')->default(true),
+                    Toggle::make('is_active')->label('Aktif')->default(true)->inline(false),
                     TextInput::make('sort_order')->label('Urutan')->numeric()->default(0),
                 ]),
             ]);

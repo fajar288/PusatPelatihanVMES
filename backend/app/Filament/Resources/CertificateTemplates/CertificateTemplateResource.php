@@ -7,6 +7,7 @@ use App\Filament\Resources\CertificateTemplates\Pages\CreateCertificateTemplate;
 use App\Filament\Resources\CertificateTemplates\Pages\EditCertificateTemplate;
 use App\Filament\Resources\CertificateTemplates\Pages\ListCertificateTemplates;
 use App\Filament\Support\Fields;
+use App\Filament\Support\Layout;
 use App\Models\CertificateTemplate;
 use BackedEnum;
 use Filament\Actions\Action;
@@ -54,7 +55,7 @@ class CertificateTemplateResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make('Identitas template')->columns(3)->components([
+            Section::make('Identitas template')->columns(Layout::cols(3))->components([
                 TextInput::make('name')->label('Nama template')->required()->maxLength(255),
                 Select::make('type')->label('Jenis')->options(CertificateTemplate::TYPES)->default('participation')->required()->native(false)
                     ->helperText('Sertifikat keikutsertaan vs kompetensi (lembaga berwenang) dibedakan jenisnya.'),
@@ -72,7 +73,7 @@ class CertificateTemplateResource extends Resource
                 Textarea::make('footer_text')->label('Catatan kaki')->rows(2)->columnSpanFull(),
                 Toggle::make('show_competencies')->label('Cetak lampiran materi/unit kompetensi (halaman 2)')->default(true),
             ]),
-            Section::make('Penerbit & penandatangan')->columns(3)->components([
+            Section::make('Penerbit & penandatangan')->columns(Layout::cols(3))->components([
                 TextInput::make('issuer_name')->label('Nama penerbit')->default('PPTI - VMES Training Center')->required()->maxLength(255),
                 TextInput::make('issuer_title')->label('Keterangan penerbit')->maxLength(255)->placeholder('mis. Lembaga Pelatihan Kerja'),
                 TextInput::make('issuer_city')->label('Kota penerbitan')->default('Batam')->maxLength(80),
@@ -83,7 +84,7 @@ class CertificateTemplateResource extends Resource
                 TextInput::make('second_signatory_title')->label('Jabatan kedua')->maxLength(255),
                 Fields::image('second_signature_image', 'certificates/signatures', 800)->label('Tanda tangan kedua'),
             ]),
-            Section::make('Tampilan')->columns(3)->components([
+            Section::make('Tampilan')->columns(Layout::cols(3))->components([
                 Select::make('orientation')->label('Orientasi')->options(['landscape' => 'Landscape', 'portrait' => 'Portrait'])->default('landscape')->required()->native(false),
                 ColorPicker::make('accent_color')->label('Warna aksen')->default('#004B23'),
                 Fields::image('logo_image', 'certificates/assets', 800)->label('Logo (opsional)'),
