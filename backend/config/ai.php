@@ -114,13 +114,13 @@ return [
         ] + $llm('CORPORATE_INSIGHT', '2026-11-17.2', 30, 1_000_000),
         'demand_forecast' => [
             'label' => 'Prakiraan permintaan',
-            'description' => 'Prakiraan jumlah pendaftar per program, kategori, dan bulan beserta rentang ketidakpastian.',
+            'description' => 'Prakiraan jumlah peserta terdaftar per bulan untuk total, segmen, bidang, dan program terpopuler, beserta rentang ketidakpastian.',
             'method' => 'statistical',
             'enabled' => (bool) env('AI_DEMAND_FORECAST_ENABLED', false),
             'review' => 'staff',
             'metrics' => ['MAE', 'MAPE'],
             'baseline' => 'Seasonal naive (bulan yang sama tahun lalu)',
-            'readiness' => ['registration_months' => 24],
+            'readiness' => ['enrollment_months' => 24],
         ],
         'public_chatbot' => [
             'label' => 'Chatbot informasi publik',

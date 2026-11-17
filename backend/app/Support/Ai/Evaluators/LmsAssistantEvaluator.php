@@ -17,6 +17,7 @@ use Illuminate\Support\Carbon;
  * - cakupan sumber = persentase jawaban model yang membawa kutipan dari materi;
  * - unresolved rate = persentase pertanyaan yang tidak terjawab dari materi (termasuk panggilan model yang gagal).
  * Baseline: pertanyaan peserta di forum diskusi kelas pada periode yang sama (berapa yang dijawab trainer dan berapa lama).
+ * Semua rasio berupa pecahan 0..1 (konvensi Metrics::rate); ai:evaluate menampilkannya sebagai persen.
  */
 class LmsAssistantEvaluator implements Evaluator
 {
@@ -46,7 +47,7 @@ class LmsAssistantEvaluator implements Evaluator
         $helpful = $feedback->where('helpful', true)->count();
 
         $forum = $this->forumBaseline($from);
-        $unresolvedRate = $asked > 0 ? round(($asked - $resolved) / $asked * 100, 1) : null;
+        $unresolvedRate = $asked > 0 ? round(($asked - $resolved) / $asked, 4) : null;
 
         $notes = [];
         if ($asked === 0) {
@@ -69,11 +70,11 @@ class LmsAssistantEvaluator implements Evaluator
                 'uncited_hidden' => (int) ($reasons['uncited'] ?? 0),
                 'no_material' => (int) ($reasons['no_material'] ?? 0),
                 'model_failures' => $failed,
-                'citation_coverage' => $modelAnswers > 0 ? round($resolved / $modelAnswers * 100, 1) : null,
+                'citation_coverage' => $modelAnswers > 0 ? round($resolved / $modelAnswers, 4) : null,
                 'avg_sources_per_answer' => $resolved > 0
                     ? round($items->sum(fn (AiInsight $i) => count((array) ($i->output['sources'] ?? []))) / $resolved, 2) : null,
                 'feedback' => $feedback->count(),
-                'helpful_rate' => $feedback->count() > 0 ? round($helpful / $feedback->count() * 100, 1) : null,
+                'helpful_rate' => $feedback->count() > 0 ? round($helpful / $feedback->count(), 4) : null,
             ],
             'baseline' => ['description' => 'Pertanyaan peserta lewat forum diskusi kelas'] + $forum,
             'notes' => $notes,
@@ -93,7 +94,7 @@ class LmsAssistantEvaluator implements Evaluator
         return [
             'questions' => $questions->count(),
             'answered_by_trainer' => $n,
-            'answered_rate' => $questions->count() > 0 ? round($n / $questions->count() * 100, 1) : null,
+            'answered_rate' => $questions->count() > 0 ? round($n / $questions->count(), 4) : null,
             'median_hours_to_answer' => $n > 0 ? round($n % 2 ? $hours[intdiv($n, 2)] : ($hours[$n / 2 - 1] + $hours[$n / 2]) / 2, 1) : null,
         ];
     }

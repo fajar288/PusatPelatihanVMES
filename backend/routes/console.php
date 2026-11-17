@@ -10,6 +10,7 @@ use App\Models\NotificationLog;
 use App\Models\Organization;
 use App\Models\WebhookDelivery;
 use App\Services\AiCorporateInsightService;
+use App\Services\AiDemandForecastService;
 use App\Services\AiEarlyWarningService;
 use App\Services\AiEvaluationService;
 use App\Services\AiFeedbackService;
@@ -156,7 +157,17 @@ Artisan::command('ai:evaluate {usecase} {--json : cetak laporan lengkap sebagai 
         return 0;
     }
     $g = $report['governance'];
-    $fmt = fn ($v) => $v === null ? '-' : (is_float($v) ? number_format($v * 100, 1).'%' : (string) $v);
+    // Metrik berupa daftar (mis. rincian per deret) hanya diringkas di layar; isinya lengkap di laporan JSON.
+    // Rasio (0..1) tampil sebagai persen; metrik lain (MAE, rata-rata) apa adanya; MAPE sudah dalam persen.
+    $fmt = fn ($v, ?string $key = null) => match (true) {
+        $v === null => '-',
+        is_array($v) => count($v).' baris (lihat laporan JSON)',
+        is_bool($v) => $v ? 'ya' : 'tidak',
+        $key !== null && str_contains($key, 'mape') && is_numeric($v) => number_format((float) $v, 1).'%',
+        is_float($v) && ($key === null || preg_match('/rate|coverage|precision|recall|f1|accuracy|ctr/', $key) === 1) => number_format($v * 100, 1).'%',
+        is_float($v) => number_format($v, 2),
+        default => (string) $v,
+    };
     $this->info($report['label'].' ('.$key.')');
     $this->line('Status: '.($report['status']['available'] ? 'aktif' : 'tidak aktif ('.$report['status']['reason_label'].')'));
     $this->table(['Metrik', 'Nilai'], [
@@ -170,7 +181,7 @@ Artisan::command('ai:evaluate {usecase} {--json : cetak laporan lengkap sebagai 
         ['Galat', $fmt($g['usage_30d']['error_rate'])],
     ]);
     if ($report['specific']) {
-        $this->table(['Metrik khusus', 'Nilai'], collect($report['specific']['metrics'])->map(fn ($v, $k) => [$k, $fmt($v)])->values()->all());
+        $this->table(['Metrik khusus', 'Nilai'], collect($report['specific']['metrics'])->map(fn ($v, $k) => [$k, $fmt($v, (string) $k)])->values()->all());
     }
     foreach ($report['notes'] as $note) {
         $this->warn($note);
@@ -281,3 +292,20 @@ Artisan::command('ai:corporate-insight {--org= : kode organisasi, kosongkan untu
 })->purpose('Susun insight kompetensi per organisasi untuk ditinjau admin');
 
 Schedule::command('ai:corporate-insight')->weeklyOn(1, '06:00');
+
+// AI prakiraan permintaan (statistik, tanpa LLM): peserta terdaftar per bulan 3 bulan ke depan, tampil di Dashboard Eksekutif.
+Artisan::command('ai:demand-forecast', function (AiDemandForecastService $forecast) {
+    if (! $forecast->status()['available']) {
+        $this->warn('Prakiraan permintaan belum tersedia: '.($forecast->status()['reason'] ?? 'fitur mati').'.');
+
+        return 0;
+    }
+    $insight = $forecast->run();
+    $this->info($insight
+        ? 'Prakiraan disimpan (insight #'.$insight->id.', '.count($insight->output['series']).' lingkup, bulan '.implode(', ', $insight->output['months']).').'
+        : 'Riwayat peserta belum cukup untuk prakiraan (minimal 4 bulan lengkap).');
+
+    return 0;
+})->purpose('Hitung prakiraan peserta terdaftar 3 bulan ke depan');
+
+Schedule::command('ai:demand-forecast')->monthlyOn(1, '05:00');

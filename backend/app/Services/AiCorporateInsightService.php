@@ -345,14 +345,14 @@ class AiCorporateInsightService
             'approved' => $approved->count(),
             'rejected' => $rejected->count(),
             'pending' => $all->where('status', AiInsight::STATUS_DRAFT)->count(),
-            'acceptance_rate' => $decided > 0 ? round($approved->count() / $decided * 100, 1) : null,
+            'acceptance_rate' => $decided > 0 ? round($approved->count() / $decided, 4) : null,
             'mature' => $mature->count(),
-            'conversion_rate' => $mature->count() > 0 ? round($converted / $mature->count() * 100, 1) : null,
-            'suggested_program_conversion_rate' => $mature->count() > 0 ? round($convertedSuggested / $mature->count() * 100, 1) : null,
+            'conversion_rate' => $mature->count() > 0 ? round($converted / $mature->count(), 4) : null,
+            'suggested_program_conversion_rate' => $mature->count() > 0 ? round($convertedSuggested / $mature->count(), 4) : null,
             'feedback' => $feedback->count(),
-            'helpful_rate' => $feedback->count() > 0 ? round($feedback->where('helpful', true)->count() / $feedback->count() * 100, 1) : null,
+            'helpful_rate' => $feedback->count() > 0 ? round($feedback->where('helpful', true)->count() / $feedback->count(), 4) : null,
             'baseline_organizations' => $baselineOrgs->count(),
-            'baseline_conversion_rate' => $baselineOrgs->count() > 0 ? round($baselineConverted / $baselineOrgs->count() * 100, 1) : null,
+            'baseline_conversion_rate' => $baselineOrgs->count() > 0 ? round($baselineConverted / $baselineOrgs->count(), 4) : null,
         ];
     }
 }

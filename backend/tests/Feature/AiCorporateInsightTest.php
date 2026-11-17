@@ -320,12 +320,12 @@ class AiCorporateInsightTest extends TestCase
         $m = app(AiCorporateInsightService::class)->evaluate();
         $this->assertSame(1, $m['approved']);
         $this->assertSame(1, $m['rejected']);
-        $this->assertEquals(50.0, $m['acceptance_rate']);
+        $this->assertEquals(0.5, $m['acceptance_rate']);
         $this->assertSame(1, $m['mature']);
-        $this->assertEquals(100.0, $m['conversion_rate']);
-        $this->assertEquals(100.0, $m['suggested_program_conversion_rate']);
+        $this->assertEquals(1.0, $m['conversion_rate']);
+        $this->assertEquals(1.0, $m['suggested_program_conversion_rate']);
         $this->assertSame(1, $m['baseline_organizations']);
-        $this->assertEquals(100.0, $m['baseline_conversion_rate']);
+        $this->assertEquals(1.0, $m['baseline_conversion_rate']);
         $this->artisan('ai:evaluate', ['usecase' => 'corporate_insight'])->assertSuccessful();
     }
 }
