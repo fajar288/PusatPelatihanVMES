@@ -90,6 +90,12 @@ class TrainingPackage extends Model
             ->withPivot(['id', 'level'])->withTimestamps();
     }
 
+    /** Program yang harus sudah diluluskan sebelum mengikuti program ini (rekomendasi "program lanjutan"). */
+    public function prerequisites(): BelongsToMany
+    {
+        return $this->belongsToMany(self::class, 'package_prerequisites', 'package_id', 'prerequisite_id')->withTimestamps();
+    }
+
     public function scopePublished(Builder $q): Builder
     {
         return $q->where('status', self::STATUS_PUBLISHED)

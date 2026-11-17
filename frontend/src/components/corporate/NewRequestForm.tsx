@@ -13,14 +13,24 @@ const DELIVERY = [
 ];
 
 /** Form Corporate Training Request (§20.3): simpan sebagai draf atau langsung kirim ke VMES. */
-export default function NewRequestForm({ org, packages, units }: { org: string; packages: { slug: string; title: string; category: string | null }[]; units: Unit[] }) {
+export default function NewRequestForm({
+  org,
+  packages,
+  units,
+  defaultPackage = "",
+}: {
+  org: string;
+  packages: { slug: string; title: string; category: string | null }[];
+  units: Unit[];
+  defaultPackage?: string;
+}) {
   const [state, action, pending] = useActionState<CorpState, FormData>(createRequestAction, { ok: false });
   return (
     <form className="ff" action={action} style={{ marginTop: 16 }}>
       <input type="hidden" name="org" value={org} />
       <div>
         <label htmlFor="rq-package">Program training</label>
-        <select id="rq-package" name="package" required defaultValue="">
+        <select id="rq-package" name="package" required defaultValue={packages.some((p) => p.slug === defaultPackage) ? defaultPackage : ""}>
           <option value="" disabled>
             Pilih program…
           </option>

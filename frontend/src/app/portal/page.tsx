@@ -3,6 +3,8 @@ import { EmptyState, PortalCard, RegistrationRow } from "@/components/portal/ui"
 import { api, requireUser } from "@/lib/auth";
 import { type CertificateInfo, MEMBER_STATUS } from "@/lib/certificates";
 import type { EnrollmentInfo, RegistrationInfo } from "@/lib/portal-types";
+import RecommendationList, { RecommendationFooter } from "@/components/portal/RecommendationList";
+import type { RecommendationResponse } from "@/lib/recommendations";
 
 // Halaman per-pengguna (cookie sesi + API terautentikasi) → diblokir di server, tidak di-prerender.
 export const instant = false;
@@ -10,10 +12,12 @@ export const instant = false;
 /** /portal - dashboard: identitas member & status alumni, ringkasan pendaftaran, sertifikat, pendaftaran terbaru (PRD §5.6). */
 export default async function PortalDashboard() {
   const { user, token } = await requireUser("/portal");
-  const [regs, certs, enrollments] = await Promise.all([
+  const [regs, certs, enrollments, rec] = await Promise.all([
     api<{ data: RegistrationInfo[] }>("/me/registrations", { token }).then((r) => r.data),
     api<{ data: CertificateInfo[] }>("/me/certificates", { token }).then((r) => r.data).catch(() => [] as CertificateInfo[]),
     api<{ data: EnrollmentInfo[] }>("/me/enrollments", { token }).then((r) => r.data).catch(() => [] as EnrollmentInfo[]),
+    // Rekomendasi (dibuat AI) bersifat tambahan: gagal atau belum tersedia → kartu tidak ditampilkan.
+    api<{ data: RecommendationResponse }>("/me/recommendations", { token }).then((r) => r.data.recommendations).catch(() => null),
   ]);
   const m = user.member;
   const counts = {
@@ -78,6 +82,17 @@ export default async function PortalDashboard() {
               Perbarui profil
             </Link>
           </div>
+        </PortalCard>
+      )}
+
+      {rec && rec.items.length > 0 && (
+        <PortalCard title={isAlumni ? "Program lanjutan untuk Anda" : "Rekomendasi training untuk Anda"}>
+          <RecommendationList insightId={rec.insightId} items={rec.items} target={(it) => `/kursus/${it.slug}`} cta="Lihat program" />
+          <RecommendationFooter
+            insightId={rec.insightId}
+            myFeedback={rec.myFeedback}
+            note="Disusun AI dari riwayat pelatihan, prasyarat program, target kompetensi posisi Anda, dan pilihan peserta lain. Alasan setiap saran ditampilkan."
+          />
         </PortalCard>
       )}
 

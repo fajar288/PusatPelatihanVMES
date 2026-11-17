@@ -9,6 +9,7 @@ use App\Support\Ai\AiUseCases;
 use App\Support\Ai\Evaluators\EarlyWarningEvaluator;
 use App\Support\Ai\Evaluators\Evaluator;
 use App\Support\Ai\Evaluators\PublicChatbotEvaluator;
+use App\Support\Ai\Evaluators\RecommendationEvaluator;
 use App\Support\Ai\Metrics;
 use Illuminate\Support\Facades\Storage;
 
@@ -26,6 +27,7 @@ class AiEvaluationService
     public const EVALUATORS = [
         'public_chatbot' => PublicChatbotEvaluator::class,
         'early_warning' => EarlyWarningEvaluator::class,
+        'recommendation' => RecommendationEvaluator::class,
     ];
 
     public function __construct(private AiGovernance $governance, private AiReadiness $readiness) {}
