@@ -111,7 +111,7 @@ return [
             'metrics' => ['Acceptance rate', 'Konversi menjadi permintaan training'],
             'baseline' => 'Laporan gap kompetensi tanpa narasi',
             'readiness' => ['organizations_with_targets' => 3, 'competency_assessments' => 50],
-        ] + $llm('CORPORATE_INSIGHT', '2026-11-17.1', 30, 1_000_000),
+        ] + $llm('CORPORATE_INSIGHT', '2026-11-17.2', 30, 1_000_000),
         'demand_forecast' => [
             'label' => 'Prakiraan permintaan',
             'description' => 'Prakiraan jumlah pendaftar per program, kategori, dan bulan beserta rentang ketidakpastian.',

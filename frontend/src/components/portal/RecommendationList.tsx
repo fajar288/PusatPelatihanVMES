@@ -47,12 +47,22 @@ export default function RecommendationList({
 }
 
 /** Keterangan + umpan balik di bawah daftar rekomendasi. */
-export function RecommendationFooter({ insightId, myFeedback, note }: { insightId: number; myFeedback: boolean | null; note: string }) {
+export function RecommendationFooter({
+  insightId,
+  myFeedback,
+  note,
+  question = "Apakah rekomendasi ini membantu?",
+}: {
+  insightId: number;
+  myFeedback: boolean | null;
+  note: string;
+  question?: string;
+}) {
   return (
     <div className="mt-3! flex flex-wrap items-center justify-between gap-2">
       <small className="text-[12px] text-[var(--mut)]">{note}</small>
       <span className="flex items-center gap-2">
-        <small className="text-[12px] text-[var(--mut)]">Apakah rekomendasi ini membantu?</small>
+        <small className="text-[12px] text-[var(--mut)]">{question}</small>
         <AiFeedback insightId={insightId} initial={myFeedback} />
       </span>
     </div>

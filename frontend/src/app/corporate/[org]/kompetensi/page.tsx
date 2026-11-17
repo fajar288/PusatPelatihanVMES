@@ -1,7 +1,8 @@
 import Link from "next/link";
 import CompetencyTargetsManager from "@/components/corporate/CompetencyTargetsManager";
+import CorporateInsightCard from "@/components/corporate/CorporateInsightCard";
 import { EmptyState, PortalCard } from "@/components/portal/ui";
-import { can, type CorporateCompetencies, orgPath, pct } from "@/lib/corporate";
+import { can, type CorporateCompetencies, type CorporateInsightResponse, orgPath, pct } from "@/lib/corporate";
 import { corporateApi, getSummary } from "@/lib/corporate-server";
 import RecommendationList, { RecommendationFooter } from "@/components/portal/RecommendationList";
 import type { RecommendationResponse } from "@/lib/recommendations";
@@ -21,11 +22,15 @@ const SOURCE: Record<string, string> = {
  */
 export default async function CompetencyPage({ params }: PageProps<"/corporate/[org]/kompetensi">) {
   const { org } = await params;
-  const [d, rec, summary] = await Promise.all([
+  const [d, rec, insight, summary] = await Promise.all([
     corporateApi<{ data: CorporateCompetencies }>(orgPath(org, "/competencies"), `/corporate/${org}/kompetensi`).then((r) => r.data),
     // Rekomendasi (dibuat AI) bersifat tambahan: gagal atau belum tersedia → bagian tidak ditampilkan.
     corporateApi<{ data: RecommendationResponse }>(orgPath(org, "/recommendations"), `/corporate/${org}/kompetensi`)
       .then((r) => r.data.recommendations)
+      .catch(() => null),
+    // Insight kompetensi (dibuat AI, sudah disetujui admin VMES): tidak ada / gagal → bagian tidak ditampilkan.
+    corporateApi<{ data: CorporateInsightResponse }>(orgPath(org, "/insight"), `/corporate/${org}/kompetensi`)
+      .then((r) => r.data.insight)
       .catch(() => null),
     getSummary(org),
   ]);
@@ -118,6 +123,8 @@ export default async function CompetencyPage({ params }: PageProps<"/corporate/[
           </ScrollX>
         )}
       </PortalCard>
+
+      {insight && <CorporateInsightCard org={org} insight={insight} canRequest={canRequest} />}
 
       {rec && groups.length > 0 && (
         <PortalCard title="Rekomendasi training per posisi">
