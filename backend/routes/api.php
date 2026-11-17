@@ -149,6 +149,7 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
             Route::get('/analytics', [CorporateAnalyticsController::class, 'analytics'])->name('analytics');
             Route::get('/competencies', [CorporateAnalyticsController::class, 'competencies'])->name('competencies');
             Route::get('/recommendations', [AiInsightController::class, 'corporateRecommendations'])->name('recommendations');
+            Route::get('/insight', [AiInsightController::class, 'corporateInsight'])->name('insight');
             Route::post('/competency-targets', [CorporateAnalyticsController::class, 'storeTarget'])->name('competency_targets.store');
             Route::delete('/competency-targets/{competencyTarget}', [CorporateAnalyticsController::class, 'destroyTarget'])->name('competency_targets.destroy');
         });

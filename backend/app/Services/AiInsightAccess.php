@@ -19,6 +19,8 @@ use App\Models\User;
  *   peserta itu (aturan sama dengan detail progres di Corporate Portal: sponsor, batas unit, kebijakan karyawan keluar).
  * - Peserta sendiri TIDAK melihat skor early warning.
  * - Asisten Belajar: jawaban hanya untuk peserta yang bertanya (dan staf AI di atas).
+ * - Insight perusahaan: pengguna perusahaan tingkat organisasi (tanpa batas unit) yang boleh melihat progres atau
+ *   mengelola kompetensi di organisasi itu.
  */
 class AiInsightAccess
 {
@@ -34,6 +36,13 @@ class AiInsightAccess
         }
         if ($insight->use_case === AiRecommendationService::USE_CASE) {
             return $this->isRecipient($user, $insight);
+        }
+        // Insight perusahaan (sudah disetujui admin): pengguna perusahaan tingkat organisasi di organisasi tersebut.
+        if ($insight->use_case === AiCorporateInsightService::USE_CASE) {
+            $org = $insight->organization_id ? Organization::query()->find($insight->organization_id) : null;
+            $cu = $org ? $this->corporate->membership($user, $org) : null;
+
+            return $cu !== null && app(AiCorporateInsightService::class)->canView($cu);
         }
         // Asisten Belajar: hanya peserta pemilik enrollment yang bertanya (bukan trainer, bukan perusahaan sponsor).
         if ($insight->use_case === AiLearningAssistantService::USE_CASE) {

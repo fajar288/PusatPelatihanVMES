@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Models\AiInsight;
 use App\Models\Organization;
+use App\Services\AiCorporateInsightService;
 use App\Services\AiInsightAccess;
 use App\Services\AiInsightService;
 use App\Services\AiRecommendationService;
@@ -37,6 +38,20 @@ class AiInsightController extends Controller
         return response()->json(['data' => [
             'status' => $recommendations->status(),
             'recommendations' => $recommendations->forCorporate($cu, $request->user()),
+        ]]);
+    }
+
+    /** GET /corporate/organizations/{org}/insight: insight kompetensi yang sudah disetujui admin VMES (null bila belum ada). */
+    public function corporateInsight(Request $request, Organization $organization, AiCorporateInsightService $insights, CorporateAccess $access): JsonResponse
+    {
+        Gate::authorize('viewCorporate', $organization);
+        $cu = $access->membership($request->user(), $organization);
+        $cu->setRelation('organization', $organization);
+
+        return response()->json(['data' => [
+            'status' => $insights->status(),
+            'canView' => $insights->canView($cu),
+            'insight' => $insights->forCorporate($cu, $request->user()),
         ]]);
     }
 

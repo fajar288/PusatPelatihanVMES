@@ -6,6 +6,7 @@ use App\Models\AiInsight;
 use App\Models\AiInsightFeedback;
 use App\Models\AiUsageRecord;
 use App\Support\Ai\AiUseCases;
+use App\Support\Ai\Evaluators\CorporateInsightEvaluator;
 use App\Support\Ai\Evaluators\EarlyWarningEvaluator;
 use App\Support\Ai\Evaluators\Evaluator;
 use App\Support\Ai\Evaluators\FeedbackAnalysisEvaluator;
@@ -32,7 +33,7 @@ class AiEvaluationService
         'recommendation' => RecommendationEvaluator::class,
         'feedback_analysis' => FeedbackAnalysisEvaluator::class,
         'lms_assistant' => LmsAssistantEvaluator::class,
-        'lms_assistant' => LmsAssistantEvaluator::class,
+        'corporate_insight' => CorporateInsightEvaluator::class,
     ];
 
     public function __construct(private AiGovernance $governance, private AiReadiness $readiness) {}

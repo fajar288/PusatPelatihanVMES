@@ -7,7 +7,9 @@ use App\Models\ChatLog;
 use App\Models\Enrollment;
 use App\Models\Lesson;
 use App\Models\NotificationLog;
+use App\Models\Organization;
 use App\Models\WebhookDelivery;
+use App\Services\AiCorporateInsightService;
 use App\Services\AiEarlyWarningService;
 use App\Services\AiEvaluationService;
 use App\Services\AiFeedbackService;
@@ -253,3 +255,29 @@ Artisan::command('ai:feedback-summarize', function (AiFeedbackService $feedback)
 })->purpose('Susun ringkasan umpan balik per kelas untuk ditinjau admin');
 
 Schedule::command('ai:feedback-summarize')->dailyAt('06:30');
+
+// AI insight kompetensi per organisasi (draf, wajib disetujui admin VMES sebelum tampil di portal perusahaan).
+Artisan::command('ai:corporate-insight {--org= : kode organisasi, kosongkan untuk semua yang punya target} {--force : buat walau data tidak berubah}', function (AiCorporateInsightService $insights) {
+    if (! $insights->status()['available']) {
+        $this->warn('Insight perusahaan belum tersedia: '.($insights->status()['reason'] ?? 'fitur mati').'. Laporan gap tanpa narasi tetap berjalan.');
+
+        return 0;
+    }
+    if ($code = $this->option('org')) {
+        $org = Organization::query()->where('code', strtoupper((string) $code))->first();
+        if (! $org) {
+            $this->error("Organisasi $code tidak ditemukan.");
+
+            return 1;
+        }
+        $insight = $insights->generate($org, (bool) $this->option('force'));
+        $this->info($insight ? "Draf insight #{$insight->id} dibuat untuk {$org->code}, menunggu persetujuan admin." : 'Tidak ada draf baru (data kurang, tidak berubah, atau model gagal).');
+
+        return 0;
+    }
+    $this->info('Draf insight baru: '.$insights->generateDue());
+
+    return 0;
+})->purpose('Susun insight kompetensi per organisasi untuk ditinjau admin');
+
+Schedule::command('ai:corporate-insight')->weeklyOn(1, '06:00');

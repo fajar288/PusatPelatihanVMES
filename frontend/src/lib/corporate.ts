@@ -190,6 +190,19 @@ export type CorporateCompetencies = {
   rows: CompetencyGapRow[] | null;
 };
 
+/** GET /corporate/organizations/{org}/insight - insight kompetensi (dibuat AI, sudah disetujui admin VMES). */
+export type CorporateInsight = {
+  insightId: number;
+  summary: string;
+  keyGaps: { competency: string; finding: string }[];
+  actions: { action: string; reason: string; priority: "tinggi" | "sedang" | "rendah"; program: { slug: string; title: string } | null }[];
+  limitations: string;
+  approvedAt: string | null;
+  myFeedback: boolean | null;
+};
+
+export type CorporateInsightResponse = { status: { available: boolean; label: string; reason: string | null }; canView: boolean; insight: CorporateInsight | null };
+
 export function pct(v: number | null | undefined): string {
   return v === null || v === undefined ? "-" : `${String(v).replace(".", ",")}%`;
 }
