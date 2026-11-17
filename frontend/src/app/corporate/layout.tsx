@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
-import { SITE } from "@/data/site";
 import { requireUser } from "@/lib/auth";
 
-export const metadata: Metadata = { title: `Corporate Portal | ${SITE.name}`, robots: { index: false } };
+export const metadata: Metadata = { title: "Corporate Portal", robots: { index: false } };
 
 // Area per-pengguna (cookie sesi) → diblokir di server agar tamu mendapat redirect HTTP ke /login.
 export const instant = false;

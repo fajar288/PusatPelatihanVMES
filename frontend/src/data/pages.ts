@@ -93,7 +93,7 @@ export const STATIC_PAGES: StaticPage[] = [
       { type: "h2", text: "Dokumen yang Diperlukan" },
       { type: "ul", items: ["Nama lengkap sesuai identitas (untuk pencetakan sertifikat)", "Alamat email dan nomor WhatsApp aktif", "Surat tugas dari instansi (untuk peserta korporasi, opsional)"] },
       { type: "h2", text: "Butuh Bantuan?" },
-      { type: "p", text: "Hubungi admin kami di WhatsApp 0851-2125-1285 pada hari kerja pukul 08.00 sampai 17.00 WIB." },
+      { type: "p", text: "Hubungi admin kami di WhatsApp {{whatsapp}} pada hari kerja pukul 08.00 sampai 17.00 WIB." },
     ],
   },
 ];

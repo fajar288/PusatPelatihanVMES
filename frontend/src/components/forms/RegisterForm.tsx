@@ -6,6 +6,7 @@ import { FieldError, FormMessage } from "@/components/auth/AuthShell";
 import { MetaList } from "@/components/portal/ui";
 import { type Schedule, scheduleBatchTitle } from "@/data/schedules";
 import { type RegistrationState, submitRegistrationAction } from "@/lib/actions/registration";
+import { useSite } from "@/components/site/SiteProvider";
 import { formatRupiah, waLink } from "@/lib/utils";
 
 type Props = { schedules: Schedule[]; selectedId?: string; prefill?: { name: string; email: string; phone?: string | null; company?: string | null; position?: string | null } | null };
@@ -15,6 +16,7 @@ type Props = { schedules: Schedule[]; selectedId?: string; prefill?: { name: str
  * Individu atau kolektif perusahaan; pendaftar login otomatis terhubung ke member.
  */
 export default function RegisterForm({ schedules, selectedId, prefill }: Props) {
+  const site = useSite();
   const [state, action, pending] = useActionState<RegistrationState, FormData>(submitRegistrationAction, { ok: false });
   const [jadwal, setJadwal] = useState(selectedId && schedules.some((s) => s.id === selectedId) ? selectedId : schedules[0]?.id ?? "");
   const [type, setType] = useState<"individual" | "corporate">("individual");
@@ -64,7 +66,7 @@ export default function RegisterForm({ schedules, selectedId, prefill }: Props) 
           <Link className="kb1" href={`/portal/pendaftaran/${r.number}`}>
             Buka Portal Member
           </Link>
-          <a className="kb2 wa" href={waLink(`Halo, saya sudah mendaftar dengan nomor ${r.number}`)} target="_blank" rel="noopener">
+          <a className="kb2 wa" href={waLink(site, `Halo, saya sudah mendaftar dengan nomor ${r.number}`)} target="_blank" rel="noopener">
             Hubungi Admin
           </a>
         </div>

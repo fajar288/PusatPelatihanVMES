@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { waLink } from "@/lib/utils";
+import WaAnchor from "@/components/site/WaAnchor";
 
 /** div.kbx.pcd "Tertarik dengan topik ini?": kotak CTA sidebar single post, teks identik website lama. */
 export default function TopicCta({ topic }: { topic: string }) {
@@ -8,9 +8,9 @@ export default function TopicCta({ topic }: { topic: string }) {
       <h3>Tertarik dengan topik ini?</h3>
       <p className="sdt">Tanyakan jadwal, harga, dan metode belajar langsung ke tim kami.</p>
       <div className="kbt">
-        <a className="kb1 wa" href={waLink(`Halo, saya ingin info ${topic}`)} target="_blank" rel="noopener">
+        <WaAnchor className="kb1 wa" text={`Halo, saya ingin info ${topic}`}>
           Konsultasi via WhatsApp
-        </a>
+        </WaAnchor>
         <Link className="kb2" href="/jadwal">
           Lihat Jadwal Training
         </Link>

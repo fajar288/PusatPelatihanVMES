@@ -3,10 +3,9 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import AuthShell from "@/components/auth/AuthShell";
 import LoginForm from "@/components/auth/LoginForm";
-import { SITE } from "@/data/site";
 import { getCurrentUser } from "@/lib/auth";
 
-export const metadata: Metadata = { title: `Masuk | ${SITE.name}`, robots: { index: false } };
+export const metadata: Metadata = { title: "Masuk", robots: { index: false } };
 
 // Membaca cookie sesi & ?next= langsung (route diblokir di server) agar pengguna yang sudah login dapat redirect HTTP.
 export const instant = false;

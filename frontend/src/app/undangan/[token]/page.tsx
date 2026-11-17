@@ -4,10 +4,10 @@ import { notFound } from "next/navigation";
 import AuthShell, { FormMessage } from "@/components/auth/AuthShell";
 import AcceptInvitationForm from "@/components/corporate/AcceptInvitationForm";
 import { MetaList } from "@/components/portal/ui";
-import { SITE } from "@/data/site";
+import { getSiteSettings } from "@/lib/cms";
 import { api, ApiRequestError, getCurrentUser } from "@/lib/auth";
 
-export const metadata: Metadata = { title: `Undangan Training | ${SITE.name}`, robots: { index: false } };
+export const metadata: Metadata = { title: "Undangan Training", robots: { index: false } };
 
 export const instant = false;
 
@@ -25,6 +25,7 @@ type Invitation = {
 
 /** /undangan/[token] - undangan peserta dari perusahaan (Roadmap 5 §20.4): masuk dengan email yang diundang, consent, terima. */
 export default async function InvitationPage({ params }: PageProps<"/undangan/[token]">) {
+  const site = await getSiteSettings();
   const { token } = await params;
   let inv: Invitation;
   try {
@@ -41,7 +42,7 @@ export default async function InvitationPage({ params }: PageProps<"/undangan/[t
       title="Undangan Training"
       subtitle={
         <>
-          <b>{inv.organization}</b> menugaskan {inv.name ? <b>{inv.name}</b> : "Anda"} mengikuti training di {SITE.name}.
+          <b>{inv.organization}</b> menugaskan {inv.name ? <b>{inv.name}</b> : "Anda"} mengikuti training di {site.name}.
         </>
       }
       footer={user ? <Link href="/portal">Buka Portal Member</Link> : undefined}

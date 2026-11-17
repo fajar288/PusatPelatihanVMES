@@ -5,8 +5,7 @@ import WhyBox from "@/components/detail/WhyBox";
 import WaitlistForm from "@/components/forms/WaitlistForm";
 import Icon from "@/components/ui/Icon";
 import { type Schedule, scheduleBatchTitle, shortDate } from "@/data/schedules";
-import { SITE } from "@/data/site";
-import { getSchedule, getSchedules } from "@/lib/cms";
+import { getSchedule, getSchedules, getSiteSettings } from "@/lib/cms";
 import { abs, JsonLd } from "@/lib/seo";
 import { formatRupiah, waLink, waRegisterText } from "@/lib/utils";
 
@@ -21,11 +20,11 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps<"/jadwal/[id]">): Promise<Metadata> {
   const { id } = await params;
   const d = await getSchedule(id);
-  if (!d) return { title: `Jadwal tidak ditemukan | ${SITE.name}` };
+  if (!d) return { title: "Jadwal tidak ditemukan" };
   const s = d.schedule;
   const title = scheduleBatchTitle(s);
   const description = `${s.title} ${s.dateLabel}, ${s.city} (${s.mode}), ${s.durationDays} hari. ${s.statusLabel}.`;
-  return { title: `${title} | ${SITE.name}`, description, alternates: { canonical: `/jadwal/${s.id}` }, openGraph: { title, description, type: "website", locale: "id_ID" } };
+  return { title: `${title}`, description, alternates: { canonical: `/jadwal/${s.id}` }, openGraph: { title, description, type: "website", locale: "id_ID" } };
 }
 
 function OtherSchedules({ items, variant }: { items: Schedule[]; variant: "rt-d" | "rt-m" }) {
@@ -52,6 +51,7 @@ function OtherSchedules({ items, variant }: { items: Schedule[]; variant: "rt-d"
 
 /** /jadwal/[id] - detail batch (PRD §5.4). `id` = kode kelas. Data: GET /api/v1/schedules/{code}. */
 export default async function JadwalDetailPage({ params }: PageProps<"/jadwal/[id]">) {
+  const site = await getSiteSettings();
   const { id } = await params;
   const d = await getSchedule(id);
   if (!d) notFound();
@@ -72,7 +72,7 @@ export default async function JadwalDetailPage({ params }: PageProps<"/jadwal/[i
     eventAttendanceMode: s.mode === "online" ? "https://schema.org/OnlineEventAttendanceMode" : s.mode === "hybrid" ? "https://schema.org/MixedEventAttendanceMode" : "https://schema.org/OfflineEventAttendanceMode",
     eventStatus: "https://schema.org/EventScheduled",
     location: s.mode === "online" ? { "@type": "VirtualLocation", url: abs(`/jadwal/${s.id}`) } : { "@type": "Place", name: s.location, address: s.city },
-    organizer: { "@type": "Organization", name: SITE.company, url: abs("/") },
+    organizer: { "@type": "Organization", name: site.company, url: abs("/") },
     offers: { "@type": "Offer", price: s.price, priceCurrency: "IDR", availability: full ? "https://schema.org/SoldOut" : "https://schema.org/InStock", url: abs(`/jadwal/${s.id}`) },
   };
 
@@ -276,7 +276,7 @@ export default async function JadwalDetailPage({ params }: PageProps<"/jadwal/[i
                         Daftar Sekarang
                       </Link>
                     )}
-                    <a className="kb2 wa" href={waLink(waRegisterText(s.title, s.dateLabel))} target="_blank" rel="noopener">
+                    <a className="kb2 wa" href={waLink(site, waRegisterText(s.title, s.dateLabel))} target="_blank" rel="noopener">
                       Tanya via WhatsApp
                     </a>
                   </div>

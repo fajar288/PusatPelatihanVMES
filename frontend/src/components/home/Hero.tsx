@@ -5,12 +5,14 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Icon from "@/components/ui/Icon";
 import type { HeroData, StatItem } from "@/lib/cms-types";
+import { useSite } from "@/components/site/SiteProvider";
 import { waLink } from "@/lib/utils";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 import StatsBar from "./StatsBar";
 
 /** section.hero2: hero beranda + slider fade 4500ms + glass cards + stats bar. Data dari API /home (fallback src/data). */
 export default function Hero({ hero, stats }: { hero: HeroData; stats: StatItem[] }) {
+  const site = useSite();
   const [cur, setCur] = useState(0);
   const reduce = useReducedMotion();
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -57,7 +59,7 @@ export default function Hero({ hero, stats }: { hero: HeroData; stats: StatItem[
             <Link className="b-o" href="/jadwal">
               Lihat Jadwal Training <Icon name="arr" />
             </Link>
-            <a className="b-w wa" href={waLink()} target="_blank" rel="noopener">
+            <a className="b-w wa" href={waLink(site)} target="_blank" rel="noopener">
               <Icon name="msg" />
               Konsultasi via WhatsApp
             </a>

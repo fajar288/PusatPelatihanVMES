@@ -3,11 +3,10 @@ import { Suspense } from "react";
 import CatalogHero from "@/components/catalog/CatalogHero";
 import type { SortKey } from "@/components/catalog/CatalogBar";
 import ScheduleCatalog from "@/components/catalog/ScheduleCatalog";
-import { SITE } from "@/data/site";
 import { getSchedules } from "@/lib/cms";
 
 export const metadata: Metadata = {
-  title: `Jadwal Training | ${SITE.name}`,
+  title: "Jadwal Training",
   description: "Jadwal pelaksanaan training terbaru PPTI - VMES Training Center.",
   alternates: { canonical: "/jadwal" },
 };

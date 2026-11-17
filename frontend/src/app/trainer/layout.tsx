@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import InstallPrompt from "@/components/pwa/InstallPrompt";
 import TrainerNav from "@/components/trainer/TrainerNav";
-import { SITE } from "@/data/site";
 import { requireTrainer } from "@/lib/trainer";
 
-export const metadata: Metadata = { title: `Portal Trainer | ${SITE.name}`, robots: { index: false } };
+export const metadata: Metadata = { title: "Portal Trainer", robots: { index: false } };
 
 export const instant = false;
 

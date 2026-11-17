@@ -32,7 +32,7 @@ export default function Footer({ site, columns }: { site: SiteSettings; columns:
               {col.links.map((l) => (
                 <li key={l.label}>
                   {l.href === "wa" ? (
-                    <a className="wa" href={waLink()} target="_blank" rel="noopener">
+                    <a className="wa" href={waLink(site)} target="_blank" rel="noopener">
                       {l.label}
                     </a>
                   ) : (

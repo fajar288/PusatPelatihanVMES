@@ -1,7 +1,8 @@
 import Link from "next/link";
 import Icon from "@/components/ui/Icon";
 import type { Course } from "@/data/courses";
-import { formatRupiah, waLink } from "@/lib/utils";
+import WaAnchor from "@/components/site/WaAnchor";
+import { formatRupiah } from "@/lib/utils";
 import RelatedCourses from "./RelatedCourses";
 import WhyBox from "./WhyBox";
 
@@ -47,9 +48,9 @@ export default function CourseSidebar({ course, related }: Props) {
             </div>
           </div>
           <div className="kbt">
-            <a className="kb1 wa" href={waLink(waText)} target="_blank" rel="noopener">
+            <WaAnchor className="kb1 wa" text={waText}>
               Konsultasi via WhatsApp
-            </a>
+            </WaAnchor>
             <Link className="kb2" href="/jadwal">
               Lihat Jadwal Training
             </Link>

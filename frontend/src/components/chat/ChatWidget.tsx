@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Fragment, useEffect, useRef, useState } from "react";
+import { useSite } from "@/components/site/SiteProvider";
 import { waLink } from "@/lib/utils";
 
 const API = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1").replace(/\/$/, "");
@@ -81,6 +82,7 @@ function Rich({ text }: { text: string }) {
  * (GET /chat/status). Percakapan disimpan di sessionStorage pengunjung; status aktif di-cache 10 menit.
  */
 export default function ChatWidget() {
+  const site = useSite();
   const [enabled, setEnabled] = useState(false);
   const [open, setOpen] = useState(false);
   const [conv, setConv] = useState<Saved>({ conversationId: "", messages: [] });
@@ -266,7 +268,7 @@ export default function ChatWidget() {
           </form>
           <p className="chatw">
             Butuh bantuan langsung?{" "}
-            <a href={waLink()} target="_blank" rel="noopener">
+            <a href={waLink(site)} target="_blank" rel="noopener">
               Chat admin di WhatsApp
             </a>
           </p>

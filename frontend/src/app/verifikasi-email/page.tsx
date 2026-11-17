@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import AuthShell, { FormMessage } from "@/components/auth/AuthShell";
-import { SITE } from "@/data/site";
 import { api, ApiRequestError } from "@/lib/auth";
 
-export const metadata: Metadata = { title: `Verifikasi Email | ${SITE.name}`, robots: { index: false } };
+export const metadata: Metadata = { title: "Verifikasi Email", robots: { index: false } };
 
 // Tautan sekali pakai dari email → selalu diproses di server per permintaan (tidak di-prerender).
 export const instant = false;

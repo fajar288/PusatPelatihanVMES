@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\SiteSettings\Schemas;
 
+use App\Support\SiteIdentity;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
@@ -15,7 +16,9 @@ class SiteSettingForm
             ->components([
                 Section::make('Pengaturan situs')->components([
                     TextInput::make('key')->label('Kunci')->required()->maxLength(80)->unique('site_settings', 'key', ignoreRecord: true)
-                        ->helperText('site, hero, stats, about, why, cta, company, post_categories'),
+                        ->helperText('site (disunting di menu Identitas & kontak), hero, stats, about, why, cta, company, post_categories')
+                        ->notIn([SiteIdentity::KEY])
+                        ->validationMessages(['not_in' => 'Pengaturan site disunting di menu Identitas & kontak.']),
                     TextInput::make('group')->label('Grup')->maxLength(40)->default('site'),
                     Textarea::make('value')
                         ->label('Nilai (JSON)')

@@ -2,19 +2,21 @@ import type { Metadata } from "next";
 import CatalogHero from "@/components/catalog/CatalogHero";
 import ContactForm from "@/components/forms/ContactForm";
 import Icon from "@/components/ui/Icon";
-import { SITE } from "@/data/site";
+import { getSiteSettings } from "@/lib/cms";
 import { waLink } from "@/lib/utils";
 
-export const metadata: Metadata = {
-  title: `Kontak | ${SITE.name}`,
-  description: `Hubungi PPTI - VMES Training Center: konsultasi training, pendaftaran, dan kerja sama. WhatsApp ${SITE.waDisplay}.`,
-  alternates: { canonical: "/kontak" },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const site = await getSiteSettings();
+  return {
+    title: "Kontak",
+    description: `Hubungi ${site.name}: konsultasi training, pendaftaran, dan kerja sama. WhatsApp ${site.waDisplay}.`,
+    alternates: { canonical: "/kontak" },
+  };
+}
 
-const MAP_QUERY = "Kawasan Industri Tunas Bizpark Blok D No 15 Batam Centre Batam";
-
-/** /kontak - PRD §5.1: formulir konsultasi + kartu kontak + peta. */
-export default function KontakPage() {
+/** /kontak: formulir konsultasi + kartu kontak + peta. Alamat, nomor WhatsApp, dan peta dari pengaturan situs CMS. */
+export default async function KontakPage() {
+  const site = await getSiteSettings();
   return (
     <div>
       <CatalogHero
@@ -39,23 +41,23 @@ export default function KontakPage() {
           </div>
 
           <div className="kinfo">
-            <a className="kc" href={SITE.mapsUrl} rel="noopener" target="_blank">
+            <a className="kc" href={site.mapsUrl} rel="noopener" target="_blank">
               <span className="ki">
                 <Icon name="pin" />
               </span>
               <div>
                 <b>Kantor Pusat</b>
-                <em>{SITE.company}</em>
-                <small>{SITE.address}</small>
+                <em>{site.company}</em>
+                <small>{site.address}</small>
               </div>
             </a>
-            <a className="kc wa" href={waLink()} target="_blank" rel="noopener">
+            <a className="kc wa" href={waLink(site)} target="_blank" rel="noopener">
               <span className="ki">
                 <Icon name="phone" />
               </span>
               <div>
                 <b>Telepon / WhatsApp</b>
-                <em>{SITE.waDisplay}</em>
+                <em>{site.waDisplay}</em>
                 <small>Chat langsung dengan tim kami</small>
               </div>
             </a>
@@ -71,8 +73,8 @@ export default function KontakPage() {
             </div>
             <div className="kmap">
               <iframe
-                title="Lokasi PPTI - VMES Training Center"
-                src={`https://www.google.com/maps?q=${encodeURIComponent(MAP_QUERY)}&output=embed`}
+                title={`Lokasi ${site.name}`}
+                src={`https://www.google.com/maps?q=${encodeURIComponent(site.address)}&output=embed`}
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
                 allowFullScreen

@@ -25,6 +25,7 @@ class PageForm
                         ->fileAttachmentsDisk(config('filesystems.default'))
                         ->fileAttachmentsDirectory('pages')
                         ->fileAttachmentsVisibility('public')
+                        ->helperText('Tulis {{whatsapp}} untuk nomor WhatsApp (bertautan) dan {{alamat}} untuk alamat kantor; keduanya diisi dari menu Identitas & kontak.')
                         ->columnSpanFull(),
                     Select::make('status')->options(['draft' => 'Draft', 'published' => 'Published'])->default('published')->required()->native(false),
                     DateTimePicker::make('published_at')->seconds(false)->native(false),

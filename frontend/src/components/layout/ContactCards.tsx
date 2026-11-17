@@ -17,7 +17,7 @@ export default function ContactCards({ site }: { site: SiteSettings }) {
             <small>{site.address}</small>
           </div>
         </a>
-        <a className="kc wa" href={waLink()} target="_blank" rel="noopener">
+        <a className="kc wa" href={waLink(site)} target="_blank" rel="noopener">
           <span className="ki">
             <Icon name="phone" />
           </span>

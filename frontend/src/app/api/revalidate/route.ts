@@ -21,7 +21,9 @@ export async function POST(req: NextRequest) {
     /* body kosong → semua */
   }
 
-  for (const tag of tags) revalidateTag(tag, "max");
+  // Konten CMS: stale-while-revalidate ("max"). Pengaturan situs (kontak, nomor WhatsApp) kedaluwarsa segera agar
+  // perubahan dari admin langsung tampil di permintaan berikutnya, bukan setelah satu pengunjung melihat versi lama.
+  for (const tag of tags) revalidateTag(tag, tag === "settings" ? { expire: 0 } : "max");
 
   return NextResponse.json({ ok: true, revalidated: tags, at: new Date().toISOString() });
 }

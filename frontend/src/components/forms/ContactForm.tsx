@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSite } from "@/components/site/SiteProvider";
 import { waLink } from "@/lib/utils";
 
 const TOPICS = ["Public Training", "Corporate / In-House Training", "Online Class", "Sertifikasi Internasional", "Program Kampus & Sekolah", "Lainnya"];
@@ -10,6 +11,7 @@ const TOPICS = ["Public Training", "Corporate / In-House Training", "Online Clas
  * ke WhatsApp resmi dengan teks terformat. Nanti diganti POST /api/v1/inquiries.
  */
 export default function ContactForm() {
+  const site = useSite();
   const [sent, setSent] = useState(false);
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -23,7 +25,7 @@ export default function ContactForm() {
       `Topik: ${f.get("topik")}`,
       `Pesan: ${f.get("pesan")}`,
     ];
-    window.open(waLink(lines.join("\n")), "_blank", "noopener");
+    window.open(waLink(site, lines.join("\n")), "_blank", "noopener");
     setSent(true);
   };
 
@@ -70,7 +72,7 @@ export default function ContactForm() {
       <button className="kb1" type="submit">
         Kirim via WhatsApp
       </button>
-      <p className="fh">Pesan akan dibuka di WhatsApp resmi kami (0851-2125-1285). Tim kami membalas pada hari kerja pukul 08.00 sampai 17.00 WIB.</p>
+      <p className="fh">Pesan akan dibuka di WhatsApp resmi kami ({site.waDisplay}). Tim kami membalas pada hari kerja pukul 08.00 sampai 17.00 WIB.</p>
       {sent && <div className="fok">Terima kasih! Lanjutkan percakapan di jendela WhatsApp yang terbuka.</div>}
     </form>
   );

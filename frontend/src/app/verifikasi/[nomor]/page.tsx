@@ -3,7 +3,6 @@ import Link from "next/link";
 import CatalogHero from "@/components/catalog/CatalogHero";
 import VerifyForm from "@/components/certificates/VerifyForm";
 import Icon from "@/components/ui/Icon";
-import { SITE } from "@/data/site";
 import { api, ApiRequestError } from "@/lib/auth";
 import { CERT_PILL, type VerificationResult } from "@/lib/certificates";
 
@@ -12,7 +11,7 @@ export const instant = false;
 
 export async function generateMetadata({ params }: PageProps<"/verifikasi/[nomor]">): Promise<Metadata> {
   const { nomor } = await params;
-  return { title: `Verifikasi ${decodeURIComponent(nomor)} | ${SITE.name}`, robots: { index: false } };
+  return { title: `Verifikasi ${decodeURIComponent(nomor)}`, robots: { index: false } };
 }
 
 async function lookup(nomor: string, code: string | null): Promise<VerificationResult | null> {

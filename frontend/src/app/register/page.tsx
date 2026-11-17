@@ -3,10 +3,9 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import AuthShell from "@/components/auth/AuthShell";
 import RegisterAccountForm from "@/components/auth/RegisterAccountForm";
-import { SITE } from "@/data/site";
 import { getCurrentUser } from "@/lib/auth";
 
-export const metadata: Metadata = { title: `Buat Akun | ${SITE.name}`, robots: { index: false } };
+export const metadata: Metadata = { title: "Buat Akun", robots: { index: false } };
 
 export const instant = false;
 
