@@ -65,6 +65,10 @@ return [
             'metrics' => ['Precision', 'Recall', 'F1'],
             'baseline' => 'Aturan peserta berisiko di Dashboard Eksekutif',
             'readiness' => ['finished_enrollments' => 200, 'failed_enrollments' => 20, 'finished_classes' => 10],
+            // Skor risiko (0-100) mulai dari angka ini dianggap "berisiko" dan memicu notifikasi ke trainer & perusahaan sponsor.
+            'threshold' => (int) env('AI_EARLY_WARNING_THRESHOLD', 50),
+            // Insight harian berlaku 2 hari; bila perintah harian berhenti, skor lama tidak tampil terus.
+            'ttl_hours' => 48,
         ],
         'recommendation' => [
             'label' => 'Rekomendasi training',

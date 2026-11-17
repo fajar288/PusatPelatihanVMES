@@ -8,6 +8,7 @@ use App\Models\Enrollment;
 use App\Models\Lesson;
 use App\Models\NotificationLog;
 use App\Models\WebhookDelivery;
+use App\Services\AiEarlyWarningService;
 use App\Services\AiEvaluationService;
 use App\Services\AiInsightService;
 use App\Services\AiReadiness;
@@ -181,3 +182,46 @@ Artisan::command('ai:expire-insights', function (AiInsightService $insights) {
 })->purpose('Tandai insight AI yang tidak ditinjau atau lewat masa berlaku sebagai kedaluwarsa');
 
 Schedule::command('ai:expire-insights')->dailyAt('01:00');
+
+// AI early warning: skor risiko harian peserta aktif (statistik, tanpa LLM). Tidak berjalan bila use case belum dinyalakan.
+// Dijalankan sebelum notifications:risk (08:00); keduanya memakai kunci dedupe yang sama sehingga tidak ada peringatan ganda.
+Artisan::command('ai:early-warning {--no-notify : hitung skor tanpa mengirim notifikasi}', function (AiEarlyWarningService $ew) {
+    $r = $ew->run(! $this->option('no-notify'));
+    if ($r['status'] !== 'ok') {
+        $this->warn('Early warning belum tersedia: '.$r['reason'].'. Proses manual (aturan peserta berisiko) tetap berjalan.');
+
+        return 0;
+    }
+    $this->info("Model {$r['model']}: {$r['scored']} peserta dinilai, {$r['flagged']} berisiko, {$r['notified']} notifikasi baru.");
+
+    return 0;
+})->purpose('Hitung skor risiko early warning untuk peserta aktif');
+
+Schedule::command('ai:early-warning')->dailyAt('07:30');
+
+// AI early warning: kalibrasi bobot dari kelas yang sudah selesai (holdout 30% terbaru, dibandingkan baseline aturan).
+Artisan::command('ai:early-warning-calibrate {--force : jalankan walau data belum cukup (hanya untuk uji pipeline)}', function (AiEarlyWarningService $ew) {
+    $r = $ew->calibrate(null, (bool) $this->option('force'));
+    if ($r['status'] === 'insufficient_data') {
+        $this->warn('Data belum cukup untuk kalibrasi. Jalankan php artisan ai:readiness early_warning.');
+
+        return 0;
+    }
+    $fmt = fn ($v) => $v === null ? '-' : number_format($v * 100, 1).'%';
+    $h = $r['holdout'];
+    $this->table(['Holdout (data terbaru)', 'Precision', 'Recall', 'F1'], [
+        ['Model baru '.$r['version'], $fmt($h['model']['precision']), $fmt($h['model']['recall']), $fmt($h['model']['f1'])],
+        ['Bobot awal', $fmt($r['prior_on_holdout']['model']['precision']), $fmt($r['prior_on_holdout']['model']['recall']), $fmt($r['prior_on_holdout']['model']['f1'])],
+        ['Baseline aturan', $fmt($h['baseline']['precision']), $fmt($h['baseline']['recall']), $fmt($h['baseline']['f1'])],
+    ]);
+    if ($r['forced']) {
+        $this->warn('Data belum cukup: hasil ini hanya membuktikan pipeline kalibrasi berjalan.');
+    }
+    match ($r['holdout']['beats_baseline']) {
+        true => $this->info("Versi {$r['version']} diaktifkan."),
+        false => $this->warn("Versi {$r['version']} disimpan tetapi TIDAK diaktifkan karena kalah dari baseline aturan. Laporkan ke pemilik proyek."),
+        null => $this->warn("Versi {$r['version']} disimpan tetapi TIDAK diaktifkan: data uji belum memuat peserta tidak lulus."),
+    };
+
+    return 0;
+})->purpose('Kalibrasi bobot early warning dari kelas yang sudah selesai');

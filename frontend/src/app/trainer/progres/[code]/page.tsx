@@ -5,6 +5,7 @@ import { api, ApiRequestError } from "@/lib/auth";
 import { type ClassOverview, ENROLLMENT_STATUS, pct } from "@/lib/monitoring";
 import { requireTrainer } from "@/lib/trainer";
 import { ScrollX } from "@/components/ui/ScrollX";
+import EarlyWarningCell from "@/components/portal/EarlyWarningCell";
 
 export const instant = false;
 
@@ -20,6 +21,8 @@ export default async function TrainerClassProgress({ params }: PageProps<"/train
     throw e;
   }
   const n = d.participants.length;
+  const ew = d.earlyWarning?.available === true;
+  const flagged = d.participants.filter((p) => p.early_warning && p.early_warning.level !== "low").length;
   const avg = (vals: (number | null)[]) => {
     const v = vals.filter((x): x is number => x !== null);
     return v.length ? Math.round(v.reduce((a, b) => a + b, 0) / v.length) : null;
@@ -41,6 +44,12 @@ export default async function TrainerClassProgress({ params }: PageProps<"/train
           <small>Rata-rata materi</small>
           <b>{pct(avg(d.participants.map((p) => p.percent)))}</b>
         </div>
+        {ew && (
+          <div className="kic1">
+            <small>Berisiko (dibuat AI)</small>
+            <b>{flagged}</b>
+          </div>
+        )}
         <div className="kic1">
           <small>Kompeten (tervalidasi)</small>
           <b>
@@ -61,6 +70,11 @@ export default async function TrainerClassProgress({ params }: PageProps<"/train
           </span>
         }
       >
+        {ew && n > 0 && (
+          <p className="fh" style={{ marginTop: 10, fontSize: 13 }}>
+            Kolom Risiko berisi skor peringatan dini yang dibuat AI dari kehadiran, materi, kuis, tugas, logbook, dan aktivitas belajar. Skor hanya bahan pertimbangan untuk mendampingi peserta dan tidak mengubah status atau nilai. Beri tanda Membantu atau Tidak membantu agar kualitasnya bisa dinilai.
+          </p>
+        )}
         {n === 0 ? (
           <p className="fh">Belum ada peserta.</p>
         ) : (
@@ -76,6 +90,7 @@ export default async function TrainerClassProgress({ params }: PageProps<"/train
                   <th>Praktik</th>
                   <th>Kompetensi</th>
                   <th>Catatan</th>
+                  {ew && <th>Risiko</th>}
                 </tr>
               </thead>
               <tbody>
@@ -123,6 +138,11 @@ export default async function TrainerClassProgress({ params }: PageProps<"/train
                       )}
                     </td>
                     <td>{p.notes_count}</td>
+                    {ew && (
+                      <td>
+                        <EarlyWarningCell ew={p.early_warning} compact />
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>

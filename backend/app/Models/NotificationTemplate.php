@@ -240,6 +240,12 @@ class NotificationTemplate extends Model
             $c('progress.risk', 'Peserta berisiko (perusahaan)', $corp, [
                 'title' => 'Peserta berisiko tertinggal: {participant}', 'body' => '{participant} ({program}, {class}) - {reasons}.',
                 'mail_subject' => 'Peserta berisiko tertinggal: {participant}', 'placeholders' => ['name', 'organization', 'participant', 'program', 'class', 'reasons', 'link']]),
+            $t('progress.risk', 'Peserta berisiko (trainer)', $trainer, [
+                'title' => 'Peserta berisiko: {participant}', 'body' => '{participant} ({class}) - {reasons}.',
+                'mail_subject' => 'Peserta berisiko di kelas {class}: {participant}',
+                'mail_body' => "Peserta **{participant}** di kelas **{program}** ({class}) perlu perhatian:\n\n{reasons}.\n\nLihat progres kelas di portal trainer.",
+                'wa_body' => 'Halo {name}, peserta *{participant}* di kelas {program} ({class}) perlu perhatian: {reasons}. Lihat progres: {link}',
+                'placeholders' => ['name', 'participant', 'program', 'class', 'reasons', 'link']]),
             $a('progress.risk', 'Peserta berisiko (admin)', [
                 'title' => '{count} peserta berisiko tertinggal', 'body' => '{participants}',
                 'placeholders' => ['count', 'participants']]),

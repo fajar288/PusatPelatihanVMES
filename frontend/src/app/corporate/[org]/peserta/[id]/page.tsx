@@ -1,4 +1,5 @@
 import ParticipantOverview from "@/components/trainer/ParticipantOverview";
+import EarlyWarningCell from "@/components/portal/EarlyWarningCell";
 import { BackLink, MetaList, PortalCard } from "@/components/portal/ui";
 import { CERT_STATUS, type CorporateProgress, orgPath } from "@/lib/corporate";
 import { corporateApi } from "@/lib/corporate-server";
@@ -35,6 +36,14 @@ export default async function ParticipantProgressPage({ params }: PageProps<"/co
           Ringkasan ini hanya untuk training yang disponsori perusahaan. Logbook &amp; penilaian kompetensi tampil setelah divalidasi VMES; catatan pribadi trainer tidak ditampilkan.
         </p>
       </PortalCard>
+      {p.earlyWarning && (
+        <PortalCard title="Peringatan dini">
+          <EarlyWarningCell ew={p.earlyWarning} />
+          <p className="fh" style={{ marginTop: 10, fontSize: 13 }}>
+            Skor dibuat AI dari data belajar training yang disponsori perusahaan, sebagai tanda awal peserta yang mungkin perlu dukungan. Skor tidak mengubah status, nilai, atau kelulusan.
+          </p>
+        </PortalCard>
+      )}
       <ParticipantOverview o={overview} />
     </>
   );

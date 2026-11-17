@@ -83,6 +83,7 @@ class AppServiceProvider extends ServiceProvider
         ]);
         RateLimiter::for('verify-resend', fn (Request $request) => Limit::perMinute(3)->by('verify-resend:'.($request->user()?->id ?: $request->ip())));
         RateLimiter::for('payment-proof', fn (Request $request) => Limit::perMinute(10)->by('payment-proof:'.($request->user()?->id ?: $request->ip())));
+        RateLimiter::for('ai-feedback', fn (Request $request) => Limit::perMinute(30)->by('ai-fb:'.($request->user()?->id ?: $request->ip())));
         RateLimiter::for('chatbot-feedback', fn (Request $request) => Limit::perMinute(30)->by('chat-fb:'.$request->ip()));
         // Webhook Fonnte (status pesan & device): tanpa auth → batasi per IP
         RateLimiter::for('fonnte-webhook', fn (Request $request) => Limit::perMinute(120)->by('fonnte-wh:'.$request->ip()));
