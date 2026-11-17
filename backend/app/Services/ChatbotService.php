@@ -24,7 +24,7 @@ class ChatbotService
     /** Penanda dari model bila jawaban tidak ada di data → status "unresolved" (dibuang sebelum ditampilkan). */
     public const UNRESOLVED_MARKER = '[[PERLU_ADMIN]]';
 
-    public function __construct(private ChatModel $model) {}
+    public function __construct(private ChatModel $model, private AiGovernance $governance) {}
 
     /** Aktif hanya bila dinyalakan (CHATBOT_ENABLED) dan API key tersedia. */
     public function enabled(): bool
@@ -56,6 +56,7 @@ class ChatbotService
         ]);
 
         $started = hrtime(true);
+        $r = null;
         try {
             $r = $this->model->reply($this->systemBlocks(), $messages);
             $text = $r->text;
@@ -78,6 +79,10 @@ class ChatbotService
         }
         $log->latency_ms = (int) ((hrtime(true) - $started) / 1_000_000);
         $log->save();
+        // Pemakaian token + perkiraan biaya ikut tercatat di halaman admin AI (status: ok | refused | error).
+        $this->governance->recordUsage('public_chatbot', match ($log->status) {
+            'error' => 'error', 'refused' => 'refused', default => 'ok',
+        }, $r, $log->latency_ms, $log->error);
 
         return ['id' => $log->id, 'reply' => $text, 'status' => $log->status];
     }

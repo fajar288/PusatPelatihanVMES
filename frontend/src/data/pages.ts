@@ -15,7 +15,7 @@ export const STATIC_PAGES: StaticPage[] = [
     slug: "kebijakan-privasi",
     title: "Kebijakan Privasi",
     description: "Kebijakan privasi PT. PPTI - VMES Training Center mengenai pengumpulan, penggunaan, dan perlindungan data pribadi peserta.",
-    updatedLabel: "Diperbarui 10 November 2026",
+    updatedLabel: "Diperbarui 17 November 2026",
     body: [
       { type: "p", text: "PT. PPTI - VMES Training Center (\"PPTI\", \"kami\") menghormati privasi Anda. Kebijakan ini menjelaskan data pribadi apa yang kami kumpulkan melalui situs pusatpelatihan.id dan layanan pelatihan kami, bagaimana data tersebut digunakan, serta hak-hak Anda." },
       { type: "h2", text: "1. Data yang Kami Kumpulkan" },
@@ -30,7 +30,11 @@ export const STATIC_PAGES: StaticPage[] = [
       { type: "p", text: "Anda berhak mengakses, memperbaiki, atau meminta penghapusan data pribadi Anda, serta menarik persetujuan pemasaran. Ajukan permintaan melalui WhatsApp resmi atau email yang tercantum di halaman Kontak." },
       { type: "h2", text: "6. Cookie" },
       { type: "p", text: "Situs ini menggunakan cookie fungsional dan analitik untuk meningkatkan pengalaman pengguna. Anda dapat menonaktifkan cookie melalui pengaturan peramban." },
-      { type: "h2", text: "7. Perubahan Kebijakan" },
+      // DRAF: bagian 7 (pemrosesan AI) ditambahkan 17 November 2026 dan wajib ditinjau legal sebelum go-live.
+      { type: "h2", text: "7. Pemrosesan dengan Kecerdasan Buatan (AI)" },
+      { type: "p", text: "Beberapa layanan kami dapat memakai kecerdasan buatan (AI) untuk membantu tim PPTI, misalnya menjawab pertanyaan umum di situs, menyarankan program pelatihan, mengenali peserta yang mungkin perlu pendampingan tambahan, dan merangkum umpan balik survei. Fitur ini dinyalakan bertahap setelah diuji." },
+      { type: "ul", items: ["AI tidak mengambil keputusan resmi. Kelulusan, nilai, sertifikat, pendaftaran, dan pembayaran tetap diputuskan oleh tim PPTI.", "Data yang dikirim ke penyedia AI dibatasi seperlunya. Nama, email, nomor telepon, NIK, dan alamat tidak dikirim; peserta diwakili kode internal, dan komentar survei disaring dari email serta nomor telepon sebelum diproses.", "Asisten belajar hanya memakai materi pelatihan yang sudah disetujui dan pertanyaan Anda, tanpa riwayat nilai atau data pribadi lain.", "Penyedia AI kami adalah Anthropic (layanan Claude). Data yang dikirim diproses atas permintaan kami dan dapat diproses di server penyedia di luar Indonesia.", "Hasil AI diberi label \"Dibuat AI\" dan dicatat beserta versi model yang dipakai. Hasil yang berisiko ditinjau petugas sebelum ditampilkan, dan insight untuk perusahaan pengirim hanya mencakup pelatihan yang mereka sponsori.", "Anda dapat bertanya atau menyampaikan keberatan atas pemrosesan AI melalui kontak di halaman Kontak."] },
+      { type: "h2", text: "8. Perubahan Kebijakan" },
       { type: "p", text: "Kebijakan ini dapat diperbarui sewaktu-waktu. Versi terbaru selalu tersedia di halaman ini beserta tanggal pembaruannya." },
     ],
   },
