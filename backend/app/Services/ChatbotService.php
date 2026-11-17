@@ -7,6 +7,7 @@ use App\Models\SiteSetting;
 use App\Models\TrainingCategory;
 use App\Models\TrainingPackage;
 use App\Models\TrainingSchedule;
+use App\Support\Ai\AiText;
 use App\Support\Chatbot\ChatModel;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -59,7 +60,8 @@ class ChatbotService
             $r = $this->model->reply($this->systemBlocks(), $messages);
             $text = $r->text;
             $unresolved = str_contains($text, self::UNRESOLVED_MARKER);
-            $text = trim(str_replace(self::UNRESOLVED_MARKER, '', $text));
+            // Normalisasi deterministik (tanpa em dash / en dash) sebelum disimpan ke chat_logs dan dikirim.
+            $text = AiText::normalize(trim(str_replace(self::UNRESOLVED_MARKER, '', $text)));
             $status = $r->refused ? 'refused' : ($unresolved ? 'unresolved' : 'answered');
             if ($r->refused || $text === '') {
                 $text = $this->fallbackText('Maaf, saya belum bisa menjawab pertanyaan itu.');
@@ -114,6 +116,8 @@ class ChatbotService
         Cara menjawab:
         - Gunakan Bahasa Indonesia yang ramah, sopan, dan ringkas (umumnya 2-6 kalimat atau daftar pendek). Jika pengunjung memakai bahasa lain, jawab dalam bahasa itu.
         - Tulis teks biasa. Boleh daftar bertanda "-" dan huruf tebal **seperlunya**; jangan memakai judul (#) atau tabel.
+        - Jangan memakai tanda pisah panjang (em dash) atau tanda pisah sedang (en dash). Untuk pemisah kalimat pakai koma, titik dua, atau tanda hubung biasa "-" dengan spasi; untuk rentang angka, jam, atau tanggal pakai "-" atau "s.d.".
+        - Jangan menyebut dokumen internal: dokumen perencanaan atau spesifikasi, nomor pasal, kode tahap proyek, atau nama berkas catatan pengembang. Jelaskan dengan bahasa pengunjung berdasarkan DATA WEBSITE.
         - Sebutkan harga, tanggal, lokasi, dan sisa kursi persis seperti di data. Jangan menebak, membulatkan, atau mengarang angka, tanggal, nama trainer, diskon, atau kebijakan yang tidak ada di data.
         - Bila relevan, sertakan tautan halaman dari data (misalnya /kursus/... atau /jadwal/...) agar pengunjung bisa membaca detail atau mendaftar. Tulis tautan sebagai path apa adanya.
         - Bila pengunjung ingin mendaftar, arahkan ke tautan "Daftar" pada jadwal yang dipilih. Jelaskan alurnya bila ditanya (lihat bagian Alur pendaftaran di data).
