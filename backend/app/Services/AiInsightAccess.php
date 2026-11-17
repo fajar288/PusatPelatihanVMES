@@ -8,6 +8,7 @@ use App\Models\Enrollment;
 use App\Models\Member;
 use App\Models\Organization;
 use App\Models\Trainer;
+use App\Models\TrainingSchedule;
 use App\Models\User;
 
 /**
@@ -32,6 +33,13 @@ class AiInsightAccess
         }
         if ($insight->use_case === AiRecommendationService::USE_CASE) {
             return $this->isRecipient($user, $insight);
+        }
+        // Ringkasan umpan balik kelas (sudah disetujui admin): trainer yang ditugaskan di kelas itu.
+        if ($insight->use_case === AiFeedbackService::USE_CASE && $insight->subject_type === (new TrainingSchedule)->getMorphClass()
+            && ($insight->output['kind'] ?? null) === 'class_summary') {
+            $trainer = Trainer::query()->where('user_id', $user->id)->where('is_active', true)->first();
+
+            return $trainer !== null && $trainer->schedules()->whereKey($insight->subject_id)->exists();
         }
         if ($insight->use_case !== AiEarlyWarningService::USE_CASE || $insight->subject_type !== (new Enrollment)->getMorphClass()) {
             return false;

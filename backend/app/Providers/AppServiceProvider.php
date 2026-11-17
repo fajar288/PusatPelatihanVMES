@@ -18,6 +18,8 @@ use App\Observers\TrainingScheduleObserver;
 use App\Services\AnalyticsService;
 use App\Services\NotificationEvents;
 use App\Services\SalesAnalyticsService;
+use App\Support\Ai\AnthropicBatchModel;
+use App\Support\Ai\BatchModel;
 use App\Support\Chatbot\AnthropicChatModel;
 use App\Support\Chatbot\ChatModel;
 use App\Support\Push\PushSender;
@@ -56,6 +58,8 @@ class AppServiceProvider extends ServiceProvider
         });
         // Chatbot publik (Claude): diganti FakeChatModel di tes
         $this->app->singleton(ChatModel::class, fn () => new AnthropicChatModel);
+        // Message Batches Claude (klasifikasi massal AI): diganti FakeBatchModel di tes
+        $this->app->singleton(BatchModel::class, fn () => new AnthropicBatchModel);
     }
 
     /**

@@ -145,6 +145,12 @@ class Enrollment extends Model
         return $this->hasMany(Certificate::class)->latest('id');
     }
 
+    /** Survei evaluasi pasca-kelas (satu per enrollment). */
+    public function surveyResponse(): HasOne
+    {
+        return $this->hasOne(SurveyResponse::class);
+    }
+
     /** Sertifikat aktif (bukan dicabut/diganti): satu per enrollment. */
     public function certificate(): HasOne
     {

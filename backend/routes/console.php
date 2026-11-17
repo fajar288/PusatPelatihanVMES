@@ -10,6 +10,7 @@ use App\Models\NotificationLog;
 use App\Models\WebhookDelivery;
 use App\Services\AiEarlyWarningService;
 use App\Services\AiEvaluationService;
+use App\Services\AiFeedbackService;
 use App\Services\AiInsightService;
 use App\Services\AiReadiness;
 use App\Services\IdentityMatchingService;
@@ -17,6 +18,7 @@ use App\Services\InvoiceService;
 use App\Services\NotificationDispatcher;
 use App\Services\NotificationEvents;
 use App\Services\SponsorshipService;
+use App\Services\SurveyService;
 use App\Services\TrainingRequestService;
 use App\Support\Ai\AiUseCases;
 use App\Support\Enterprise\IdentityMatch;
@@ -225,3 +227,29 @@ Artisan::command('ai:early-warning-calibrate {--force : jalankan walau data belu
 
     return 0;
 })->purpose('Kalibrasi bobot early warning dari kelas yang sudah selesai');
+
+// Survei evaluasi pasca-kelas: undang peserta kelas yang sudah selesai (lewat Notification Engine). Aman diulang.
+Artisan::command('surveys:invite', function (SurveyService $surveys) {
+    $this->info('Undangan survei baru: '.$surveys->inviteDue());
+})->purpose('Kirim undangan survei evaluasi ke peserta kelas yang sudah selesai');
+
+Schedule::command('surveys:invite')->dailyAt('09:00');
+
+// AI analisis umpan balik: proses Message Batches yang selesai lalu kirim komentar baru (klasifikasi). Tanpa worker
+// permanen: dijalankan cron tiap jam. Tidak mengirim apa pun bila use case belum dinyalakan.
+Artisan::command('ai:feedback-analyze {--limit=200}', function (AiFeedbackService $feedback) {
+    $r = $feedback->analyze((int) $this->option('limit'));
+    if ($r['status'] !== 'ok') {
+        $this->warn('Analisis umpan balik belum tersedia: '.$r['reason'].'. Survei tetap dapat dibaca manual.');
+    }
+    $this->info("Batch selesai: {$r['ended']}, komentar terklasifikasi: {$r['classified']}, dikirim: {$r['submitted']}.");
+})->purpose('Klasifikasi komentar survei lewat Claude Message Batches');
+
+Schedule::command('ai:feedback-analyze')->hourly()->between('6:00', '22:00')->withoutOverlapping();
+
+// AI ringkasan umpan balik per kelas (draf, wajib disetujui admin sebelum tampil ke trainer).
+Artisan::command('ai:feedback-summarize', function (AiFeedbackService $feedback) {
+    $this->info('Ringkasan kelas baru: '.$feedback->summarizeDue());
+})->purpose('Susun ringkasan umpan balik per kelas untuk ditinjau admin');
+
+Schedule::command('ai:feedback-summarize')->dailyAt('06:30');

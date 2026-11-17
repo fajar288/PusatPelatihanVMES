@@ -17,6 +17,7 @@ const ITEMS: { href: string; label: string; icon: IconName }[] = [
   { href: "/portal/tugas", label: "Tugas", icon: "code" },
   { href: "/portal/hasil", label: "Hasil", icon: "trophy" },
   { href: "/portal/sertifikat", label: "Sertifikat", icon: "award" },
+  { href: "/portal/survei", label: "Survei", icon: "star" },
   { href: "/portal/pendaftaran", label: "Riwayat Pendaftaran", icon: "brief" },
   { href: "/portal/pembayaran", label: "Invoice & Pembayaran", icon: "award" },
   { href: "/portal/notifikasi", label: "Notifikasi", icon: "msg" },
@@ -59,9 +60,10 @@ export default function PortalNav({
           return (
             <Link key={it.href} href={it.href} className={active ? "on" : undefined} aria-current={active ? "page" : undefined}>
               <Icon name={it.icon} />
-              {it.label}
+              <span className="min-w-0 [overflow-wrap:normal]">{it.label}</span>
               {it.href === "/portal/asisten" && (
-                <span className="ml-auto! rounded-full border border-[var(--ln)] px-2! py-px! text-[11px] font-bold whitespace-nowrap text-[var(--mut)]">Belum tersedia</span>
+                // Di layar sempit (menu 2 kolom) lencana disembunyikan agar label tidak terpecah per huruf.
+                <span className="ml-auto! rounded-full border border-[var(--ln)] px-2! py-px! text-[11px] font-bold whitespace-nowrap text-[var(--mut)] max-sm:hidden">Belum tersedia</span>
               )}
               {it.href === "/portal/notifikasi" && unread > 0 && (
                 <span className="pnav-badge" aria-label={`${unread} belum dibaca`}>
