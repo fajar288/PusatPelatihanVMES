@@ -73,7 +73,7 @@ export default function Header({ site, nav }: { site: SiteSettings; nav: NavItem
               {n.label}
             </Link>
           ))}
-          <a className="cta-n wa" href={waLink()} target="_blank" rel="noopener">
+          <a className="cta-n wa" href={waLink(site)} target="_blank" rel="noopener">
             Hubungi Kami
           </a>
           <form action="/search" className="nsf" method="get" role="search">

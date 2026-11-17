@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Icon from "@/components/ui/Icon";
 import type { CtaData } from "@/lib/cms-types";
-import { waLink } from "@/lib/utils";
+import WaAnchor from "@/components/site/WaAnchor";
 
 /** section.cs > .ctw: banner CTA hijau gelap dengan glass panel 4 poin. */
 export default function CtaBanner({ cta }: { cta: CtaData }) {
@@ -18,10 +18,10 @@ export default function CtaBanner({ cta }: { cta: CtaData }) {
                 <Link className="c1" href="/jadwal">
                   Daftar Sekarang <Icon name="arr" />
                 </Link>
-                <a className="c2 wa" href={waLink()} target="_blank" rel="noopener">
+                <WaAnchor className="c2 wa">
                   <Icon name="msg" />
                   Konsultasi via WhatsApp
-                </a>
+                </WaAnchor>
               </div>
             </div>
             <div className="cpn">

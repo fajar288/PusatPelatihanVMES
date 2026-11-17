@@ -2,12 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import RegisterForm from "@/components/forms/RegisterForm";
-import { SITE } from "@/data/site";
 import { getCurrentUser } from "@/lib/auth";
 import { getSchedules } from "@/lib/cms";
 
 export const metadata: Metadata = {
-  title: `Formulir Pendaftaran | ${SITE.name}`,
+  title: "Formulir Pendaftaran",
   description: "Daftar training PPTI - VMES Training Center: pilih jadwal, isi data peserta, dan terima konfirmasi dari admin.",
   alternates: { canonical: "/daftar" },
   robots: { index: false },

@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { MetaList } from "@/components/portal/ui";
 import type { Schedule } from "@/data/schedules";
-import { formatRupiah, waLink, waRegisterText } from "@/lib/utils";
+import WaAnchor from "@/components/site/WaAnchor";
+import { formatRupiah, waRegisterText } from "@/lib/utils";
 
 /** section.kbx > .kjl > .kj: daftar jadwal batch untuk satu kursus (CSS .kj/.kjr/.kem dari tema asli). */
 export default function CourseSchedules({ schedules, title }: { schedules: Schedule[]; title: string }) {
@@ -26,9 +27,9 @@ export default function CourseSchedules({ schedules, title }: { schedules: Sched
               <div className="kjr">
                 <span className={"jst " + s.status}>{s.statusLabel}</span>
                 <strong>{formatRupiah(s.price)}</strong>
-                <a className="jb" target="_blank" rel="noopener" href={waLink(waRegisterText(s.title, s.dateLabel))}>
+                <WaAnchor className="jb" text={waRegisterText(s.title, s.dateLabel)}>
                   Daftar
-                </a>
+                </WaAnchor>
               </div>
             </div>
           ))}

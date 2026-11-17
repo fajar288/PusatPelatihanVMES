@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { PortalCard } from "@/components/portal/ui";
-import { SITE } from "@/data/site";
+import { getSiteSettings } from "@/lib/cms";
 import { requireUser } from "@/lib/auth";
 import { waLink } from "@/lib/utils";
 
@@ -9,6 +9,7 @@ export const instant = false;
 
 /** /portal/bantuan - Support: kontak admin, tautan panduan. */
 export default async function PortalSupportPage() {
+  const site = await getSiteSettings();
   const { user } = await requireUser("/portal/bantuan");
   return (
     <PortalCard title="Bantuan">
@@ -16,8 +17,8 @@ export default async function PortalSupportPage() {
         Tim admin melayani pada hari kerja pukul 08.00 sampai 17.00 WIB. Sertakan nomor member Anda ({user.member?.memberNumber}) agar lebih cepat diproses.
       </p>
       <div className="kbt" style={{ gridTemplateColumns: "1fr 1fr", marginTop: 20 }}>
-        <a className="kb1 wa" href={waLink(`Halo, saya member ${user.member?.memberNumber ?? ""} (${user.name}) membutuhkan bantuan.`)} target="_blank" rel="noopener">
-          Chat WhatsApp {SITE.waDisplay}
+        <a className="kb1 wa" href={waLink(site, `Halo, saya member ${user.member?.memberNumber ?? ""} (${user.name}) membutuhkan bantuan.`)} target="_blank" rel="noopener">
+          Chat WhatsApp {site.waDisplay}
         </a>
         <Link className="kb2" href="/kontak">
           Formulir Konsultasi

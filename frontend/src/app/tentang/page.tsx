@@ -6,21 +6,20 @@ import About from "@/components/home/About";
 import CtaBanner from "@/components/home/CtaBanner";
 import Partners from "@/components/home/Partners";
 import Icon from "@/components/ui/Icon";
-import { SITE } from "@/data/site";
-import { getCompanyProfile, getHome } from "@/lib/cms";
+import { getCompanyProfile, getHome, getSiteSettings } from "@/lib/cms";
 import { waLink } from "@/lib/utils";
 
-export const metadata: Metadata = {
-  title: `Tentang Kami | ${SITE.name}`,
-  description: SITE.footerDescription,
-  alternates: { canonical: "/tentang" },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const site = await getSiteSettings();
+  return { title: "Tentang Kami", description: site.footerDescription, alternates: { canonical: "/tentang" } };
+}
 
 /**
  * /tentang - PRD §5.1: profil, visi-misi, fasilitas, trainer, layanan, kerja sama.
  * Website lama tidak punya halaman ini; dibangun dari section beranda (.tk, .wg/.wc, .ps, .cs) + gaya .kbx.
  */
 export default async function TentangPage() {
+  const site = await getSiteSettings();
   const [h, co] = await Promise.all([getHome(), getCompanyProfile()]);
   return (
     <div>
@@ -31,7 +30,7 @@ export default async function TentangPage() {
             Tentang <em>PPTI VMES Training Center</em>
           </>
         }
-        desc={SITE.tagline}
+        desc={site.tagline}
       />
 
       <About about={h.about} youtubeId={h.site.youtubeProfileId} />
@@ -145,7 +144,7 @@ export default async function TentangPage() {
               ))}
             </div>
             <div className="kbt" style={{ gridTemplateColumns: "1fr 1fr" }}>
-              <a className="kb1 wa" href={waLink("Halo, saya ingin menjajaki kerja sama dengan PPTI - VMES")} target="_blank" rel="noopener">
+              <a className="kb1 wa" href={waLink(site, "Halo, saya ingin menjajaki kerja sama dengan PPTI - VMES")} target="_blank" rel="noopener">
                 Ajukan Kerja Sama
               </a>
               <Link className="kb2" href="/kontak">

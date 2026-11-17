@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Schedule } from "@/data/schedules";
-import { formatRupiah, waLink, waRegisterText } from "@/lib/utils";
+import WaAnchor from "@/components/site/WaAnchor";
+import { formatRupiah, waRegisterText } from "@/lib/utils";
 
 /** div.jr: baris jadwal terdekat. Tombol "Daftar" membuka WA dengan prefill nama + tanggal. */
 export default function ScheduleRow({ s, hidden }: { s: Schedule; hidden?: boolean }) {
@@ -22,9 +23,9 @@ export default function ScheduleRow({ s, hidden }: { s: Schedule; hidden?: boole
         <span className={"jst " + s.status}>{s.statusLabel}</span>
         <b>{formatRupiah(s.price)}</b>
       </div>
-      <a className="jb" target="_blank" rel="noopener" href={waLink(waRegisterText(s.title, s.dateLabel))}>
+      <WaAnchor className="jb" text={waRegisterText(s.title, s.dateLabel)}>
         Daftar
-      </a>
+      </WaAnchor>
     </div>
   );
 }

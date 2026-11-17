@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { SITE } from "@/data/site";
 
-export const metadata: Metadata = { title: `Offline | ${SITE.name}`, robots: { index: false } };
+export const metadata: Metadata = { title: "Offline", robots: { index: false } };
 
 /** Halaman cadangan service worker (PWA) saat perangkat offline dan halaman belum pernah dibuka. Statis → di-precache. */
 export default function OfflinePage() {

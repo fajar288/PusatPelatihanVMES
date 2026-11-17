@@ -3,11 +3,10 @@ import { Suspense } from "react";
 import CatalogHero from "@/components/catalog/CatalogHero";
 import CourseCatalog from "@/components/catalog/CourseCatalog";
 import type { SortKey } from "@/components/catalog/CatalogBar";
-import { SITE } from "@/data/site";
 import { getPackages } from "@/lib/cms";
 
 export const metadata: Metadata = {
-  title: `Katalog Training | ${SITE.name}`,
+  title: "Katalog Training",
   description:
     "Temukan program pelatihan bersertifikasi untuk teknologi industri, IT, otomasi, dan pengembangan SDM digital di PPTI - VMES Training Center.",
   alternates: { canonical: "/kursus" },

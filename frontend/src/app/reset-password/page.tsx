@@ -2,9 +2,8 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import AuthShell from "@/components/auth/AuthShell";
 import { ResetForm } from "@/components/auth/PasswordForms";
-import { SITE } from "@/data/site";
 
-export const metadata: Metadata = { title: `Atur Ulang Sandi | ${SITE.name}`, robots: { index: false } };
+export const metadata: Metadata = { title: "Atur Ulang Sandi", robots: { index: false } };
 
 const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v) ?? "";
 

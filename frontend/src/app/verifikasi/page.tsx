@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import CatalogHero from "@/components/catalog/CatalogHero";
 import VerifyForm from "@/components/certificates/VerifyForm";
-import { SITE } from "@/data/site";
 
 export const metadata: Metadata = {
-  title: `Verifikasi Sertifikat | ${SITE.name}`,
+  title: "Verifikasi Sertifikat",
   description: "Periksa keaslian dan status sertifikat PPTI - VMES Training Center dengan nomor sertifikat atau pindai kode QR pada sertifikat.",
   alternates: { canonical: "/verifikasi" },
 };

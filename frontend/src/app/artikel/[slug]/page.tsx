@@ -7,8 +7,7 @@ import WhyBox from "@/components/detail/WhyBox";
 import { MetaList } from "@/components/portal/ui";
 import Icon from "@/components/ui/Icon";
 import { getCategorySlug, POST_CATEGORIES } from "@/data/articles";
-import { SITE } from "@/data/site";
-import { getPost, getPosts } from "@/lib/cms";
+import { getPost, getPosts, getSiteSettings } from "@/lib/cms";
 import { abs, JsonLd } from "@/lib/seo";
 import { scrollableHtml } from "@/lib/scrollable-html";
 
@@ -22,9 +21,9 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps<"/artikel/[slug]">): Promise<Metadata> {
   const { slug } = await params;
   const post = await getPost(slug);
-  if (!post) return { title: `Artikel tidak ditemukan | ${SITE.name}` };
+  if (!post) return { title: "Artikel tidak ditemukan" };
   return {
-    title: `${post.title} | ${SITE.name}`,
+    title: `${post.title}`,
     description: post.excerpt,
     alternates: { canonical: `/artikel/${post.slug}` },
     openGraph: { title: post.title, description: post.excerpt, type: "article", locale: "id_ID", images: post.image ? [post.image] : undefined },
@@ -33,6 +32,7 @@ export async function generateMetadata({ params }: PageProps<"/artikel/[slug]">)
 
 /** /artikel/[slug] - clone single post website lama (g-artikel .kd). Data: GET /api/v1/posts/{slug} (body HTML). */
 export default async function ArtikelPage({ params }: PageProps<"/artikel/[slug]">) {
+  const site = await getSiteSettings();
   const { slug } = await params;
   const post = await getPost(slug);
   if (!post) notFound();
@@ -46,8 +46,8 @@ export default async function ArtikelPage({ params }: PageProps<"/artikel/[slug]
     description: post.excerpt,
     datePublished: new Date(post.publishedAt * 1000).toISOString(),
     image: post.image ? [post.image] : undefined,
-    author: { "@type": "Organization", name: post.author ?? SITE.company },
-    publisher: { "@type": "Organization", name: SITE.company, logo: { "@type": "ImageObject", url: abs(SITE.logo) } },
+    author: { "@type": "Organization", name: post.author ?? site.company },
+    publisher: { "@type": "Organization", name: site.company, logo: { "@type": "ImageObject", url: abs(site.logo) } },
     mainEntityOfPage: abs(`/artikel/${post.slug}`),
   };
 

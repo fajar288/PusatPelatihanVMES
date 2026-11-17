@@ -2,11 +2,10 @@ import type { Metadata } from "next";
 import InstallPrompt from "@/components/pwa/InstallPrompt";
 import PortalNav from "@/components/portal/PortalNav";
 import VerifyEmailBanner from "@/components/portal/VerifyEmailBanner";
-import { SITE } from "@/data/site";
 import { api, requireUser } from "@/lib/auth";
 import type { AssistantStatus } from "@/lib/portal-types";
 
-export const metadata: Metadata = { title: `Portal Member | ${SITE.name}`, robots: { index: false } };
+export const metadata: Metadata = { title: "Portal Member", robots: { index: false } };
 
 /**
  * Area member bersifat per-pengguna (cookie sesi) → route diblokir di server (instant = false, cacheComponents)

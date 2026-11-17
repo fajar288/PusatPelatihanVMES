@@ -4,10 +4,9 @@ import { Suspense } from "react";
 import ArticleCard from "@/components/cards/ArticleCard";
 import CourseCard from "@/components/cards/CourseCard";
 import { scheduleBatchTitle, shortDate } from "@/data/schedules";
-import { SITE } from "@/data/site";
 import { search } from "@/lib/cms";
 
-export const metadata: Metadata = { title: `Pencarian | ${SITE.name}`, robots: { index: false } };
+export const metadata: Metadata = { title: "Pencarian", robots: { index: false } };
 
 const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v) ?? "";
 

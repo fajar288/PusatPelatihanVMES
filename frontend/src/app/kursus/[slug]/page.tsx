@@ -5,8 +5,7 @@ import CourseSchedules from "@/components/detail/CourseSchedules";
 import CourseSidebar from "@/components/detail/CourseSidebar";
 import RelatedCourses from "@/components/detail/RelatedCourses";
 import Icon from "@/components/ui/Icon";
-import { SITE } from "@/data/site";
-import { getPackage, getPackages } from "@/lib/cms";
+import { getPackage, getPackages, getSiteSettings } from "@/lib/cms";
 import { abs, JsonLd } from "@/lib/seo";
 
 // Route detail: `params` dibaca langsung (bukan di dalam <Suspense>) supaya slug asing menghasilkan status 404
@@ -22,9 +21,9 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps<"/kursus/[slug]">): Promise<Metadata> {
   const { slug } = await params;
   const course = await getPackage(slug);
-  if (!course) return { title: `Training tidak ditemukan | ${SITE.name}` };
+  if (!course) return { title: "Training tidak ditemukan" };
   return {
-    title: `${course.title} | ${SITE.name}`,
+    title: `${course.title}`,
     description: course.desc,
     alternates: { canonical: `/kursus/${course.slug}` },
     openGraph: { title: course.title, description: course.desc, type: "website", locale: "id_ID" },
@@ -36,6 +35,7 @@ export async function generateMetadata({ params }: PageProps<"/kursus/[slug]">):
  * tetapi CSS-nya sudah ada (.kd .kic .kjl .kov .ksd .pcd .rcg). Data: GET /api/v1/packages/{slug}.
  */
 export default async function KursusDetailPage({ params }: PageProps<"/kursus/[slug]">) {
+  const site = await getSiteSettings();
   const { slug } = await params;
   const course = await getPackage(slug);
   if (!course) notFound();
@@ -49,7 +49,7 @@ export default async function KursusDetailPage({ params }: PageProps<"/kursus/[s
     name: course.title,
     description: course.desc,
     url: abs(`/kursus/${course.slug}`),
-    provider: { "@type": "Organization", name: SITE.company, url: abs("/") },
+    provider: { "@type": "Organization", name: site.company, url: abs("/") },
     educationalLevel: course.level,
     offers: { "@type": "Offer", price: course.price, priceCurrency: "IDR", category: course.category },
     hasCourseInstance: schedules.map((s) => ({ "@type": "CourseInstance", courseMode: s.mode, startDate: s.startDate, endDate: s.endDate, location: s.city })),

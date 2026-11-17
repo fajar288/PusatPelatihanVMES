@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { SITE } from "@/data/site";
 
-export const metadata: Metadata = { title: `Halaman tidak ditemukan | ${SITE.name}` };
+export const metadata: Metadata = { title: "Halaman tidak ditemukan" };
 
 /** 404: memakai gaya `.nores` dari tema asli (teks tengah, tombol hijau). */
 export default function NotFound() {

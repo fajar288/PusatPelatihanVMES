@@ -6,9 +6,9 @@ import type { SortKey } from "@/components/catalog/CatalogBar";
 import PostCatalog from "@/components/catalog/PostCatalog";
 import { getCategoryBySlug, POST_CATEGORIES } from "@/data/articles";
 import { STATIC_PAGES } from "@/data/pages";
-import { SITE } from "@/data/site";
-import { getPage, getPosts } from "@/lib/cms";
+import { getPage, getPosts, getSiteSettings } from "@/lib/cms";
 import { scrollableHtml } from "@/lib/scrollable-html";
+import { fillSitePlaceholders } from "@/lib/site-placeholders";
 
 /**
  * Route level-1 untuk dua jenis halaman website lama:
@@ -24,10 +24,10 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps<"/[slug]">): Promise<Metadata> {
   const { slug } = await params;
   const cat = getCategoryBySlug(slug);
-  if (cat) return { title: `${cat.title} | ${SITE.name}`, description: cat.desc, alternates: { canonical: `/${cat.slug}` } };
+  if (cat) return { title: `${cat.title}`, description: cat.desc, alternates: { canonical: `/${cat.slug}` } };
   const page = await getPage(slug);
-  if (page) return { title: `${page.title} | ${SITE.name}`, description: page.description ?? undefined, alternates: { canonical: `/${page.slug}` } };
-  return { title: `Halaman tidak ditemukan | ${SITE.name}` };
+  if (page) return { title: `${page.title}`, description: page.description ?? undefined, alternates: { canonical: `/${page.slug}` } };
+  return { title: "Halaman tidak ditemukan" };
 }
 
 const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v) ?? "";
@@ -62,7 +62,7 @@ export default async function SlugPage({ params, searchParams }: PageProps<"/[sl
     );
   }
 
-  const page = await getPage(slug);
+  const [page, site] = await Promise.all([getPage(slug), getSiteSettings()]);
   if (!page) notFound();
   return (
     <>
@@ -76,7 +76,7 @@ export default async function SlugPage({ params, searchParams }: PageProps<"/[sl
         <div className="wrap">
           <div className="in">
             {/* HTML dari CMS (editor admin): sama seperti WordPress lama merender konten ke .pb */}
-            <div className="pb" dangerouslySetInnerHTML={{ __html: scrollableHtml(page.body) }} />
+            <div className="pb" dangerouslySetInnerHTML={{ __html: scrollableHtml(fillSitePlaceholders(page.body, site)) }} />
           </div>
         </div>
       </div>
