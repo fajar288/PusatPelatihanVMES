@@ -6,27 +6,34 @@ use Anthropic\Client;
 
 /**
  * Claude lewat SDK resmi anthropic-ai/sdk (Messages API, endpoint beta karena memakai server-side fallback).
- * - Prompt sistem + data katalog di-cache (cacheControl ephemeral) → token input berulang jauh lebih murah.
+ * - Prompt sistem + data stabil di-cache (cacheControl ephemeral) sehingga token input berulang jauh lebih murah.
  * - `fallbacks: 'default'`: bila model menolak (stop_reason refusal), server mengulang di model cadangan sesuai kategori.
+ * - Opsi per use case (model, effort, max_tokens, timeout, json_schema) menimpa config/chatbot.php.
  */
 class AnthropicChatModel implements ChatModel
 {
     public function __construct(private ?Client $client = null) {}
 
-    public function reply(array $system, array $messages): ChatReply
+    public function reply(array $system, array $messages, array $options = []): ChatReply
     {
+        $outputConfig = ['effort' => (string) ($options['effort'] ?? config('chatbot.effort'))];
+        if (isset($options['json_schema'])) {
+            $outputConfig['format'] = ['type' => 'json_schema', 'schema' => $options['json_schema']];
+        }
+
         $message = $this->client()->beta->messages->create(
-            model: (string) config('chatbot.model'),
-            maxTokens: (int) config('chatbot.max_tokens'),
+            model: (string) ($options['model'] ?? config('chatbot.model')),
+            maxTokens: (int) ($options['max_tokens'] ?? config('chatbot.max_tokens')),
             system: array_map(fn (array $b) => array_filter([
                 'type' => 'text',
                 'text' => $b['text'],
                 'cacheControl' => ($b['cache'] ?? false) ? ['type' => 'ephemeral'] : null,
             ]), $system),
             messages: $messages,
-            outputConfig: ['effort' => (string) config('chatbot.effort')],
+            outputConfig: $outputConfig,
             fallbacks: 'default',
             betas: ['server-side-fallback-2026-07-01'],
+            requestOptions: isset($options['timeout']) ? ['timeout' => (float) $options['timeout']] : null,
         );
 
         $text = '';

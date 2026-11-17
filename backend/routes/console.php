@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\AiInsight;
 use App\Models\ApiIdempotencyKey;
 use App\Models\ApiRequestLog;
 use App\Models\ChatLog;
@@ -7,12 +8,16 @@ use App\Models\Enrollment;
 use App\Models\Lesson;
 use App\Models\NotificationLog;
 use App\Models\WebhookDelivery;
+use App\Services\AiEvaluationService;
+use App\Services\AiInsightService;
+use App\Services\AiReadiness;
 use App\Services\IdentityMatchingService;
 use App\Services\InvoiceService;
 use App\Services\NotificationDispatcher;
 use App\Services\NotificationEvents;
 use App\Services\SponsorshipService;
 use App\Services\TrainingRequestService;
+use App\Support\Ai\AiUseCases;
 use App\Support\Enterprise\IdentityMatch;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
@@ -102,3 +107,77 @@ Artisan::command('invoices:expire', function (InvoiceService $invoices) {
 })->purpose('Tandai invoice yang lewat jatuh tempo tanpa pembayaran sebagai kedaluwarsa');
 
 Schedule::command('invoices:expire')->dailyAt('00:45');
+
+// AI terukur: kesiapan data per use case (jumlah data riil dibanding ambang minimum di config/ai.php).
+Artisan::command('ai:readiness {usecase? : nama use case, kosongkan untuk semua}', function (AiReadiness $readiness) {
+    $key = $this->argument('usecase');
+    if ($key !== null && ! AiUseCases::exists($key)) {
+        $this->error("Use case tidak dikenal: $key. Pilihan: ".implode(', ', AiUseCases::keys()));
+
+        return 1;
+    }
+    $reports = $key !== null ? [$readiness->report($key)] : $readiness->all();
+    $rows = [];
+    foreach ($reports as $r) {
+        foreach ($r['checks'] ?: [['label' => '(tidak ada ambang data)', 'actual' => 0, 'required' => 0, 'ok' => true]] as $c) {
+            $rows[] = [$r['key'], $c['label'], $c['actual'], $c['required'], $c['ok'] ? 'cukup' : 'belum cukup'];
+        }
+    }
+    $this->table(['Use case', 'Data', 'Ada', 'Minimum', 'Status'], $rows);
+    foreach ($reports as $r) {
+        $this->line(sprintf('%s: %s', $r['key'], match (true) {
+            $r['checks'] === [] => 'Tidak ada ambang data; nilai dari metrik pemakaian.',
+            $r['ready'] => 'Data cukup untuk evaluasi.',
+            default => 'Data belum cukup.',
+        }));
+    }
+
+    return 0;
+})->purpose('Bandingkan jumlah data riil dengan ambang minimum tiap use case AI');
+
+// AI terukur: laporan evaluasi offline satu use case (metrik tata kelola + metrik khusus bila tersedia), disimpan sebagai JSON.
+Artisan::command('ai:evaluate {usecase} {--json : cetak laporan lengkap sebagai JSON}', function (AiEvaluationService $evaluation) {
+    $key = (string) $this->argument('usecase');
+    if (! AiUseCases::exists($key)) {
+        $this->error("Use case tidak dikenal: $key. Pilihan: ".implode(', ', AiUseCases::keys()));
+
+        return 1;
+    }
+    $report = $evaluation->evaluate($key);
+    $path = $evaluation->store($report);
+    if ($this->option('json')) {
+        $this->line((string) json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+
+        return 0;
+    }
+    $g = $report['governance'];
+    $fmt = fn ($v) => $v === null ? '-' : (is_float($v) ? number_format($v * 100, 1).'%' : (string) $v);
+    $this->info($report['label'].' ('.$key.')');
+    $this->line('Status: '.($report['status']['available'] ? 'aktif' : 'tidak aktif ('.$report['status']['reason_label'].')'));
+    $this->table(['Metrik', 'Nilai'], [
+        ['Insight per status', collect($g['insights'])->map(fn ($n, $s) => (AiInsight::STATUSES[$s] ?? $s).': '.$n)->implode(', ') ?: 'belum ada'],
+        ['Acceptance rate tinjauan', $fmt($g['acceptance_rate'])],
+        ['Umpan balik membantu', $fmt($g['helpful_rate']).' dari '.$g['feedback_count']],
+        ['Panggilan 30 hari', (string) $g['usage_30d']['calls']],
+        ['Token 30 hari', (string) $g['usage_30d']['tokens']],
+        ['Perkiraan biaya 30 hari (USD)', number_format($g['usage_30d']['cost_usd'], 4)],
+        ['Penolakan model', $fmt($g['usage_30d']['refusal_rate'])],
+        ['Galat', $fmt($g['usage_30d']['error_rate'])],
+    ]);
+    if ($report['specific']) {
+        $this->table(['Metrik khusus', 'Nilai'], collect($report['specific']['metrics'])->map(fn ($v, $k) => [$k, $fmt($v)])->values()->all());
+    }
+    foreach ($report['notes'] as $note) {
+        $this->warn($note);
+    }
+    $this->line("Laporan disimpan: storage/app/$path");
+
+    return 0;
+})->purpose('Buat laporan evaluasi offline satu use case AI');
+
+// AI terukur: insight draft yang tidak ditinjau dalam AI_INSIGHT_TTL_DAYS hari dan insight lewat expires_at menjadi kedaluwarsa.
+Artisan::command('ai:expire-insights', function (AiInsightService $insights) {
+    $this->info('Insight AI kedaluwarsa: '.$insights->expireDue());
+})->purpose('Tandai insight AI yang tidak ditinjau atau lewat masa berlaku sebagai kedaluwarsa');
+
+Schedule::command('ai:expire-insights')->dailyAt('01:00');

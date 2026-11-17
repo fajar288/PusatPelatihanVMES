@@ -41,6 +41,8 @@ class RolesSeeder extends Seeder
         'notifications.manage' => ['Kelola template notifikasi, log pengiriman & kirim pengumuman', 'notifications', ['administrator', 'management', 'marketing', 'training_coordinator']],
         'corporate.manage' => ['Kelola organisasi, employment, pengguna perusahaan & review identitas', 'corporate', ['administrator', 'management', 'marketing']],
         'sponsorship.approve' => ['Setujui/tolak transfer sponsor enrollment', 'corporate', ['administrator', 'management']],
+        'ai.review' => ['Tinjau insight AI (setujui/tolak) & lihat pemakaian AI', 'ai', ['administrator', 'management', 'training_coordinator']],
+        'ai.manage' => ['Kelola fitur AI: jeda/lanjutkan use case, lihat pemakaian & biaya', 'ai', ['administrator']],
         'portal.access' => ['Akses portal member', 'portal', ['student', 'alumni']],
         'trainer.portal' => ['Akses portal trainer', 'portal', ['trainer', 'assessor']],
     ];

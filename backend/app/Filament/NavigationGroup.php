@@ -20,6 +20,7 @@ enum NavigationGroup implements Collapsible, HasLabel
     case TmsDelivery;
     case Lms;
     case Certificates;
+    case Ai;
     case Notifications;
     case System;
 
@@ -34,6 +35,7 @@ enum NavigationGroup implements Collapsible, HasLabel
             self::TmsDelivery => 'TMS: Pelaksanaan & Penilaian',
             self::Lms => 'LMS (E-learning)',
             self::Certificates => 'Sertifikat & Alumni',
+            self::Ai => 'AI',
             self::Notifications => 'Notifikasi',
             self::System => 'Sistem & Integrasi',
         };
