@@ -256,9 +256,14 @@ final class EnterpriseApiSpec
                     'certificates_issued' => $i(), 'active_employees' => $i(true), 'seats_bought' => $i(), 'seats_filled' => $i(),
                     'requests_by_status' => ['type' => 'object', 'additionalProperties' => ['type' => 'integer']],
                 ]),
-                'definitions' => ['type' => 'object', 'additionalProperties' => ['type' => 'string']],
+                'definitions' => ['type' => 'object', 'description' => 'Penjelasan setiap angka di objek `kpi`, dengan kunci yang sama.', 'additionalProperties' => ['type' => 'string']],
                 'period' => $obj(['from' => $date(false), 'to' => $date(false)]),
-                'kpi_8_1' => ['type' => 'object', 'description' => 'completion_rate, attendance_rate, repeat_order_rate, average_order_value, training_conversion, at_risk_rate',
+                'kpi_8_1' => ['type' => 'object', 'description' => 'Indikator kinerja utama untuk enrollment yang disponsori organisasi dalam periode `period.from` s.d. `period.to`. '
+                    .'Kunci: `completion_rate` (persen peserta lulus dari peserta yang kelasnya sudah selesai), `attendance_rate` (persen sesi yang dihadiri dari sesi yang sudah berlangsung), '
+                    .'`repeat_order_rate` (persen organisasi yang memesan lagi), `average_order_value` (rata-rata nilai pesanan lunas, dalam rupiah), '
+                    .'`training_conversion` (persen peluang, yaitu peserta pendaftaran dan kursi permintaan training, yang menjadi enrollment dari pesanan lunas), `at_risk_rate` (persen peserta aktif yang berisiko tertinggal). '
+                    .'Setiap kunci berisi `value` (null bila belum ada data), `numerator`, `denominator`, dan `definition` (rumus lengkap dalam kalimat). '
+                    .'Nama field ini dipertahankan agar integrasi yang sudah ada tetap berjalan.',
                     'additionalProperties' => $obj(['value' => $n(true), 'numerator' => $n(), 'denominator' => $i(), 'definition' => $s()])],
             ]),
             'TrainingRequest' => $obj($request),
