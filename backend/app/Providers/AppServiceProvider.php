@@ -11,6 +11,7 @@ use App\Models\Lesson;
 use App\Models\Registration;
 use App\Models\TrainingRequest;
 use App\Models\TrainingSchedule;
+use App\Models\User;
 use App\Observers\AuditObserver;
 use App\Observers\CmsObserver;
 use App\Observers\EnterpriseWebhookObserver;
@@ -34,6 +35,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Sanctum\PersonalAccessToken;
+use Laravel\Sanctum\Sanctum;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -70,6 +73,10 @@ class AppServiceProvider extends ServiceProvider
     {
         // Admin: Section/Grid/Fieldset/Tabs selebar form (Filament 5 tidak lagi melakukannya otomatis)
         Layout::configureDefaults();
+        // Token API milik akun yang dinonaktifkan admin langsung ditolak (token juga dicabut saat dinonaktifkan).
+        Sanctum::authenticateAccessTokensUsing(
+            fn (PersonalAccessToken $token, bool $isValid) => $isValid && ! ($token->tokenable instanceof User && ! $token->tokenable->isActive()),
+        );
 
         // Perubahan konten CMS → flush cache API + webhook revalidasi frontend
         /** @var class-string<Model> $model */

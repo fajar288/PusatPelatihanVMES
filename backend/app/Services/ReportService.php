@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Enums\RegistrationStatus;
 use App\Models\Enrollment;
 use App\Models\Invoice;
+use App\Models\Member;
 use App\Models\Registration;
 use App\Models\TrainingSchedule;
 use Illuminate\Support\Collection;
@@ -26,6 +27,12 @@ class ReportService
         'trainers' => 'Kinerja trainer',
     ];
 
+    /** Ekspor data peserta & alumni (menu Peserta/Alumni): berisi data pribadi, butuh izin members.view. */
+    public const MEMBER_TYPES = [
+        'members' => 'Peserta',
+        'alumni' => 'Alumni',
+    ];
+
     /**
      * @param  array<string, mixed>  $filters  filter Dashboard Eksekutif (lihat AnalyticsService::FILTER_KEYS)
      * @return array{headers: string[], rows: array<int, array<int, mixed>>}
@@ -38,6 +45,8 @@ class ReportService
             'schedules' => $this->schedules(),
             'enrollments' => $this->enrollments(),
             'executive', 'at-risk', 'trainers' => $this->executive($type, ['from' => $from, 'to' => $to] + $filters),
+            'members' => $this->members($filters),
+            'alumni' => $this->alumni($filters),
             default => throw new \InvalidArgumentException("Jenis laporan tidak dikenal: $type"),
         };
     }
@@ -137,6 +146,49 @@ class ReportService
         if ($to) {
             $q->whereDate($col, '<=', $to);
         }
+    }
+
+    /**
+     * Peserta dengan filter tabel Peserta: status, company, program (package_id).
+     *
+     * @param  array<string, mixed>  $filters
+     */
+    private function members(array $filters): array
+    {
+        $rows = Member::query()->with('user')
+            ->withCount(['registrations', 'enrollments as completed_count' => fn ($q) => $q->where('status', 'completed')])
+            ->when($filters['status'] ?? null, fn ($q, $v) => $q->where('status', $v))
+            ->when($filters['company'] ?? null, fn ($q, $v) => $q->where('company', $v))
+            ->when($filters['program'] ?? null, fn ($q, $v) => $q->whereHas('enrollments.schedule', fn ($s) => $s->where('package_id', $v)))
+            ->orderByDesc('created_at')->get()
+            ->map(fn (Member $m) => [
+                $m->member_number, $m->user?->name, $m->user?->email, $m->phone, $m->company, $m->position, $m->city,
+                $m->status, $m->registrations_count, $m->completed_count, $m->alumni_since?->toDateString(), $m->created_at?->toDateString(),
+            ])->all();
+
+        return ['headers' => ['No. member', 'Nama', 'Email', 'Telepon', 'Perusahaan', 'Jabatan', 'Kota', 'Status', 'Pendaftaran', 'Kelas selesai', 'Alumni sejak', 'Tanggal daftar'], 'rows' => $rows];
+    }
+
+    /**
+     * Alumni (status alumni) dengan filter tabel Alumni: year (tahun lulus), program (package_id).
+     *
+     * @param  array<string, mixed>  $filters
+     */
+    private function alumni(array $filters): array
+    {
+        $rows = Member::query()->where('status', 'alumni')
+            ->with(['user', 'enrollments' => fn ($q) => $q->where('status', 'completed')->with('schedule.package')])
+            ->withCount(['certificates as active_certificates_count' => fn ($q) => $q->where('status', 'issued')->where(fn ($w) => $w->whereNull('valid_until')->orWhereDate('valid_until', '>=', today()))])
+            ->when($filters['year'] ?? null, fn ($q, $y) => $q->whereBetween('alumni_since', [$y.'-01-01', $y.'-12-31']))
+            ->when($filters['program'] ?? null, fn ($q, $v) => $q->whereHas('enrollments', fn ($e) => $e->where('status', 'completed')->whereHas('schedule', fn ($s) => $s->where('package_id', $v))))
+            ->orderByDesc('alumni_since')->get()
+            ->map(fn (Member $m) => [
+                $m->member_number, $m->user?->name, $m->user?->email,
+                $m->enrollments->map(fn ($e) => $e->schedule?->package?->title ?? $e->schedule?->title)->filter()->unique()->implode('; '),
+                $m->alumni_since?->toDateString(), $m->active_certificates_count, $m->company,
+            ])->all();
+
+        return ['headers' => ['No. member', 'Nama', 'Email', 'Program yang diselesaikan', 'Tanggal lulus', 'Sertifikat aktif', 'Perusahaan'], 'rows' => $rows];
     }
 
     /** Konversi dataset ke koleksi baris asosiatif (untuk tabel Filament). */
