@@ -6,7 +6,7 @@ import type { CorporateOrg } from "@/lib/corporate";
 
 export const instant = false;
 
-/** /corporate — pilih organisasi (langsung masuk bila hanya satu). */
+/** /corporate: pilih organisasi (langsung masuk bila hanya satu). */
 export default async function CorporateIndex() {
   const { token } = await requireUser("/corporate");
   const orgs = (await api<{ data: CorporateOrg[] }>("/corporate/organizations", { token })).data;

@@ -25,7 +25,7 @@ use Filament\Tables\Table;
 use Illuminate\Support\HtmlString;
 use Illuminate\Validation\ValidationException;
 
-/** Peserta resmi kelas (enrollment) — otomatis dari pendaftaran terkonfirmasi, bisa ditambah manual. */
+/** Peserta resmi kelas (enrollment): otomatis dari pendaftaran terkonfirmasi, bisa ditambah manual. */
 class EnrollmentsRelationManager extends RelationManager
 {
     protected static string $relationship = 'enrollments';
@@ -40,7 +40,7 @@ class EnrollmentsRelationManager extends RelationManager
             TextInput::make('participant_name')->label('Nama peserta')->required()->maxLength(255),
             TextInput::make('participant_email')->label('Email')->email()->maxLength(255),
             Select::make('member_id')->label('Member')->relationship('member', 'member_number')->searchable(['member_number'])->preload()
-                ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->member_number} — ".($record->user?->name ?? '')),
+                ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->member_number} - ".($record->user?->name ?? '')),
             Select::make('status')->options(self::STATUS)->default('enrolled')->required()->native(false),
             TextInput::make('final_score')->label('Nilai akhir')->numeric()->minValue(0)->maxValue(100),
             Textarea::make('notes')->label('Catatan')->rows(2)->columnSpanFull(),
@@ -90,7 +90,7 @@ class EnrollmentsRelationManager extends RelationManager
                     ->modalHeading(fn (Enrollment $record) => 'Kelulusan: '.$record->participant_name)
                     ->modalDescription(function (Enrollment $record, CompletionService $svc) {
                         $ev = $svc->evaluate($record);
-                        $rows = collect($ev['checks'])->map(fn ($c) => ($c['ok'] ? '✅' : ($c['required'] ? '❌' : '⚪')).' '.e($c['label']).' — '.e($c['detail']))->implode('<br>');
+                        $rows = collect($ev['checks'])->map(fn ($c) => ($c['ok'] ? '✅' : ($c['required'] ? '❌' : '⚪')).' '.e($c['label']).': '.e($c['detail']))->implode('<br>');
 
                         return new HtmlString(($ev['eligible'] ? '<b>Memenuhi aturan kelulusan.</b>' : '<b>Belum memenuhi aturan kelulusan.</b>').'<br>'.$rows.'<br>Nilai terhitung: '.($ev['score'] ?? '-'));
                     })
@@ -112,7 +112,7 @@ class EnrollmentsRelationManager extends RelationManager
                     ->modalHeading(fn (Enrollment $record) => 'Buat draf sertifikat: '.$record->participant_name)
                     ->modalDescription(function (Enrollment $record, CertificateService $svc) {
                         $check = $svc->eligibility($record);
-                        $rows = collect($check['evaluation']['checks'])->map(fn ($c) => ($c['ok'] ? '✅' : ($c['required'] ? '❌' : '⚪')).' '.e($c['label']).' — '.e($c['detail']))->implode('<br>');
+                        $rows = collect($check['evaluation']['checks'])->map(fn ($c) => ($c['ok'] ? '✅' : ($c['required'] ? '❌' : '⚪')).' '.e($c['label']).': '.e($c['detail']))->implode('<br>');
 
                         return new HtmlString(($check['eligible'] ? '<b>Memenuhi syarat.</b>' : '<b>Belum memenuhi syarat:</b> '.e(implode(' ', $check['reasons']))).'<br>'.$rows);
                     })

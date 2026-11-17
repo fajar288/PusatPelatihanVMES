@@ -7,7 +7,7 @@ import { requireTrainer } from "@/lib/trainer";
 
 export const instant = false;
 
-/** /trainer/materi/[code] — materi kelas (course → modul → lesson) + tabel progres LMS tiap peserta. */
+/** /trainer/materi/[code]: materi kelas (course → modul → lesson) + tabel progres LMS tiap peserta. */
 export default async function TrainerClassMaterials({ params }: PageProps<"/trainer/materi/[code]">) {
   const { code } = await params;
   const { token } = await requireTrainer(`/trainer/materi/${code}`);
@@ -23,7 +23,7 @@ export default async function TrainerClassMaterials({ params }: PageProps<"/trai
     <>
       <BackLink href="/trainer/materi">Kembali ke Materi</BackLink>
       <PortalCard
-        title={`Progres belajar — ${d.class.title}`}
+        title={`Progres belajar: ${d.class.title}`}
         action={
           <span style={{ display: "flex", gap: 8 }}>
             <Link className="jb" href={`/trainer/tugas/${code}`}>

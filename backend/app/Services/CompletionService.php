@@ -77,7 +77,7 @@ class CompletionService
                 'detail' => $posttests->isEmpty() ? 'Belum ada post-test pada course kelas ini.' : "{$passed->count()} dari {$posttests->count()} post-test lulus."];
         }
 
-        // 5. Kompetensi — informasi untuk kelulusan; menjadi syarat saat menerbitkan sertifikat kompetensi (CertificateService::eligibility)
+        // 5. Kompetensi - informasi untuk kelulusan; menjadi syarat saat menerbitkan sertifikat kompetensi (CertificateService::eligibility)
         $competency = $assessment ? ['percent' => $assessment->total_percent !== null ? (float) $assessment->total_percent : null, 'competent' => $assessment->is_competent, 'validated' => $assessment->isValidated()] : null;
         $checks[] = ['key' => 'competency', 'label' => 'Dinyatakan kompeten (penilaian tervalidasi)', 'ok' => (bool) ($competency['validated'] ?? false) && (bool) ($competency['competent'] ?? false), 'required' => false,
             'detail' => $competency === null ? 'Belum ada penilaian kompetensi.' : (($competency['validated'] ? 'Tervalidasi' : 'Belum divalidasi').', '.($competency['percent'] !== null ? $competency['percent'].'%' : '-').($competency['competent'] ? ', kompeten' : ($competency['competent'] === false ? ', belum kompeten' : '')).'.')];

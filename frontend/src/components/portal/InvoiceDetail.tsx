@@ -6,7 +6,7 @@ const TX_PILL: Record<string, "ok" | "wn" | "no"> = { paid: "ok", pending: "wn",
 
 /**
  * Rincian invoice (Roadmap 5C) untuk portal member & portal perusahaan: item, subtotal/diskon/pajak/total (baris pajak
- * disembunyikan bila tarif 0), pembayaran & riwayat transaksi. Tanpa tombol — aksi unggah ada di InvoiceProofForm.
+ * disembunyikan bila tarif 0), pembayaran & riwayat transaksi. Tanpa tombol - aksi unggah ada di InvoiceProofForm.
  */
 export default function InvoiceDetail({ invoice: inv, pdfHref }: { invoice: InvoiceInfo; pdfHref?: string }) {
   const items = inv.items ?? [];

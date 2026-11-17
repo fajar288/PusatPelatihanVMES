@@ -9,7 +9,7 @@ import { waLink } from "@/lib/utils";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 import StatsBar from "./StatsBar";
 
-/** section.hero2 — hero beranda + slider fade 4500ms + glass cards + stats bar. Data dari API /home (fallback src/data). */
+/** section.hero2: hero beranda + slider fade 4500ms + glass cards + stats bar. Data dari API /home (fallback src/data). */
 export default function Hero({ hero, stats }: { hero: HeroData; stats: StatItem[] }) {
   const [cur, setCur] = useState(0);
   const reduce = useReducedMotion();

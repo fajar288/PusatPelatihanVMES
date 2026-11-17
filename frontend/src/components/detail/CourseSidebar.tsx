@@ -7,7 +7,7 @@ import WhyBox from "./WhyBox";
 
 type Props = { course: Course; related: Course[] };
 
-/** aside.kdr > .ksd — sidebar sticky: kartu harga `.pcd` + "Kenapa Pilih PPTI?" + terkait (mobile). */
+/** aside.kdr > .ksd - sidebar sticky: kartu harga `.pcd` + "Kenapa Pilih PPTI?" + terkait (mobile). */
 export default function CourseSidebar({ course, related }: Props) {
   const waText = `Halo, saya ingin info training ${course.title}`;
   return (

@@ -21,7 +21,7 @@ const CATEGORY_LABEL: Record<string, string> = {
 
 type ListResponse = { data: AppNotification[]; meta: { current_page: number; last_page: number; total: number; unread: number } };
 
-/** /portal/notifikasi — notifikasi aplikasi (PRD §5.12): status baca, tautan ke halaman terkait, pengaturan email & push. */
+/** /portal/notifikasi - notifikasi aplikasi (PRD §5.12): status baca, tautan ke halaman terkait, pengaturan email & push. */
 export default async function PortalNotificationsPage({ searchParams }: PageProps<"/portal/notifikasi">) {
   const sp = await searchParams;
   const unreadOnly = sp.filter === "unread";

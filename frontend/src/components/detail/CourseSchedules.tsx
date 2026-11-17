@@ -3,7 +3,7 @@ import { MetaList } from "@/components/portal/ui";
 import type { Schedule } from "@/data/schedules";
 import { formatRupiah, waLink, waRegisterText } from "@/lib/utils";
 
-/** section.kbx > .kjl > .kj — daftar jadwal batch untuk satu kursus (CSS .kj/.kjr/.kem dari tema asli). */
+/** section.kbx > .kjl > .kj: daftar jadwal batch untuk satu kursus (CSS .kj/.kjr/.kem dari tema asli). */
 export default function CourseSchedules({ schedules, title }: { schedules: Schedule[]; title: string }) {
   return (
     <section className="kbx">

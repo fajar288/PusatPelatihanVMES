@@ -22,7 +22,7 @@ class TrainerPerformanceTable extends TableWidget
 
     public function table(Table $table): Table
     {
-        $pct = fn ($state) => $state === null ? '—' : rtrim(rtrim(number_format((float) $state, 1, ',', '.'), '0'), ',').'%';
+        $pct = fn ($state) => $state === null ? '-' : rtrim(rtrim(number_format((float) $state, 1, ',', '.'), '0'), ',').'%';
 
         return $table
             ->heading('Kinerja trainer')
@@ -39,8 +39,8 @@ class TrainerPerformanceTable extends TableWidget
                 TextColumn::make('logbooks')->label('Logbook')->formatStateUsing(fn ($state, array $record) => $state.' ('.$record['logbooks_validated'].' valid)'),
                 TextColumn::make('participants')->label('Peserta')->numeric(),
                 TextColumn::make('assessments')->label('Penilaian')->numeric(),
-                TextColumn::make('avg_competency')->label('Skor kompetensi')->formatStateUsing($pct)->placeholder('—'),
-                TextColumn::make('completion_rate')->label('Completion')->formatStateUsing($pct)->placeholder('—'),
+                TextColumn::make('avg_competency')->label('Skor kompetensi')->formatStateUsing($pct)->placeholder('-'),
+                TextColumn::make('completion_rate')->label('Completion')->formatStateUsing($pct)->placeholder('-'),
             ])
             ->paginated([10, 25, 50])
             ->defaultPaginationPageOption(10)

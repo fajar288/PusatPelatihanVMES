@@ -22,7 +22,7 @@ class PostController extends Controller
         return PostResource::collection($q->paginate($perPage)->withQueryString());
     }
 
-    /** GET /api/v1/posts/{slug} — detail (body HTML) + terkait */
+    /** GET /api/v1/posts/{slug}: detail (body HTML) + terkait */
     public function show(string $slug): PostResource
     {
         $post = Post::query()->published()->where('slug', $slug)->firstOrFail();

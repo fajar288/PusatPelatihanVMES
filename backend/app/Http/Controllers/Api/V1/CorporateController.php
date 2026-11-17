@@ -25,7 +25,7 @@ use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
- * API Corporate Portal (Roadmap 5 §4.6, §20.9–§20.12, §20.21). Organisasi dari URL SELALU diverifikasi terhadap
+ * API Corporate Portal (Roadmap 5 §4.6, §20.9-§20.12, §20.21). Organisasi dari URL SELALU diverifikasi terhadap
  * keanggotaan aktif user (OrganizationPolicy, tolak sebagai 404). Data peserta hanya enrollment bersponsor (R3),
  * dalam batas unit pengguna, mengikuti kebijakan exit_access. Akses peserta, ekspor & perubahan peran diaudit.
  */
@@ -33,7 +33,7 @@ class CorporateController extends Controller
 {
     public function __construct(private CorporateAccess $access, private CorporateReporting $reporting) {}
 
-    /** GET /corporate/organizations — organisasi tempat user menjadi pengguna perusahaan aktif. */
+    /** GET /corporate/organizations: organisasi tempat user menjadi pengguna perusahaan aktif. */
     public function organizations(Request $request): JsonResponse
     {
         return response()->json(['data' => $this->access->memberships($request->user())->map(fn (CorporateUser $cu) => [
@@ -45,7 +45,7 @@ class CorporateController extends Controller
         ])->values()]);
     }
 
-    /** GET /corporate/organizations/{org} — profil singkat, peran, kemampuan, ringkasan dashboard (§20.9). */
+    /** GET /corporate/organizations/{org}: profil singkat, peran, kemampuan, ringkasan dashboard (§20.9). */
     public function summary(Request $request, Organization $organization): JsonResponse
     {
         $cu = $this->member($request, $organization);
@@ -57,7 +57,7 @@ class CorporateController extends Controller
         ]]);
     }
 
-    /** GET /corporate/organizations/{org}/enrollments — peserta bersponsor dalam scope pengguna. */
+    /** GET /corporate/organizations/{org}/enrollments: peserta bersponsor dalam scope pengguna. */
     public function enrollments(Request $request, Organization $organization): JsonResponse
     {
         $cu = $this->member($request, $organization);
@@ -82,7 +82,7 @@ class CorporateController extends Controller
         ]);
     }
 
-    /** GET /corporate/organizations/{org}/enrollments/{enrollment} — ringkasan progres (§20.10) tanpa catatan privat trainer. */
+    /** GET /corporate/organizations/{org}/enrollments/{enrollment}: ringkasan progres (§20.10) tanpa catatan privat trainer. */
     public function enrollment(Request $request, Organization $organization, Enrollment $enrollment): JsonResponse
     {
         $cu = $this->member($request, $organization);
@@ -98,7 +98,7 @@ class CorporateController extends Controller
         ]]);
     }
 
-    /** GET /corporate/organizations/{org}/enrollments-export — CSV sesuai scope & izin yang sama dengan dashboard (§20.21). */
+    /** GET /corporate/organizations/{org}/enrollments-export: CSV sesuai scope & izin yang sama dengan dashboard (§20.21). */
     public function export(Request $request, Organization $organization): StreamedResponse
     {
         $cu = $this->member($request, $organization);
@@ -121,7 +121,7 @@ class CorporateController extends Controller
         }, "peserta-{$organization->code}-".now()->format('Ymd').'.csv', ['Content-Type' => 'text/csv; charset=UTF-8']);
     }
 
-    /** GET /corporate/organizations/{org}/certificates — status sertifikat dari enrollment bersponsor saja (§11, §20.11). */
+    /** GET /corporate/organizations/{org}/certificates: status sertifikat dari enrollment bersponsor saja (§11, §20.11). */
     public function certificates(Request $request, Organization $organization): JsonResponse
     {
         $cu = $this->member($request, $organization);
@@ -139,7 +139,7 @@ class CorporateController extends Controller
         ])->values()]);
     }
 
-    /** GET /corporate/organizations/{org}/employees — karyawan aktif (untuk memilih peserta) dalam batas unit. */
+    /** GET /corporate/organizations/{org}/employees: karyawan aktif (untuk memilih peserta) dalam batas unit. */
     public function employees(Request $request, Organization $organization): JsonResponse
     {
         $cu = $this->member($request, $organization);
@@ -243,7 +243,7 @@ class CorporateController extends Controller
     }
 
     /**
-     * Hak lihat & kehadiran untuk satu halaman/ekspor sekaligus (bukan kueri per baris — Roadmap 5H).
+     * Hak lihat & kehadiran untuk satu halaman/ekspor sekaligus (bukan kueri per baris - Roadmap 5H).
      *
      * @param  Collection<int, Enrollment>  $rows
      * @return array{access: array<int, array{exited: bool, view: bool, progress: bool}>, attendance: array<int, int|null>}
@@ -267,7 +267,7 @@ class CorporateController extends Controller
             'employment' => $this->reporting->employmentStatus($e, $employment, $access['exited']),
             'program' => $e->schedule?->package?->title ?? $e->schedule?->title,
             'schedule' => $e->schedule?->code,
-            'dates' => $e->schedule ? IdDate::long($e->schedule->start_date).' – '.IdDate::long($e->schedule->end_date) : null,
+            'dates' => $e->schedule ? IdDate::long($e->schedule->start_date).' - '.IdDate::long($e->schedule->end_date) : null,
             'unit' => $e->sponsorUnit?->label(),
             'status' => $e->status,
             'attendancePercent' => $progress ? $ctx['attendance'][$e->id] : null,

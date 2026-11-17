@@ -139,7 +139,7 @@ class SponsorshipService
     private function assertStatus(SponsorshipTransfer $t, array $allowed): void
     {
         if (! in_array($t->status, $allowed, true)) {
-            throw ValidationException::withMessages(['status' => 'Transfer berstatus "'.(SponsorshipTransfer::STATUSES[$t->status] ?? $t->status).'" — aksi tidak diizinkan.']);
+            throw ValidationException::withMessages(['status' => 'Transfer berstatus "'.(SponsorshipTransfer::STATUSES[$t->status] ?? $t->status).'", aksi tidak diizinkan.']);
         }
     }
 }

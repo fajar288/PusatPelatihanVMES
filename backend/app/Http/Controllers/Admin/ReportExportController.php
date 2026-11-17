@@ -13,7 +13,7 @@ use OpenSpout\Writer\XLSX\Writer as XlsxWriter;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
- * GET /admin/export/{type}.{format}?from=&to= — ekspor laporan CSV/XLSX (sesi panel admin).
+ * GET /admin/export/{type}.{format}?from=&to=: ekspor laporan CSV/XLSX (sesi panel admin).
  * Jenis eksekutif (ReportService::EXECUTIVE_TYPES) menerima seluruh filter Dashboard Eksekutif dan butuh izin analytics.view.
  */
 class ReportExportController extends Controller

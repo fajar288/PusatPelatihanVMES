@@ -116,7 +116,7 @@ export default function SeatAssignPanel({ org, code, freeSeats, employees, units
         </form>
       ) : employees.length === 0 ? (
         <p className="fh" style={{ marginTop: 16 }}>
-          Belum ada karyawan yang tersambung ke akun VMES. Isi data peserta secara manual — setelah mereka menerima undangan, mereka akan muncul di daftar ini.
+          Belum ada karyawan yang tersambung ke akun VMES. Isi data peserta secara manual. Setelah mereka menerima undangan, mereka akan muncul di daftar ini.
         </p>
       ) : (
         <form className="ff" action={empAction} style={{ marginTop: 16 }}>
@@ -134,7 +134,7 @@ export default function SeatAssignPanel({ org, code, freeSeats, employees, units
                   <option key={e.id} value={e.id}>
                     {e.name}
                     {e.employeeId ? ` (${e.employeeId})` : ""}
-                    {e.unit ? ` — ${e.unit}` : ""}
+                    {e.unit ? `, ${e.unit}` : ""}
                   </option>
                 ))}
               </select>

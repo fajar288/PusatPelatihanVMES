@@ -45,7 +45,7 @@ use Tests\Fakes\FakeWhatsAppSender;
 use Tests\TestCase;
 
 /**
- * Roadmap 5 tahap 5D — Notification Engine (PRD Roadmap 5 §6, §6.1, §15 "WhatsApp and email can be triggered by the same
+ * Roadmap 5 tahap 5D: Notification Engine (PRD Roadmap 5 §6, §6.1, §15 "WhatsApp and email can be triggered by the same
  * business event", "Notification delivery status and retry are logged"): katalog event, penerima per scope (perusahaan hanya
  * untuk enrollment bersponsor), jadwal, retry, status Queued/Sent/Delivered/Read/Failed, template berversi, kanal WA driver log.
  */

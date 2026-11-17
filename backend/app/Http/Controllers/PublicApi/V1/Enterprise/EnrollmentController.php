@@ -18,7 +18,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
 
 /**
- * API enterprise — enrollment bersponsor (R3), progres LMS, kehadiran, penilaian (§20.10) & status sertifikat (§20.11).
+ * API enterprise: enrollment bersponsor (R3), progres LMS, kehadiran, penilaian (§20.10) & status sertifikat (§20.11).
  * Selalu dibatasi organisasi klien + batas unit pengguna perusahaan yang diwakili + kebijakan exit_access.
  * Self-funded & sponsor lain tidak pernah muncul; id enrollment di luar scope dijawab 404.
  */
@@ -59,7 +59,7 @@ class EnrollmentController extends EnterpriseController
         return response()->json(['data' => $this->row($cu, $e, $this->activeEmployments($cu), $this->rowContext($cu, collect([$e])))]);
     }
 
-    /** GET /certificates — status sertifikat enrollment bersponsor (nomor hanya bila terbit). */
+    /** GET /certificates: status sertifikat enrollment bersponsor (nomor hanya bila terbit). */
     public function certificates(Request $request): JsonResponse
     {
         $cu = $this->cu($request);
@@ -72,7 +72,7 @@ class EnrollmentController extends EnterpriseController
             $q->whereHas('certificates', fn (Builder $c) => $c->where('updated_at', '>=', Carbon::parse($since)));
         }
 
-        // sertifikat terakhir enrollment (sesuai filter status) — termasuk yang dicabut/diganti
+        // sertifikat terakhir enrollment (sesuai filter status): termasuk yang dicabut/diganti
         $latest = fn (Enrollment $e) => $e->certificates->when($p['status'] ?? null, fn ($c, $s) => $c->where('status', $s))->sortByDesc('id')->first();
 
         return $this->paginate($request, $q, applySince: false, map: fn (Enrollment $e) => [
@@ -83,7 +83,7 @@ class EnrollmentController extends EnterpriseController
         ] + EnterpriseApiPresenter::certificateStatus($latest($e)));
     }
 
-    /** GET /progress — progres LMS & praktik (logbook tervalidasi, tanpa catatan privat trainer). */
+    /** GET /progress: progres LMS & praktik (logbook tervalidasi, tanpa catatan privat trainer). */
     public function progress(Request $request): JsonResponse
     {
         return $this->learningList($request, 'api.progress_viewed', fn (Enrollment $e, array $o) => [
@@ -97,7 +97,7 @@ class EnrollmentController extends EnterpriseController
         ]);
     }
 
-    /** GET /attendance?from=&to= — rekap & rincian kehadiran per sesi. */
+    /** GET /attendance?from=&to=: rekap & rincian kehadiran per sesi. */
     public function attendance(Request $request): JsonResponse
     {
         $range = $request->validate(['from' => ['nullable', 'date'], 'to' => ['nullable', 'date', 'after_or_equal:from']]);
@@ -119,7 +119,7 @@ class EnrollmentController extends EnterpriseController
         });
     }
 
-    /** GET /assessments — nilai kuis/tugas, nilai akhir & penilaian kompetensi TERVALIDASI (tanpa catatan penilai). */
+    /** GET /assessments: nilai kuis/tugas, nilai akhir & penilaian kompetensi TERVALIDASI (tanpa catatan penilai). */
     public function assessments(Request $request): JsonResponse
     {
         return $this->learningList($request, 'api.assessments_viewed', fn (Enrollment $e, array $o) => [
@@ -200,7 +200,7 @@ class EnrollmentController extends EnterpriseController
     }
 
     /**
-     * Hak lihat, employment terakhir & kehadiran untuk satu halaman sekaligus (bukan kueri per baris — Roadmap 5H).
+     * Hak lihat, employment terakhir & kehadiran untuk satu halaman sekaligus (bukan kueri per baris - Roadmap 5H).
      *
      * @param  Collection<int, Enrollment>  $rows
      */

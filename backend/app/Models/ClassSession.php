@@ -39,6 +39,6 @@ class ClassSession extends Model
 
     public function label(): string
     {
-        return "Sesi {$this->session_no} — ".$this->date->locale('id')->translatedFormat('j M Y').($this->topic ? " · {$this->topic}" : '');
+        return "Sesi {$this->session_no}: ".$this->date->locale('id')->translatedFormat('j M Y').($this->topic ? " · {$this->topic}" : '');
     }
 }

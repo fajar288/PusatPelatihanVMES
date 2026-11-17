@@ -242,7 +242,7 @@ class LmsService
         abort_unless(in_array($status, ['graded', 'returned'], true), 422);
         $max = (float) ($sub->lesson->config()['max_score'] ?? 100);
         if ($status === 'graded' && ($score === null || $score < 0 || $score > $max)) {
-            throw ValidationException::withMessages(['score' => ["Nilai harus 0–{$max}."]]);
+            throw ValidationException::withMessages(['score' => ["Nilai harus 0-{$max}."]]);
         }
         $before = $sub->only(['score', 'feedback', 'status']);
         $sub->update(['score' => $status === 'graded' ? $score : null, 'feedback' => $feedback, 'status' => $status, 'graded_by' => $grader->id, 'graded_at' => now()]);

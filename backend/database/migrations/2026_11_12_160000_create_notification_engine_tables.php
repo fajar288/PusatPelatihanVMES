@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * Roadmap 5 tahap 5D — Notification Engine (PRD Roadmap 5 §6, §6.1).
+ * Roadmap 5 tahap 5D: Notification Engine (PRD Roadmap 5 §6, §6.1).
  * - `notification_events`: business event dicatat SEKALI (dedupe_key unik) + pemicu (aktor/sistem) + jadwal.
  * - `notification_deliveries`: satu baris per penerima × kanal, status Queued → Sent → Delivered → Read / Failed, retry.
  * - Template berversi: `notification_templates.audience` + `version` + `wa_body`, riwayat di `notification_template_versions`.

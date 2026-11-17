@@ -1,6 +1,6 @@
 import type { AboutData } from "@/lib/cms-types";
 
-/** section.tk#tentang-kami — video profil YouTube + teks tentang. */
+/** section.tk#tentang-kami: video profil YouTube + teks tentang. */
 export default function About({ about, youtubeId }: { about: AboutData; youtubeId: string }) {
   return (
     <section className="tk" id="tentang-kami">

@@ -28,7 +28,7 @@ use Livewire\Livewire;
 use Tests\Fakes\FakePushSender;
 use Tests\TestCase;
 
-/** Phase 5 — Notifikasi & komunikasi (PRD §5.12): aplikasi, email, web push, template, preferensi, log, pengingat, pengumuman. */
+/** Phase 5 - Notifikasi & komunikasi (PRD §5.12): aplikasi, email, web push, template, preferensi, log, pengingat, pengumuman. */
 class NotificationCenterTest extends TestCase
 {
     use RefreshDatabase;

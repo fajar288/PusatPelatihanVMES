@@ -18,7 +18,7 @@ const STEPS: { key: RegistrationInfo["status"]; label: string }[] = [
   { key: "confirmed", label: "Terkonfirmasi" },
 ];
 
-/** /portal/pendaftaran/[number] — detail pendaftaran: progres status, rincian, tagihan, aksi pendaftar. */
+/** /portal/pendaftaran/[number] - detail pendaftaran: progres status, rincian, tagihan, aksi pendaftar. */
 export default async function PortalRegistrationDetail({ params }: PageProps<"/portal/pendaftaran/[number]">) {
   const { number } = await params;
   const { token, user } = await requireUser(`/portal/pendaftaran/${number}`);

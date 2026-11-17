@@ -11,7 +11,7 @@ use App\Models\TrainingRequest;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
- * Ringkasan & progres yang boleh dilihat perusahaan — dipakai bersama Corporate Portal (5B) dan API enterprise (5E)
+ * Ringkasan & progres yang boleh dilihat perusahaan: dipakai bersama Corporate Portal (5B) dan API enterprise (5E)
  * agar batas privasi (§20.10, §20.11) dan scope (R3, batas unit, exit_access) identik di kedua jalur.
  */
 class CorporateReporting

@@ -9,9 +9,9 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * `api.scope:catalog.read` — klien API wajib memiliki scope tersebut.
+ * `api.scope:catalog.read`: klien API wajib memiliki scope tersebut.
  * Scope enterprise juga mensyaratkan peran pengguna perusahaan yang diwakili punya kemampuan yang sesuai
- * (ApiClient::SCOPE_CAPABILITIES) — scope tidak pernah memberi lebih dari peran perusahaan itu sendiri.
+ * (ApiClient::SCOPE_CAPABILITIES): scope tidak pernah memberi lebih dari peran perusahaan itu sendiri.
  */
 class RequireApiScope
 {

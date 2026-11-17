@@ -36,8 +36,8 @@ use LogicException;
 use Tests\TestCase;
 
 /**
- * Roadmap 5 tahap 5A — fondasi enterprise. Setiap baris tabel PRD Roadmap 5 §11 + skenario §20.7 (resign) dan §20.8
- * (pindah perusahaan), aturan R1–R10 yang relevan, identity matching §20.5, transfer sponsor §20.20, keamanan §20.21.
+ * Roadmap 5 tahap 5A: fondasi enterprise. Setiap baris tabel PRD Roadmap 5 §11 + skenario §20.7 (resign) dan §20.8
+ * (pindah perusahaan), aturan R1-R10 yang relevan, identity matching §20.5, transfer sponsor §20.20, keamanan §20.21.
  */
 class EnterpriseFoundationTest extends TestCase
 {

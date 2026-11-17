@@ -10,7 +10,7 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Tests\TestCase;
 
-/** Bentuk request SDK Anthropic & pembacaan respons — lewat transport HTTP palsu (tanpa jaringan / API key asli). */
+/** Bentuk request SDK Anthropic & pembacaan respons: lewat transport HTTP palsu (tanpa jaringan / API key asli). */
 class AnthropicChatModelTest extends TestCase
 {
     private function transport(array $body): ClientInterface

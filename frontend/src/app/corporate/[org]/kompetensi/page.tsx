@@ -12,7 +12,7 @@ const SOURCE: Record<string, string> = {
 };
 
 /**
- * /corporate/[org]/kompetensi — Competency Matrix (PRD Roadmap 5 §4.6, §20.16): target per posisi, lalu per karyawan
+ * /corporate/[org]/kompetensi - Competency Matrix (PRD Roadmap 5 §4.6, §20.16): target per posisi, lalu per karyawan
  * Required / Actual / Gap / Rekomendasi. Bukti hanya dari training yang disponsori perusahaan; nama karyawan hanya untuk
  * peran yang boleh melihat progres.
  */

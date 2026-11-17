@@ -121,7 +121,7 @@ class MonitoringService
         return $logbook->refresh();
     }
 
-    /** Buka kunci logbook tervalidasi (admin) dengan alasan — tercatat di audit log. */
+    /** Buka kunci logbook tervalidasi (admin) dengan alasan: tercatat di audit log. */
     public function unlockLogbook(TrainingLogbook $logbook, User $actor, string $reason): TrainingLogbook
     {
         $logbook->update(['status' => 'draft', 'is_locked' => false]);
@@ -174,7 +174,7 @@ class MonitoringService
             }
             $val = $s['score'] ?? null;
             if ($val !== null && $val !== '' && ((float) $val < 0 || (float) $val > $c->max_score)) {
-                throw ValidationException::withMessages(["scores.$i.score" => ["Skor {$c->name} harus 0–{$c->max_score}."]]);
+                throw ValidationException::withMessages(["scores.$i.score" => ["Skor {$c->name} harus 0-{$c->max_score}."]]);
             }
         }
 

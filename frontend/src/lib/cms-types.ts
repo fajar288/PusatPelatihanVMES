@@ -1,4 +1,4 @@
-// Bentuk data yang dikonsumsi komponen — identik untuk sumber API Laravel maupun fallback statis (src/data).
+// Bentuk data yang dikonsumsi komponen: identik untuk sumber API Laravel maupun fallback statis (src/data).
 import type { IconName } from "@/components/ui/icons";
 import type { PostSummary } from "@/data/articles";
 import type { Course } from "@/data/courses";

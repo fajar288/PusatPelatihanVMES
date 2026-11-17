@@ -6,7 +6,7 @@ import { corporateApi } from "@/lib/corporate-server";
 export const instant = false;
 
 /**
- * /corporate/[org]/sertifikat — status sertifikat dari enrollment yang disponsori (§11, §20.11). Sertifikat tetap milik
+ * /corporate/[org]/sertifikat: status sertifikat dari enrollment yang disponsori (§11, §20.11). Sertifikat tetap milik
  * peserta (unduh PDF hanya dari Portal Member); perusahaan melihat status & nomor untuk verifikasi publik.
  */
 export default async function CertificatesPage({ params }: PageProps<"/corporate/[org]/sertifikat">) {

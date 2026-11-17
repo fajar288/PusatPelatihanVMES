@@ -4,7 +4,7 @@ import { requireTrainer, type TrainerClass } from "@/lib/trainer";
 
 export const instant = false;
 
-/** /trainer/penilaian — Assessment: pilih kelas untuk menilai kompetensi peserta dengan rubrik program. */
+/** /trainer/penilaian - Assessment: pilih kelas untuk menilai kompetensi peserta dengan rubrik program. */
 export default async function TrainerAssessmentPage() {
   const { token } = await requireTrainer("/trainer/penilaian");
   const classes = (await api<{ data: TrainerClass[] }>("/trainer/classes", { token })).data;

@@ -42,7 +42,7 @@ class AppServiceProvider extends ServiceProvider
         // Dashboard Eksekutif: hasil analitik di-memo per request (dipakai banyak widget sekaligus).
         $this->app->scoped(AnalyticsService::class);
         $this->app->scoped(SalesAnalyticsService::class);
-        // Web Push (VAPID) — diganti FakePushSender di tes
+        // Web Push (VAPID): diganti FakePushSender di tes
         $this->app->singleton(PushSender::class, WebPushSender::class);
         // WhatsApp (Roadmap 5 §6): driver dari WHATSAPP_DRIVER (`log` bawaan, `fonnte`); diganti FakeWhatsAppSender di tes
         $this->app->singleton(WhatsAppSender::class, function ($app): WhatsAppSender {
@@ -54,7 +54,7 @@ class AppServiceProvider extends ServiceProvider
                 default => tap($app->make(LogWhatsAppSender::class), fn () => Log::warning('[whatsapp] WHATSAPP_DRIVER tidak dikenal, memakai driver log.', ['driver' => $driver])),
             };
         });
-        // Chatbot publik (Claude) — diganti FakeChatModel di tes
+        // Chatbot publik (Claude): diganti FakeChatModel di tes
         $this->app->singleton(ChatModel::class, fn () => new AnthropicChatModel);
     }
 

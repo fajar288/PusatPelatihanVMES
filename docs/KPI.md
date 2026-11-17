@@ -1,4 +1,4 @@
-# Definisi KPI — PRD Roadmap 5 §8.1
+# Definisi KPI: PRD Roadmap 5 §8.1
 
 Dokumen ini adalah **sumber kebenaran** rumus KPI resmi. Implementasinya ada di `backend/app/Services/KpiService.php`
 dan diuji di `backend/tests/Feature/AdvancedAnalyticsTest.php` dengan angka yang dihitung manual. Mengubah rumus berarti
@@ -10,7 +10,7 @@ Setiap KPI dihitung untuk satu **lingkup**:
 
 | Parameter | Arti |
 |---|---|
-| Periode `from`–`to` | Tanggal inklusif. Default Dashboard Eksekutif & Corporate Portal: 12 bulan terakhir (awal bulan s.d. hari ini). |
+| Periode `from`-`to` | Tanggal inklusif. Default Dashboard Eksekutif & Corporate Portal: 12 bulan terakhir (awal bulan s.d. hari ini). |
 | Tanggal acuan | `min(to, hari ini)`, dipakai untuk "sesi yang sudah berlangsung". |
 | Segmen | `all` (semua), `self` (enrollment `type = self`, self-funded), `corporate` (enrollment `type = corporate`, disponsori organisasi). |
 | Filter program | Dari Dashboard Eksekutif (kategori, paket, kelas, trainer, status kelas): membatasi enrollment ke kelas yang cocok; request/invoice yang belum punya kelas dicocokkan lewat paket. Tidak berlaku untuk Repeat Order Rate dan tabel cohort. |
@@ -28,7 +28,7 @@ Setiap KPI dihitung untuk satu **lingkup**:
 
 ## KPI
 
-### `completion_rate` — Completion Rate
+### `completion_rate`: Completion Rate
 
 > Completed enrollments / enrollments eligible for completion
 
@@ -43,7 +43,7 @@ Setiap KPI dihitung untuk satu **lingkup**:
   di penyebut** sebagai belum lulus, dan dilaporkan sebagai `pending_evaluation` agar koordinator menuntaskannya.
 - Hasil: persen 1 desimal; `null` bila penyebut 0.
 
-### `attendance_rate` — Attendance Rate
+### `attendance_rate`: Attendance Rate
 
 > Attended learning units / scheduled learning units
 
@@ -55,7 +55,7 @@ Setiap KPI dihitung untuk satu **lingkup**:
 - Hasil: persen 1 desimal; `null` bila penyebut 0.
 - Catatan: kartu "Rata-rata kehadiran" di Dashboard Eksekutif tetap rata-rata persen per peserta (indikator lama, bukan KPI ini).
 
-### `repeat_order_rate` — Repeat Order Rate
+### `repeat_order_rate`: Repeat Order Rate
 
 > Corporate accounts with repeat purchase / corporate accounts eligible
 
@@ -64,7 +64,7 @@ Setiap KPI dihitung untuk satu **lingkup**:
 - Hanya berlaku untuk akun corporate; segmen `self` ditampilkan `n/a`.
 - Hasil: persen 1 desimal; `null` bila penyebut 0.
 
-### `average_order_value` — Average Order Value (AOV)
+### `average_order_value`: Average Order Value (AOV)
 
 > Recognized transaction value / number of orders
 
@@ -73,7 +73,7 @@ Setiap KPI dihitung untuk satu **lingkup**:
 - **Penyebut**: jumlah order tersebut.
 - Hasil: rupiah 2 desimal; `null` bila tidak ada order.
 
-### `training_conversion` — Training Conversion
+### `training_conversion`: Training Conversion
 
 > Paid enrollments / qualified opportunities
 
@@ -87,7 +87,7 @@ Setiap KPI dihitung untuk satu **lingkup**:
   - kursi request yang request-nya sudah lunas (`paid_at`).
 - Hasil: persen 1 desimal; `null` bila tidak ada peluang.
 
-### `at_risk_rate` — At-Risk Rate
+### `at_risk_rate`: At-Risk Rate
 
 > Active participants flagged by defined risk rules / active participants
 
@@ -99,7 +99,7 @@ Setiap KPI dihitung untuk satu **lingkup**:
   3. rata-rata kuis di bawah 60;
   4. tidak membuka LMS lebih dari 7 hari (atau belum pernah) selama kelas masih berjalan.
 
-  Aturan 2–4 hanya untuk kelas yang punya materi LMS.
+  Aturan 2-4 hanya untuk kelas yang punya materi LMS.
 - Hasil: persen 1 desimal; `null` bila tidak ada peserta aktif. Perusahaan hanya melihat **nama** peserta berisiko bila
   perannya `view_progress` dan detail progres peserta itu boleh dibuka (kebijakan `exit_access`).
 
@@ -108,7 +108,7 @@ Setiap KPI dihitung untuk satu **lingkup**:
 | Indikator | Definisi | Dipakai di |
 |---|---|---|
 | Training Utilization | Kursi request yang dikirim dalam periode & sudah lunas (dibeli) dibanding kursi yang enrollment-nya **dipakai** (lulus atau ≥ 1 kehadiran hadir/terlambat). | Corporate Portal §20.15 |
-| Training Hours | Jumlah durasi sesi yang dihadiri (hadir/terlambat) sampai akhir periode. Durasi sesi = jam mulai–selesai sesi, lalu jam kelas, lalu `duration_hours` paket ÷ jumlah sesi, lalu 0. Per karyawan = total ÷ member unik. | Corporate Portal §20.15 |
+| Training Hours | Jumlah durasi sesi yang dihadiri (hadir/terlambat) sampai akhir periode. Durasi sesi = jam mulai-selesai sesi, lalu jam kelas, lalu `duration_hours` paket ÷ jumlah sesi, lalu 0. Per karyawan = total ÷ member unik. | Corporate Portal §20.15 |
 | Cost per Employee | Nilai diakui order organisasi yang lunas dalam periode ÷ member unik dengan enrollment bersponsor di kelas yang beririsan periode. Hanya peran `view_finance`. Per departemen mengikuti unit request. | Corporate Portal §20.15 |
 | Program Effectiveness | Per program: peserta, lulus ÷ (lulus + tidak lulus), rata-rata nilai akhir, % kompeten & rata-rata skor penilaian tervalidasi. | Corporate Portal §20.15 |
 | Funnel corporate | Satuan Corporate Training Request yang **dibuat** dalam periode: lead (dibuat, termasuk draf), dikirim, penawaran, disetujui, lunas, selesai; repeat = request lunas dari organisasi yang sebelumnya sudah punya request lunas. | Dashboard Eksekutif |

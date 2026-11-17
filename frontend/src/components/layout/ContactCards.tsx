@@ -2,7 +2,7 @@ import Icon from "@/components/ui/Icon";
 import type { SiteSettings } from "@/lib/cms-types";
 import { waLink } from "@/lib/utils";
 
-/** section.ct — kartu Kantor Pusat & Telepon/WhatsApp, tampil di semua halaman (di luar <main>). */
+/** section.ct: kartu Kantor Pusat & Telepon/WhatsApp, tampil di semua halaman (di luar <main>). */
 export default function ContactCards({ site }: { site: SiteSettings }) {
   return (
     <section className="ct">

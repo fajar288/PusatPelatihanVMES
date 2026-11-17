@@ -5,7 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * Roadmap 5 tahap 5E — API enterprise (PRD Roadmap 5 §7, §7.1, §20.21):
+ * Roadmap 5 tahap 5E - API enterprise (PRD Roadmap 5 §7, §7.1, §20.21):
  * - klien API terikat organisasi + bertindak atas nama satu pengguna perusahaan (peran & batas unitnya ikut berlaku),
  * - kunci idempotensi (`Idempotency-Key`) untuk POST penting,
  * - jejak audit mencatat klien API yang memicu perubahan.

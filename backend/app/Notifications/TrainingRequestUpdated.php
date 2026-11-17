@@ -28,7 +28,7 @@ class TrainingRequestUpdated extends Notification
         $base = rtrim((string) explode(',', (string) config('services.frontend.url'))[0], '/');
         $rupiah = fn ($v) => 'Rp '.number_format((float) $v, 0, ',', '.');
         $m = (new MailMessage)
-            ->subject("[{$r->code}] {$r->label()} — {$r->package?->title}")
+            ->subject("[{$r->code}] {$r->label()}: {$r->package?->title}")
             ->greeting("Halo {$notifiable->name},")
             ->line("Permintaan training **{$r->code}** ({$r->package?->title}, {$r->seats} kursi) dari {$r->organization->name()} kini berstatus **{$r->label()}**.");
 

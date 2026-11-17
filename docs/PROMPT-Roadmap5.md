@@ -4,7 +4,7 @@ Kita lanjut ke **PRD Roadmap 5 (Enterprise, Integration & Intelligence)** dari a
 
 - Satu tahap = satu branch + satu PR lewat GitHub API. Gabungkan sendiri setelah CI hijau, lalu lanjut ke tahap berikutnya tanpa menunggu saya, kecuali di titik "BERHENTI" di bawah.
 - Setiap tahap wajib: migrasi + model + service + tes Pest/PHPUnit (termasuk tes skenario PRD), Pint, dan untuk frontend `tsc`, `eslint`, `next build`, plus uji end-to-end (curl + cookie / Edge headless) seperti tahap-tahap sebelumnya.
-- Tambahkan bagian **PHASE 5 — Roadmap 5** di `task.md` berisi checklist per tahap (5A–5H) sebelum mulai coding. Perbarui checklist dan LOG PROGRES setiap tahap selesai.
+- Tambahkan bagian **PHASE 5: Roadmap 5** di `task.md` berisi checklist per tahap (5A-5H) sebelum mulai coding. Perbarui checklist dan LOG PROGRES setiap tahap selesai.
 - Halaman baru portal perusahaan memakai Tailwind dengan token warna tema yang sama (aturan §0.2 `task.md`). Jangan menyentuh tampilan halaman publik.
 - Semua perubahan akses, enrollment, sponsor, pembayaran, dan sertifikat wajib tercatat di `audit_logs`.
 
@@ -13,7 +13,7 @@ Kita lanjut ke **PRD Roadmap 5 (Enterprise, Integration & Intelligence)** dari a
 1. **Keputusan arsitektur PRD §18 tidak boleh dilanggar.** Satu Member per orang. Sponsor disimpan di Enrollment, bukan di Member. Employment Relationship adalah tabel terpisah. Enrollment SELF tidak punya sponsor.
 2. **Pembayaran tetap manual** (dikonfirmasi ulang atasan 2026-11-12: transfer bank / Virtual Account statis + unggah bukti + verifikasi finance). Bagian payment gateway di PRD §5 **tidak dikerjakan**. Catat di `task.md` bahwa ini penyimpangan yang disengaja dari PRD. Aturan PRD yang tetap berlaku untuk alur manual: invoice lunas tidak bisa dibayar ulang, status hanya berubah lewat verifikasi finance (bukan klaim peserta), refund punya alasan/penyetuju/waktu/referensi, dan semua perubahan diaudit. **Jangan** memasang Midtrans, Xendit, atau penyedia lain, dan jangan pernah membuat form yang meminta nomor kartu.
 3. **WhatsApp ditunda.** Jangan memasang penyedia WA apa pun. Kanal WA cukup antarmuka dengan driver `log`, dimatikan lewat konfigurasi.
-4. **AI: chatbot publik sudah ada (nonaktif), asisten belajar baru kerangka.** *(Diperbarui 2026-11-12, pilihan nomor 3.)* Chatbot informasi publik dengan Claude sudah dibangun di PR #22 (SDK `anthropic-ai/sdk`, flag `CHATBOT_ENABLED=false`, hanya data katalog website) dan tetap dipertahankan dalam keadaan nonaktif. Untuk portal member, buat UI chatbot (asisten belajar) dengan status **"Belum tersedia"**: tombol/panel terlihat, input nonaktif, tanpa panggilan ke API AI mana pun, dikendalikan flag terpisah `AI_CHATBOT_ENABLED=false`. Siapkan endpoint backend yang mengembalikan 503 `{"error":{"code":"ai_unavailable"}}` selama flag mati. Asisten belajar tidak boleh mengirim data peserta ke API AI mana pun sampai ada keputusan baru. *(Keputusan baru 2026-11-16: fitur AI terukur PRD §9 disetujui sebagai tahap **5I** setelah 5H. Untuk 5A–5H keputusan ini tetap berlaku apa adanya; aturan 5I ada di `docs/PROMPT-AI-Terukur.md`.)*
+4. **AI: chatbot publik sudah ada (nonaktif), asisten belajar baru kerangka.** *(Diperbarui 2026-11-12, pilihan nomor 3.)* Chatbot informasi publik dengan Claude sudah dibangun di PR #22 (SDK `anthropic-ai/sdk`, flag `CHATBOT_ENABLED=false`, hanya data katalog website) dan tetap dipertahankan dalam keadaan nonaktif. Untuk portal member, buat UI chatbot (asisten belajar) dengan status **"Belum tersedia"**: tombol/panel terlihat, input nonaktif, tanpa panggilan ke API AI mana pun, dikendalikan flag terpisah `AI_CHATBOT_ENABLED=false`. Siapkan endpoint backend yang mengembalikan 503 `{"error":{"code":"ai_unavailable"}}` selama flag mati. Asisten belajar tidak boleh mengirim data peserta ke API AI mana pun sampai ada keputusan baru. *(Keputusan baru 2026-11-16: fitur AI terukur PRD §9 disetujui sebagai tahap **5I** setelah 5H. Untuk 5A-5H keputusan ini tetap berlaku apa adanya; aturan 5I ada di `docs/PROMPT-AI-Terukur.md`.)*
 5. **Kebijakan yang belum diputuskan dibuat bisa dikonfigurasi** dengan default aman, lalu dicatat di `task.md` sebagai keputusan terbuka:
    - Pembuatan akun organisasi: default hanya admin VMES yang membuat organisasi lalu mengundang Corporate Owner. Simpan sebagai setting agar pendaftaran mandiri perusahaan bisa dibuka nanti.
    - Pajak invoice: setting tarif pajak, default 0% dan baris pajak disembunyikan bila 0.
@@ -43,7 +43,7 @@ Kita lanjut ke **PRD Roadmap 5 (Enterprise, Integration & Intelligence)** dari a
 - Alur Sponsorship Transfer (§20.20) dengan audit tak bisa diubah.
 - Resign → employment INACTIVE, akses corporate dicabut sesuai kebijakan, member/sertifikat/histori tetap.
 - Admin Filament: Organisasi, Employment, Corporate User, Review identitas, Transfer sponsor.
-- Tes untuk **setiap baris tabel §11** dan skenario §20.7–20.8.
+- Tes untuk **setiap baris tabel §11** dan skenario §20.7-20.8.
 
 **5B Corporate Portal MVP** (`feat/corporate-portal`)
 - `training_requests` dengan status §4.2 (DRAFT → … → COMPLETED/CANCELLED) dan `request_seats`. Reserved seat tidak membuat Member.

@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Schema;
  * Roadmap 5 tahap 5A.
  * - identity_reviews: antrean tinjauan identitas (PRD Roadmap 5 §20.5 "Data meragukan → review queue,
  *   jangan otomatis membuat akun"), juga kandidat yang perlu dikonfirmasi (nomor HP / email belum terverifikasi).
- * - sponsorship_transfers: alur resmi pengalihan sponsor enrollment (§20.20, R7/R8) — permintaan, otorisasi,
+ * - sponsorship_transfers: alur resmi pengalihan sponsor enrollment (§20.20, R7/R8) - permintaan, otorisasi,
  *   sponsor lama & baru, tanggal efektif, alasan; berlaku per tanggal efektif; tidak bisa diubah setelah diterapkan.
  */
 return new class extends Migration

@@ -4,7 +4,7 @@ import { requireTrainer, type TrainerClass } from "@/lib/trainer";
 
 export const instant = false;
 
-/** /trainer/progres — Progress overview: pilih kelas untuk melihat indikator lengkap tiap peserta. */
+/** /trainer/progres - Progress overview: pilih kelas untuk melihat indikator lengkap tiap peserta. */
 export default async function TrainerProgressPage() {
   const { token } = await requireTrainer("/trainer/progres");
   const classes = (await api<{ data: TrainerClass[] }>("/trainer/classes", { token })).data;

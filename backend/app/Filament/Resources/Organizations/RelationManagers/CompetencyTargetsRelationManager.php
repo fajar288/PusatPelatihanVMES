@@ -17,7 +17,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Target kompetensi per posisi organisasi (Roadmap 5F, §20.16) — sama dengan yang dikelola Corporate Owner/HR di portal.
+ * Target kompetensi per posisi organisasi (Roadmap 5F, §20.16) - sama dengan yang dikelola Corporate Owner/HR di portal.
  * Posisi dicocokkan dengan jabatan employment aktif (huruf besar/kecil & spasi diabaikan). Semua perubahan lewat
  * CompetencyGapService agar tercatat di audit_logs.
  */

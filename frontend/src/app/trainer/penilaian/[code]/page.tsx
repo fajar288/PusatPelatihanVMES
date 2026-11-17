@@ -7,7 +7,7 @@ import { requireTrainer } from "@/lib/trainer";
 
 export const instant = false;
 
-/** /trainer/penilaian/[code] — rubrik program + penilaian kompetensi tiap peserta kelas. */
+/** /trainer/penilaian/[code]: rubrik program + penilaian kompetensi tiap peserta kelas. */
 export default async function TrainerClassAssessments({ params }: PageProps<"/trainer/penilaian/[code]">) {
   const { code } = await params;
   const { token } = await requireTrainer(`/trainer/penilaian/${code}`);
@@ -25,7 +25,7 @@ export default async function TrainerClassAssessments({ params }: PageProps<"/tr
     <>
       <BackLink href="/trainer/penilaian">Kembali ke Penilaian</BackLink>
       <PortalCard
-        title={`Penilaian — ${d.class.title}`}
+        title={`Penilaian: ${d.class.title}`}
         action={
           <span className={"jst " + (validated === d.participants.length && d.participants.length > 0 ? "ok" : "wn")}>
             {validated}/{d.participants.length} tervalidasi, {competent} kompeten

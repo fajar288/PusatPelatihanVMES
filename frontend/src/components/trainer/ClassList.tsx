@@ -19,7 +19,7 @@ export default function ClassList({ title, intro, classes, base, cta }: { title:
                   compact
                   items={[
                     { icon: "code", value: c.code },
-                    { icon: "cal", value: `${c.dateLabel} – ${c.endLabel}` },
+                    { icon: "cal", value: `${c.dateLabel} - ${c.endLabel}` },
                     { icon: "users", value: `${c.participantsCount} peserta` },
                     { value: `${c.sessionsCount} sesi` },
                   ]}

@@ -5,7 +5,7 @@ import { CLASS_STATUS, requireTrainer, type TrainerClass } from "@/lib/trainer";
 
 export const instant = false;
 
-/** /trainer/materi — Materials: pilih kelas untuk melihat course/materi & progres belajar peserta. */
+/** /trainer/materi - Materials: pilih kelas untuk melihat course/materi & progres belajar peserta. */
 export default async function TrainerMaterialsPage() {
   const { token } = await requireTrainer("/trainer/materi");
   const classes = (await api<{ data: TrainerClass[] }>("/trainer/classes", { token })).data;
@@ -24,7 +24,7 @@ export default async function TrainerMaterialsPage() {
                   compact
                   items={[
                     { icon: "code", value: c.code },
-                    { icon: "cal", value: `${c.dateLabel} – ${c.endLabel}` },
+                    { icon: "cal", value: `${c.dateLabel} - ${c.endLabel}` },
                     { icon: "users", value: `${c.participantsCount} peserta` },
                   ]}
                 />

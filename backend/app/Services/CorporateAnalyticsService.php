@@ -167,7 +167,7 @@ class CorporateAnalyticsService
                 'code' => $s->code,
                 'program' => $s->title ?? $s->package?->title,
                 'startDate' => $s->start_date->toDateString(),
-                'dates' => $s->start_date->format('d/m/Y').' – '.$s->end_date->format('d/m/Y'),
+                'dates' => $s->start_date->format('d/m/Y').' - '.$s->end_date->format('d/m/Y'),
                 'participants' => $g->count(),
                 'attendanceRate' => $scheduled > 0 ? round($attended / $scheduled * 100, 1) : null,
                 'completed' => $g->where('status', 'completed')->count(),
@@ -244,7 +244,7 @@ class CorporateAnalyticsService
         })->sortByDesc('participants')->values()->all();
     }
 
-    /** Pembelian ulang (§20.15 Repeat Training) — order lunas organisasi sepanjang waktu (dalam batas unit pengguna). */
+    /** Pembelian ulang (§20.15 Repeat Training): order lunas organisasi sepanjang waktu (dalam batas unit pengguna). */
     private function repeat(CorporateUser $cu): array
     {
         $orders = $this->reporting->invoicesQuery($cu)->whereNotNull('paid_at')->whereColumn('amount_paid', '>', 'amount_refunded')
@@ -285,7 +285,7 @@ class CorporateAnalyticsService
         ];
     }
 
-    /** Daftar peserta berisiko yang boleh dibuka per nama (tanpa email — §20.11). */
+    /** Daftar peserta berisiko yang boleh dibuka per nama (tanpa email - §20.11). */
     private function riskRows(CorporateUser $cu, array $flagged): array
     {
         if ($flagged === []) {

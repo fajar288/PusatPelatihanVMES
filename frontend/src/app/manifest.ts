@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { SITE } from "@/data/site";
 
-/** Web App Manifest (PWA, Phase 5) — dapat dipasang di layar utama; pintasan ke halaman yang paling sering dibuka. */
+/** Web App Manifest (PWA, Phase 5) - dapat dipasang di layar utama; pintasan ke halaman yang paling sering dibuka. */
 export default function manifest(): MetadataRoute.Manifest {
   const shortcutIcon = [{ src: "/icons/shortcut-96.png", sizes: "96x96", type: "image/png" }];
   return {

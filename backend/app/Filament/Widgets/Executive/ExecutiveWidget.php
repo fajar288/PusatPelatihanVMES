@@ -55,6 +55,6 @@ trait ExecutiveWidget
 
     protected static function pct(float|int|null $v): string
     {
-        return $v === null ? '—' : rtrim(rtrim(number_format((float) $v, 1, ',', '.'), '0'), ',').'%';
+        return $v === null ? '-' : rtrim(rtrim(number_format((float) $v, 1, ',', '.'), '0'), ',').'%';
     }
 }

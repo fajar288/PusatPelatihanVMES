@@ -4,7 +4,7 @@ import { SITE } from "@/data/site";
 
 export const metadata: Metadata = { title: `Halaman tidak ditemukan | ${SITE.name}` };
 
-/** 404 — memakai gaya `.nores` dari tema asli (teks tengah, tombol hijau). */
+/** 404: memakai gaya `.nores` dari tema asli (teks tengah, tombol hijau). */
 export default function NotFound() {
   return (
     <div className="wrap">

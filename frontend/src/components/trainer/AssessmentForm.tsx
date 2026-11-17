@@ -111,15 +111,15 @@ export default function AssessmentForm({ code, item }: { code: string; item: Ite
                     <td>
                       {c.levels.length ? (
                         <select name={`sc_${c.id}`} value={v} onChange={(e) => setScores({ ...scores, [c.id]: e.target.value })}>
-                          <option value="">—</option>
+                          <option value="">-</option>
                           {c.levels.map((l) => (
                             <option key={l.score} value={l.score}>
-                              {l.score} — {l.label}
+                              {l.score} - {l.label}
                             </option>
                           ))}
                         </select>
                       ) : (
-                        <input name={`sc_${c.id}`} type="number" min={0} max={c.maxScore} step="0.5" value={v} onChange={(e) => setScores({ ...scores, [c.id]: e.target.value })} placeholder={`0–${c.maxScore}`} />
+                        <input name={`sc_${c.id}`} type="number" min={0} max={c.maxScore} step="0.5" value={v} onChange={(e) => setScores({ ...scores, [c.id]: e.target.value })} placeholder={`0-${c.maxScore}`} />
                       )}
                       {lvl?.description ? <small>{lvl.description}</small> : <small>maks. {c.maxScore}</small>}
                     </td>

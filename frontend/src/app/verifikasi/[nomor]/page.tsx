@@ -25,7 +25,7 @@ async function lookup(nomor: string, code: string | null): Promise<VerificationR
   }
 }
 
-/** /verifikasi/[nomor]?k= — hasil verifikasi publik (AC-10): status, penerima, program, tanggal, masa berlaku. */
+/** /verifikasi/[nomor]?k= - hasil verifikasi publik (AC-10): status, penerima, program, tanggal, masa berlaku. */
 export default async function VerifikasiHasilPage({ params, searchParams }: PageProps<"/verifikasi/[nomor]">) {
   const { nomor } = await params;
   const sp = await searchParams;

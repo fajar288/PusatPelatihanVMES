@@ -63,7 +63,7 @@ class CorporateFinanceController extends Controller
         ]);
     }
 
-    /** POST .../invoices/{number}/proof — finance perusahaan mengunggah bukti transfer; status berubah hanya lewat verifikasi VMES. */
+    /** POST .../invoices/{number}/proof: finance perusahaan mengunggah bukti transfer; status berubah hanya lewat verifikasi VMES. */
     public function proof(Request $request, Organization $organization, Invoice $invoice, PaymentService $payments): InvoiceResource
     {
         $cu = $this->finance($request, $organization);

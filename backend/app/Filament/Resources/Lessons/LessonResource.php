@@ -19,7 +19,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use UnitEnum;
 
-/** LMS — Lesson (materi teks/dokumen/video/tautan/kuis/tugas) dalam modul course. */
+/** LMS: Lesson (materi teks/dokumen/video/tautan/kuis/tugas) dalam modul course. */
 class LessonResource extends Resource
 {
     protected static ?string $model = Lesson::class;

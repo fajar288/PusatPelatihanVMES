@@ -38,7 +38,7 @@ use Illuminate\Support\HtmlString;
 use Illuminate\Validation\ValidationException;
 use UnitEnum;
 
-/** Sertifikat — draf → validasi → terbit → cabut/ganti; PDF + QR; riwayat (PRD §5.10). */
+/** Sertifikat: draf → validasi → terbit → cabut/ganti; PDF + QR; riwayat (PRD §5.10). */
 class CertificateResource extends Resource
 {
     protected static ?string $model = Certificate::class;
@@ -107,7 +107,7 @@ class CertificateResource extends Resource
                             return 'Pilih peserta untuk melihat pemeriksaan aturan kelulusan.';
                         }
                         $check = app(CertificateService::class)->eligibility($e, $get('type') ?: null);
-                        $rows = collect($check['evaluation']['checks'])->map(fn ($c) => ($c['ok'] ? '✅' : ($c['required'] ? '❌' : '⚪')).' '.e($c['label']).' — '.e($c['detail']))->implode('<br>');
+                        $rows = collect($check['evaluation']['checks'])->map(fn ($c) => ($c['ok'] ? '✅' : ($c['required'] ? '❌' : '⚪')).' '.e($c['label']).': '.e($c['detail']))->implode('<br>');
                         // Utilitas text-success-600/text-danger-600 tidak ada di CSS Filament terkompilasi → pakai komponen badge.
                         $head = Blade::render(
                             '<div style="display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;margin-bottom:.25rem"><x-filament::badge :color="$color">{{ $label }}</x-filament::badge>@if ($reasons)<span>{{ $reasons }}</span>@endif</div>',
@@ -159,7 +159,7 @@ class CertificateResource extends Resource
 
     public static function enrollmentLabel(Enrollment $e): string
     {
-        return $e->participant_name.' — '.($e->schedule?->code ?? '?').' ('.(['enrolled' => 'terdaftar', 'attending' => 'mengikuti', 'completed' => 'lulus', 'failed' => 'tidak lulus', 'dropped' => 'mundur'][$e->status] ?? $e->status).')';
+        return $e->participant_name.' - '.($e->schedule?->code ?? '?').' ('.(['enrolled' => 'terdaftar', 'attending' => 'mengikuti', 'completed' => 'lulus', 'failed' => 'tidak lulus', 'dropped' => 'mundur'][$e->status] ?? $e->status).')';
     }
 
     public static function table(Table $table): Table

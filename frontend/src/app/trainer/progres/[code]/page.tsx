@@ -7,7 +7,7 @@ import { requireTrainer } from "@/lib/trainer";
 
 export const instant = false;
 
-/** /trainer/progres/[code] — tabel progress overview seluruh peserta: kehadiran, materi, kuis, tugas, praktik, kompetensi, catatan. */
+/** /trainer/progres/[code] - tabel progress overview seluruh peserta: kehadiran, materi, kuis, tugas, praktik, kompetensi, catatan. */
 export default async function TrainerClassProgress({ params }: PageProps<"/trainer/progres/[code]">) {
   const { code } = await params;
   const { token } = await requireTrainer(`/trainer/progres/${code}`);
@@ -48,7 +48,7 @@ export default async function TrainerClassProgress({ params }: PageProps<"/train
         </div>
       </div>
       <PortalCard
-        title={`Progres — ${d.class.title}`}
+        title={`Progres: ${d.class.title}`}
         action={
           <span style={{ display: "flex", gap: 8 }}>
             <Link className="jb" href={`/trainer/logbook/${code}`}>

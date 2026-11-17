@@ -5,7 +5,7 @@ import { requireTrainer, type TrainerClass } from "@/lib/trainer";
 
 export const instant = false;
 
-/** /trainer/kuis — Quiz Results: pilih kelas. */
+/** /trainer/kuis - Quiz Results: pilih kelas. */
 export default async function TrainerQuizIndex() {
   const { token } = await requireTrainer("/trainer/kuis");
   const classes = (await api<{ data: TrainerClass[] }>("/trainer/classes", { token })).data;

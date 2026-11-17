@@ -44,7 +44,7 @@ class WebhookDeliveriesRelationManager extends RelationManager
             ->headerActions([])
             ->recordActions([
                 Action::make('payload')->label('Payload')->icon('heroicon-o-code-bracket')->color('gray')
-                    ->modalHeading(fn (WebhookDelivery $record) => $record->event.' — '.$record->uuid)
+                    ->modalHeading(fn (WebhookDelivery $record) => $record->event.' - '.$record->uuid)
                     ->modalContent(fn (WebhookDelivery $record) => new HtmlString(
                         '<pre style="font-size:12px;white-space:pre-wrap;word-break:break-all;max-height:60vh;overflow:auto">'.e(json_encode($record->payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)).'</pre>'
                         .($record->response_body ? '<p style="margin-top:12px;font-weight:600">Respons terakhir</p><pre style="font-size:12px;white-space:pre-wrap;word-break:break-all">'.e($record->response_body).'</pre>' : '')

@@ -9,7 +9,7 @@ import { formatRupiah } from "@/lib/utils";
 // Halaman per-pengguna (cookie sesi + API terautentikasi) → diblokir di server, tidak di-prerender.
 export const instant = false;
 
-/** /portal/pembayaran — invoice & status verifikasi pembayaran (Payment History, Roadmap 5C). */
+/** /portal/pembayaran: invoice & status verifikasi pembayaran (Payment History, Roadmap 5C). */
 export default async function PortalPaymentsPage() {
   const { token } = await requireUser("/portal/pembayaran");
   const [invoices, accounts] = await Promise.all([

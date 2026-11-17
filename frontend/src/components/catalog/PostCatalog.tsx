@@ -19,7 +19,7 @@ const getItem = (a: PostSummary): CatalogItem => ({
 
 type Props = { posts: PostSummary[]; categories: string[]; initial?: Partial<CatalogFilter> };
 
-/** div.catb + div.list (g-artikel) — daftar postingan satu kategori dengan cari/urut. */
+/** div.catb + div.list (g-artikel): daftar postingan satu kategori dengan cari/urut. */
 export default function PostCatalog({ posts, categories, initial }: Props) {
   const { filter, setFilter, visible } = useCatalog(posts, getItem, initial, { categories, modes: [], sorts: SORT_OPTIONS.map((o) => o.value) });
   return (

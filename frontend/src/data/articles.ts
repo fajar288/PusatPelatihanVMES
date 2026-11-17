@@ -1,4 +1,4 @@
-// Postingan (tutorial, berita, kegiatan, dokumentasi) — dummy. Website lama hanya punya 1 post
+// Postingan (tutorial, berita, kegiatan, dokumentasi) - dummy. Website lama hanya punya 1 post
 // bawaan WordPress ("Hello world!") plus konten contoh tema; judul & tanggal tutorial diambil apa adanya.
 // Nanti diganti GET /api/v1/posts?category= dan /api/v1/posts/{slug} (Laravel).
 
@@ -19,14 +19,14 @@ export type Article = {
   excerpt: string;
   category: PostCategory;
   dateLabel: string; // "10 Nov 2026" (format website lama)
-  publishedAt: number; // unix time (data-d di website lama) — urutan "Terbaru"
+  publishedAt: number; // unix time (data-d di website lama) - urutan "Terbaru"
   image?: string;
   author?: string;
   tags?: string[];
   body: PostBlock[];
 };
 
-/** Ringkasan post untuk kartu/list — bentuk sama antara data statis dan API. */
+/** Ringkasan post untuk kartu/list: bentuk sama antara data statis dan API. */
 export type PostSummary = Pick<Article, "slug" | "title" | "excerpt" | "category" | "dateLabel" | "publishedAt" | "image">;
 
 export const POST_CATEGORIES: { slug: string; category: PostCategory; title: string; desc: string }[] = [
@@ -124,7 +124,7 @@ export const ARTICLES: Article[] = [
     slug: "ppti-mitra-resmi-pearson-vue", title: "PPTI - VMES Resmi Menjadi Authorized Test Center Pearson VUE", excerpt: "Peserta kini dapat mengikuti ujian sertifikasi internasional Cisco, AWS, dan CompTIA langsung di lab PPTI - VMES Training Center Batam.",
     category: "Berita", dateLabel: "8 Nov 2026", publishedAt: 1794096000, author: "Humas PPTI", tags: ["Sertifikasi", "Pearson VUE"],
     body: [
-      { type: "p", text: "Batam — PPTI - VMES Training Center resmi ditunjuk sebagai Pearson VUE Authorized Test Center. Dengan status ini, peserta training tidak perlu lagi menempuh perjalanan ke kota lain untuk mengikuti ujian sertifikasi internasional." },
+      { type: "p", text: "Batam, PPTI - VMES Training Center resmi ditunjuk sebagai Pearson VUE Authorized Test Center. Dengan status ini, peserta training tidak perlu lagi menempuh perjalanan ke kota lain untuk mengikuti ujian sertifikasi internasional." },
       { type: "p", text: "Ujian yang tersedia mencakup Cisco (CCNA, CCNP), AWS Certified, CompTIA, dan vendor lain yang bermitra dengan Pearson VUE. Pendaftaran ujian dapat dilakukan melalui tim admin PPTI atau langsung di portal Pearson VUE dengan memilih lokasi Batam." },
       { type: "h2", text: "Fasilitas Ruang Ujian" },
       { type: "ul", items: ["8 workstation dengan pengawasan CCTV sesuai standar Pearson VUE", "Ruang tunggu dan loker peserta", "Jadwal ujian Senin sampai Sabtu"] },
@@ -178,7 +178,7 @@ export const ARTICLES: Article[] = [
     ],
   },
 
-  // ===== DOKUMENTASI (foto hotlink pihak ketiga — ganti dengan foto PPTI, lihat task.md §1.9) =====
+  // ===== DOKUMENTASI (foto hotlink pihak ketiga - ganti dengan foto PPTI, lihat task.md §1.9) =====
   {
     slug: "dokumentasi-training-within-industry", title: "Dokumentasi Training Within Industry Batch Oktober 2026", excerpt: "Suasana kelas Training Within Industry (TWI) untuk supervisor produksi.",
     category: "Dokumentasi", dateLabel: "9 Nov 2026", publishedAt: 1794182400, image: "https://merca.team/wp-content/uploads/2026/02/training-within-industry-1024x683.webp", tags: ["TWI", "Supervisor"],

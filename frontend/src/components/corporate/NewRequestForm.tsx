@@ -27,7 +27,7 @@ export default function NewRequestForm({ org, packages, units }: { org: string; 
           {packages.map((p) => (
             <option key={p.slug} value={p.slug}>
               {p.title}
-              {p.category ? ` — ${p.category}` : ""}
+              {p.category ? ` (${p.category})` : ""}
             </option>
           ))}
         </select>

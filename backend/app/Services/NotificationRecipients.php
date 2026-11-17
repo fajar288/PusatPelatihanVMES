@@ -16,7 +16,7 @@ use Throwable;
 /**
  * Penerima per scope untuk Notification Engine (PRD Roadmap 5 §6.1 "Recipient Scope").
  * Audiens perusahaan HANYA untuk enrollment yang disponsori organisasinya, dalam batas unit & kebijakan exit
- * (CorporateAccess — sama dengan Corporate Portal), sehingga self-funded/sponsor lain tidak pernah bocor lewat notifikasi.
+ * (CorporateAccess - sama dengan Corporate Portal), sehingga self-funded/sponsor lain tidak pernah bocor lewat notifikasi.
  */
 class NotificationRecipients
 {

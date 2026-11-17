@@ -57,7 +57,7 @@ class NotificationController extends Controller
         return response()->json(['data' => ['marked' => $count], 'unread' => 0]);
     }
 
-    /** GET /me/notification-settings — preferensi per kategori + status push. */
+    /** GET /me/notification-settings: preferensi per kategori + status push. */
     public function settings(Request $request, NotificationCenter $center, PushSender $push, WhatsAppSender $whatsapp): JsonResponse
     {
         return response()->json(['data' => $this->settingsPayload($request, $center, $push, $whatsapp)]);
@@ -80,7 +80,7 @@ class NotificationController extends Controller
         return response()->json(['data' => $this->settingsPayload($request, $center, $push, $whatsapp), 'message' => 'Pengaturan notifikasi disimpan.']);
     }
 
-    /** POST /me/push-subscriptions — simpan langganan dari PushManager.subscribe() (format toJSON()). */
+    /** POST /me/push-subscriptions: simpan langganan dari PushManager.subscribe() (format toJSON()). */
     public function subscribe(Request $request, PushSender $push): JsonResponse
     {
         abort_unless($push->configured(), 503, 'Notifikasi push belum diaktifkan di server.');
@@ -114,7 +114,7 @@ class NotificationController extends Controller
         return response()->json(['data' => ['deleted' => $deleted, 'devices' => $request->user()->pushSubscriptions()->count()]]);
     }
 
-    /** POST /me/push-subscriptions/test — kirim push uji ke semua perangkat akun. */
+    /** POST /me/push-subscriptions/test: kirim push uji ke semua perangkat akun. */
     public function test(Request $request, NotificationCenter $center): JsonResponse
     {
         abort_unless($request->user()->pushSubscriptions()->exists(), 422, 'Aktifkan notifikasi push di perangkat ini terlebih dahulu.');

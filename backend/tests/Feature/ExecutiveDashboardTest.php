@@ -35,7 +35,7 @@ use Illuminate\Support\Facades\Notification;
 use Livewire\Livewire;
 use Tests\TestCase;
 
-/** Phase 5 — Executive dashboard (PRD §5.13): indikator, filter, peserta berisiko, kinerja trainer, akses & ekspor. */
+/** Phase 5 - Executive dashboard (PRD §5.13): indikator, filter, peserta berisiko, kinerja trainer, akses & ekspor. */
 class ExecutiveDashboardTest extends TestCase
 {
     use RefreshDatabase;
@@ -49,7 +49,7 @@ class ExecutiveDashboardTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        Carbon::setTestNow('2026-11-19 09:00:00'); // kelas CCNA-2611 (17–21 Nov 2026) sedang berjalan, 3 sesi sudah lewat
+        Carbon::setTestNow('2026-11-19 09:00:00'); // kelas CCNA-2611 (17-21 Nov 2026) sedang berjalan, 3 sesi sudah lewat
         $this->seed([RolesSeeder::class, CmsSeeder::class]);
         Notification::fake();
         $this->schedule = TrainingSchedule::query()->where('code', 'CCNA-2611')->first();

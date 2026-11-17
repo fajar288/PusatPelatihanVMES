@@ -4,7 +4,7 @@ import { requireTrainer, type TrainerClass } from "@/lib/trainer";
 
 export const instant = false;
 
-/** /trainer/logbook — Logbook: pilih kelas untuk mencatat pertemuan. */
+/** /trainer/logbook - Logbook: pilih kelas untuk mencatat pertemuan. */
 export default async function TrainerLogbookPage() {
   const { token } = await requireTrainer("/trainer/logbook");
   const classes = (await api<{ data: TrainerClass[] }>("/trainer/classes", { token })).data;

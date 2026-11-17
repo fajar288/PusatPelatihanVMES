@@ -39,7 +39,7 @@ class MeController extends Controller
         return new UserResource($user->load('member'));
     }
 
-    /** PATCH /me — profil member */
+    /** PATCH /me: profil member */
     public function update(Request $request, MemberService $members): UserResource
     {
         $user = $request->user();
@@ -108,7 +108,7 @@ class MeController extends Controller
         return new InvoiceResource($invoice->refresh()->load('items', 'transactions', 'refunds', 'registration'));
     }
 
-    /** GET /me/payments — semua invoice pendaftaran milik pengguna (nama lama dipertahankan). */
+    /** GET /me/payments: semua invoice pendaftaran milik pengguna (nama lama dipertahankan). */
     public function payments(Request $request): AnonymousResourceCollection
     {
         $ids = Registration::query()->ownedBy($request->user())->pluck('id');
@@ -123,7 +123,7 @@ class MeController extends Controller
         return new InvoiceResource($this->ownedInvoice($request, $invoice)->load('registration', 'items', 'transactions', 'refunds'));
     }
 
-    /** POST /me/invoices/{invoice}/proof — unggah bukti transfer untuk invoice tertentu (termin). */
+    /** POST /me/invoices/{invoice}/proof: unggah bukti transfer untuk invoice tertentu (termin). */
     public function invoiceProof(Request $request, Invoice $invoice, PaymentService $payments): InvoiceResource
     {
         $invoice = $this->ownedInvoice($request, $invoice);
@@ -166,13 +166,13 @@ class MeController extends Controller
         ]);
     }
 
-    /** GET /me/payment-accounts — rekening/VA tujuan pembayaran manual yang aktif. */
+    /** GET /me/payment-accounts: rekening/VA tujuan pembayaran manual yang aktif. */
     public function paymentAccounts(): JsonResponse
     {
         return response()->json(['data' => PaymentAccount::query()->shown()->get()->map->toApi()->values()]);
     }
 
-    /** GET /me/enrollments — "Pelatihan Saya": kelas, trainer, sesi, kehadiran */
+    /** GET /me/enrollments - "Pelatihan Saya": kelas, trainer, sesi, kehadiran */
     public function enrollments(Request $request): AnonymousResourceCollection
     {
         $q = Enrollment::query()->ownedBy($request->user())
@@ -182,7 +182,7 @@ class MeController extends Controller
         return EnrollmentResource::collection($q->get());
     }
 
-    /** GET /me/progress — progress overview per enrollment (PRD §5.9): kehadiran, materi, nilai, praktik, kompetensi & catatan trainer yang sudah divalidasi. */
+    /** GET /me/progress - progress overview per enrollment (PRD §5.9): kehadiran, materi, nilai, praktik, kompetensi & catatan trainer yang sudah divalidasi. */
     public function progress(Request $request, MonitoringService $monitoring): JsonResponse
     {
         $items = Enrollment::query()->ownedBy($request->user())->with('schedule.package')->latest('enrolled_at')->get()

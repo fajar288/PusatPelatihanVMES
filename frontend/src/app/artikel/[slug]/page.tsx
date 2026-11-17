@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: PageProps<"/artikel/[slug]">)
   };
 }
 
-/** /artikel/[slug] — clone single post website lama (g-artikel .kd). Data: GET /api/v1/posts/{slug} (body HTML). */
+/** /artikel/[slug] - clone single post website lama (g-artikel .kd). Data: GET /api/v1/posts/{slug} (body HTML). */
 export default async function ArtikelPage({ params }: PageProps<"/artikel/[slug]">) {
   const { slug } = await params;
   const post = await getPost(slug);
@@ -86,7 +86,7 @@ export default async function ArtikelPage({ params }: PageProps<"/artikel/[slug]
               <section className="kbx">
                 <h2 id="kd-oh">Detail</h2>
                 <div className="kov" id="kd-ov">
-                  {/* HTML dari CMS — dirender ke .pb persis seperti konten WordPress di website lama */}
+                  {/* HTML dari CMS: dirender ke .pb persis seperti konten WordPress di website lama */}
                   <div className="pb" dangerouslySetInnerHTML={{ __html: post.body ?? "" }} />
                 </div>
               </section>

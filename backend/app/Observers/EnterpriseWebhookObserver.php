@@ -20,7 +20,7 @@ use Illuminate\Support\Arr;
  * Webhook enterprise (Roadmap 5E) untuk klien API yang terikat organisasi: perubahan Corporate Training Request,
  * enrollment bersponsor (dibuat, status, transfer sponsor), hubungan kerja, invoice, dan sertifikat enrollment bersponsor.
  * Dijalankan setelah transaksi commit; nilai lama diambil dari getPrevious(). Payload memakai EnterpriseApiPresenter yang
- * sama dengan API (tanpa angka progres — ambil lewat API bila perlu). Peserta yang sudah keluar dari organisasi dengan
+ * sama dengan API (tanpa angka progres - ambil lewat API bila perlu). Peserta yang sudah keluar dari organisasi dengan
  * kebijakan exit_access=none tidak lagi dikirim.
  */
 class EnterpriseWebhookObserver implements ShouldHandleEventsAfterCommit

@@ -3,7 +3,7 @@ Kita lanjut ke **Roadmap 5 tahap 5I: AI terukur** (PRD Roadmap 5 §9 Modul F "Me
 ## Bacaan wajib sebelum mengubah apa pun
 
 1. `docs/PRD-Roadmap5.md` §8 (KPI), §9, §9.1, §15, §20.11 (batas privasi), §20.15 dan §20.16 (analitik & TNA perusahaan).
-2. `task.md`: bagian **5I AI terukur**, **DEPLOY — cPanel**, dan keputusan penyedia di §13.1.
+2. `task.md`: bagian **5I AI terukur**, **DEPLOY - cPanel**, dan keputusan penyedia di §13.1.
 3. Kode yang sudah ada dan wajib dipakai ulang, bukan diduplikasi:
    - Chatbot publik: `config/chatbot.php`, `App\Services\ChatbotService`, `App\Support\Chatbot\{ChatModel, AnthropicChatModel, ChatReply}`, tabel `chat_logs`, palsu `Tests\Fakes\FakeChatModel`.
    - Aturan peserta berisiko: `AnalyticsService::atRisk()` dan perintah `notifications:risk`.
@@ -58,7 +58,7 @@ Jika 5F, 5G, atau 5H belum digabung ke `main`, kerjakan dulu tahap itu sesuai `d
 - Kerangka `ai:evaluate` dan `ai:readiness`, helper penyaring data pribadi, dan model palsu untuk tes.
 
 **5I.2 Early warning** (`feat/ai-early-warning`)
-- Skor risiko 0–100 dan alasan teratas per peserta aktif, dihitung dari kehadiran, progres LMS, nilai kuis dan tugas, praktik di logbook, dan keterlambatan tugas. Pakai model statistik transparan, misalnya regresi logistik sederhana atau skor berbobot yang dikalibrasi dari kelas selesai, dengan aturan `atRisk()` sebagai baseline.
+- Skor risiko 0-100 dan alasan teratas per peserta aktif, dihitung dari kehadiran, progres LMS, nilai kuis dan tugas, praktik di logbook, dan keterlambatan tugas. Pakai model statistik transparan, misalnya regresi logistik sederhana atau skor berbobot yang dikalibrasi dari kelas selesai, dengan aturan `atRisk()` sebagai baseline.
 - Hitung harian lewat perintah terjadwal. Tampilkan di portal trainer (progres kelas), admin (Dashboard Eksekutif), dan portal perusahaan untuk peserta bersponsor saja. Picu notifikasi lewat engine 5D tanpa duplikasi dengan `notifications:risk`.
 - Evaluasi: precision, recall, dan F1 terhadap hasil kelas yang sudah selesai (lulus atau tidak), dibandingkan dengan baseline aturan.
 
@@ -91,4 +91,4 @@ Jika 5F, 5G, atau 5H belum digabung ke `main`, kerjakan dulu tahap itu sesuai `d
 - Ada keputusan bisnis baru yang memengaruhi skema data dan tidak tertulis di PRD, `task.md`, atau prompt ini. Untuk hal kecil, putuskan sendiri dan tulis asumsinya di PR.
 - Hasil evaluasi menunjukkan sebuah use case kalah dari baseline. Laporkan, jangan dipaksakan.
 
-Mulai dengan membaca bahan di atas. Pastikan 5F–5H sudah selesai, lalu kerjakan 5I.1.
+Mulai dengan membaca bahan di atas. Pastikan 5F-5H sudah selesai, lalu kerjakan 5I.1.

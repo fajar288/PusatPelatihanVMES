@@ -11,7 +11,7 @@ use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use UnitEnum;
 
-/** /admin/laporan — ringkasan operasional & pendapatan + ekspor CSV/XLSX (task Phase 2 "Laporan operasional + ekspor"). */
+/** /admin/laporan: ringkasan operasional & pendapatan + ekspor CSV/XLSX (task Phase 2 "Laporan operasional + ekspor"). */
 class Laporan extends Page
 {
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChartBar;

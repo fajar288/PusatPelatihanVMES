@@ -16,7 +16,7 @@ const STATUS: Record<EnrollmentInfo["status"], { label: string; cls: "ok" | "wn"
 
 const ATT: Record<string, "ok" | "wn" | "no"> = { present: "ok", late: "wn", excused: "wn", absent: "no" };
 
-/** /portal/pelatihan — My Training: enrollment dari pendaftaran terkonfirmasi, trainer, sesi, kehadiran (GET /me/enrollments). */
+/** /portal/pelatihan - My Training: enrollment dari pendaftaran terkonfirmasi, trainer, sesi, kehadiran (GET /me/enrollments). */
 export default async function PortalTrainingPage() {
   const { token } = await requireUser("/portal/pelatihan");
   const items = (await api<{ data: EnrollmentInfo[] }>("/me/enrollments", { token })).data;
@@ -62,7 +62,7 @@ export default async function PortalTrainingPage() {
                   <li key={s.no}>
                     <span>
                       <b>Sesi {s.no}</b>
-                      {s.topic ? ` — ${s.topic}` : ""}
+                      {s.topic ? `: ${s.topic}` : ""}
                       <MetaList
                         compact
                         items={[

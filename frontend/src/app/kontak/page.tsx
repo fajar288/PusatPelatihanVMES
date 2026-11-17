@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 const MAP_QUERY = "Kawasan Industri Tunas Bizpark Blok D No 15 Batam Centre Batam";
 
-/** /kontak — PRD §5.1: formulir konsultasi + kartu kontak + peta. */
+/** /kontak - PRD §5.1: formulir konsultasi + kartu kontak + peta. */
 export default function KontakPage() {
   return (
     <div>
@@ -65,8 +65,8 @@ export default function KontakPage() {
               </span>
               <div>
                 <b>Jam Operasional</b>
-                <em>Senin – Jumat, 08.00 – 17.00 WIB</em>
-                <small>Sabtu 08.00 – 13.00 WIB (kelas & ujian sesuai jadwal)</small>
+                <em>Senin - Jumat, 08.00 - 17.00 WIB</em>
+                <small>Sabtu 08.00 - 13.00 WIB (kelas & ujian sesuai jadwal)</small>
               </div>
             </div>
             <div className="kmap">

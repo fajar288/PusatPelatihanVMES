@@ -4,7 +4,7 @@ import { requireTrainer } from "@/lib/trainer";
 
 export const instant = false;
 
-/** /trainer/profil — profil trainer (keahlian, pendidikan, sertifikasi, portofolio). */
+/** /trainer/profil: profil trainer (keahlian, pendidikan, sertifikasi, portofolio). */
 export default async function TrainerProfilePage() {
   const { profile } = await requireTrainer("/trainer/profil");
   return (

@@ -27,7 +27,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use UnitEnum;
 
-/** Sertifikat — template (judul, kalimat, penerbit, penandatangan, masa berlaku, format nomor) PRD §5.10. */
+/** Sertifikat: template (judul, kalimat, penerbit, penandatangan, masa berlaku, format nomor) PRD §5.10. */
 class CertificateTemplateResource extends Resource
 {
     protected static ?string $model = CertificateTemplate::class;

@@ -14,7 +14,7 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-/** Departemen / cost center / proyek — dipakai untuk batas akses supervisor & sponsor unit enrollment. */
+/** Departemen / cost center / proyek: dipakai untuk batas akses supervisor & sponsor unit enrollment. */
 class UnitsRelationManager extends RelationManager
 {
     protected static string $relationship = 'units';

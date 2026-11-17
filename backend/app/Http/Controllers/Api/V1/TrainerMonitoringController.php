@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-/** Portal trainer — Logbook, Assessment (penilaian kompetensi), Progress overview (PRD §5.9). */
+/** Portal trainer: Logbook, Assessment (penilaian kompetensi), Progress overview (PRD §5.9). */
 class TrainerMonitoringController extends Controller
 {
     use ResolvesTrainer;
@@ -47,7 +47,7 @@ class TrainerMonitoringController extends Controller
 
     // ---------------------------------------------------------------- logbook
 
-    /** GET /trainer/classes/{code}/logbooks — logbook kelas + sesi & peserta untuk form. */
+    /** GET /trainer/classes/{code}/logbooks: logbook kelas + sesi & peserta untuk form. */
     public function logbooks(Request $request, string $code): JsonResponse
     {
         $s = $this->classOf($this->trainer($request), $code)->load('package', 'sessions', 'enrollments');
@@ -63,7 +63,7 @@ class TrainerMonitoringController extends Controller
         ]]);
     }
 
-    /** POST /trainer/classes/{code}/logbooks — buat logbook (multipart: field + docs[]). */
+    /** POST /trainer/classes/{code}/logbooks - buat logbook (multipart: field + docs[]). */
     public function storeLogbook(Request $request, string $code): JsonResponse
     {
         $t = $this->trainer($request);
@@ -74,7 +74,7 @@ class TrainerMonitoringController extends Controller
         return response()->json(['data' => MonitoringService::logbook($l)], 201);
     }
 
-    /** POST /trainer/logbooks/{id} — ubah logbook (ditolak bila terkunci). */
+    /** POST /trainer/logbooks/{id}: ubah logbook (ditolak bila terkunci). */
     public function updateLogbook(Request $request, int $id): JsonResponse
     {
         $t = $this->trainer($request);
@@ -85,7 +85,7 @@ class TrainerMonitoringController extends Controller
         return response()->json(['data' => MonitoringService::logbook($l)]);
     }
 
-    /** POST /trainer/logbooks/{id}/validate — validasi & kunci. */
+    /** POST /trainer/logbooks/{id}/validate: validasi & kunci. */
     public function validateLogbook(Request $request, int $id): JsonResponse
     {
         $l = $this->monitoring->validateLogbook($this->logbookOf($request, $id), $request->user());
@@ -93,7 +93,7 @@ class TrainerMonitoringController extends Controller
         return response()->json(['data' => MonitoringService::logbook($l)]);
     }
 
-    /** GET /trainer/logbooks/{id}/docs/{index} — unduh dokumentasi. */
+    /** GET /trainer/logbooks/{id}/docs/{index}: unduh dokumentasi. */
     public function logbookDoc(Request $request, int $id, int $index): StreamedResponse
     {
         $l = $this->logbookOf($request, $id);
@@ -131,7 +131,7 @@ class TrainerMonitoringController extends Controller
 
     // ---------------------------------------------------------------- penilaian
 
-    /** GET /trainer/classes/{code}/assessments — rubrik program + penilaian tiap peserta. */
+    /** GET /trainer/classes/{code}/assessments: rubrik program + penilaian tiap peserta. */
     public function assessments(Request $request, string $code): JsonResponse
     {
         $s = $this->classOf($this->trainer($request), $code)->load('package', 'enrollments');
@@ -150,7 +150,7 @@ class TrainerMonitoringController extends Controller
         ]]);
     }
 
-    /** POST /trainer/classes/{code}/assessments/{enrollment} — simpan skor; {scores:[{criterion_id,score,note}], summary, recommendation, validate?} */
+    /** POST /trainer/classes/{code}/assessments/{enrollment}: simpan skor; {scores:[{criterion_id,score,note}], summary, recommendation, validate?} */
     public function saveAssessment(Request $request, string $code, int $enrollment): JsonResponse
     {
         $t = $this->trainer($request);
@@ -185,7 +185,7 @@ class TrainerMonitoringController extends Controller
 
     // ---------------------------------------------------------------- progress overview
 
-    /** GET /trainer/classes/{code}/progress — tabel overview seluruh peserta. */
+    /** GET /trainer/classes/{code}/progress: tabel overview seluruh peserta. */
     public function progress(Request $request, string $code): JsonResponse
     {
         $s = $this->classOf($this->trainer($request), $code)->load('package');
@@ -193,7 +193,7 @@ class TrainerMonitoringController extends Controller
         return response()->json(['data' => ['class' => $this->classInfo($s), 'participants' => $this->monitoring->classOverview($s)]]);
     }
 
-    /** GET /trainer/classes/{code}/progress/{enrollment} — overview lengkap satu peserta. */
+    /** GET /trainer/classes/{code}/progress/{enrollment}: overview lengkap satu peserta. */
     public function participantProgress(Request $request, string $code, int $enrollment): JsonResponse
     {
         $s = $this->classOf($this->trainer($request), $code);

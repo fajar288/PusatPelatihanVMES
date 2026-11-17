@@ -9,7 +9,7 @@ import { requireTrainer } from "@/lib/trainer";
 
 export const instant = false;
 
-/** /trainer/logbook/[code] — daftar logbook kelas + form pertemuan baru. */
+/** /trainer/logbook/[code]: daftar logbook kelas + form pertemuan baru. */
 export default async function TrainerClassLogbook({ params }: PageProps<"/trainer/logbook/[code]">) {
   const { code } = await params;
   const { token } = await requireTrainer(`/trainer/logbook/${code}`);
@@ -27,7 +27,7 @@ export default async function TrainerClassLogbook({ params }: PageProps<"/traine
     <>
       <BackLink href="/trainer/logbook">Kembali ke Logbook</BackLink>
       <PortalCard
-        title={`Logbook — ${d.class.title}`}
+        title={`Logbook: ${d.class.title}`}
         action={
           <span style={{ display: "flex", gap: 8 }}>
             <Link className="jb" href={`/trainer/progres/${code}`}>
@@ -45,7 +45,7 @@ export default async function TrainerClassLogbook({ params }: PageProps<"/traine
             <b className="spv">
               {d.class.code}
               <small>
-                {d.class.dateLabel} – {d.class.endLabel}
+                {d.class.dateLabel} - {d.class.endLabel}
               </small>
             </b>
           </li>

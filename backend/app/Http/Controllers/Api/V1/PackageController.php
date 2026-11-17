@@ -38,7 +38,7 @@ class PackageController extends Controller
         ]);
     }
 
-    /** GET /api/v1/packages/{slug} — detail + jadwal mendatang + kurikulum + terkait */
+    /** GET /api/v1/packages/{slug}: detail + jadwal mendatang + kurikulum + terkait */
     public function show(string $slug): PackageResource
     {
         $pkg = TrainingPackage::query()->published()->with(['category', 'curricula'])->where('slug', $slug)->firstOrFail();

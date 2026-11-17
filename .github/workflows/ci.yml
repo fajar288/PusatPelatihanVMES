@@ -13,6 +13,24 @@ env:
   NEXT_TELEMETRY_DISABLED: "1"
 
 jobs:
+  text-guard:
+    name: Teks (tanpa em dash / en dash)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Teks yang tampil ke pengguna memakai "-", ":", koma, atau "s.d.", bukan em dash (U+2014) / en dash (U+2013).
+      # Pola ditulis sebagai byte UTF-8 agar berkas ini sendiri tidak memuat karakternya.
+      - name: Tolak em dash / en dash di frontend/src, backend/app, backend/resources, seed data
+        run: |
+          pattern="$(printf '\xe2\x80\x94')\|$(printf '\xe2\x80\x93')"
+          if grep -rn "$pattern" frontend/src backend/app backend/resources backend/database/seeders; then
+            echo "::error::Ditemukan em dash / en dash. Ganti dengan '-', ':', koma, atau 's.d.' sesuai konteks."
+            exit 1
+          fi
+          echo "Tidak ada em dash / en dash."
+
   frontend:
     name: Frontend (lint, type-check, build)
     runs-on: ubuntu-latest
@@ -58,7 +76,7 @@ jobs:
       - name: Check backend exists
         id: exists
         run: |
-          if [ -f backend/composer.json ]; then echo "yes=true" >> "$GITHUB_OUTPUT"; else echo "yes=false" >> "$GITHUB_OUTPUT"; echo "backend/ belum ada — job dilewati"; fi
+          if [ -f backend/composer.json ]; then echo "yes=true" >> "$GITHUB_OUTPUT"; else echo "yes=false" >> "$GITHUB_OUTPUT"; echo "backend/ belum ada - job dilewati"; fi
 
       - name: Setup PHP
         if: steps.exists.outputs.yes == 'true'

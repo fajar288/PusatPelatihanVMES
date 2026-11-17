@@ -26,8 +26,8 @@ return new class extends Migration
             $table->unsignedInteger('cache_read_tokens')->default(0);
             $table->unsignedInteger('cache_write_tokens')->default(0);
             $table->unsignedInteger('latency_ms')->nullable();
-            $table->string('feedback', 10)->nullable()->comment('up|down — dari pengunjung');
-            $table->string('review', 20)->nullable()->comment('correct|incorrect|needs_info — tinjauan admin');
+            $table->string('feedback', 10)->nullable()->comment('up|down - dari pengunjung');
+            $table->string('review', 20)->nullable()->comment('correct|incorrect|needs_info - tinjauan admin');
             $table->text('review_note')->nullable();
             $table->foreignId('reviewed_by')->nullable()->constrained('users')->nullOnDelete();
             $table->string('error', 255)->nullable();

@@ -9,7 +9,7 @@ use App\Support\Enterprise\EnterpriseApiPresenter;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-/** API enterprise — profil organisasi (scope organization.read) & KPI ringkas (scope analytics.read). */
+/** API enterprise: profil organisasi (scope organization.read) & KPI ringkas (scope analytics.read). */
 class OrganizationController extends EnterpriseController
 {
     /** Definisi KPI yang dibuka lewat API (PRD Roadmap 5 §7 "Approved KPI access", §20.9 Overview). */
@@ -34,7 +34,7 @@ class OrganizationController extends EnterpriseController
         return response()->json(['data' => EnterpriseApiPresenter::organization($cu->organization, $cu)]);
     }
 
-    /** GET /analytics — agregat menghitung semua enrollment bersponsor dalam batas unit (termasuk peserta yang sudah keluar). */
+    /** GET /analytics: agregat menghitung semua enrollment bersponsor dalam batas unit (termasuk peserta yang sudah keluar). */
     public function analytics(Request $request, CorporateReporting $reporting, KpiService $kpis): JsonResponse
     {
         $request->validate(['from' => ['nullable', 'date'], 'to' => ['nullable', 'date']]);

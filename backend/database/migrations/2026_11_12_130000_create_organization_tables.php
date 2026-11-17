@@ -5,7 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * Roadmap 5 tahap 5A — fondasi data enterprise (PRD Roadmap 5 §4.1, §13, §20.1, §20.6, §20.12).
+ * Roadmap 5 tahap 5A: fondasi data enterprise (PRD Roadmap 5 §4.1, §13, §20.1, §20.6, §20.12).
  * - organizations: akun perusahaan/instansi (corporate account).
  * - organization_units: departemen / cost center / proyek (hierarki opsional).
  * - employment_relationships: hubungan kerja Member ↔ Organization (ACTIVE/INACTIVE), terpisah dari Member (§18).
@@ -36,10 +36,10 @@ return new class extends Migration
             $table->string('invoice_email')->nullable();
             $table->string('logo')->nullable();
             $table->string('status', 20)->default('active')->comment('active|inactive|suspended');
-            $table->boolean('needs_review')->default(false)->comment('dibuat otomatis (backfill/pendaftaran kolektif) — perlu diperiksa admin');
+            $table->boolean('needs_review')->default(false)->comment('dibuat otomatis (backfill/pendaftaran kolektif) - perlu diperiksa admin');
             $table->string('source', 30)->default('admin')->comment('admin|registration|backfill|self_signup');
             $table->json('settings')->nullable()->comment('kebijakan per organisasi, mis. exit_access');
-            $table->text('notes')->nullable()->comment('catatan internal VMES — tidak tampil ke perusahaan');
+            $table->text('notes')->nullable()->comment('catatan internal VMES - tidak tampil ke perusahaan');
             $table->timestamps();
         });
 

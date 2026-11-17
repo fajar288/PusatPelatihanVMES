@@ -1,4 +1,4 @@
-# Frontend Next.js — build standalone (next.config.ts: output "standalone").
+# Frontend Next.js - build standalone (next.config.ts: output "standalone").
 FROM node:24-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./

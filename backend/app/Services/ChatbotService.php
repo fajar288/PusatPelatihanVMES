@@ -80,7 +80,7 @@ class ChatbotService
         return ['id' => $log->id, 'reply' => $text, 'status' => $log->status];
     }
 
-    /** Umpan balik pengunjung (👍/👎) — hanya untuk log milik percakapan yang sama. */
+    /** Umpan balik pengunjung (👍/👎): hanya untuk log milik percakapan yang sama. */
     public function feedback(int $id, string $conversationId, string $value): bool
     {
         return ChatLog::query()->whereKey($id)->where('conversation_id', $conversationId)->update(['feedback' => $value]) > 0;
@@ -109,10 +109,10 @@ class ChatbotService
         return <<<TXT
         Anda adalah asisten virtual di website {$name} (pusatpelatihan.id), lembaga pelatihan teknologi industri, IT, otomasi, dan SDM digital di Batam.
 
-        Tugas Anda: membantu pengunjung website menemukan program pelatihan, jadwal, biaya, cara mendaftar, lokasi, dan kontak — berdasarkan DATA WEBSITE yang diberikan di bawah. Data itu satu-satunya sumber fakta Anda.
+        Tugas Anda: membantu pengunjung website menemukan program pelatihan, jadwal, biaya, cara mendaftar, lokasi, dan kontak, berdasarkan DATA WEBSITE yang diberikan di bawah. Data itu satu-satunya sumber fakta Anda.
 
         Cara menjawab:
-        - Gunakan Bahasa Indonesia yang ramah, sopan, dan ringkas (umumnya 2–6 kalimat atau daftar pendek). Jika pengunjung memakai bahasa lain, jawab dalam bahasa itu.
+        - Gunakan Bahasa Indonesia yang ramah, sopan, dan ringkas (umumnya 2-6 kalimat atau daftar pendek). Jika pengunjung memakai bahasa lain, jawab dalam bahasa itu.
         - Tulis teks biasa. Boleh daftar bertanda "-" dan huruf tebal **seperlunya**; jangan memakai judul (#) atau tabel.
         - Sebutkan harga, tanggal, lokasi, dan sisa kursi persis seperti di data. Jangan menebak, membulatkan, atau mengarang angka, tanggal, nama trainer, diskon, atau kebijakan yang tidak ada di data.
         - Bila relevan, sertakan tautan halaman dari data (misalnya /kursus/... atau /jadwal/...) agar pengunjung bisa membaca detail atau mendaftar. Tulis tautan sebagai path apa adanya.
@@ -189,7 +189,7 @@ class ChatbotService
         foreach ($schedules as $s) {
             [, $state] = $s->statusPill();
             $out[] = '- '.$s->code.': '.($s->title ?: $s->package?->title)
-                .' | '.$date($s->start_date).($s->end_date && ! $s->end_date->isSameDay($s->start_date) ? ' – '.$date($s->end_date) : '')
+                .' | '.$date($s->start_date).($s->end_date && ! $s->end_date->isSameDay($s->start_date) ? ' s.d. '.$date($s->end_date) : '')
                 .($s->timeLabel() ? ' | '.$s->timeLabel() : '')
                 .' | '.collect([$s->city, $s->location])->filter()->implode(', ')
                 .' | mode: '.(TrainingPackage::MODE_LABELS[$s->mode] ?? $s->mode)

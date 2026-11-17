@@ -3,7 +3,7 @@ import Icon from "@/components/ui/Icon";
 import type { Course } from "@/data/courses";
 import { formatRupiah } from "@/lib/utils";
 
-/** article.cc — kartu kursus (slider beranda & katalog). Markup identik dengan tema asli. */
+/** article.cc: kartu kursus (slider beranda & katalog). Markup identik dengan tema asli. */
 export default function CourseCard({ course }: { course: Course }) {
   const href = `/kursus/${course.slug}`;
   return (

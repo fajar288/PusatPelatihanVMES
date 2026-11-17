@@ -13,7 +13,7 @@ const SORT_OPTIONS: { value: SortKey; label: string }[] = [
   { value: "az", label: "Urutkan: Nama A-Z" },
 ];
 
-/** Atribut kartu — sama dengan data-* di tema asli: data-q = "{judul} kursus {vendor} {kategori} {deskripsi}  {mode} ". */
+/** Atribut kartu - sama dengan data-* di tema asli: data-q = "{judul} kursus {vendor} {kategori} {deskripsi}  {mode} ". */
 const getItem = (c: Course): CatalogItem => ({
   q: `${c.title} kursus ${c.vendor} ${c.category} ${c.desc}  ${c.mode} `.toLowerCase(),
   cat: c.category, mode: c.mode, pr: c.price, pop: !!c.popular, t: c.title, d: c.publishedAt,
@@ -27,7 +27,7 @@ type Props = {
   initial?: Partial<CatalogFilter>;
 };
 
-/** div.catb + div.list — katalog kursus dengan cari/filter/urut di sisi klien. */
+/** div.catb + div.list: katalog kursus dengan cari/filter/urut di sisi klien. */
 export default function CourseCatalog({ courses, categories, modes, initial }: Props) {
   const { filter, setFilter, visible } = useCatalog(courses, getItem, initial, { categories, modes, sorts: SORT_OPTIONS.map((o) => o.value) });
   return (

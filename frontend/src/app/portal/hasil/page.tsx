@@ -6,7 +6,7 @@ import type { EnrollmentInfo } from "@/lib/portal-types";
 
 export const instant = false;
 
-/** /portal/hasil — Results: nilai kuis (percobaan terbaik), nilai & umpan balik tugas, nilai akhir kelas. */
+/** /portal/hasil - Results: nilai kuis (percobaan terbaik), nilai & umpan balik tugas, nilai akhir kelas. */
 export default async function PortalResultsPage() {
   const { token } = await requireUser("/portal/hasil");
   const [results, enrollments] = await Promise.all([

@@ -83,7 +83,7 @@ class EnrollmentService
         });
     }
 
-    /** Batalkan satu peserta — hanya enrollment ini yang berubah (§11 "Corporate membatalkan satu peserta"). */
+    /** Batalkan satu peserta: hanya enrollment ini yang berubah (§11 "Corporate membatalkan satu peserta"). */
     public function drop(Enrollment $enrollment, string $reason, ?User $actor = null): Enrollment
     {
         if (in_array($enrollment->status, ['completed', 'dropped'], true)) {

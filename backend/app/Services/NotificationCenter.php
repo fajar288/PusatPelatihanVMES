@@ -40,7 +40,7 @@ class NotificationCenter
      * @param  User|iterable<User>  $users
      * @param  array<string, scalar|null>  $vars
      * @param  string[]|null  $onlyChannels  paksa kanal tertentu (mis. uji push; tanpa retry)
-     * @return int jumlah pengguna yang (akan) menerima notifikasi — tidak termasuk yang semua kanalnya gagal
+     * @return int jumlah pengguna yang (akan) menerima notifikasi: tidak termasuk yang semua kanalnya gagal
      */
     public function send(User|iterable $users, string $key, array $vars = [], ?string $url = null, ?string $dedupeKey = null, ?array $onlyChannels = null, ?DateTimeInterface $scheduledAt = null): int
     {

@@ -109,7 +109,7 @@ async function Results({ searchParams }: Pick<PageProps<"/search">, "searchParam
   );
 }
 
-/** /search?q= — hasil pencarian kursus, jadwal, dan postingan (form .sf di header mengirim ke sini). */
+/** /search?q=: hasil pencarian kursus, jadwal, dan postingan (form .sf di header mengirim ke sini). */
 export default function SearchPage({ searchParams }: PageProps<"/search">) {
   return (
     <Suspense

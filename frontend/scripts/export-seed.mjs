@@ -76,7 +76,7 @@ const testi = testimonials.TESTIMONIALS.map((t, i) => {
 });
 writeFileSync(resolve(out, "testimonials.json"), JSON.stringify(testi, null, 2));
 
-// ---- Galeri beranda (hotlink pihak ketiga — ganti dengan foto PPTI)
+// ---- Galeri beranda (hotlink pihak ketiga - ganti dengan foto PPTI)
 writeFileSync(resolve(out, "galleries.json"), JSON.stringify(home.GALLERY.map((g, i) => ({ title: g.alt, image: g.src, caption: null, sort_order: i + 1 })), null, 2));
 
 // ---- Postingan
@@ -96,7 +96,7 @@ site.NAV.forEach((n, i) => menus.push({ location: "header", label: n.label, url:
 site.FOOTER_COLUMNS.forEach((col, ci) => col.links.forEach((l, i) => menus.push({ location: `footer_${ci + 1}`, group_title: col.title, label: l.label, url: l.href === "wa" ? "wa" : l.href, is_external: !!l.external || l.href === "wa", sort_order: i + 1 })));
 writeFileSync(resolve(out, "menus.json"), JSON.stringify(menus, null, 2));
 
-// ---- Banner hero (hotlink pihak ketiga — ganti dengan foto PPTI)
+// ---- Banner hero (hotlink pihak ketiga - ganti dengan foto PPTI)
 writeFileSync(resolve(out, "banners.json"), JSON.stringify(home.HERO_SLIDES.map((src, i) => ({ position: "hero", image: src, alt: "Training PPTI", sort_order: i + 1 })), null, 2));
 
 // ---- Pengaturan situs (key → value)

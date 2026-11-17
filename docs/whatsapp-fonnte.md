@@ -1,4 +1,4 @@
-# WhatsApp lewat Fonnte — panduan setup
+# WhatsApp lewat Fonnte: panduan setup
 
 Kanal WhatsApp Notification Engine (Roadmap 5D) memakai antarmuka `WhatsAppSender`. Bawaan: **mati** (`WHATSAPP_ENABLED=false`) dengan driver `log`. Driver `fonnte` (`App\Support\WhatsApp\FonnteWhatsAppSender`) mengirim lewat WhatsApp API gateway [Fonnte](https://fonnte.com) ([dokumentasi](https://docs.fonnte.com)). Selama `.env` tidak diubah, aplikasi tetap memakai driver `log`.
 

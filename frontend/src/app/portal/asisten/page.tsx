@@ -15,7 +15,7 @@ const FALLBACK: AssistantStatus = {
   message: "Asisten Belajar sedang disiapkan. Untuk pertanyaan materi, hubungi trainer lewat forum diskusi kelas atau tim admin.",
 };
 
-/** /portal/asisten — Asisten Belajar (Roadmap 5 tahap 5G): kerangka berlabel "Belum tersedia", input nonaktif, tanpa panggilan AI. */
+/** /portal/asisten - Asisten Belajar (Roadmap 5 tahap 5G): kerangka berlabel "Belum tersedia", input nonaktif, tanpa panggilan AI. */
 export default async function PortalAssistantPage() {
   const { token } = await requireUser("/portal/asisten");
   const status = await api<{ data: AssistantStatus }>("/me/assistant", { token })

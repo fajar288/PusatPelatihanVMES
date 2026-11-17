@@ -5,7 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * Roadmap 5 tahap 5F — master kompetensi & target per posisi untuk competency gap dasar (PRD Roadmap 5 §8.2, §20.15, §20.16).
+ * Roadmap 5 tahap 5F: master kompetensi & target per posisi untuk competency gap dasar (PRD Roadmap 5 §8.2, §20.15, §20.16).
  * - competencies: master kompetensi (sebelumnya hanya teks bebas di rubrik/paket).
  * - package_competencies: program yang membangun kompetensi + level yang dicapai lulusan (bukti "training" & sumber rekomendasi).
  * - rubric_criteria.competency_id: kriteria rubrik yang mengukur kompetensi (bukti "assessment").

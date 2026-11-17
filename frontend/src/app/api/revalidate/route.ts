@@ -2,7 +2,7 @@ import { revalidateTag } from "next/cache";
 import { NextResponse, type NextRequest } from "next/server";
 
 /**
- * Webhook revalidasi cache CMS — dipanggil backend Laravel saat konten dipublikasikan.
+ * Webhook revalidasi cache CMS: dipanggil backend Laravel saat konten dipublikasikan.
  *   POST /api/revalidate  (header: x-revalidate-secret: <REVALIDATE_SECRET>)
  *   body JSON opsional: { "tags": ["posts", "post:slug"] }  → default ["cms"] (semua)
  */

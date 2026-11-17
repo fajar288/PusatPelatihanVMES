@@ -8,7 +8,7 @@ use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-/** KPI resmi PRD Roadmap 5 §8.1 per segmen (Semua / Mandiri / Corporate) — definisi persis docs/KPI.md. */
+/** KPI resmi PRD Roadmap 5 §8.1 per segmen (Semua / Mandiri / Corporate): definisi persis docs/KPI.md. */
 class KpiTable extends TableWidget
 {
     use ExecutiveWidget;

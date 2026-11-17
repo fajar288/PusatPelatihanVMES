@@ -43,7 +43,7 @@ use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
 
 /**
- * Roadmap 5 tahap 5H — hardening organization scope (PRD Roadmap 5 §7.1, §20.11, §20.19 R3/R5, §20.21, §20.22):
+ * Roadmap 5 tahap 5H - hardening organization scope (PRD Roadmap 5 §7.1, §20.11, §20.19 R3/R5, §20.21, §20.22):
  * IDOR antar perusahaan di SEMUA rute Corporate Portal (dibangkitkan dari daftar rute, jadi rute baru otomatis ikut
  * diuji), referensi lintas organisasi di isi permintaan, ekspor sesuai scope, pencabutan sesi/token/klien API, dan
  * isolasi API enterprise. Tolakan selalu 404 agar keberadaan data organisasi lain tidak bocor.
@@ -197,7 +197,7 @@ class OrganizationScopeSecurityTest extends TestCase
             'action' => 'cancel',
         ];
         $unknown = array_diff($route->parameterNames(), array_keys($values));
-        $this->assertSame([], array_values($unknown), "Parameter rute {$route->uri()} belum dipetakan di tes IDOR — tambahkan sumber daya organisasi lain untuknya.");
+        $this->assertSame([], array_values($unknown), "Parameter rute {$route->uri()} belum dipetakan di tes IDOR - tambahkan sumber daya organisasi lain untuknya.");
 
         return '/'.preg_replace_callback('/\{(\w+)\??\}/', fn ($m) => (string) $values[$m[1]], $route->uri());
     }
@@ -239,7 +239,7 @@ class OrganizationScopeSecurityTest extends TestCase
         return array_map(fn ($l) => str_getcsv($l), array_slice($lines, 1));
     }
 
-    // ---------- §20.21: organisasi lain lewat URL — semua rute portal ----------
+    // ---------- §20.21: organisasi lain lewat URL - semua rute portal ----------
 
     public function test_every_portal_route_rejects_another_organization_in_the_url(): void
     {

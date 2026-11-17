@@ -49,7 +49,7 @@ export default function BulkImportForm({ org, code, templateHref }: { org: strin
                   </b>
                   <small>
                     {row.email ?? "-"}
-                    {row.seat ? ` · kursi ${row.seat}` : ""} — {row.message}
+                    {row.seat ? ` · kursi ${row.seat}` : ""} : {row.message}
                   </small>
                 </span>
                 <b className="spv">

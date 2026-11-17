@@ -18,7 +18,7 @@ type Props = {
 };
 
 /**
- * div.catb — bar pencarian + filter + urutan katalog.
+ * div.catb: bar pencarian + filter + urutan katalog.
  * Port dari markup `#cat-bar` dan logika `draw()` di theme.main.js (state di komponen induk).
  */
 export default function CatalogBar({ value, onChange, categories, modes, sortOptions, count, label }: Props) {

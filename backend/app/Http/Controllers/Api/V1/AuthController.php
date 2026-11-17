@@ -22,7 +22,7 @@ use Illuminate\Validation\ValidationException;
 /** Autentikasi member berbasis token Sanctum (dipakai frontend Next.js). */
 class AuthController extends Controller
 {
-    /** POST /auth/register — buat akun + member (student). */
+    /** POST /auth/register: buat akun + member (student). */
     public function register(RegisterRequest $request, MemberService $members): JsonResponse
     {
         $data = $request->validated();
@@ -56,7 +56,7 @@ class AuthController extends Controller
     }
 
     /**
-     * GET /auth/email/verify/{id}/{hash}?expires=&signature= — tanda tangan relatif (middleware signed:relative),
+     * GET /auth/email/verify/{id}/{hash}?expires=&signature=: tanda tangan relatif (middleware signed:relative),
      * dipanggil halaman frontend /verifikasi-email. Tidak butuh login (tautan bisa dibuka di perangkat lain).
      */
     public function verifyEmail(Request $request, string $id, string $hash, IdentityMatchingService $identity): JsonResponse
@@ -75,7 +75,7 @@ class AuthController extends Controller
         return response()->json(['ok' => true, 'message' => 'Email terverifikasi.']);
     }
 
-    /** POST /auth/email/resend — kirim ulang tautan verifikasi. */
+    /** POST /auth/email/resend: kirim ulang tautan verifikasi. */
     public function resendVerification(Request $request): JsonResponse
     {
         $user = $request->user();
@@ -87,7 +87,7 @@ class AuthController extends Controller
         return response()->json(['ok' => true, 'message' => "Tautan verifikasi dikirim ke {$user->email}."]);
     }
 
-    /** POST /auth/logout — cabut token yang dipakai (diaudit, PRD Roadmap 5 §20.21). */
+    /** POST /auth/logout: cabut token yang dipakai (diaudit, PRD Roadmap 5 §20.21). */
     public function logout(Request $request): JsonResponse
     {
         $user = $request->user();
@@ -97,7 +97,7 @@ class AuthController extends Controller
         return response()->json(['ok' => true]);
     }
 
-    /** POST /auth/forgot-password — kirim tautan reset (selalu 200 agar tidak membocorkan email terdaftar). */
+    /** POST /auth/forgot-password: kirim tautan reset (selalu 200 agar tidak membocorkan email terdaftar). */
     public function forgotPassword(Request $request): JsonResponse
     {
         $request->validate(['email' => ['required', 'email']]);

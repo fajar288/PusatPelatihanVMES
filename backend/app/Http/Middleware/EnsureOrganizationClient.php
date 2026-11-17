@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * `api.organization` — endpoint enterprise (Roadmap 5E): klien harus terikat organisasi AKTIF dan pengguna perusahaan
+ * `api.organization` - endpoint enterprise (Roadmap 5E): klien harus terikat organisasi AKTIF dan pengguna perusahaan
  * yang diwakilinya masih AKTIF di organisasi itu. Organisasi tidak pernah diambil dari URL/isi permintaan (§20.21).
  * Pengguna perusahaan (peran + batas unit) disimpan di atribut request `corporate_user` untuk dipakai service yang sama
  * dengan Corporate Portal.

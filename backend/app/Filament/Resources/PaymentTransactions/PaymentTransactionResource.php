@@ -107,13 +107,13 @@ class PaymentTransactionResource extends Resource
         ]));
     }
 
-    /** Aksi verifikasi/tolak — dipakai di antrean dan di halaman invoice. @return list<Action> */
+    /** Aksi verifikasi/tolak: dipakai di antrean dan di halaman invoice. @return list<Action> */
     public static function reviewActions(): array
     {
         return [
             Action::make('verify')->label('Verifikasi')->icon('heroicon-o-check-circle')->color('success')
                 ->visible(fn (PaymentTransaction $record) => $record->status === 'pending' && FinanceFields::canManage())
-                ->modalHeading(fn (PaymentTransaction $record) => "Verifikasi {$record->code} — invoice {$record->invoice?->invoice_number}")
+                ->modalHeading(fn (PaymentTransaction $record) => "Verifikasi {$record->code} (invoice {$record->invoice?->invoice_number})")
                 ->modalDescription(fn (PaymentTransaction $record) => 'Total '.FinanceFields::rupiah($record->invoice?->total).' · sisa '.FinanceFields::rupiah($record->invoice?->outstanding())
                     .' · dinyatakan '.FinanceFields::rupiah($record->amount).($record->destination ? ' ke '.$record->destination : ''))
                 ->fillForm(fn (PaymentTransaction $record) => ['amount_received' => (float) $record->amount, 'transfer_date' => $record->transfer_date])

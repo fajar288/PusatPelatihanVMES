@@ -92,7 +92,7 @@ class IdentityReviewResource extends Resource
                         'Peserta ditautkan ke member')),
                 Action::make('create')->label('Buat member baru')->icon('heroicon-o-user-plus')->color('gray')
                     ->visible(fn (IdentityReview $record) => $record->status === 'pending' && ! empty($record->input['email']))
-                    ->requiresConfirmation()->modalDescription('Akun baru dibuat dengan email peserta (tanpa kata sandi yang diketahui — peserta memakai "Lupa kata sandi" untuk masuk). Pastikan orang ini belum punya akun.')
+                    ->requiresConfirmation()->modalDescription('Akun baru dibuat dengan email peserta (tanpa kata sandi yang diketahui; peserta memakai "Lupa kata sandi" untuk masuk). Pastikan orang ini belum punya akun.')
                     ->action(fn (IdentityReview $record, Action $action) => EnterpriseFields::attempt($action,
                         fn () => app(IdentityMatchingService::class)->createMemberForReview($record, auth()->user()), 'Akun & member baru dibuat')),
                 Action::make('rematch')->label('Cocokkan ulang')->icon('heroicon-o-arrow-path')->color('gray')

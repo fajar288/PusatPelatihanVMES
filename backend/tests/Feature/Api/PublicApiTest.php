@@ -14,7 +14,7 @@ class PublicApiTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        // Data seed berisi jadwal Nov 2026 – Jan 2027; "hari ini" dikunci agar tes stabil sepanjang waktu.
+        // Data seed berisi jadwal Nov 2026 - Jan 2027; "hari ini" dikunci agar tes stabil sepanjang waktu.
         Carbon::setTestNow('2026-11-10 09:00:00');
         $this->seed(CmsSeeder::class);
     }

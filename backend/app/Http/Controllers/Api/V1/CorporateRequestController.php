@@ -65,7 +65,7 @@ class CorporateRequestController extends Controller
         return response()->json(['data' => $this->present($cu, $r->fresh(['package', 'unit', 'requestSeats']), true)]);
     }
 
-    /** POST .../requests/{code}/{action} — submit | accept-quote | approve | cancel */
+    /** POST .../requests/{code}/{action}: submit | accept-quote | approve | cancel */
     public function transition(Request $request, Organization $organization, TrainingRequest $trainingRequest, string $action): JsonResponse
     {
         $cu = $this->corporate->member($request, $organization);
@@ -82,7 +82,7 @@ class CorporateRequestController extends Controller
         return $this->show($request, $organization, $r->refresh());
     }
 
-    /** POST .../requests/{code}/seats/{seat}/assign — manual (identity matching → tetapkan / undang / review). */
+    /** POST .../requests/{code}/seats/{seat}/assign: manual (identity matching → tetapkan / undang / review). */
     public function assign(Request $request, Organization $organization, TrainingRequest $trainingRequest, RequestSeat $seat): JsonResponse
     {
         $cu = $this->corporate->member($request, $organization);
@@ -96,7 +96,7 @@ class CorporateRequestController extends Controller
         return response()->json(['data' => ['status' => $res['status'], 'message' => $res['message'], 'seat' => $res['seat']->seat_no]]);
     }
 
-    /** POST .../seats/{seat}/assign-employee — pilih dari karyawan aktif. */
+    /** POST .../seats/{seat}/assign-employee: pilih dari karyawan aktif. */
     public function assignEmployee(Request $request, Organization $organization, TrainingRequest $trainingRequest, RequestSeat $seat): JsonResponse
     {
         $cu = $this->corporate->member($request, $organization);
@@ -108,7 +108,7 @@ class CorporateRequestController extends Controller
         return response()->json(['data' => ['status' => $res['status'], 'message' => $res['message'], 'seat' => $res['seat']->seat_no]]);
     }
 
-    /** POST .../seats/{seat}/release — batalkan peserta di kursi ini (hanya enrollment-nya yang berubah). */
+    /** POST .../seats/{seat}/release: batalkan peserta di kursi ini (hanya enrollment-nya yang berubah). */
     public function release(Request $request, Organization $organization, TrainingRequest $trainingRequest, RequestSeat $seat): JsonResponse
     {
         $cu = $this->corporate->member($request, $organization);
@@ -129,7 +129,7 @@ class CorporateRequestController extends Controller
         ]);
     }
 
-    /** POST .../requests/{code}/import — CSV/XLSX, laporan per baris. */
+    /** POST .../requests/{code}/import: CSV/XLSX, laporan per baris. */
     public function import(Request $request, Organization $organization, TrainingRequest $trainingRequest): JsonResponse
     {
         $cu = $this->corporate->member($request, $organization);
@@ -194,7 +194,7 @@ class CorporateRequestController extends Controller
             'seats' => $r->seats,
             'filled' => $r->filled_count ?? $r->requestSeats()->whereIn('status', ['assigned', 'enrolled'])->count(),
             'invited' => $r->invited_count ?? $r->requestSeats()->where('status', 'invited')->count(),
-            'schedule' => $r->schedule ? ['code' => $r->schedule->code, 'dates' => IdDate::long($r->schedule->start_date).' – '.IdDate::long($r->schedule->end_date)] : null,
+            'schedule' => $r->schedule ? ['code' => $r->schedule->code, 'dates' => IdDate::long($r->schedule->start_date).' - '.IdDate::long($r->schedule->end_date)] : null,
             'createdAt' => IdDate::long($r->created_at),
             'quote' => $finance && $r->quote_total !== null ? [
                 'pricePerSeat' => (float) $r->price_per_seat, 'discount' => (float) $r->quote_discount, 'total' => (float) $r->quote_total,

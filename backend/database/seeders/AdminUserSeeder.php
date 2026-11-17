@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Hash;
 
 /**
  * Akun super admin awal untuk panel /admin.
- * Email & sandi dari env ADMIN_EMAIL / ADMIN_PASSWORD (default hanya untuk pengembangan lokal — GANTI di produksi).
+ * Email & sandi dari env ADMIN_EMAIL / ADMIN_PASSWORD (default hanya untuk pengembangan lokal - GANTI di produksi).
  */
 class AdminUserSeeder extends Seeder
 {

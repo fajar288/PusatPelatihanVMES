@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 /**
- * `api.idempotent` (wajib) / `api.idempotent:optional` — header `Idempotency-Key` untuk POST penting (PRD Roadmap 5 §7.1).
+ * `api.idempotent` (wajib) / `api.idempotent:optional`: header `Idempotency-Key` untuk POST penting (PRD Roadmap 5 §7.1).
  *
  * - Key + isi sama dalam 24 jam → respons sukses pertama diputar ulang (header `Idempotent-Replayed: true`), aksi tidak diulang.
  * - Key sama, isi berbeda → 422 `idempotency_key_reused`.
@@ -61,7 +61,7 @@ class EnforceIdempotency
         return $response;
     }
 
-    /** Pesan key (insert atomik — unique per klien) atau kembalikan respons replay/konflik. */
+    /** Pesan key (insert atomik - unique per klien) atau kembalikan respons replay/konflik. */
     private function reserve(ApiClient $client, string $key, string $hash, Request $request): ApiIdempotencyKey|Response
     {
         for ($i = 0; $i < 2; $i++) {

@@ -5,7 +5,7 @@ import { corporateApi, getSummary } from "@/lib/corporate-server";
 
 export const instant = false;
 
-/** /corporate/[org]/permintaan — daftar Corporate Training Request (dalam batas unit pengguna). */
+/** /corporate/[org]/permintaan: daftar Corporate Training Request (dalam batas unit pengguna). */
 export default async function RequestsPage({ params }: PageProps<"/corporate/[org]/permintaan">) {
   const { org } = await params;
   const [s, rows] = await Promise.all([getSummary(org), corporateApi<{ data: CorporateRequest[] }>(orgPath(org, "/requests"), `/corporate/${org}/permintaan`).then((r) => r.data)]);
@@ -23,7 +23,7 @@ export default async function RequestsPage({ params }: PageProps<"/corporate/[or
     >
       {rows.length === 0 ? (
         <EmptyState
-          text="Belum ada permintaan training. Ajukan berdasarkan kebutuhan dan jumlah kursi — daftar peserta bisa diisi kemudian."
+          text="Belum ada permintaan training. Ajukan berdasarkan kebutuhan dan jumlah kursi; daftar peserta bisa diisi kemudian."
           href={can(s, "manage_requests") ? `/corporate/${org}/permintaan/baru` : undefined}
           cta="Buat permintaan"
         />

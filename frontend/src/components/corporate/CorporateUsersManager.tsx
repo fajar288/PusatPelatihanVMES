@@ -77,7 +77,7 @@ export default function CorporateUsersManager({ org, users, units }: { org: stri
             <select id="cu-role" name="role" defaultValue="hr_admin">
               {ROLE_OPTIONS.map((r) => (
                 <option key={r.value} value={r.value}>
-                  {r.label} — {r.hint}
+                  {r.label}: {r.hint}
                 </option>
               ))}
             </select>

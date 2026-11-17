@@ -29,7 +29,7 @@ use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| API v1 — PPTI VMES ITMS
+| API v1 - PPTI VMES ITMS
 |--------------------------------------------------------------------------
 |
 | Endpoint publik (task.md §1D) dikonsumsi frontend Next.js menggantikan src/data/*.
@@ -73,7 +73,7 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
     // Verifikasi sertifikat publik (PRD §5.10, AC-10)
     Route::get('/verify/{number}', [CertificateController::class, 'verify'])->middleware('throttle:60,1')->where('number', '.+')->name('certificates.verify');
 
-    // Chatbot informasi publik (Phase 5 — Claude). Nonaktif bawaan: CHATBOT_ENABLED + ANTHROPIC_API_KEY.
+    // Chatbot informasi publik (Phase 5 - Claude). Nonaktif bawaan: CHATBOT_ENABLED + ANTHROPIC_API_KEY.
     Route::get('/chat/status', [ChatController::class, 'status'])->name('chat.status');
     Route::post('/chat', [ChatController::class, 'send'])->middleware('throttle:chatbot')->name('chat.send');
     Route::post('/chat/feedback', [ChatController::class, 'feedback'])->middleware('throttle:chatbot-feedback')->name('chat.feedback');
@@ -143,7 +143,7 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
             Route::post('/requests/{trainingRequest}/{action}', [CorporateRequestController::class, 'transition'])
                 ->whereIn('action', ['submit', 'accept-quote', 'approve', 'cancel'])->name('requests.transition');
 
-            // Analitik perusahaan & competency gap (Roadmap 5F, §20.15–§20.16)
+            // Analitik perusahaan & competency gap (Roadmap 5F, §20.15-§20.16)
             Route::get('/analytics', [CorporateAnalyticsController::class, 'analytics'])->name('analytics');
             Route::get('/competencies', [CorporateAnalyticsController::class, 'competencies'])->name('competencies');
             Route::post('/competency-targets', [CorporateAnalyticsController::class, 'storeTarget'])->name('competency_targets.store');
@@ -168,7 +168,7 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
         Route::get('/me/certificates/{certificate}', [CertificateController::class, 'show'])->name('me.certificate');
         Route::get('/me/certificates/{certificate}/pdf', [CertificateController::class, 'pdf'])->name('me.certificate.pdf');
 
-        // LMS peserta (PRD §5.8) — My Learning, Assignments, Results, forum, berkas materi
+        // LMS peserta (PRD §5.8): My Learning, Assignments, Results, forum, berkas materi
         Route::prefix('me/learning')->name('me.learning.')->group(function (): void {
             Route::get('/', [LearningController::class, 'index'])->name('index');
             Route::get('/assignments', [LearningController::class, 'assignments'])->name('assignments');
@@ -185,7 +185,7 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
             Route::post('/{course}/lessons/{lesson}/assignment', [LearningController::class, 'submitAssignment'])->name('lesson.assignment');
         });
 
-        // Portal trainer (PRD §5.7) — akun dengan profil trainer aktif
+        // Portal trainer (PRD §5.7): akun dengan profil trainer aktif
         Route::prefix('trainer')->name('trainer.')->group(function (): void {
             Route::get('/profile', [TrainerController::class, 'profile'])->name('profile');
             Route::patch('/profile', [TrainerController::class, 'updateProfile'])->name('profile.update');
@@ -213,7 +213,7 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
     });
 });
 
-// ---- Webhook penyedia WhatsApp (Fonnte) — tanpa auth/CSRF; diamankan secret acak di path (FONNTE_WEBHOOK_SECRET) ----
+// ---- Webhook penyedia WhatsApp (Fonnte): tanpa auth/CSRF; diamankan secret acak di path (FONNTE_WEBHOOK_SECRET) ----
 Route::prefix('webhooks/fonnte/{secret}')->name('webhooks.fonnte.')->middleware('throttle:fonnte-webhook')->group(function (): void {
     Route::post('/status', [FonnteWebhookController::class, 'status'])->name('status');
     Route::post('/device', [FonnteWebhookController::class, 'device'])->name('device');

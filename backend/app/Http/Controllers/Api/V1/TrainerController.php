@@ -44,7 +44,7 @@ class TrainerController extends Controller
         return response()->json(['data' => $this->profileArray($t->refresh())]);
     }
 
-    /** GET /trainer/classes — kelas yang ditugaskan (mendatang dulu). */
+    /** GET /trainer/classes: kelas yang ditugaskan (mendatang dulu). */
     public function classes(Request $request): AnonymousResourceCollection
     {
         $t = $this->trainer($request);
@@ -53,7 +53,7 @@ class TrainerController extends Controller
         return TrainerClassResource::collection($classes);
     }
 
-    /** GET /trainer/classes/{code} — peserta, sesi, matriks kehadiran. */
+    /** GET /trainer/classes/{code}: peserta, sesi, matriks kehadiran. */
     public function show(Request $request, string $code): TrainerClassResource
     {
         $t = $this->trainer($request);
@@ -62,7 +62,7 @@ class TrainerController extends Controller
         return new TrainerClassResource($s);
     }
 
-    /** POST /trainer/classes/{code}/sessions/{no}/attendance — tandai kehadiran massal. body: {marks:[{enrollment_id,status,note?}]} */
+    /** POST /trainer/classes/{code}/sessions/{no}/attendance - tandai kehadiran massal. body: {marks:[{enrollment_id,status,note?}]} */
     public function attendance(Request $request, string $code, int $no): JsonResponse
     {
         $t = $this->trainer($request);

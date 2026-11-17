@@ -1,5 +1,5 @@
 // LMS (PRD §5.8): tipe data dari /api/v1/me/learning/* dan /api/v1/trainer/classes/{code}/{learning,submissions,quiz-results}
-// — lihat backend App\Support\LmsPresenter.
+//: lihat backend App\Support\LmsPresenter.
 
 export type LessonType = "text" | "document" | "video" | "link" | "quiz" | "assignment";
 export type ProgressStatus = "not_started" | "in_progress" | "completed";

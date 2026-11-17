@@ -6,7 +6,7 @@ import { CERT_PILL, type CertificateHistory, type CertificateInfo, HISTORY_LABEL
 
 export const instant = false;
 
-/** /portal/sertifikat/[number] — detail sertifikat: data tercetak, lampiran materi/kompetensi, riwayat penerbitan, unduh & verifikasi. */
+/** /portal/sertifikat/[number] - detail sertifikat: data tercetak, lampiran materi/kompetensi, riwayat penerbitan, unduh & verifikasi. */
 export default async function PortalCertificateDetailPage({ params }: PageProps<"/portal/sertifikat/[number]">) {
   const { number } = await params;
   const { token } = await requireUser(`/portal/sertifikat/${number}`);
@@ -139,8 +139,8 @@ export default async function PortalCertificateDetailPage({ params }: PageProps<
                 <time>{h.atLabel}</time>
                 <p>
                   <b>{HISTORY_LABEL[h.action] ?? h.action}</b>
-                  {h.after && typeof h.after.reason === "string" ? ` — ${h.after.reason}` : ""}
-                  {h.after && typeof h.after.replaced_by === "string" ? ` — pengganti ${h.after.replaced_by}` : ""}
+                  {h.after && typeof h.after.reason === "string" ? `: ${h.after.reason}` : ""}
+                  {h.after && typeof h.after.replaced_by === "string" ? ` (pengganti ${h.after.replaced_by})` : ""}
                 </p>
               </li>
             ))}

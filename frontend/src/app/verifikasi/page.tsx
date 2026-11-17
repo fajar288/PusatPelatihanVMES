@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/verifikasi" },
 };
 
-/** /verifikasi — halaman verifikasi publik (PRD §5.10, AC-10): masukkan nomor → /verifikasi/[nomor]. */
+/** /verifikasi - halaman verifikasi publik (PRD §5.10, AC-10): masukkan nomor → /verifikasi/[nomor]. */
 export default function VerifikasiPage() {
   return (
     <div>

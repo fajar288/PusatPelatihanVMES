@@ -8,7 +8,7 @@ import type { EnrollmentInfo } from "@/lib/portal-types";
 
 export const instant = false;
 
-/** /portal/progres — My Progress: kehadiran per kelas, progres per course & modul, nilai kuis/tugas, praktik & kompetensi, catatan trainer (yang sudah disahkan). */
+/** /portal/progres - My Progress: kehadiran per kelas, progres per course & modul, nilai kuis/tugas, praktik & kompetensi, catatan trainer (yang sudah disahkan). */
 export default async function PortalProgressPage() {
   const { token } = await requireUser("/portal/progres");
   const [enrollments, courses, results, overview] = await Promise.all([
@@ -135,7 +135,7 @@ export default async function PortalProgressPage() {
       {overview.map((o) => (
         <PortalCard
           key={o.enrollment.id}
-          title={`Praktik, kompetensi & catatan trainer — ${o.class.title}`}
+          title={`Praktik, kompetensi & catatan trainer: ${o.class.title}`}
           action={
             o.competency ? (
               <span className={"jst " + (o.competency.isCompetent ? "ok" : o.competency.isCompetent === false ? "no" : "wn")}>

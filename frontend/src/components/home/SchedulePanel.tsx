@@ -6,7 +6,7 @@ import type { Schedule } from "@/data/schedules";
 
 const PER_PAGE = 7; // sama dengan `per = 7` di theme.main.js
 
-/** div.jt — panel "Jadwal Terdekat" dengan paginasi 7 baris/halaman (.jp .pn .pm). */
+/** div.jt: panel "Jadwal Terdekat" dengan paginasi 7 baris/halaman (.jp .pn .pm). */
 export default function SchedulePanel({ schedules }: { schedules: Schedule[] }) {
   const [cur, setCur] = useState(1);
   const tot = Math.max(1, Math.ceil(schedules.length / PER_PAGE));

@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 
 const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v) ?? "";
 
-/** Membaca query string (?q=, ?kategori=, ?mode=, ?urut=) — harus di dalam <Suspense> karena cacheComponents aktif. */
+/** Membaca query string (?q=, ?kategori=, ?mode=, ?urut=) - harus di dalam <Suspense> karena cacheComponents aktif. */
 async function CatalogFromParams({ searchParams }: Pick<PageProps<"/kursus">, "searchParams">) {
   const [sp, pk] = await Promise.all([searchParams, getPackages()]);
   return (
@@ -34,7 +34,7 @@ async function CatalogStatic() {
 }
 
 /**
- * /kursus — katalog training (clone `/category/kursus/` website lama, body class g-kursus):
+ * /kursus - katalog training (clone `/category/kursus/` website lama, body class g-kursus):
  * hero `.cath` → bar `.catb` (cari, kategori, mode, urutan) → grid `.list` kartu `.cc`.
  * Data dari GET /api/v1/packages (cache); fallback Suspense = katalog tanpa filter (markup sama).
  */

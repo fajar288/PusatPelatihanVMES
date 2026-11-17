@@ -8,7 +8,7 @@ import { formatRupiah } from "@/lib/utils";
 
 /**
  * Form unggah bukti transfer untuk satu invoice (portal member & portal perusahaan). Nominal bawaan = sisa tagihan;
- * pembayar boleh mengisi nominal yang benar-benar ditransfer — selisih dicatat finance saat verifikasi.
+ * pembayar boleh mengisi nominal yang benar-benar ditransfer: selisih dicatat finance saat verifikasi.
  */
 export default function InvoiceProofForm({
   scope,
@@ -60,7 +60,7 @@ export default function InvoiceProofForm({
           <div>
             <label htmlFor={`pf-acc-${number}`}>Rekening tujuan</label>
             <select id={`pf-acc-${number}`} name="payment_account_id" defaultValue={accounts.length === 1 ? String(accounts[0].id) : ""}>
-              <option value="">— Pilih rekening —</option>
+              <option value="">Pilih rekening</option>
               {accounts.map((a) => (
                 <option key={a.id} value={a.id}>
                   {a.bank} {a.type === "virtual_account" ? "(VA) " : ""}

@@ -77,7 +77,7 @@ class InvoiceService
                 'notes' => trim(implode("\n", array_filter([$r->quote_notes, $settings['invoice_notes']]))) ?: null,
                 'created_by' => $actor?->id,
             ]);
-            $label = ($r->package?->title ?? 'Program training').' — '.$r->code.($r->unit ? " ({$r->unit->name})" : '');
+            $label = ($r->package?->title ?? 'Program training').' - '.$r->code.($r->unit ? " ({$r->unit->name})" : '');
             $this->fill($invoice, [['description' => $label, 'quantity' => $r->seats, 'unit_price' => (float) $r->price_per_seat]], (float) $r->quote_discount, $r->quote_discount > 0 ? 'penawaran' : null);
             AuditLog::record('invoice.created', $invoice, null, ['number' => $invoice->invoice_number, 'total' => (float) $invoice->total, 'training_request' => $r->code], $actor);
 
@@ -149,7 +149,7 @@ class InvoiceService
                     'notes' => FinanceSettings::all()['invoice_notes'],
                     'created_by' => $actor?->id,
                 ]);
-                $label = $count > 1 ? "Termin {$i} dari {$count} — {$program} ({$r->registration_number})" : "{$program} ({$r->registration_number})";
+                $label = $count > 1 ? "Termin {$i} dari {$count}: {$program} ({$r->registration_number})" : "{$program} ({$r->registration_number})";
                 $this->fill($invoice, [['description' => $label, 'quantity' => 1, 'unit_price' => $amount]], 0, null);
                 $out[] = $invoice;
             }
@@ -163,7 +163,7 @@ class InvoiceService
     public function cancel(Invoice $invoice, string $reason, ?User $actor = null): Invoice
     {
         if (! in_array($invoice->status, ['pending', 'failed', 'expired'], true) || (float) $invoice->amount_paid > 0) {
-            throw ValidationException::withMessages(['invoice' => "Invoice {$invoice->invoice_number} berstatus \"{$invoice->statusLabel()}\" atau sudah dibayar — tidak bisa dibatalkan (gunakan refund)."]);
+            throw ValidationException::withMessages(['invoice' => "Invoice {$invoice->invoice_number} berstatus \"{$invoice->statusLabel()}\" atau sudah dibayar sehingga tidak bisa dibatalkan (gunakan refund)."]);
         }
         if ($invoice->hasPendingTransaction()) {
             throw ValidationException::withMessages(['invoice' => 'Masih ada bukti pembayaran yang menunggu verifikasi.']);
@@ -179,7 +179,7 @@ class InvoiceService
     public function extend(Invoice $invoice, string $dueDate, ?User $actor = null): Invoice
     {
         if (! in_array($invoice->status, ['pending', 'failed', 'expired'], true)) {
-            throw ValidationException::withMessages(['invoice' => "Invoice berstatus \"{$invoice->statusLabel()}\" — jatuh tempo tidak bisa diubah."]);
+            throw ValidationException::withMessages(['invoice' => "Invoice berstatus \"{$invoice->statusLabel()}\", jatuh tempo tidak bisa diubah."]);
         }
         $due = Carbon::parse($dueDate)->startOfDay();
         if ($due->isBefore(today())) {
@@ -261,7 +261,7 @@ class InvoiceService
         ])->setPaper('a4')->setOption('isRemoteEnabled', false)->setOption('isFontSubsettingEnabled', true)->output();
     }
 
-    /** Logo kecil (lebar 360 px) untuk PDF — logo asli 1600 px membuat tiap PDF ±1 MB. Disimpan sekali di storage. */
+    /** Logo kecil (lebar 360 px) untuk PDF: logo asli 1600 px membuat tiap PDF ±1 MB. Disimpan sekali di storage. */
     private function pdfLogo(): ?string
     {
         $src = public_path('images/logo.jpeg');
@@ -284,7 +284,7 @@ class InvoiceService
     private function registrationItems(Registration $r): array
     {
         $program = $r->schedule?->package?->title ?? 'Pelatihan';
-        $batch = $r->schedule ? ' — batch '.$r->schedule->code : '';
+        $batch = $r->schedule ? ', batch '.$r->schedule->code : '';
         if ($r->price_quoted === null) {
             return [['description' => "{$program}{$batch} ({$r->registration_number})", 'quantity' => 1, 'unit_price' => (float) $r->total + (float) $r->discount]];
         }

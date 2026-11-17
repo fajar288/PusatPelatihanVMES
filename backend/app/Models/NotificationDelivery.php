@@ -23,7 +23,7 @@ class NotificationDelivery extends Model
         'cancelled' => 'Dibatalkan',
     ];
 
-    /** Urutan kemajuan status — status tidak pernah mundur (mis. tanda terima "delivered" setelah "read"). */
+    /** Urutan kemajuan status: status tidak pernah mundur (mis. tanda terima "delivered" setelah "read"). */
     public const PROGRESS = ['queued' => 0, 'sent' => 1, 'delivered' => 2, 'read' => 3];
 
     protected $guarded = [];

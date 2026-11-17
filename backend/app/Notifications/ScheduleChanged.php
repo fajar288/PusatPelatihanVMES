@@ -31,7 +31,7 @@ class ScheduleChanged extends Notification
         $s = $this->schedule->loadMissing('package');
         $name = $notifiable->name ?? 'Peserta';
         $m = (new MailMessage)
-            ->subject("Perubahan jadwal kelas {$s->code} — ".($s->package?->title ?? $s->title))
+            ->subject("Perubahan jadwal kelas {$s->code}: ".($s->package?->title ?? $s->title))
             ->greeting("Halo {$name},")
             ->line('Ada perubahan pada kelas **'.($s->package?->title ?? $s->title)."** (kode {$s->code}):");
 
@@ -44,7 +44,7 @@ class ScheduleChanged extends Notification
         }
 
         return $m
-            ->line('Jadwal terkini: '.IdDate::long($s->start_date).' – '.IdDate::long($s->end_date).', '.$s->city.' ('.$s->mode.')'.($s->timeLabel() ? ', '.$s->timeLabel() : ''))
+            ->line('Jadwal terkini: '.IdDate::long($s->start_date).' s.d. '.IdDate::long($s->end_date).', '.$s->city.' ('.$s->mode.')'.($s->timeLabel() ? ', '.$s->timeLabel() : ''))
             ->line('Mohon maaf atas ketidaknyamanannya. Hubungi kami bila perubahan ini menyulitkan Anda.')
             ->salutation('Salam, PPTI - VMES Training Center');
     }

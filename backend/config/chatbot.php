@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Chatbot informasi publik (Phase 5 — Measurable AI, PRD Roadmap 5 §9). Penyedia: Claude (Anthropic API).
+ * Chatbot informasi publik (Phase 5 - Measurable AI, PRD Roadmap 5 §9). Penyedia: Claude (Anthropic API).
  * NONAKTIF bawaan: aktif hanya bila CHATBOT_ENABLED=true DAN ANTHROPIC_API_KEY terisi.
  */
 return [
@@ -16,7 +16,7 @@ return [
 
     'max_tokens' => (int) env('CHATBOT_MAX_TOKENS', 8000),
 
-    // Versi prompt sistem — dicatat di setiap log (governance: model & prompt/version harus tercatat).
+    // Versi prompt sistem - dicatat di setiap log (governance: model & prompt/version harus tercatat).
     'prompt_version' => '2026-11-12.1',
 
     // Batas pemakaian (biaya API dihitung per token).

@@ -111,7 +111,7 @@ class NotificationDispatcher
     }
 
     /**
-     * Tanda terima dari penyedia (WhatsApp/email) — dipakai webhook penyedia (mis. FonnteWebhookController). Status hanya maju
+     * Tanda terima dari penyedia (WhatsApp/email): dipakai webhook penyedia (mis. FonnteWebhookController). Status hanya maju
      * (sent → delivered → read); "failed" setelah terkirim mencatat galat penyedia.
      */
     public function receipt(string $provider, string $messageId, string $status, ?Carbon $at = null, ?string $error = null): ?NotificationDelivery

@@ -46,7 +46,7 @@ class TrainingScheduleForm
                     DatePicker::make('registration_deadline')->label('Batas pendaftaran')->native(false),
                     DateTimePicker::make('published_at')->label('Tanggal terbit')->seconds(false)->native(false),
                     Textarea::make('notes')->label('Catatan internal')->rows(2)->columnSpanFull(),
-                    Textarea::make('change_reason')->label('Alasan perubahan (wajib bila tanggal/jam/lokasi/metode/status berubah — dikirim ke peserta)')->rows(2)->columnSpanFull()->dehydrated(false)->visibleOn('edit'),
+                    Textarea::make('change_reason')->label('Alasan perubahan (wajib bila tanggal/jam/lokasi/metode/status berubah; dikirim ke peserta)')->rows(2)->columnSpanFull()->dehydrated(false)->visibleOn('edit'),
                 ]),
             ]);
     }

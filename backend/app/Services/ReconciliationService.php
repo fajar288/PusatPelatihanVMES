@@ -194,7 +194,7 @@ class ReconciliationService
                 if ($map === null) {
                     $map = $this->headerMap($cells);
                     if (! isset($map['date'], $map['amount'])) {
-                        $map = null;   // baris judul bank di atas header — cari header di baris berikutnya
+                        $map = null;   // baris judul bank di atas header - cari header di baris berikutnya
                         if ($lineNo > 15) {
                             break 2;
                         }
@@ -263,7 +263,7 @@ class ReconciliationService
         $lastComma = strrpos($v, ',');
         $lastDot = strrpos($v, '.');
         if ($lastComma !== false && ($lastDot === false || $lastComma > $lastDot)) {
-            // koma = desimal bila diikuti 1–2 digit di akhir; selain itu pemisah ribuan
+            // koma = desimal bila diikuti 1-2 digit di akhir; selain itu pemisah ribuan
             $v = preg_match('/,\d{1,2}$/', $v) ? str_replace(',', '.', str_replace('.', '', $v)) : str_replace([',', '.'], '', $v);
         } else {
             $v = preg_match('/\.\d{1,2}$/', $v) && substr_count($v, '.') === 1 ? str_replace(',', '', $v) : str_replace([',', '.'], '', $v);

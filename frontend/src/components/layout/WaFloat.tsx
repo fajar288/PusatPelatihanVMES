@@ -1,6 +1,6 @@
 import { waLink } from "@/lib/utils";
 
-/** Tombol WhatsApp melayang (task 1C, opsional) — warna #25a244. */
+/** Tombol WhatsApp melayang (task 1C, opsional) - warna #25a244. */
 export default function WaFloat() {
   return (
     <a className="waf wa" href={waLink()} target="_blank" rel="noopener" aria-label="Chat WhatsApp PPTI - VMES">

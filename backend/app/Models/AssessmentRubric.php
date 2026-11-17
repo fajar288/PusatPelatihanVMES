@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-/** Rubrik penilaian kompetensi per program (PRD §5.9) — dapat disesuaikan per paket. */
+/** Rubrik penilaian kompetensi per program (PRD §5.9): dapat disesuaikan per paket. */
 class AssessmentRubric extends Model
 {
     /** Kriteria bawaan PRD §5.9 bila program belum punya rubrik sendiri. */

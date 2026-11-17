@@ -8,7 +8,7 @@ import { requireTrainer } from "@/lib/trainer";
 
 export const instant = false;
 
-/** /trainer/progres/[code]/[enrollment] — progress overview lengkap satu peserta (termasuk draf logbook/penilaian). */
+/** /trainer/progres/[code]/[enrollment]: progress overview lengkap satu peserta (termasuk draf logbook/penilaian). */
 export default async function TrainerParticipantProgress({ params }: PageProps<"/trainer/progres/[code]/[enrollment]">) {
   const { code, enrollment } = await params;
   const { token } = await requireTrainer(`/trainer/progres/${code}/${enrollment}`);

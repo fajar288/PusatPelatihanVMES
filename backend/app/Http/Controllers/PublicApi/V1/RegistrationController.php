@@ -18,12 +18,12 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\Rule;
 
-/** API Publik v1 — pendaftaran atas nama peserta (scope registrations.write / registrations.read). */
+/** API Publik v1: pendaftaran atas nama peserta (scope registrations.write / registrations.read). */
 class RegistrationController extends Controller
 {
     private const WITH = ['schedule.package', 'participants', 'invoices'];
 
-    /** POST /registrations — idempoten bila `external_ref` dikirim ulang (200 + header Idempotent-Replayed). */
+    /** POST /registrations: idempoten bila `external_ref` dikirim ulang (200 + header Idempotent-Replayed). */
     public function store(StoreApiRegistrationRequest $request, RegistrationService $service, WebhookService $webhooks): JsonResponse
     {
         $client = $this->client($request);
@@ -57,7 +57,7 @@ class RegistrationController extends Controller
         return (new RegistrationResource($registration->load(self::WITH)))->response()->setStatusCode(201);
     }
 
-    /** GET /registrations?status=&external_ref=&updated_since=&per_page= — hanya milik klien ini. */
+    /** GET /registrations?status=&external_ref=&updated_since=&per_page=: hanya milik klien ini. */
     public function index(Request $request): AnonymousResourceCollection
     {
         $request->validate([

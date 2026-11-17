@@ -15,7 +15,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-/** Sesi/pertemuan kelas — dasar kehadiran (PRD §5.4, §5.9). */
+/** Sesi/pertemuan kelas: dasar kehadiran (PRD §5.4, §5.9). */
 class SessionsRelationManager extends RelationManager
 {
     protected static string $relationship = 'sessions';

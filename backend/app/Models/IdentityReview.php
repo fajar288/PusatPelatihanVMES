@@ -11,8 +11,8 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 class IdentityReview extends Model
 {
     public const REASONS = [
-        'not_found' => 'Tidak ditemukan — perlu undangan/akun baru',
-        'phone_match' => 'Nomor HP cocok — perlu konfirmasi',
+        'not_found' => 'Tidak ditemukan (perlu undangan/akun baru)',
+        'phone_match' => 'Nomor HP cocok (perlu konfirmasi)',
         'unverified_email' => 'Email cocok tetapi belum terverifikasi',
         'employee_id_match' => 'Employee ID cocok di organisasi',
         'conflict' => 'Data menunjuk ke beberapa member berbeda',

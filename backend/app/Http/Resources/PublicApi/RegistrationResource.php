@@ -6,7 +6,7 @@ use App\Models\Registration;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-/** API Publik v1 — pendaftaran yang dibuat klien API. @mixin Registration */
+/** API Publik v1: pendaftaran yang dibuat klien API. @mixin Registration */
 class RegistrationResource extends JsonResource
 {
     public function toArray(Request $request): array

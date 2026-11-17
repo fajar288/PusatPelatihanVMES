@@ -120,7 +120,7 @@ class AnalyticsService
         ];
     }
 
-    /** Completion Rate sesuai definisi KPI §8.1 (docs/KPI.md) — satu angka completion di seluruh dashboard. */
+    /** Completion Rate sesuai definisi KPI §8.1 (docs/KPI.md): satu angka completion di seluruh dashboard. */
     private function kpiCompletion(array $f): ?float
     {
         $kpi = app(KpiService::class);
@@ -177,7 +177,7 @@ class AnalyticsService
         $titles = TrainingPackage::query()->whereIn('id', $packageOf->unique()->values())->pluck('title', 'id');
         $popular = $enrollments->where('status', '!=', 'dropped')
             ->groupBy(fn ($e) => $packageOf[$e->schedule_id] ?? 0)
-            ->map(fn ($g, $pid) => ['package_id' => (int) $pid, 'title' => $titles[$pid] ?? '—', 'participants' => $g->count(), 'classes' => $g->pluck('schedule_id')->unique()->count()])
+            ->map(fn ($g, $pid) => ['package_id' => (int) $pid, 'title' => $titles[$pid] ?? '-', 'participants' => $g->count(), 'classes' => $g->pluck('schedule_id')->unique()->count()])
             ->sortByDesc('participants')->take(8)->values()->all();
 
         return [
@@ -266,7 +266,7 @@ class AnalyticsService
         $received = fn ($t): float => (float) ($t->amount_received ?? $t->amount);
         $titles = TrainingPackage::query()->pluck('title', 'id');
         $byProgram = $verified->groupBy(fn ($t) => $pkgOf($t->invoice))
-            ->map(fn ($g, $pid) => ['package_id' => (int) $pid, 'title' => $titles[$pid] ?? '—', 'amount' => (float) $g->sum($received), 'payments' => $g->count()])
+            ->map(fn ($g, $pid) => ['package_id' => (int) $pid, 'title' => $titles[$pid] ?? '-', 'amount' => (float) $g->sum($received), 'payments' => $g->count()])
             ->sortByDesc('amount')->take(8)->values()->all();
         $invoicedAmount = (float) $issued->sum('total');
         $monthly = $verified->groupBy(fn ($t) => $t->verified_at->format('Y-m'))->map(fn ($g) => (float) $g->sum($received));
@@ -520,7 +520,7 @@ class AnalyticsService
     {
         $fmt = fn (string $d) => (int) substr($d, 8, 2).' '.self::monthLabel(substr($d, 0, 7));
 
-        return $fmt($f['from']).' – '.$fmt($f['to']);
+        return $fmt($f['from']).' s.d. '.$fmt($f['to']);
     }
 
     /** Pilihan filter (dropdown). @return array<string, array<int|string, string>> */
@@ -608,7 +608,7 @@ class AnalyticsService
         $sales = app(SalesAnalyticsService::class)->dashboard($d['filters']);
         foreach ($sales['kpi_table'] as $k) {
             foreach (KpiService::SEGMENTS as $seg => $label) {
-                $rows[] = ['KPI', $k['label'].' — '.$label.($k['key'] === 'average_order_value' ? ' (Rp)' : ' (%)'), $k[$seg.'_value']];
+                $rows[] = ['KPI', $k['label'].' - '.$label.($k['key'] === 'average_order_value' ? ' (Rp)' : ' (%)'), $k[$seg.'_value']];
             }
         }
         foreach ($sales['funnel']['stages'] as $st) {

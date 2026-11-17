@@ -58,7 +58,7 @@ export default function GradeForm({ s, code }: { s: TrainerSubmission; code: str
               </select>
             </div>
             <div>
-              <label htmlFor={`sc-${s.id}`}>Nilai (0–{s.maxScore})</label>
+              <label htmlFor={`sc-${s.id}`}>Nilai (0-{s.maxScore})</label>
               <input id={`sc-${s.id}`} name="score" type="number" min={0} max={s.maxScore} step="0.5" defaultValue={s.score ?? ""} />
             </div>
           </div>

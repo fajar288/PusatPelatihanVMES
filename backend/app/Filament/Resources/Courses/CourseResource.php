@@ -17,7 +17,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use UnitEnum;
 
-/** LMS — Course per program (PRD §5.8). Modul dikelola di tab, lesson di resource "Lesson". */
+/** LMS: Course per program (PRD §5.8). Modul dikelola di tab, lesson di resource "Lesson". */
 class CourseResource extends Resource
 {
     protected static ?string $model = Course::class;

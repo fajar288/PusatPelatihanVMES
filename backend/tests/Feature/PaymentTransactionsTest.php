@@ -36,7 +36,7 @@ use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
 
 /**
- * Roadmap 5 tahap 5C — Transaksi dengan pembayaran MANUAL: invoice lengkap (item, diskon, pajak, jatuh tempo),
+ * Roadmap 5 tahap 5C - Transaksi dengan pembayaran MANUAL: invoice lengkap (item, diskon, pajak, jatuh tempo),
  * payment_transactions, idempotensi verifikasi, kurang/lebih bayar, kedaluwarsa, refund, rekonsiliasi mutasi, dan
  * keuangan di portal perusahaan.
  */
@@ -156,7 +156,7 @@ class PaymentTransactionsTest extends TestCase
 
         // invoice lunas tidak menerima bukti baru (API & service)
         $this->actingAs($this->member, 'sanctum')->post("/api/v1/me/invoices/{$inv->invoice_number}/proof", ['proof' => UploadedFile::fake()->image('b2.jpg')], ['Accept' => 'application/json'])
-            ->assertStatus(422)->assertJsonPath('errors.invoice.0', 'Invoice ini sudah lunas — tidak menerima bukti pembayaran baru.');
+            ->assertStatus(422)->assertJsonPath('errors.invoice.0', 'Invoice ini sudah lunas dan tidak menerima bukti pembayaran baru.');
         $this->assertSame(1, PaymentTransaction::query()->count());
         $this->assertSame(1, AuditLog::query()->where('action', 'payment.verified')->count());
     }

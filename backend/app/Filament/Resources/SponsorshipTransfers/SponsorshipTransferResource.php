@@ -99,7 +99,7 @@ class SponsorshipTransferResource extends Resource
                     ->schema([Textarea::make('note')->label('Catatan')->rows(2)])
                     ->action(function (array $data, SponsorshipTransfer $record, Action $action): void {
                         $t = EnterpriseFields::attempt($action, fn () => app(SponsorshipService::class)->approve($record, auth()->user(), $data['note'] ?? null));
-                        Notification::make()->title($t->status === 'applied' ? 'Disetujui & diterapkan' : 'Disetujui — berlaku pada '.$t->effective_date->format('d M Y'))->success()->send();
+                        Notification::make()->title($t->status === 'applied' ? 'Disetujui & diterapkan' : 'Disetujui, berlaku pada '.$t->effective_date->format('d M Y'))->success()->send();
                     }),
                 Action::make('reject')->label('Tolak')->icon('heroicon-o-x-circle')->color('danger')
                     ->visible(fn (SponsorshipTransfer $record) => $record->status === 'requested' && self::canApprove())
@@ -127,7 +127,7 @@ class SponsorshipTransferResource extends Resource
 
     private static function enrollmentLabel(Enrollment $e): string
     {
-        return '#'.$e->id.' '.$e->participant_name.' — '.($e->schedule?->code ?? '?').' — '.($e->sponsor?->legal_name ?? 'Mandiri');
+        return '#'.$e->id.' '.$e->participant_name.' - '.($e->schedule?->code ?? '?').' - '.($e->sponsor?->legal_name ?? 'Mandiri');
     }
 
     public static function getPages(): array

@@ -5,7 +5,7 @@ import { type AssignmentListItem, SUBMISSION_PILL } from "@/lib/lms";
 
 export const instant = false;
 
-/** /portal/tugas — Assignments: semua tugas lintas course dengan batas waktu & status pengumpulan. */
+/** /portal/tugas - Assignments: semua tugas lintas course dengan batas waktu & status pengumpulan. */
 export default async function PortalAssignmentsPage() {
   const { token } = await requireUser("/portal/tugas");
   const items = (await api<{ data: AssignmentListItem[] }>("/me/learning/assignments", { token })).data;

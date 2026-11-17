@@ -26,7 +26,7 @@ use Illuminate\Support\Facades\Route;
 use Livewire\Livewire;
 use Tests\TestCase;
 
-/** Phase 5 — API Publik v1 (/api/public/v1): API key, scope, rate limit, log, katalog, pendaftaran, verifikasi, webhook, OpenAPI, admin. */
+/** Phase 5 - API Publik v1 (/api/public/v1): API key, scope, rate limit, log, katalog, pendaftaran, verifikasi, webhook, OpenAPI, admin. */
 class PublicIntegrationApiTest extends TestCase
 {
     use RefreshDatabase;
@@ -36,7 +36,7 @@ class PublicIntegrationApiTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        Carbon::setTestNow('2026-11-11 09:00:00'); // CCNA-2611 (17–21 Nov) masih dibuka
+        Carbon::setTestNow('2026-11-11 09:00:00'); // CCNA-2611 (17-21 Nov) masih dibuka
         $this->seed([RolesSeeder::class, CmsSeeder::class]);
         Notification::fake();
     }

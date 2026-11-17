@@ -4,7 +4,7 @@ import type { PostSummary } from "@/data/articles";
 
 type Props = { posts: PostSummary[]; variant: "rt-d" | "rt-m"; title?: string };
 
-/** div.rt > .rcg > a.rc — "Artikel Terkait" di halaman detail post. */
+/** div.rt > .rcg > a.rc: "Artikel Terkait" di halaman detail post. */
 export default function RelatedPosts({ posts, variant, title = "Artikel Terkait" }: Props) {
   if (!posts.length) return null;
   return (

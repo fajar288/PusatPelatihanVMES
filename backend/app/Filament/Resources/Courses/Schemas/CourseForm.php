@@ -23,7 +23,7 @@ class CourseForm
                     ->helperText('Course berlaku untuk semua kelas dari program ini, kecuali dikhususkan ke satu kelas di bawah.'),
                 Select::make('schedule_id')->label('Khusus kelas (opsional)')->searchable()->preload()
                     ->relationship('schedule', 'code', fn ($query, Get $get) => $query->when($get('package_id'), fn ($q, $id) => $q->where('package_id', $id))->orderByDesc('start_date'))
-                    ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->code} — ".($record->title ?? $record->package?->title).' ('.$record->start_date->format('d/m/Y').')')
+                    ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->code} - ".($record->title ?? $record->package?->title).' ('.$record->start_date->format('d/m/Y').')')
                     ->helperText('Kosongkan agar berlaku untuk semua kelas program.'),
                 Textarea::make('description')->label('Deskripsi')->rows(3)->columnSpanFull(),
                 Fields::image('thumbnail', 'lms/courses', 1200)->label('Thumbnail'),

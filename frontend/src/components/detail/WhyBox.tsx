@@ -7,7 +7,7 @@ const POINTS = [
   "Support pasca training",
 ];
 
-/** div.kbx.why — kotak "Kenapa Pilih PPTI?" di sidebar halaman detail (teks identik dengan website lama). */
+/** div.kbx.why: kotak "Kenapa Pilih PPTI?" di sidebar halaman detail (teks identik dengan website lama). */
 export default function WhyBox() {
   return (
     <div className="kbx why">

@@ -9,7 +9,7 @@ use App\Models\Waitlist;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-/** POST /api/v1/schedules/{code}/waitlist — daftar tunggu untuk kelas penuh (PRD §5.4). */
+/** POST /api/v1/schedules/{code}/waitlist: daftar tunggu untuk kelas penuh (PRD §5.4). */
 class WaitlistController extends Controller
 {
     public function store(Request $request, TrainingSchedule $schedule): JsonResponse

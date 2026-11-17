@@ -19,7 +19,7 @@ class ReportService
         'enrollments' => 'Peserta & kehadiran',
     ];
 
-    /** Ekspor Dashboard Eksekutif (Phase 5) — memakai seluruh filter dashboard; butuh izin analytics.view. */
+    /** Ekspor Dashboard Eksekutif (Phase 5): memakai seluruh filter dashboard; butuh izin analytics.view. */
     public const EXECUTIVE_TYPES = [
         'executive' => 'Ringkasan eksekutif',
         'at-risk' => 'Peserta berisiko',

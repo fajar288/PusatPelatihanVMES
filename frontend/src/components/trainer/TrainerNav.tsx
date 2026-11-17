@@ -20,7 +20,7 @@ const ITEMS: { href: string; label: string; icon: IconName }[] = [
   { href: "/portal", label: "Portal Member", icon: "arr" },
 ];
 
-/** Navigasi samping portal trainer — memakai gaya .pnav yang sama dengan portal member. */
+/** Navigasi samping portal trainer: memakai gaya .pnav yang sama dengan portal member. */
 export default function TrainerNav({ name, title }: { name: string; title?: string | null }) {
   const path = usePathname();
   return (

@@ -8,7 +8,7 @@ import { ENROLLMENT_STATUS } from "@/lib/monitoring";
 export const instant = false;
 
 /**
- * /corporate/[org]/peserta/[id] — ringkasan progres training yang disponsori (§20.10): kehadiran, LMS, nilai,
+ * /corporate/[org]/peserta/[id] - ringkasan progres training yang disponsori (§20.10): kehadiran, LMS, nilai,
  * praktik, kompetensi tervalidasi. Catatan privat trainer & catatan internal VMES tidak pernah dikirim API (§20.11).
  */
 export default async function ParticipantProgressPage({ params }: PageProps<"/corporate/[org]/peserta/[id]">) {
@@ -23,7 +23,7 @@ export default async function ParticipantProgressPage({ params }: PageProps<"/co
         <MetaList
           items={[
             { icon: "grad", label: "Program", value: p.class.title },
-            { icon: "cal", label: "Kelas", value: `${p.class.code} · ${p.class.dateLabel} – ${p.class.endLabel}` },
+            { icon: "cal", label: "Kelas", value: `${p.class.code} · ${p.class.dateLabel} - ${p.class.endLabel}` },
             { label: "Nomor member", value: p.participant.memberNumber },
             { label: "Employee ID", value: p.participant.employeeId },
             { label: "Jabatan", value: p.participant.position },

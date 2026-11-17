@@ -36,7 +36,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use UnitEnum;
 
 /**
- * /admin/dashboard-eksekutif — Executive dashboard manajemen (PRD §5.13, peran Management "Executive Dashboard").
+ * /admin/dashboard-eksekutif: Executive dashboard manajemen (PRD §5.13, peran Management "Executive Dashboard").
  * Indikator peserta/alumni/kelas/kapasitas, keuangan, pembelajaran & peserta berisiko, trainer, sertifikat,
  * dengan filter periode, kategori, paket, kelas, trainer, dan status; dapat diekspor (AC-12).
  */

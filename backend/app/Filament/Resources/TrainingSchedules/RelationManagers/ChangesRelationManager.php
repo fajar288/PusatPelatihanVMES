@@ -7,7 +7,7 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-/** Riwayat perubahan jadwal (hanya baca) — PRD §5.4. */
+/** Riwayat perubahan jadwal (hanya baca): PRD §5.4. */
 class ChangesRelationManager extends RelationManager
 {
     protected static string $relationship = 'changes';
