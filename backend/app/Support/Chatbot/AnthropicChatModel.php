@@ -9,6 +9,7 @@ use Anthropic\Client;
  * - Prompt sistem + data stabil di-cache (cacheControl ephemeral) sehingga token input berulang jauh lebih murah.
  * - `fallbacks: 'default'`: bila model menolak (stop_reason refusal), server mengulang di model cadangan sesuai kategori.
  * - Opsi per use case (model, effort, max_tokens, timeout, json_schema) menimpa config/chatbot.php.
+ * - Isi pesan boleh berupa daftar blok (mis. dokumen materi dengan citations); kutipan jawaban dikembalikan di segments.
  */
 class AnthropicChatModel implements ChatModel
 {
@@ -37,14 +38,27 @@ class AnthropicChatModel implements ChatModel
         );
 
         $text = '';
+        $segments = [];
+        $cited = false;
         foreach ($message->content as $block) {
-            if ($block->type === 'text') {
-                $text .= $block->text;
+            if ($block->type !== 'text') {
+                continue;
             }
+            $text .= $block->text;
+            $citations = [];
+            foreach ($block->citations ?? [] as $c) {
+                // Dokumen teks biasa menghasilkan char_location; jenis lain tetap dicatat dengan indeks dokumennya.
+                if (isset($c->documentIndex)) {
+                    $citations[] = ['document_index' => (int) $c->documentIndex, 'document_title' => $c->documentTitle ?? null, 'cited_text' => (string) ($c->citedText ?? '')];
+                }
+            }
+            $cited = $cited || $citations !== [];
+            $segments[] = ['text' => $block->text, 'citations' => $citations];
         }
 
         return new ChatReply(
             text: trim($text),
+            segments: $cited ? $segments : [],
             refused: $message->stopReason === 'refusal',
             model: $message->model,
             inputTokens: $message->usage->inputTokens,

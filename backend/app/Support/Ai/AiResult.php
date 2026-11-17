@@ -19,6 +19,8 @@ final class AiResult
         public readonly ?string $model = null,
         public readonly ?string $promptVersion = null,
         public readonly ?AiUsageRecord $usage = null,
+        /** @var list<array{text:string,citations:list<array{document_index:int,document_title:?string,cited_text:string}>}> jawaban bersitasi (teks sudah dinormalkan) */
+        public readonly array $segments = [],
     ) {}
 
     public function ok(): bool

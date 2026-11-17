@@ -12,7 +12,13 @@ class FakeChatModel implements ChatModel
     /** @var list<array{system: array, messages: array, options: array}> */
     public array $calls = [];
 
-    public function __construct(public string $text = 'Jadwal CCNA tersedia, detail di /jadwal/CCNA-2611.', public bool $refuse = false, public bool $fail = false) {}
+    /** $segments = jawaban bersitasi (format ChatReply::$segments); bila diisi, teks jawaban disusun dari segmen. */
+    public function __construct(
+        public string $text = 'Jadwal CCNA tersedia, detail di /jadwal/CCNA-2611.',
+        public bool $refuse = false,
+        public bool $fail = false,
+        public array $segments = [],
+    ) {}
 
     public function reply(array $system, array $messages, array $options = []): ChatReply
     {
@@ -22,7 +28,8 @@ class FakeChatModel implements ChatModel
         }
 
         return new ChatReply(
-            text: $this->refuse ? '' : $this->text,
+            text: $this->refuse ? '' : ($this->segments !== [] ? trim(implode('', array_column($this->segments, 'text'))) : $this->text),
+            segments: $this->refuse ? [] : $this->segments,
             refused: $this->refuse,
             model: $options['model'] ?? 'claude-opus-5-5',
             inputTokens: 120,

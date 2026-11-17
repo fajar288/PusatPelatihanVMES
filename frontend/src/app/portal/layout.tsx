@@ -3,7 +3,8 @@ import InstallPrompt from "@/components/pwa/InstallPrompt";
 import PortalNav from "@/components/portal/PortalNav";
 import VerifyEmailBanner from "@/components/portal/VerifyEmailBanner";
 import { SITE } from "@/data/site";
-import { requireUser } from "@/lib/auth";
+import { api, requireUser } from "@/lib/auth";
+import type { AssistantStatus } from "@/lib/portal-types";
 
 export const metadata: Metadata = { title: `Portal Member | ${SITE.name}`, robots: { index: false } };
 
@@ -15,7 +16,11 @@ export const instant = false;
 
 /** /portal/*: area member (PRD §5.6). */
 export default async function PortalLayout({ children }: LayoutProps<"/portal">) {
-  const { user } = await requireUser();
+  const { user, token } = await requireUser();
+  // Lencana "Belum tersedia" di menu Asisten Belajar hanya tampil saat fitur mati (gagal dicek = dianggap mati).
+  const assistantAvailable = await api<{ data: AssistantStatus }>("/me/assistant?brief=1", { token })
+    .then((r) => r.data.available)
+    .catch(() => false);
   return (
     <>
       <section className="ph0">
@@ -31,6 +36,7 @@ export default async function PortalLayout({ children }: LayoutProps<"/portal">)
           isTrainer={user.roles.some((r) => r === "trainer" || r === "assessor")}
           hasCorporate={(user.corporate?.length ?? 0) > 0}
           unread={user.unreadNotifications ?? 0}
+          assistantAvailable={assistantAvailable}
         />
         <section className="pmain">
           {user.emailVerified === false && <VerifyEmailBanner email={user.email} />}

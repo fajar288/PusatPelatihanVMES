@@ -9,6 +9,7 @@ use App\Support\Ai\AiUseCases;
 use App\Support\Ai\Evaluators\EarlyWarningEvaluator;
 use App\Support\Ai\Evaluators\Evaluator;
 use App\Support\Ai\Evaluators\FeedbackAnalysisEvaluator;
+use App\Support\Ai\Evaluators\LmsAssistantEvaluator;
 use App\Support\Ai\Evaluators\PublicChatbotEvaluator;
 use App\Support\Ai\Evaluators\RecommendationEvaluator;
 use App\Support\Ai\Metrics;
@@ -30,6 +31,8 @@ class AiEvaluationService
         'early_warning' => EarlyWarningEvaluator::class,
         'recommendation' => RecommendationEvaluator::class,
         'feedback_analysis' => FeedbackAnalysisEvaluator::class,
+        'lms_assistant' => LmsAssistantEvaluator::class,
+        'lms_assistant' => LmsAssistantEvaluator::class,
     ];
 
     public function __construct(private AiGovernance $governance, private AiReadiness $readiness) {}

@@ -52,9 +52,9 @@ export function BackLink({ href, children }: { href: string; children: React.Rea
   );
 }
 
-export function PortalCard({ title, children, action }: { title: string; children: React.ReactNode; action?: React.ReactNode }) {
+export function PortalCard({ title, children, action, id }: { title: string; children: React.ReactNode; action?: React.ReactNode; id?: string }) {
   return (
-    <section className="kbx pcard">
+    <section className="kbx pcard" id={id}>
       <div className="pcard-h">
         <h2>{title}</h2>
         {action}

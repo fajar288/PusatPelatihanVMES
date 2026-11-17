@@ -2,9 +2,9 @@ import Icon from "@/components/ui/Icon";
 import type { AssistantStatus } from "@/lib/portal-types";
 
 /**
- * Panel Asisten Belajar (kerangka Roadmap 5 tahap 5G). Sengaja tanpa "use client", tanpa form action, dan tanpa
- * fetch dari browser: input & tombol nonaktif, sehingga tidak ada pertanyaan atau data peserta yang terkirim ke mana pun.
- * Asisten sungguhan (jawaban dari materi lesson yang disetujui + sitasi) menyusul di tahap 5I.5.
+ * Panel Asisten Belajar saat fitur mati ("Belum tersedia"). Sengaja tanpa "use client", tanpa form action, dan tanpa
+ * fetch dari browser: input & tombol nonaktif, sehingga tidak ada pertanyaan yang terkirim. Saat fitur aktif halaman
+ * memakai LearningAssistantChat.
  */
 export default function LearningAssistantPanel({ status }: { status: AssistantStatus }) {
   return (

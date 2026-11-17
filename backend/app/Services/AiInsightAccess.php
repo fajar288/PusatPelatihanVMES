@@ -18,6 +18,7 @@ use App\Models\User;
  * - Early warning: trainer yang ditugaskan di kelas peserta, dan pengguna perusahaan sponsor yang boleh melihat progres
  *   peserta itu (aturan sama dengan detail progres di Corporate Portal: sponsor, batas unit, kebijakan karyawan keluar).
  * - Peserta sendiri TIDAK melihat skor early warning.
+ * - Asisten Belajar: jawaban hanya untuk peserta yang bertanya (dan staf AI di atas).
  */
 class AiInsightAccess
 {
@@ -33,6 +34,11 @@ class AiInsightAccess
         }
         if ($insight->use_case === AiRecommendationService::USE_CASE) {
             return $this->isRecipient($user, $insight);
+        }
+        // Asisten Belajar: hanya peserta pemilik enrollment yang bertanya (bukan trainer, bukan perusahaan sponsor).
+        if ($insight->use_case === AiLearningAssistantService::USE_CASE) {
+            return $insight->subject_type === (new Enrollment)->getMorphClass()
+                && Enrollment::query()->ownedBy($user)->whereKey($insight->subject_id)->exists();
         }
         // Ringkasan umpan balik kelas (sudah disetujui admin): trainer yang ditugaskan di kelas itu.
         if ($insight->use_case === AiFeedbackService::USE_CASE && $insight->subject_type === (new TrainingSchedule)->getMorphClass()

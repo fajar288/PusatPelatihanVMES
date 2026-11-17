@@ -10,9 +10,10 @@ interface ChatModel
 {
     /**
      * Opsi `json_schema` = structured output (keluaran berupa JSON sesuai skema).
+     * Isi pesan boleh string atau daftar blok (mis. blok `document` dengan citations, kunci camelCase sesuai SDK).
      *
      * @param  list<array{type:string,text:string,cache?:bool}>  $system  blok prompt sistem; `cache` = titik cache
-     * @param  list<array{role:'user'|'assistant',content:string}>  $messages
+     * @param  list<array{role:'user'|'assistant',content:string|list<array<string,mixed>>}>  $messages
      * @param  array{model?:string,effort?:string,max_tokens?:int,timeout?:float,json_schema?:array<string,mixed>}  $options
      */
     public function reply(array $system, array $messages, array $options = []): ChatReply;

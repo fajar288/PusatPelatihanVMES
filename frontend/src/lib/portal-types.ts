@@ -207,11 +207,31 @@ export const INVOICE_PILL: Record<InvoiceStatus | "awaiting", { label: string; c
   cancelled: { label: "Dibatalkan", cls: "no" },
 };
 
-/** GET /me/assistant - Asisten Belajar (kerangka Roadmap 5 tahap 5G): selalu "Belum tersedia", tanpa panggilan AI. */
+/** GET /me/assistant - status Asisten Belajar, kuota hari ini, dan course yang bisa ditanyakan. */
 export type AssistantStatus = {
   enabled: boolean;
   available: boolean;
-  status: "unavailable";
+  status: "available" | "unavailable";
   label: string;
   message: string;
+  limit?: number;
+  usedToday?: number;
+  remaining?: number;
+  courses?: AssistantCourse[];
+};
+
+export type AssistantCourse = { slug: string; title: string; classCode: string | null; lessons: { id: number; title: string }[] };
+
+/** Satu tanya jawab Asisten Belajar (GET/POST /me/assistant/messages). `refs` = nomor sumber per bagian jawaban. */
+export type AssistantMessage = {
+  id: number;
+  question: string;
+  answer: string;
+  segments: { text: string; refs: number[] }[];
+  sources: { n: number; lessonId: number; title: string; module: string | null; quotes: string[] }[];
+  resolved: boolean;
+  course: string;
+  lessonId: number | null;
+  createdAt: string | null;
+  feedback: boolean | null;
 };

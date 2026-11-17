@@ -31,12 +31,14 @@ export default function PortalNav({
   isTrainer,
   hasCorporate,
   unread = 0,
+  assistantAvailable = false,
 }: {
   name: string;
   memberNumber?: string | null;
   isTrainer?: boolean;
   hasCorporate?: boolean;
   unread?: number;
+  assistantAvailable?: boolean;
 }) {
   const path = usePathname();
   return (
@@ -61,7 +63,7 @@ export default function PortalNav({
             <Link key={it.href} href={it.href} className={active ? "on" : undefined} aria-current={active ? "page" : undefined}>
               <Icon name={it.icon} />
               <span className="min-w-0 [overflow-wrap:normal]">{it.label}</span>
-              {it.href === "/portal/asisten" && (
+              {it.href === "/portal/asisten" && !assistantAvailable && (
                 // Di layar sempit (menu 2 kolom) lencana disembunyikan agar label tidak terpecah per huruf.
                 <span className="ml-auto! rounded-full border border-[var(--ln)] px-2! py-px! text-[11px] font-bold whitespace-nowrap text-[var(--mut)] max-sm:hidden">Belum tersedia</span>
               )}

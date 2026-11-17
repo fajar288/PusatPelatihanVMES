@@ -26,7 +26,7 @@ class AiModelRunner
 
     /**
      * @param  list<array{type:string,text:string,cache?:bool}>  $system
-     * @param  list<array{role:'user'|'assistant',content:string}>  $messages
+     * @param  list<array{role:'user'|'assistant',content:string|list<array<string,mixed>>}>  $messages  isi boleh berupa blok (dokumen dengan citations)
      * @param  array<string, mixed>|null  $jsonSchema  structured output; hasilnya ada di AiResult::$data
      */
     public function run(string $useCase, array $system, array $messages, ?array $jsonSchema = null): AiResult
@@ -101,6 +101,10 @@ class AiModelRunner
             model: $reply->model,
             promptVersion: $uc['prompt_version'],
             usage: $usage,
+            segments: array_map(fn (array $s) => [
+                'text' => AiText::normalize($s['text']),
+                'citations' => array_map(fn (array $c) => ['cited_text' => AiText::normalize($c['cited_text'])] + $c, $s['citations']),
+            ], $reply->segments),
         );
     }
 

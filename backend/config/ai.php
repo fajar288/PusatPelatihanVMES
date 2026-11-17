@@ -44,11 +44,6 @@ return [
         'claude-haiku-5-5' => ['input' => 0.10, 'output' => 0.50, 'cache_read' => 0.01, 'cache_write' => 0.125],
     ],
 
-    // Asisten Belajar portal member (kerangka). Tetap 503 "Belum tersedia" sampai asisten sungguhan dibuat.
-    'assistant' => [
-        'enabled' => (bool) env('AI_CHATBOT_ENABLED', false),
-    ],
-
     /*
      * Daftar use case. method: "statistical" (tanpa LLM, deterministik) atau "llm" (Claude, butuh API key).
      * review: "required" = wajib disetujui admin sebelum tampil ke pengguna; "staff" = hanya tampil ke staf/trainer/
@@ -94,13 +89,19 @@ return [
             'label' => 'Asisten Belajar',
             'description' => 'Menjawab pertanyaan peserta hanya dari materi lesson yang disetujui, dengan sumber.',
             'method' => 'llm',
-            // Memakai flag yang sama dengan kerangka Asisten Belajar di portal member.
+            // Flag AI_CHATBOT_ENABLED dipertahankan dari kerangka Asisten Belajar (tahap sebelumnya), terpisah dari chatbot publik.
             'enabled' => (bool) env('AI_CHATBOT_ENABLED', false),
             'review' => 'logged',
             'metrics' => ['Kualitas jawaban', 'Cakupan sumber', 'Unresolved rate'],
             'baseline' => 'Pertanyaan ke trainer lewat forum diskusi',
             'readiness' => ['published_lessons' => 30],
-        ] + $llm('LMS_ASSISTANT', '2026-11-17.1', 300, 3_000_000, 'low'),
+            // Batas pertanyaan per peserta per hari (di luar batas harian use case).
+            'per_user_daily' => (int) env('AI_LMS_ASSISTANT_PER_USER_DAILY', 20),
+            // Panjang maksimum materi (karakter teks polos) yang dikirim per pertanyaan; course yang lebih panjang
+            // dipotong per lesson dengan prioritas lesson yang sedang dibuka, dan jumlah lesson yang dipakai dicatat.
+            'max_material_chars' => (int) env('AI_LMS_ASSISTANT_MAX_MATERIAL_CHARS', 200_000),
+            'question_max' => 1000,
+        ] + $llm('LMS_ASSISTANT', '2026-11-17.2', 300, 3_000_000, 'low'),
         'corporate_insight' => [
             'label' => 'Insight perusahaan',
             'description' => 'Ringkasan gap kompetensi dan usulan tindakan per organisasi dari angka agregat.',
