@@ -42,6 +42,27 @@ export type TrainerClass = {
   attendanceLabels?: Record<string, string>;
 };
 
+/** Ringkasan satu kelas di /trainer/laporan (GET /trainer/reports). */
+export type TrainerReportClass = {
+  code: string;
+  title: string;
+  status: string;
+  startDate: string;
+  endDate: string;
+  dateLabel: string;
+  endLabel: string;
+  participants: number;
+  dropped: number;
+  attendanceRate: number | null;
+  averageFinalScore: number | null;
+  passed: number;
+  failed: number;
+  notEvaluated: number;
+  completionRate: number | null;
+  lmsAverage: number | null;
+  survey: { invited: number; submitted: number; average: number | null; hidden: boolean; minResponses: number };
+};
+
 export const CLASS_STATUS: Record<string, string> = {
   draft: "Draft", registration_open: "Pendaftaran dibuka", registration_closed: "Pendaftaran ditutup", confirmed: "Terkonfirmasi", ongoing: "Berlangsung", completed: "Selesai", cancelled: "Dibatalkan",
 };

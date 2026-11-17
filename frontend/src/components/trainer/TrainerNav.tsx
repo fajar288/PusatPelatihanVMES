@@ -16,6 +16,7 @@ const ITEMS: { href: string; label: string; icon: IconName }[] = [
   { href: "/trainer/logbook", label: "Logbook", icon: "cal" },
   { href: "/trainer/penilaian", label: "Penilaian", icon: "award" },
   { href: "/trainer/progres", label: "Progres Peserta", icon: "check" },
+  { href: "/trainer/laporan", label: "Laporan", icon: "db" },
   { href: "/trainer/profil", label: "Profil", icon: "users" },
   { href: "/portal", label: "Portal Member", icon: "arr" },
 ];

@@ -24,6 +24,7 @@ use App\Http\Controllers\Api\V1\SurveyController;
 use App\Http\Controllers\Api\V1\TrainerController;
 use App\Http\Controllers\Api\V1\TrainerLmsController;
 use App\Http\Controllers\Api\V1\TrainerMonitoringController;
+use App\Http\Controllers\Api\V1\TrainerReportController;
 use App\Http\Controllers\Api\V1\WaitlistController;
 use App\Http\Controllers\Webhooks\FonnteWebhookController;
 use Illuminate\Http\Request;
@@ -224,6 +225,9 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
             Route::get('/classes/{code}/progress', [TrainerMonitoringController::class, 'progress'])->name('classes.progress');
             Route::get('/classes/{code}/survey', [SurveyController::class, 'trainerReport'])->name('classes.survey');
             Route::get('/classes/{code}/progress/{enrollment}', [TrainerMonitoringController::class, 'participantProgress'])->name('classes.progress.participant');
+            // Laporan kelas yang ditugaskan + ekspor rincian peserta per kelas
+            Route::get('/reports', [TrainerReportController::class, 'index'])->name('reports');
+            Route::get('/reports/{code}/export.{format}', [TrainerReportController::class, 'export'])->name('reports.export');
         });
     });
 });
