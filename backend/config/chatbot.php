@@ -17,7 +17,7 @@ return [
     'max_tokens' => (int) env('CHATBOT_MAX_TOKENS', 8000),
 
     // Versi prompt sistem - dicatat di setiap log (governance: model & prompt/version harus tercatat).
-    'prompt_version' => '2026-11-12.1',
+    'prompt_version' => '2026-11-17.1',
 
     // Batas pemakaian (biaya API dihitung per token).
     'per_ip_per_minute' => (int) env('CHATBOT_PER_IP_PER_MINUTE', 6),

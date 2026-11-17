@@ -95,6 +95,29 @@ class ChatbotTest extends TestCase
         $this->assertDatabaseHas('chat_logs', ['status' => 'unresolved']);
     }
 
+    public function test_reply_is_normalized_without_em_or_en_dash_before_logging_and_sending(): void
+    {
+        $this->enable();
+        $em = "\u{2014}";
+        $en = "\u{2013}";
+        $this->model->text = "Kelas CCNA {$em} batch November {$en} dibuka 17{$en}21 November, pukul 08.00 {$en} 16.00, Senin{$en}Jumat.\n{$em} Biaya Rp 7.500.000";
+
+        $res = $this->ask('Kapan kelas CCNA?')->assertOk()->assertJsonPath('data.status', 'answered');
+
+        $expected = "Kelas CCNA - batch November - dibuka 17-21 November, pukul 08.00-16.00, Senin-Jumat.\n- Biaya Rp 7.500.000";
+        $this->assertSame($expected, $res->json('data.reply'));
+        $this->assertSame($expected, ChatLog::query()->findOrFail($res->json('data.id'))->answer, 'teks yang disimpan sama dengan yang dikirim');
+
+        // Prompt sistem melarang em dash / en dash dan rujukan dokumen internal; promptnya sendiri bersih.
+        $instructions = $this->model->calls[0]['system'][0]['text'];
+        $this->assertStringContainsString('Jangan memakai tanda pisah panjang (em dash) atau tanda pisah sedang (en dash)', $instructions);
+        $this->assertStringContainsString('Jangan menyebut dokumen internal', $instructions);
+        foreach ($this->model->calls[0]['system'] as $block) {
+            $this->assertDoesNotMatchRegularExpression('/[\x{2013}\x{2014}]/u', $block['text']);
+        }
+        $this->assertSame('2026-11-17.1', ChatLog::query()->findOrFail($res->json('data.id'))->prompt_version);
+    }
+
     public function test_refusal_and_errors_fall_back_to_whatsapp(): void
     {
         $this->enable();

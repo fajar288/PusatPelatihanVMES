@@ -48,6 +48,11 @@ Jika 5F, 5G, atau 5H belum digabung ke `main`, kerjakan dulu tahap itu sesuai `d
    - Skor early warning hanya tampil ke staf, trainer, dan perusahaan sponsor, beserta alasannya.
    - Rekomendasi boleh langsung tampil ke member karena risikonya rendah, tetapi tetap dicatat.
    - Setiap keluaran AI di UI diberi label "Dibuat AI" dan tombol umpan balik (membantu atau tidak). Umpan balik ini dipakai sebagai metrik.
+10. **Gaya teks keluaran AI.** Berlaku untuk chatbot publik, Asisten Belajar, narasi insight, dan setiap teks AI lain yang tampil ke pengguna.
+    - Prompt sistem wajib memuat dua larangan: jangan memakai em dash (U+2014) atau en dash (U+2013), dan jangan menyebut dokumen internal (dokumen perencanaan atau spesifikasi, nomor pasal, kode tahap proyek, nama berkas catatan pengembang). Tulis larangan itu dengan kata-kata, jangan menyertakan karakter dash-nya di prompt.
+    - Model tetap bisa melanggar, jadi teks keluaran **selalu** dilewatkan ke `App\Support\Ai\AiText::normalize()` sebelum disimpan (log, `ai_insights`) dan sebelum dikirim ke pengguna. Aturannya deterministik: rentang angka/jam/tanggal jadi `-` tanpa spasi, dash di awal baris jadi butir `- `, pemisah antar kata/kalimat jadi ` - `.
+    - Setiap perubahan prompt menaikkan versi prompt (`prompt_version`) supaya log bisa dibandingkan.
+    - Tes memakai model palsu (contoh: `Tests\Fakes\FakeChatModel`) yang membalas teks berisi em dash dan en dash, lalu memastikan teks yang tersimpan dan yang dikirim sudah bersih. Contoh: `ChatbotTest::test_reply_is_normalized_without_em_or_en_dash_before_logging_and_sending` dan `tests/Unit/AiTextTest.php`.
 
 ## Urutan sub-tahap
 
