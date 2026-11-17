@@ -49,7 +49,13 @@ class AuthController extends Controller
             }
             throw ValidationException::withMessages(['email' => 'Email atau sandi salah.']);
         }
+        if (! $user->isActive()) {
+            // Akun dinonaktifkan admin (menu Pengguna): sandi benar pun tidak mendapat token.
+            AuditLog::record('auth.login_blocked', $user, null, ['reason' => 'deactivated'], null);
+            throw ValidationException::withMessages(['email' => 'Akun ini dinonaktifkan. Hubungi admin PPTI untuk mengaktifkannya kembali.']);
+        }
         $token = $user->createToken($data['device'] ?? 'web')->plainTextToken;
+        $user->forceFill(['last_login_at' => now()])->saveQuietly();
         AuditLog::record('auth.login', $user, null, null, $user);
 
         return response()->json(['token' => $token, 'user' => new UserResource($user->load('member'))]);

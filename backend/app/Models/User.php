@@ -10,6 +10,7 @@ use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -68,6 +69,8 @@ class User extends Authenticatable implements FilamentUser
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'deactivated_at' => 'datetime',
+            'last_login_at' => 'datetime',
         ];
     }
 
@@ -149,7 +152,19 @@ class User extends Authenticatable implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->hasRole(...self::ADMIN_ROLES);
+        return $this->isActive() && $this->hasRole(...self::ADMIN_ROLES);
+    }
+
+    /** Akun aktif: belum dinonaktifkan admin (menu Pengguna). Akun nonaktif tidak bisa login atau memakai token. */
+    public function isActive(): bool
+    {
+        return $this->deactivated_at === null;
+    }
+
+    /** @param  Builder<User>  $query */
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->whereNull('deactivated_at');
     }
 
     public function isSuperAdmin(): bool

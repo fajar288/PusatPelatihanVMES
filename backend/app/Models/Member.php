@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 /** Identitas digital peserta (PRD §5.6): satu akun = satu member, nomor member tetap. */
 class Member extends Model
@@ -15,7 +16,7 @@ class Member extends Model
 
     protected function casts(): array
     {
-        return ['birth_date' => 'date', 'communication_pref' => 'array'];
+        return ['birth_date' => 'date', 'alumni_since' => 'date', 'communication_pref' => 'array'];
     }
 
     public function user(): BelongsTo
@@ -26,6 +27,18 @@ class Member extends Model
     public function registrations(): HasMany
     {
         return $this->hasMany(Registration::class)->latest();
+    }
+
+    /** Sertifikat milik member (semua status). */
+    public function certificates(): HasMany
+    {
+        return $this->hasMany(Certificate::class);
+    }
+
+    /** Invoice dari pendaftaran member (invoice permintaan training perusahaan tidak termasuk). */
+    public function invoices(): HasManyThrough
+    {
+        return $this->hasManyThrough(Invoice::class, Registration::class, 'member_id', 'registration_id');
     }
 
     public function enrollments(): HasMany
