@@ -14,7 +14,10 @@
 
     {{-- Gaya ter-scope: CSS panel Filament sudah dikompilasi sehingga utilitas Tailwind kustom di view tidak tersedia. --}}
     <style>
-        .ppti-lp { display: grid; gap: 1.5rem; }
+        /* Kolom grid minmax(0, 1fr) + min-width: 0 pada anak: tanpa ini item grid ikut melebar mengikuti tabel
+           (sel nowrap) sehingga .ppti-lp-tablewrap tidak pernah memotong dan kolom kanan hilang tanpa scrollbar. */
+        .ppti-lp { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
+        .ppti-lp > *, .ppti-lp .fi-section-content-ctn, .ppti-lp .fi-section-content { min-width: 0; }
         .ppti-lp-range { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 1rem; }
         .ppti-lp-field { display: grid; gap: .375rem; min-width: 12rem; }
         .ppti-lp-field > span { font-size: .875rem; font-weight: 500; color: var(--gray-950); }
@@ -26,7 +29,22 @@
         .ppti-lp-export-title { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; font-size: .9375rem; font-weight: 600; color: var(--gray-950); }
         .ppti-lp-export-desc { margin-top: .25rem; font-size: .8125rem; line-height: 1.45; color: var(--gray-500); }
         .ppti-lp-export-actions { display: flex; flex-wrap: wrap; gap: .5rem; }
-        .ppti-lp-tablewrap { overflow-x: auto; border: 1px solid var(--gray-200); border-radius: .75rem; }
+        .ppti-lp-tablewrap { max-width: 100%; overflow-x: auto; border: 1px solid var(--gray-200); border-radius: .75rem; }
+        /* Bayangan tepi = petunjuk masih ada kolom di kiri/kanan (tetap terlihat walau browser memakai scrollbar overlay). */
+        .ppti-lp-tablewrap {
+            background:
+                linear-gradient(to right, #fff 30%, rgb(255 255 255 / 0)) left center / 2.5rem 100% no-repeat local,
+                linear-gradient(to left, #fff 30%, rgb(255 255 255 / 0)) right center / 2.5rem 100% no-repeat local,
+                radial-gradient(farthest-side at 0 50%, rgb(0 0 0 / .14), transparent) left center / .875rem 100% no-repeat scroll,
+                radial-gradient(farthest-side at 100% 50%, rgb(0 0 0 / .14), transparent) right center / .875rem 100% no-repeat scroll;
+        }
+        .ppti-lp-tablewrap:focus-visible { outline: 2px solid var(--primary-500); outline-offset: 2px; }
+        /* Scrollbar selalu terlihat (juga di sistem dengan scrollbar overlay); Firefox memakai scrollbar-color. */
+        .ppti-lp-tablewrap::-webkit-scrollbar { height: 10px; }
+        .ppti-lp-tablewrap::-webkit-scrollbar-track { background: var(--gray-100); border-radius: 0 0 .75rem .75rem; }
+        .ppti-lp-tablewrap::-webkit-scrollbar-thumb { background: var(--gray-400); border: 2px solid var(--gray-100); border-radius: 999px; }
+        .ppti-lp-tablewrap::-webkit-scrollbar-thumb:hover { background: var(--gray-500); }
+        @supports not selector(::-webkit-scrollbar) { .ppti-lp-tablewrap { scrollbar-width: thin; scrollbar-color: var(--gray-400) var(--gray-100); } }
         .ppti-lp-table { width: 100%; border-collapse: collapse; font-size: .8125rem; }
         .ppti-lp-table th { padding: .625rem .875rem; text-align: left; white-space: nowrap; font-size: .75rem; font-weight: 600; color: var(--gray-600); background: var(--gray-50); border-bottom: 1px solid var(--gray-200); }
         .ppti-lp-table td { padding: .625rem .875rem; white-space: nowrap; color: var(--gray-950); border-bottom: 1px solid var(--gray-100); vertical-align: top; }
@@ -38,7 +56,18 @@
         .ppti-lp-empty { font-size: .875rem; color: var(--gray-500); }
         .dark .ppti-lp-field > span, .dark .ppti-lp-export-title, .dark .ppti-lp-table td { color: #fff; }
         .dark .ppti-lp-export { background: rgba(255, 255, 255, .03); border-color: rgba(255, 255, 255, .1); }
-        .dark .ppti-lp-tablewrap { border-color: rgba(255, 255, 255, .1); }
+        .dark .ppti-lp-tablewrap {
+            border-color: rgba(255, 255, 255, .1);
+            background:
+                linear-gradient(to right, var(--gray-900) 30%, transparent) left center / 2.5rem 100% no-repeat local,
+                linear-gradient(to left, var(--gray-900) 30%, transparent) right center / 2.5rem 100% no-repeat local,
+                radial-gradient(farthest-side at 0 50%, rgb(0 0 0 / .55), transparent) left center / .875rem 100% no-repeat scroll,
+                radial-gradient(farthest-side at 100% 50%, rgb(0 0 0 / .55), transparent) right center / .875rem 100% no-repeat scroll;
+        }
+        .dark .ppti-lp-tablewrap::-webkit-scrollbar-track { background: rgba(255, 255, 255, .05); }
+        .dark .ppti-lp-tablewrap::-webkit-scrollbar-thumb { background: var(--gray-600); border-color: transparent; }
+        .dark .ppti-lp-tablewrap::-webkit-scrollbar-thumb:hover { background: var(--gray-500); }
+        @supports not selector(::-webkit-scrollbar) { .dark .ppti-lp-tablewrap { scrollbar-color: var(--gray-600) rgba(255, 255, 255, .05); } }
         .dark .ppti-lp-table th { background: rgba(255, 255, 255, .05); color: var(--gray-300); border-color: rgba(255, 255, 255, .1); }
         .dark .ppti-lp-table td { border-color: rgba(255, 255, 255, .06); }
         .dark .ppti-lp-table tbody tr:hover td { background: rgba(255, 255, 255, .03); }
@@ -105,7 +134,7 @@
             @if (empty($monthly))
                 <p class="ppti-lp-empty">Belum ada pembayaran terverifikasi.</p>
             @else
-                <div class="ppti-lp-tablewrap ppti-lp-month">
+                <div class="ppti-lp-tablewrap ppti-lp-month" tabindex="0" role="region" aria-label="Tabel pendapatan per bulan">
                     <table class="ppti-lp-table">
                         <thead>
                             <tr>
@@ -137,7 +166,7 @@
                     <p class="ppti-lp-empty">Belum ada data.</p>
                 @else
                     @php $numeric = collect(array_keys($rows->first()))->mapWithKeys(fn ($h) => [$h => $rows->contains(fn ($r) => $isNum($r[$h]))]); @endphp
-                    <div class="ppti-lp-tablewrap">
+                    <div class="ppti-lp-tablewrap" tabindex="0" role="region" aria-label="{{ 'Pratinjau ' . $types[$type] . ', geser ke samping untuk kolom lainnya' }}">
                         <table class="ppti-lp-table">
                             <thead>
                                 <tr>

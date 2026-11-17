@@ -9,6 +9,7 @@ import { BackLink, MetaList, PortalCard } from "@/components/portal/ui";
 import Icon from "@/components/ui/Icon";
 import { api, ApiRequestError, requireUser } from "@/lib/auth";
 import { type DiscussionPostInfo, LESSON_ICON, type LessonDetail, type ResourceInfo } from "@/lib/lms";
+import { scrollableHtml } from "@/lib/scrollable-html";
 
 export const instant = false;
 
@@ -55,7 +56,7 @@ export default async function LessonPage({ params }: PageProps<"/portal/belajar/
 
         {l.type === "video" && <VideoPlayer lesson={l} />}
 
-        {l.body && <div className="pb lbody" dangerouslySetInnerHTML={{ __html: l.body }} />}
+        {l.body && <div className="pb lbody" dangerouslySetInnerHTML={{ __html: scrollableHtml(l.body) }} />}
 
         {l.type === "link" && l.link?.url && (
           <p style={{ marginTop: 16 }}>

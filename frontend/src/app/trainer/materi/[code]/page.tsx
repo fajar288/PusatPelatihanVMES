@@ -4,6 +4,7 @@ import { BackLink, MetaList, PortalCard } from "@/components/portal/ui";
 import { api, ApiRequestError } from "@/lib/auth";
 import { LESSON_ICON, type TrainerLearning } from "@/lib/lms";
 import { requireTrainer } from "@/lib/trainer";
+import { ScrollX } from "@/components/ui/ScrollX";
 
 export const instant = false;
 
@@ -38,48 +39,50 @@ export default async function TrainerClassMaterials({ params }: PageProps<"/trai
         {d.participants.length === 0 ? (
           <p className="fh">Belum ada peserta.</p>
         ) : (
-          <table className="att" style={{ marginTop: 12 }}>
-            <thead>
-              <tr>
-                <th>Peserta</th>
-                <th>Kehadiran</th>
-                <th>Materi</th>
-                <th>Kuis</th>
-                <th>Tugas</th>
-                <th>Terakhir aktif</th>
-              </tr>
-            </thead>
-            <tbody>
-              {d.participants.map((p) => (
-                <tr key={p.enrollment_id}>
-                  <td>
-                    <b>{p.name}</b>
-                    <small>{p.email}</small>
-                  </td>
-                  <td>{p.attendance_percent === null ? "-" : `${p.attendance_percent}%`}</td>
-                  <td>
-                    <b>{p.percent}%</b>
-                    <small>
-                      {p.lessons_completed}/{p.lessons_total} lesson
-                    </small>
-                  </td>
-                  <td>
-                    <b>{p.quiz_avg === null ? "-" : `${p.quiz_avg}%`}</b>
-                    <small>
-                      {p.quiz_done}/{p.quiz_total} dikerjakan
-                    </small>
-                  </td>
-                  <td>
-                    <b>
-                      {p.assignments_submitted}/{p.assignments_total}
-                    </b>
-                    <small>{p.assignments_graded} dinilai</small>
-                  </td>
-                  <td>{p.last_seen_at ? new Date(p.last_seen_at).toLocaleDateString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : "-"}</td>
+          <ScrollX label="Tabel progres belajar peserta" style={{ marginTop: 12 }}>
+            <table className="att">
+              <thead>
+                <tr>
+                  <th>Peserta</th>
+                  <th>Kehadiran</th>
+                  <th>Materi</th>
+                  <th>Kuis</th>
+                  <th>Tugas</th>
+                  <th>Terakhir aktif</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {d.participants.map((p) => (
+                  <tr key={p.enrollment_id}>
+                    <td>
+                      <b>{p.name}</b>
+                      <small>{p.email}</small>
+                    </td>
+                    <td>{p.attendance_percent === null ? "-" : `${p.attendance_percent}%`}</td>
+                    <td>
+                      <b>{p.percent}%</b>
+                      <small>
+                        {p.lessons_completed}/{p.lessons_total} lesson
+                      </small>
+                    </td>
+                    <td>
+                      <b>{p.quiz_avg === null ? "-" : `${p.quiz_avg}%`}</b>
+                      <small>
+                        {p.quiz_done}/{p.quiz_total} dikerjakan
+                      </small>
+                    </td>
+                    <td>
+                      <b>
+                        {p.assignments_submitted}/{p.assignments_total}
+                      </b>
+                      <small>{p.assignments_graded} dinilai</small>
+                    </td>
+                    <td>{p.last_seen_at ? new Date(p.last_seen_at).toLocaleDateString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : "-"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </ScrollX>
         )}
       </PortalCard>
 

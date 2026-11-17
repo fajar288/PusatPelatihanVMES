@@ -6,6 +6,7 @@ import { type FormState } from "@/lib/actions/auth";
 import { saveAssessmentAction } from "@/lib/actions/monitoring";
 import { MetaList } from "@/components/portal/ui";
 import type { AssessmentsData } from "@/lib/monitoring";
+import { ScrollX } from "@/components/ui/ScrollX";
 
 type Item = AssessmentsData["participants"][number];
 
@@ -88,49 +89,51 @@ export default function AssessmentForm({ code, item }: { code: string; item: Ite
         <form className="ff" action={action} style={{ marginTop: 14 }}>
           <input type="hidden" name="code" value={code} />
           <input type="hidden" name="enrollment" value={item.participant.id} />
-          <table className="att asm">
-            <thead>
-              <tr>
-                <th>Kriteria</th>
-                <th>Skor</th>
-                <th>Catatan</th>
-              </tr>
-            </thead>
-            <tbody>
-              {a.criteria.map((c) => {
-                const v = scores[c.id] ?? "";
-                const lvl = c.levels.find((l) => String(l.score) === v);
-                return (
-                  <tr key={c.id}>
-                    <td>
-                      <b>{c.name}</b>
-                      {c.competency && <small>Kompetensi: {c.competency}</small>}
-                      {c.description && <small>{c.description}</small>}
-                      {c.weight !== 1 && <small>Bobot {c.weight}</small>}
-                    </td>
-                    <td>
-                      {c.levels.length ? (
-                        <select name={`sc_${c.id}`} value={v} onChange={(e) => setScores({ ...scores, [c.id]: e.target.value })}>
-                          <option value="">-</option>
-                          {c.levels.map((l) => (
-                            <option key={l.score} value={l.score}>
-                              {l.score} - {l.label}
-                            </option>
-                          ))}
-                        </select>
-                      ) : (
-                        <input name={`sc_${c.id}`} type="number" min={0} max={c.maxScore} step="0.5" value={v} onChange={(e) => setScores({ ...scores, [c.id]: e.target.value })} placeholder={`0-${c.maxScore}`} />
-                      )}
-                      {lvl?.description ? <small>{lvl.description}</small> : <small>maks. {c.maxScore}</small>}
-                    </td>
-                    <td>
-                      <input name={`nt_${c.id}`} defaultValue={c.note ?? ""} placeholder="opsional" maxLength={500} />
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+          <ScrollX label="Tabel skor rubrik penilaian">
+            <table className="att asm">
+              <thead>
+                <tr>
+                  <th>Kriteria</th>
+                  <th>Skor</th>
+                  <th>Catatan</th>
+                </tr>
+              </thead>
+              <tbody>
+                {a.criteria.map((c) => {
+                  const v = scores[c.id] ?? "";
+                  const lvl = c.levels.find((l) => String(l.score) === v);
+                  return (
+                    <tr key={c.id}>
+                      <td>
+                        <b>{c.name}</b>
+                        {c.competency && <small>Kompetensi: {c.competency}</small>}
+                        {c.description && <small>{c.description}</small>}
+                        {c.weight !== 1 && <small>Bobot {c.weight}</small>}
+                      </td>
+                      <td>
+                        {c.levels.length ? (
+                          <select name={`sc_${c.id}`} value={v} onChange={(e) => setScores({ ...scores, [c.id]: e.target.value })}>
+                            <option value="">-</option>
+                            {c.levels.map((l) => (
+                              <option key={l.score} value={l.score}>
+                                {l.score} - {l.label}
+                              </option>
+                            ))}
+                          </select>
+                        ) : (
+                          <input name={`sc_${c.id}`} type="number" min={0} max={c.maxScore} step="0.5" value={v} onChange={(e) => setScores({ ...scores, [c.id]: e.target.value })} placeholder={`0-${c.maxScore}`} />
+                        )}
+                        {lvl?.description ? <small>{lvl.description}</small> : <small>maks. {c.maxScore}</small>}
+                      </td>
+                      <td>
+                        <input name={`nt_${c.id}`} defaultValue={c.note ?? ""} placeholder="opsional" maxLength={500} />
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </ScrollX>
           <p className="fh">
             Perkiraan total: <b>{live === null ? "-" : `${live}%`}</b> (ambang kompeten {a.threshold}%)
           </p>

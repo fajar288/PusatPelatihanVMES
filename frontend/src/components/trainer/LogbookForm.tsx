@@ -5,6 +5,7 @@ import { FormMessage } from "@/components/auth/AuthShell";
 import { type FormState } from "@/lib/actions/auth";
 import { saveLogbookAction } from "@/lib/actions/monitoring";
 import type { LogbookInfo, LogbooksData } from "@/lib/monitoring";
+import { ScrollX } from "@/components/ui/ScrollX";
 
 /** Form logbook per pertemuan (buat/ubah): data pertemuan, isi logbook, catatan per peserta, dokumentasi. */
 export default function LogbookForm({ d, logbook, onDone }: { d: LogbooksData; logbook?: LogbookInfo | null; onDone?: () => void }) {
@@ -77,41 +78,43 @@ export default function LogbookForm({ d, logbook, onDone }: { d: LogbooksData; l
           Catatan per peserta <small>(status praktik &amp; observasi individual; tampil di progres peserta setelah logbook divalidasi)</small>
         </label>
         {d.participants.length ? (
-          <table className="att">
-            <thead>
-              <tr>
-                <th>Peserta</th>
-                <th>Praktik</th>
-                <th>Observasi</th>
-              </tr>
-            </thead>
-            <tbody>
-              {d.participants.map((p) => {
-                const e = entries.get(p.id);
-                return (
-                  <tr key={p.id}>
-                    <td>
-                      <b>{p.name}</b>
-                      <small>{p.email ?? ""}</small>
-                    </td>
-                    <td>
-                      <select name={`ps_${p.id}`} defaultValue={e?.practiceStatus ?? ""}>
-                        <option value="">-</option>
-                        {(Object.keys(d.practiceLabels) as (keyof typeof d.practiceLabels)[]).map((k) => (
-                          <option key={k} value={k}>
-                            {d.practiceLabels[k]}
-                          </option>
-                        ))}
-                      </select>
-                    </td>
-                    <td>
-                      <input name={`ob_${p.id}`} defaultValue={e?.observation ?? ""} placeholder="opsional" maxLength={2000} />
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+          <ScrollX label="Tabel catatan per peserta">
+            <table className="att">
+              <thead>
+                <tr>
+                  <th>Peserta</th>
+                  <th>Praktik</th>
+                  <th>Observasi</th>
+                </tr>
+              </thead>
+              <tbody>
+                {d.participants.map((p) => {
+                  const e = entries.get(p.id);
+                  return (
+                    <tr key={p.id}>
+                      <td>
+                        <b>{p.name}</b>
+                        <small>{p.email ?? ""}</small>
+                      </td>
+                      <td>
+                        <select name={`ps_${p.id}`} defaultValue={e?.practiceStatus ?? ""}>
+                          <option value="">-</option>
+                          {(Object.keys(d.practiceLabels) as (keyof typeof d.practiceLabels)[]).map((k) => (
+                            <option key={k} value={k}>
+                              {d.practiceLabels[k]}
+                            </option>
+                          ))}
+                        </select>
+                      </td>
+                      <td>
+                        <input name={`ob_${p.id}`} defaultValue={e?.observation ?? ""} placeholder="opsional" maxLength={2000} />
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </ScrollX>
         ) : (
           <p className="fh">Belum ada peserta di kelas ini.</p>
         )}

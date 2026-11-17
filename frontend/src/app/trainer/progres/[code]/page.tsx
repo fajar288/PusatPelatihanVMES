@@ -4,6 +4,7 @@ import { BackLink, PortalCard } from "@/components/portal/ui";
 import { api, ApiRequestError } from "@/lib/auth";
 import { type ClassOverview, ENROLLMENT_STATUS, pct } from "@/lib/monitoring";
 import { requireTrainer } from "@/lib/trainer";
+import { ScrollX } from "@/components/ui/ScrollX";
 
 export const instant = false;
 
@@ -63,7 +64,7 @@ export default async function TrainerClassProgress({ params }: PageProps<"/train
         {n === 0 ? (
           <p className="fh">Belum ada peserta.</p>
         ) : (
-          <div style={{ overflowX: "auto" }}>
+          <ScrollX label="Tabel progres peserta">
             <table className="att lqm" style={{ marginTop: 12 }}>
               <thead>
                 <tr>
@@ -126,7 +127,7 @@ export default async function TrainerClassProgress({ params }: PageProps<"/train
                 ))}
               </tbody>
             </table>
-          </div>
+          </ScrollX>
         )}
       </PortalCard>
     </>
