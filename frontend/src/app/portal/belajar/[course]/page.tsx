@@ -5,6 +5,7 @@ import { LessonItem, ProgressBar } from "@/components/lms/ui";
 import { BackLink, MetaList, PortalCard } from "@/components/portal/ui";
 import { api, ApiRequestError, requireUser } from "@/lib/auth";
 import type { CourseDetail, DiscussionPostInfo } from "@/lib/lms";
+import type { AssistantStatus } from "@/lib/portal-types";
 
 export const instant = false;
 
@@ -30,6 +31,9 @@ export default async function CoursePage({ params }: PageProps<"/portal/belajar/
     );
   }
   const posts = (await api<{ data: DiscussionPostInfo[] }>(`/me/learning/${encodeURIComponent(course)}/discussions`, { token })).data;
+  const assistant = await api<{ data: AssistantStatus }>("/me/assistant?brief=1", { token })
+    .then((r) => r.data.available)
+    .catch(() => false);
 
   return (
     <>
@@ -73,7 +77,17 @@ export default async function CoursePage({ params }: PageProps<"/portal/belajar/
         </PortalCard>
       ))}
 
-      <PortalCard title="Forum & tanya jawab">
+      <PortalCard
+        title="Forum & tanya jawab"
+        id="forum"
+        action={
+          assistant ? (
+            <Link className="jb" href={`/portal/asisten?course=${encodeURIComponent(c.slug)}`}>
+              Tanya Asisten Belajar
+            </Link>
+          ) : undefined
+        }
+      >
         <Discussion course={c.slug} posts={posts} back={`/portal/belajar/${c.slug}`} />
       </PortalCard>
     </>

@@ -9,6 +9,7 @@ import { BackLink, MetaList, PortalCard } from "@/components/portal/ui";
 import Icon from "@/components/ui/Icon";
 import { api, ApiRequestError, requireUser } from "@/lib/auth";
 import { type DiscussionPostInfo, LESSON_ICON, type LessonDetail, type ResourceInfo } from "@/lib/lms";
+import type { AssistantStatus } from "@/lib/portal-types";
 import { scrollableHtml } from "@/lib/scrollable-html";
 
 export const instant = false;
@@ -37,6 +38,13 @@ export default async function LessonPage({ params }: PageProps<"/portal/belajar/
   }
   const posts = (await api<{ data: DiscussionPostInfo[] }>(`/me/learning/${encodeURIComponent(course)}/discussions?lesson=${l.id}`, { token })).data;
   const canMark = ["text", "document", "link", "video"].includes(l.type);
+  // Asisten Belajar hanya memakai materi teks lesson (bukan kuis/tugas), jadi tautannya hanya di lesson seperti itu.
+  const assistant =
+    canMark && !!l.body
+      ? await api<{ data: AssistantStatus }>("/me/assistant?brief=1", { token })
+          .then((r) => r.data.available)
+          .catch(() => false)
+      : false;
 
   return (
     <>
@@ -107,7 +115,17 @@ export default async function LessonPage({ params }: PageProps<"/portal/belajar/
         )}
       </nav>
 
-      <PortalCard title="Tanya jawab materi ini">
+      <PortalCard
+        title="Tanya jawab materi ini"
+        id="forum"
+        action={
+          assistant ? (
+            <Link className="jb" href={`/portal/asisten?course=${encodeURIComponent(course)}&lesson=${l.id}`}>
+              Tanya Asisten Belajar
+            </Link>
+          ) : undefined
+        }
+      >
         <Discussion course={course} lesson={l.id} posts={posts} back={back} />
       </PortalCard>
     </>

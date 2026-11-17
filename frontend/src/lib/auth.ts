@@ -6,7 +6,8 @@ import type { PortalUser } from "./portal-types";
 export const TOKEN_COOKIE = "ppti_token";
 const API = (process.env.API_URL_INTERNAL ?? process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1").replace(/\/$/, "");
 
-export type ApiError = { status: number; message: string; errors: Record<string, string[]> };
+/** `code` diisi bila API membalas bentuk {error:{code,message}} (mis. ai_unavailable, ai_limit). */
+export type ApiError = { status: number; message: string; errors: Record<string, string[]>; code?: string };
 
 export class ApiRequestError extends Error {
   constructor(public readonly error: ApiError) {
@@ -29,8 +30,8 @@ export async function api<T>(path: string, init: RequestInit & { token?: string 
     data = null;
   }
   if (!res.ok) {
-    const d = (data ?? {}) as { message?: string; errors?: Record<string, string[]> };
-    throw new ApiRequestError({ status: res.status, message: d.message ?? `Permintaan gagal (${res.status})`, errors: d.errors ?? {} });
+    const d = (data ?? {}) as { message?: string; errors?: Record<string, string[]>; error?: { code?: string; message?: string } };
+    throw new ApiRequestError({ status: res.status, message: d.message ?? d.error?.message ?? `Permintaan gagal (${res.status})`, errors: d.errors ?? {}, code: d.error?.code });
   }
   return data as T;
 }
