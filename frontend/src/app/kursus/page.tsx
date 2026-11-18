@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v) ?? "";
 
-/** Membaca query string (?q=, ?kategori=, ?mode=, ?urut=) - harus di dalam <Suspense> karena cacheComponents aktif. */
+/** Membaca query string (?q=, ?kategori=, ?mode=, ?level=, ?bulan=, ?urut=) - harus di dalam <Suspense> karena cacheComponents aktif. */
 async function CatalogFromParams({ searchParams }: Pick<PageProps<"/kursus">, "searchParams">) {
   const [sp, pk] = await Promise.all([searchParams, getPackages()]);
   return (
@@ -22,19 +22,21 @@ async function CatalogFromParams({ searchParams }: Pick<PageProps<"/kursus">, "s
       courses={pk.items}
       categories={pk.categories}
       modes={pk.modes}
-      initial={{ q: first(sp.q), category: first(sp.kategori), mode: first(sp.mode), sort: first(sp.urut) as SortKey }}
+      levels={pk.levels}
+      months={pk.months}
+      initial={{ q: first(sp.q), category: first(sp.kategori), mode: first(sp.mode), level: first(sp.level), month: first(sp.bulan), sort: first(sp.urut) as SortKey }}
     />
   );
 }
 
 async function CatalogStatic() {
   const pk = await getPackages();
-  return <CourseCatalog courses={pk.items} categories={pk.categories} modes={pk.modes} />;
+  return <CourseCatalog courses={pk.items} categories={pk.categories} modes={pk.modes} levels={pk.levels} months={pk.months} />;
 }
 
 /**
  * /kursus - katalog training (clone `/category/kursus/` website lama, body class g-kursus):
- * hero `.cath` → bar `.catb` (cari, kategori, mode, urutan) → grid `.list` kartu `.cc`.
+ * hero `.cath` → bar `.catb` (cari, kategori, mode, level, jadwal, urutan) → grid `.list` kartu `.cc`.
  * Data dari GET /api/v1/packages (cache); fallback Suspense = katalog tanpa filter (markup sama).
  */
 export default function KursusPage({ searchParams }: PageProps<"/kursus">) {

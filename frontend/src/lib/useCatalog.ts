@@ -12,6 +12,9 @@ export type CatalogItem = {
   pop: boolean;
   t: string;
   d: number;
+  /** Tambahan katalog kursus (bukan dari tema asli): level & bulan mulai jadwal (YYYY-MM). */
+  lvl?: string;
+  months?: string[];
 };
 
 export function sortItems<T>(list: T[], get: (x: T) => CatalogItem, m: SortKey): T[] {
@@ -26,18 +29,32 @@ export function sortItems<T>(list: T[], get: (x: T) => CatalogItem, m: SortKey):
 }
 
 /** State cari/filter/urut + daftar hasil, logika identik dengan katalog website lama. */
-export function useCatalog<T>(items: T[], get: (x: T) => CatalogItem, initial: Partial<CatalogFilter> | undefined, allowed: { categories: string[]; modes: string[]; sorts: SortKey[] }) {
+export function useCatalog<T>(
+  items: T[],
+  get: (x: T) => CatalogItem,
+  initial: Partial<CatalogFilter> | undefined,
+  allowed: { categories: string[]; modes: string[]; sorts: SortKey[]; levels?: string[]; months?: string[] },
+) {
+  const pick = (v: string | undefined, list: string[] | undefined) => (v && list?.includes(v) ? v : "");
   const [filter, setFilter] = useState<CatalogFilter>({
     q: initial?.q ?? "",
-    category: allowed.categories.includes(initial?.category ?? "") ? (initial!.category as string) : "",
-    mode: allowed.modes.includes(initial?.mode ?? "") ? (initial!.mode as string) : "",
+    category: pick(initial?.category, allowed.categories),
+    mode: pick(initial?.mode, allowed.modes),
+    level: pick(initial?.level, allowed.levels),
+    month: pick(initial?.month, allowed.months),
     sort: allowed.sorts.includes(initial?.sort as SortKey) ? (initial!.sort as SortKey) : "new",
   });
   const visible = useMemo(() => {
     const t = filter.q.trim().toLowerCase();
     const ok = items.filter((it) => {
       const a = get(it);
-      return (!t || a.q.includes(t)) && (!filter.category || a.cat === filter.category) && (!filter.mode || a.mode === filter.mode);
+      return (
+        (!t || a.q.includes(t)) &&
+        (!filter.category || a.cat === filter.category) &&
+        (!filter.mode || a.mode === filter.mode) &&
+        (!filter.level || a.lvl === filter.level) &&
+        (!filter.month || (a.months ?? []).includes(filter.month))
+      );
     });
     return sortItems(ok, get, filter.sort);
   }, [items, get, filter]);

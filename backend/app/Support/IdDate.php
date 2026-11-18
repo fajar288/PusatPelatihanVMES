@@ -24,4 +24,10 @@ final class IdDate
     {
         return $d ? 'Batch '.$d->copy()->locale('id')->translatedFormat('F') : null;
     }
+
+    /** "Desember 2026" */
+    public static function monthYear(?CarbonInterface $d): ?string
+    {
+        return $d?->copy()->locale('id')->translatedFormat('F Y');
+    }
 }

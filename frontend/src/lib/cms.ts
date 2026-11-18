@@ -7,8 +7,12 @@ import { cacheLife, cacheTag } from "next/cache";
 import type { PostSummary } from "@/data/articles";
 import type { Course } from "@/data/courses";
 import type { Schedule } from "@/data/schedules";
+<<<<<<< HEAD
 import type { Testimonial } from "@/data/testimonials";
 import type { CmsPage, CompanyProfile, HomeData, MenuData, Package, Post, PublicPartner, ScheduleDetail, SearchResult, SiteSettings } from "./cms-types";
+=======
+import type { CatalogMonth, CmsPage, CompanyProfile, HomeData, MenuData, Package, Post, ScheduleDetail, SearchResult, SiteSettings } from "./cms-types";
+>>>>>>> origin/main
 import { fallback } from "./fallback";
 
 const BASE = (process.env.API_URL_INTERNAL ?? process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1").replace(/\/$/, "");
@@ -70,13 +74,16 @@ export async function getHome(): Promise<HomeData> {
   };
 }
 
-export async function getPackages(): Promise<{ items: Package[]; categories: string[]; modes: string[] }> {
+export type PackageCatalog = { items: Package[]; categories: string[]; modes: string[]; levels: string[]; months: CatalogMonth[] };
+
+export async function getPackages(): Promise<PackageCatalog> {
   "use cache";
   cacheLife("hours");
   cacheTag("cms", "packages");
-  const r = await api<{ data: Package[]; meta: { categories: string[]; modes: string[] } }>("/packages");
+  const r = await api<{ data: Package[]; meta: { categories: string[]; modes: string[]; levels?: string[]; months?: CatalogMonth[] } }>("/packages");
   if (!r.ok) return fallback.packages();
-  return { items: r.data.data.map(course), categories: r.data.meta?.categories ?? [], modes: r.data.meta?.modes ?? [] };
+  const m = r.data.meta;
+  return { items: r.data.data.map(course), categories: m?.categories ?? [], modes: m?.modes ?? [], levels: m?.levels ?? [], months: m?.months ?? [] };
 }
 
 export async function getPackage(slug: string): Promise<Package | null> {
