@@ -110,6 +110,7 @@ class AppServiceProvider extends ServiceProvider
         ]);
         RateLimiter::for('public-form', fn (Request $request) => Limit::perMinute(10)->by('public-form:'.($request->user()?->id ?: $request->ip())));
         RateLimiter::for('verify-resend', fn (Request $request) => Limit::perMinute(3)->by('verify-resend:'.($request->user()?->id ?: $request->ip())));
+        RateLimiter::for('data-export', fn (Request $request) => Limit::perMinute(6)->by('data-export:'.($request->user()?->id ?: $request->ip())));
         RateLimiter::for('payment-proof', fn (Request $request) => Limit::perMinute(10)->by('payment-proof:'.($request->user()?->id ?: $request->ip())));
         RateLimiter::for('registration-documents', fn (Request $request) => Limit::perMinute(10)->by('reg-docs:'.($request->user()?->id ?: $request->ip())));
         RateLimiter::for('member-photo', fn (Request $request) => Limit::perMinute(6)->by('member-photo:'.($request->user()?->id ?: $request->ip())));

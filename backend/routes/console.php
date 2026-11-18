@@ -20,6 +20,7 @@ use App\Services\IdentityMatchingService;
 use App\Services\InvoiceService;
 use App\Services\NotificationDispatcher;
 use App\Services\NotificationEvents;
+use App\Services\PrivacyService;
 use App\Services\SponsorshipService;
 use App\Services\SurveyService;
 use App\Services\TrainingRequestService;
@@ -341,3 +342,10 @@ Artisan::command('files:privatize {--dry-run : hanya tampilkan jumlah berkas yan
     }
     $this->info($this->option('dry-run') ? 'Mode uji: tidak ada berkas yang dipindah.' : "$moved berkas dipindah ke disk privat.");
 })->purpose('Pindahkan bukti bayar, tugas, logbook, dan materi LMS lama ke disk privat');
+// Retensi data pribadi (config/privacy.php, semua aturan mati bawaan sampai kebijakan PPTI ditetapkan).
+Artisan::command('privacy:prune {--dry-run : hanya hitung data yang akan diproses}', function (PrivacyService $privacy) {
+    foreach ($privacy->prune((bool) $this->option('dry-run')) as $rule => $count) {
+        $this->line(sprintf('%-24s %s', $rule, $count === null ? 'mati (atur di .env)' : $count));
+    }
+})->purpose('Jalankan aturan retensi data pribadi yang diaktifkan');
+Schedule::command('privacy:prune')->dailyAt('02:30');

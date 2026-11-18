@@ -75,7 +75,7 @@ export default function AttendanceForm({ cls }: { cls: TrainerClass }) {
                   <small>{p.email ?? ""}</small>
                 </td>
                 <td>
-                  <select name={`att_${p.id}`} defaultValue={p.attendance[String(sessionNo)] ?? ""} key={`${p.id}-${sessionNo}`}>
+                  <select name={`att_${p.id}`} aria-label={`Kehadiran ${p.name}${session ? ` sesi ${session.no}` : ""}`} defaultValue={p.attendance[String(sessionNo)] ?? ""} key={`${p.id}-${sessionNo}`}>
                     <option value="">(belum)</option>
                     {OPTIONS.map(([v, l]) => (
                       <option key={v} value={v}>
@@ -85,7 +85,7 @@ export default function AttendanceForm({ cls }: { cls: TrainerClass }) {
                   </select>
                 </td>
                 <td>
-                  <input name={`note_${p.id}`} placeholder="opsional" />
+                  <input name={`note_${p.id}`} aria-label={`Catatan kehadiran ${p.name}`} placeholder="opsional" />
                 </td>
                 <td>{p.attendancePercent === null ? "-" : `${p.attendancePercent}%`}</td>
               </tr>
