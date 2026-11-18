@@ -16,10 +16,8 @@ export default function About({ about, youtubeId }: { about: AboutData; youtubeI
           />
         </div>
         <div className="tkt">
-          <span className="eb">
-            <i />
-            {about.eyebrow}
-          </span>
+          {/* titik hijau berasal dari .eb:before (tema), sama seperti label .eb lain di beranda */}
+          <span className="eb">{about.eyebrow}</span>
           <h2>
             {about.titlePrefix}
             <em>{about.titleEm}</em>

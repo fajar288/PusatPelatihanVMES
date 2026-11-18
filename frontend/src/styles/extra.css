@@ -356,3 +356,7 @@
    melayang (.waf, komponen baru) memakai hijau #1a7f37 (5.1:1). */
 .pgrid .btn:not(.bl),.pwa-inst .btn:not(.bl){background:#c23e00}
 .pgrid .btn:not(.bl):hover,.pwa-inst .btn:not(.bl):hover{background:#a33400}
+/* Beranda, baris jadwal .jr: kota & metode berikon (MetaList compact) rapat di bawah judul, ukuran setara kolom
+   tanggal .j2 (13px, abu); kolom judul boleh menyempit agar teks panjang membungkus, tidak mendorong kolom lain. */
+.jr .j1{min-width:0}
+.j1 .pmeta.sm{margin-top:4px;gap:2px 14px}
