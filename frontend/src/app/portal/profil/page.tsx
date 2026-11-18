@@ -1,4 +1,5 @@
 import ProfileForm from "@/components/portal/ProfileForm";
+import ProfilePhotoForm from "@/components/portal/ProfilePhotoForm";
 import { MetaList, PortalCard } from "@/components/portal/ui";
 import { requireUser } from "@/lib/auth";
 
@@ -16,6 +17,9 @@ export default async function PortalProfilePage() {
           { icon: "cal", label: "Terdaftar sejak", value: user.member?.since ?? "-" },
         ]}
       />
+      <div style={{ marginTop: 20 }}>
+        <ProfilePhotoForm name={user.name} photoVersion={user.member?.photoVersion ?? null} />
+      </div>
       <div style={{ marginTop: 20 }}>
         <ProfileForm user={user} />
       </div>

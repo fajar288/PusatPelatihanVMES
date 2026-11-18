@@ -28,6 +28,7 @@ const ITEMS: { href: string; label: string; icon: IconName }[] = [
 export default function PortalNav({
   name,
   memberNumber,
+  photoVersion,
   isTrainer,
   hasCorporate,
   unread = 0,
@@ -35,6 +36,7 @@ export default function PortalNav({
 }: {
   name: string;
   memberNumber?: string | null;
+  photoVersion?: string | null;
   isTrainer?: boolean;
   hasCorporate?: boolean;
   unread?: number;
@@ -45,7 +47,12 @@ export default function PortalNav({
     <aside className="pnav">
       <div className="pnav-user">
         <span className="av" aria-hidden="true">
-          {name.slice(0, 1).toUpperCase()}
+          {photoVersion ? (
+            // foto privat lewat route handler (token di cookie httpOnly), bukan next/image
+            <img src={`/portal/foto?v=${encodeURIComponent(photoVersion)}`} alt="" width={42} height={42} />
+          ) : (
+            name.slice(0, 1).toUpperCase()
+          )}
         </span>
         <div>
           <b>{name}</b>

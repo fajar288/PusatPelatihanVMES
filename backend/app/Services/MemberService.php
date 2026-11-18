@@ -7,11 +7,59 @@ use App\Models\Enrollment;
 use App\Models\Member;
 use App\Models\Registration;
 use App\Models\User;
+use App\Support\ImageProcessor;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 /** Satu akun = satu member (PRD §5.6). */
 class MemberService
 {
+    /** Foto profil member: data pribadi, disimpan di disk privat dan hanya dibuka pemilik akun atau admin. */
+    public const PHOTO_DISK = 'local';
+
+    /** Sisi foto profil hasil kompresi (persegi, WebP). */
+    public const PHOTO_SIZE = 400;
+
+    /**
+     * Simpan foto profil baru (dipotong persegi & dikompresi ke WebP bila GD tersedia), hapus foto lama, catat audit.
+     */
+    public function updatePhoto(Member $member, UploadedFile $file, ?User $actor = null): Member
+    {
+        $disk = Storage::disk(self::PHOTO_DISK);
+        $dir = 'members/photos';
+        $webp = ImageProcessor::toWebp((string) file_get_contents($file->getRealPath()), self::PHOTO_SIZE, square: true);
+        if ($webp !== null) {
+            $path = $dir.'/'.$member->member_number.'-'.Str::random(16).'.webp';
+            $disk->put($path, $webp);
+        } else {
+            $path = $file->store($dir, self::PHOTO_DISK) ?: throw new \RuntimeException('Foto gagal disimpan.');
+        }
+
+        $old = $member->photo;
+        $member->forceFill(['photo' => $path])->save();
+        if ($old && $old !== $path && ! str_contains($old, '://')) {
+            $disk->delete($old);
+        }
+        AuditLog::record('member.photo_updated', $member, ['photo' => $old ? 'ada' : null], ['photo' => 'baru'], $actor);
+
+        return $member;
+    }
+
+    public function removePhoto(Member $member, ?User $actor = null): Member
+    {
+        if ($member->photo) {
+            if (! str_contains($member->photo, '://')) {
+                Storage::disk(self::PHOTO_DISK)->delete($member->photo);
+            }
+            $member->forceFill(['photo' => null])->save();
+            AuditLog::record('member.photo_removed', $member, ['photo' => 'ada'], ['photo' => null], $actor);
+        }
+
+        return $member;
+    }
+
     /** @param  array<string, mixed>  $profile */
     public function createForUser(User $user, array $profile = []): Member
     {

@@ -13,12 +13,15 @@ use App\Filament\Resources\Members\RelationManagers\RegistrationsRelationManager
 use App\Filament\Support\Layout;
 use App\Models\Member;
 use App\Models\TrainingPackage;
+use App\Services\MemberService;
 use BackedEnum;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
@@ -106,6 +109,13 @@ class MemberResource extends Resource
                     TextInput::make('education')->label('Pendidikan terakhir')->maxLength(60),
                     TextInput::make('city')->label('Kota')->maxLength(80),
                     Textarea::make('address')->label('Alamat')->rows(2)->columnSpanFull(),
+                    // Foto profil = data pribadi: disk privat, dibuka lewat URL sementara bertanda tangan.
+                    FileUpload::make('photo')->label('Foto profil')->image()->avatar()
+                        ->disk(MemberService::PHOTO_DISK)->visibility('private')->directory('members/photos')
+                        ->imageResizeMode('cover')->imageCropAspectRatio('1:1')
+                        ->imageResizeTargetWidth((string) MemberService::PHOTO_SIZE)->imageResizeTargetHeight((string) MemberService::PHOTO_SIZE)
+                        ->maxSize(4096)
+                        ->helperText('Biasanya diunggah peserta sendiri dari portal. Hapus bila foto tidak pantas.'),
                 ]),
         ]);
     }
@@ -114,6 +124,9 @@ class MemberResource extends Resource
     {
         return $schema->components([
             Section::make('Profil')->columns(Layout::cols(3))->components([
+                ImageEntry::make('photo')->label('Foto')->circular()->imageSize(72)
+                    ->disk(MemberService::PHOTO_DISK)->visibility('private')
+                    ->placeholder('Belum ada foto')->columnSpanFull(),
                 TextEntry::make('member_number')->label('Nomor member')->copyable(),
                 TextEntry::make('user.name')->label('Nama'),
                 TextEntry::make('user.email')->label('Email')->copyable(),
