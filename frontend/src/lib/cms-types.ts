@@ -100,3 +100,12 @@ export type HomeData = {
 };
 
 export type SearchResult = { q: string; total: number; courses: Course[]; schedules: Schedule[]; posts: PostSummary[] };
+
+/** Mitra untuk halaman /mitra (GET /api/v1/partners). type: client | principal | certification. */
+export type PublicPartner = PartnerLogo & {
+  slug?: string | null;
+  type: "client" | "principal" | "certification" | string;
+  website?: string | null;
+  description?: string | null;
+  official?: boolean;
+};
