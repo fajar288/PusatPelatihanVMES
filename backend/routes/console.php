@@ -26,9 +26,11 @@ use App\Services\SurveyService;
 use App\Services\TrainingRequestService;
 use App\Support\Ai\AiUseCases;
 use App\Support\Enterprise\IdentityMatch;
+use App\Support\PrivateFiles;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
+use Illuminate\Support\Facades\Storage;
 use Minishlink\WebPush\VAPID;
 
 Artisan::command('inspire', function () {
@@ -311,6 +313,35 @@ Artisan::command('ai:demand-forecast', function (AiDemandForecastService $foreca
 
 Schedule::command('ai:demand-forecast')->monthlyOn(1, '05:00');
 
+// Pindahkan berkas pribadi/berbayar lama dari disk default (public) ke disk privat. Path di database tidak berubah,
+// jadi aman dijalankan berulang; berkas yang sudah ada di disk privat dilewati.
+Artisan::command('files:privatize {--dry-run : hanya tampilkan jumlah berkas yang akan dipindah}', function () {
+    $from = Storage::disk((string) config('filesystems.default'));
+    $to = PrivateFiles::disk();
+    if (config('filesystems.default') === PrivateFiles::diskName()) {
+        $this->warn('Disk default sama dengan disk privat; tidak ada yang dipindah.');
+
+        return;
+    }
+    $moved = 0;
+    foreach (PrivateFiles::DIRECTORIES as $dir) {
+        $files = $from->allFiles($dir);
+        $this->line(sprintf('%-22s %d berkas', $dir, count($files)));
+        if ($this->option('dry-run')) {
+            continue;
+        }
+        foreach ($files as $path) {
+            if (! $to->exists($path)) {
+                $stream = $from->readStream($path);
+                $to->writeStream($path, $stream);
+                is_resource($stream) && fclose($stream);
+            }
+            $from->delete($path);
+            $moved++;
+        }
+    }
+    $this->info($this->option('dry-run') ? 'Mode uji: tidak ada berkas yang dipindah.' : "$moved berkas dipindah ke disk privat.");
+})->purpose('Pindahkan bukti bayar, tugas, logbook, dan materi LMS lama ke disk privat');
 // Retensi data pribadi (config/privacy.php, semua aturan mati bawaan sampai kebijakan PPTI ditetapkan).
 Artisan::command('privacy:prune {--dry-run : hanya hitung data yang akan diproses}', function (PrivacyService $privacy) {
     foreach ($privacy->prune((bool) $this->option('dry-run')) as $rule => $count) {

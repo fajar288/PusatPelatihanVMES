@@ -11,6 +11,7 @@ use App\Models\LessonProgress;
 use App\Models\QuizAttempt;
 use App\Models\TrainingSchedule;
 use App\Models\User;
+use App\Support\PrivateFiles;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\ValidationException;
@@ -226,7 +227,7 @@ class LmsService
         }
         $data = ['text' => $text, 'status' => 'submitted', 'submitted_at' => now(), 'score' => null, 'feedback' => $existing?->feedback];
         if ($file) {
-            $data['file_path'] = $file->store('lms/submissions/'.$enrollment->id, config('filesystems.default'));
+            $data['file_path'] = PrivateFiles::store($file, 'lms/submissions/'.$enrollment->id);
             $data['file_name'] = $file->getClientOriginalName();
         }
         $sub = AssignmentSubmission::query()->updateOrCreate(['lesson_id' => $lesson->id, 'enrollment_id' => $enrollment->id], $data);

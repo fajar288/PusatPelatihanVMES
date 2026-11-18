@@ -96,6 +96,19 @@ class AppServiceProvider extends ServiceProvider
             Limit::perMinute(max(1, (int) config('chatbot.per_ip_per_minute')))->by('chat-m:'.$request->ip()),
             Limit::perDay(max(1, (int) config('chatbot.per_ip_per_day')))->by('chat-d:'.$request->ip()),
         ]);
+        // Pembatas bernama (throttle:N,1 tanpa nama berbagi penghitung per IP lintas rute). IP = pengunjung asli bila
+        // frontend meneruskannya (TrustFrontendClientIp), bukan IP server frontend.
+        RateLimiter::for('auth', fn (Request $request) => Limit::perMinute(20)->by('auth:'.$request->ip()));
+        // Tebak sandi: maks. 5 percobaan per email+IP per menit dan 30 per IP (banyak email) per menit.
+        RateLimiter::for('login', fn (Request $request) => [
+            Limit::perMinute(5)->by('login:'.mb_strtolower((string) $request->input('email')).'|'.$request->ip()),
+            Limit::perMinute(30)->by('login-ip:'.$request->ip()),
+        ]);
+        RateLimiter::for('password-reset', fn (Request $request) => [
+            Limit::perMinute(3)->by('pw-reset:'.mb_strtolower((string) $request->input('email'))),
+            Limit::perMinute(10)->by('pw-reset-ip:'.$request->ip()),
+        ]);
+        RateLimiter::for('public-form', fn (Request $request) => Limit::perMinute(10)->by('public-form:'.($request->user()?->id ?: $request->ip())));
         RateLimiter::for('verify-resend', fn (Request $request) => Limit::perMinute(3)->by('verify-resend:'.($request->user()?->id ?: $request->ip())));
         RateLimiter::for('data-export', fn (Request $request) => Limit::perMinute(6)->by('data-export:'.($request->user()?->id ?: $request->ip())));
         RateLimiter::for('payment-proof', fn (Request $request) => Limit::perMinute(10)->by('payment-proof:'.($request->user()?->id ?: $request->ip())));

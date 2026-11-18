@@ -38,6 +38,8 @@ return [
     'frontend' => [
         'url' => env('FRONTEND_URL', 'http://localhost:3000'),
         'revalidate_secret' => env('REVALIDATE_SECRET'),
+        // Secret bersama dengan frontend (API_PROXY_SECRET di .env kedua aplikasi) agar IP pengunjung yang diteruskan dipercaya
+        'proxy_secret' => env('API_PROXY_SECRET'),
     ],
 
     // Web Push PWA (PRD §5.12): buat kunci dengan `php artisan webpush:vapid`
