@@ -47,7 +47,7 @@
 @media(max-width:700px){.calc{min-height:48px;padding:4px}.calc a{font-size:0;padding:0;height:6px;border-radius:3px;margin-top:3px}}
 
 /* ---- Tombol WhatsApp melayang ---- */
-.waf{position:fixed;right:20px;bottom:20px;z-index:90;display:inline-flex;align-items:center;gap:10px;background:#25a244;color:#fff;border-radius:99px;padding:12px 18px 12px 14px;font-weight:800;font-size:14px;box-shadow:0 10px 26px rgba(37,162,68,.4);transition:transform .2s,box-shadow .2s}
+.waf{position:fixed;right:20px;bottom:20px;z-index:90;display:inline-flex;align-items:center;gap:10px;background:#1a7f37;color:#fff;border-radius:99px;padding:12px 18px 12px 14px;font-weight:800;font-size:14px;box-shadow:0 10px 26px rgba(37,162,68,.4);transition:transform .2s,box-shadow .2s}
 .waf:hover{transform:translateY(-2px);box-shadow:0 14px 32px rgba(37,162,68,.5)}
 .waf svg{width:22px;height:22px;fill:#fff}
 @media(max-width:640px){.waf{right:14px;bottom:14px;padding:12px}.waf span{display:none}}
@@ -351,3 +351,8 @@
 .mgr-tx a{color:var(--p);font-weight:700}
 .mgr-cta{max-width:520px;margin:28px auto 0;grid-template-columns:1fr 1fr}
 @media(max-width:480px){.mgr{grid-template-columns:repeat(2,minmax(0,1fr))}.mgr-cta{grid-template-columns:minmax(0,1fr)}}
+/* Aksesibilitas (kontras WCAG AA 4.5:1) di area portal member/trainer/perusahaan: tombol .btn oranye tema (#FA5000,
+   3.4:1 dengan teks putih) digelapkan. Halaman publik clone tidak diubah (keputusan stakeholder). Tombol WhatsApp
+   melayang (.waf, komponen baru) memakai hijau #1a7f37 (5.1:1). */
+.pgrid .btn:not(.bl),.pwa-inst .btn:not(.bl){background:#c23e00}
+.pgrid .btn:not(.bl):hover,.pwa-inst .btn:not(.bl):hover{background:#a33400}
