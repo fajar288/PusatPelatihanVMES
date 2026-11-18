@@ -60,7 +60,7 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
 
     Route::get('/schedules', [ScheduleController::class, 'index'])->name('schedules.index');
     Route::get('/schedules/{schedule}', [ScheduleController::class, 'show'])->name('schedules.show');
-    Route::post('/schedules/{schedule}/waitlist', [WaitlistController::class, 'store'])->middleware('throttle:10,1')->name('schedules.waitlist');
+    Route::post('/schedules/{schedule}/waitlist', [WaitlistController::class, 'store'])->middleware('throttle:public-form')->name('schedules.waitlist');
 
     Route::get('/posts', [PostController::class, 'index'])->name('posts.index');
     Route::get('/posts/{slug}', [PostController::class, 'show'])->name('posts.show');
@@ -82,12 +82,12 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
     Route::post('/chat/feedback', [ChatController::class, 'feedback'])->middleware('throttle:chatbot-feedback')->name('chat.feedback');
 
     // ---- Pendaftaran publik (tamu atau member) & autentikasi (Phase 1E) ----
-    Route::post('/registrations', [RegistrationController::class, 'store'])->middleware('throttle:10,1')->name('registrations.store');
-    Route::prefix('auth')->name('auth.')->middleware('throttle:20,1')->group(function (): void {
+    Route::post('/registrations', [RegistrationController::class, 'store'])->middleware('throttle:public-form')->name('registrations.store');
+    Route::prefix('auth')->name('auth.')->middleware('throttle:auth')->group(function (): void {
         Route::post('/register', [AuthController::class, 'register'])->name('register');
-        Route::post('/login', [AuthController::class, 'login'])->name('login');
-        Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->name('forgot');
-        Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('reset');
+        Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:login')->name('login');
+        Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->middleware('throttle:password-reset')->name('forgot');
+        Route::post('/reset-password', [AuthController::class, 'resetPassword'])->middleware('throttle:password-reset')->name('reset');
         Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])->middleware('signed:relative')->name('verify');
     });
 

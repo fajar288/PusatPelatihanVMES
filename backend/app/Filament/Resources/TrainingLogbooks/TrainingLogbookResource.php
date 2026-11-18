@@ -31,6 +31,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\HtmlString;
 use UnitEnum;
+use App\Support\PrivateFiles;
 
 /** Monitoring: logbook per pertemuan (PRD §5.9). Dokumentasi diunggah trainer lewat portal; admin memvalidasi/membuka kunci. */
 class TrainingLogbookResource extends Resource
@@ -80,7 +81,15 @@ class TrainingLogbookResource extends Resource
                 Textarea::make('obstacles')->label('Kendala')->rows(2),
                 Textarea::make('notes')->label('Catatan trainer')->rows(2),
                 Placeholder::make('documentation_info')->label('Dokumentasi')->columnSpanFull()
-                    ->content(fn (?TrainingLogbook $record) => $record && $record->documentation ? collect($record->documentation)->pluck('name')->implode(', ') : 'Belum ada (diunggah trainer lewat portal).'),
+                    // berkas di disk privat: dibuka lewat URL sementara bertanda tangan
+                    ->content(fn (?TrainingLogbook $record) => $record && $record->documentation
+                        ? new HtmlString(collect($record->documentation)->map(function (array $d) {
+                            $url = PrivateFiles::url($d['path'] ?? null);
+                            $name = e($d['name'] ?? basename((string) ($d['path'] ?? '')));
+
+                            return $url ? '<a href="'.e($url).'" target="_blank" rel="noopener" class="text-primary-600 underline">'.$name.'</a>' : $name;
+                        })->implode(', '))
+                        : 'Belum ada (diunggah trainer lewat portal).'),
             ]),
         ]);
     }

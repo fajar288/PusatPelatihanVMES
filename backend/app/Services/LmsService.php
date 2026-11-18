@@ -14,6 +14,7 @@ use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\ValidationException;
+use App\Support\PrivateFiles;
 
 /**
  * Logika LMS (PRD §5.8): akses materi berdasarkan enrollment & periode kelas, learning progress,
@@ -226,7 +227,7 @@ class LmsService
         }
         $data = ['text' => $text, 'status' => 'submitted', 'submitted_at' => now(), 'score' => null, 'feedback' => $existing?->feedback];
         if ($file) {
-            $data['file_path'] = $file->store('lms/submissions/'.$enrollment->id, config('filesystems.default'));
+            $data['file_path'] = PrivateFiles::store($file, 'lms/submissions/'.$enrollment->id);
             $data['file_name'] = $file->getClientOriginalName();
         }
         $sub = AssignmentSubmission::query()->updateOrCreate(['lesson_id' => $lesson->id, 'enrollment_id' => $enrollment->id], $data);

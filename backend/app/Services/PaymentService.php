@@ -12,8 +12,8 @@ use App\Models\User;
 use App\Notifications\PaymentTransactionRejected;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
+use App\Support\PrivateFiles;
 
 /**
  * Pembayaran MANUAL (PRD Roadmap 5 §5.1 diterapkan ke alur manual, keputusan 2026-11-12):
@@ -38,12 +38,12 @@ class PaymentService
     public function submitProof(Invoice $invoice, User $actor, UploadedFile $proof, array $data = [], string $source = 'member'): PaymentTransaction
     {
         $this->assertAcceptsProof($invoice->refresh());
-        $path = $proof->store('payments/'.$invoice->invoice_number, config('filesystems.default'));
+        $path = PrivateFiles::store($proof, 'payments/'.$invoice->invoice_number);
 
         try {
             $tx = $this->createPendingTransaction($invoice, $actor, $path, $data, $source);
         } catch (\Throwable $e) {
-            Storage::disk(config('filesystems.default'))->delete($path);
+            PrivateFiles::delete($path);
             throw $e;
         }
 
@@ -104,7 +104,7 @@ class PaymentService
      */
     public function recordReceived(Invoice $invoice, User $actor, array $data, ?UploadedFile $proof = null): PaymentTransaction
     {
-        $path = $proof?->store('payments/'.$invoice->invoice_number, config('filesystems.default'));
+        $path = ($proof ? PrivateFiles::store($proof, 'payments/'.$invoice->invoice_number) : null);
         $tx = DB::transaction(function () use ($invoice, $actor, $data, $path) {
             $invoice = Invoice::query()->lockForUpdate()->findOrFail($invoice->id);
             if (! in_array($invoice->status, ['pending', 'failed', 'expired'], true)) {

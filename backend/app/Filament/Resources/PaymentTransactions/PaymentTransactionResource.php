@@ -21,6 +21,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use UnitEnum;
+use App\Support\PrivateFiles;
 
 /**
  * Antrean verifikasi pembayaran manual (Roadmap 5C): setiap bukti transfer = transaksi. Verifikasi → invoice lunas
@@ -99,7 +100,7 @@ class PaymentTransactionResource extends Resource
             TextColumn::make('status')->label('Status')->badge()->formatStateUsing(fn ($state) => PaymentTransaction::STATUSES[$state] ?? $state)
                 ->color(fn ($state) => FinanceFields::transactionColor($state)),
             TextColumn::make('proof_path')->label('Bukti')->formatStateUsing(fn ($state) => $state ? 'Lihat bukti' : '-')
-                ->url(fn (PaymentTransaction $record) => Media::url($record->proof_path), shouldOpenInNewTab: true),
+                ->url(fn (PaymentTransaction $record) => PrivateFiles::url($record->proof_path), shouldOpenInNewTab: true),
             TextColumn::make('submitted_at')->label('Diunggah')->dateTime('d M Y H:i')
                 ->description(fn (PaymentTransaction $record) => $record->submitter?->name),
             TextColumn::make('verifier.name')->label('Diverifikasi')->placeholder('-')->toggleable()

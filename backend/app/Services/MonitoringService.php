@@ -17,8 +17,8 @@ use App\Support\IdDate;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
+use App\Support\PrivateFiles;
 
 /**
  * Training Logbook & Progress Monitoring (PRD §5.9).
@@ -57,16 +57,15 @@ class MonitoringService
         return DB::transaction(function () use ($schedule, $logbook, $data, $entries, $files, $removeDocs, $actor, $trainer) {
             $before = $logbook ? $this->logbookSnapshot($logbook) : null;
             $docs = collect($logbook?->documentation ?? [])->values();
-            $disk = Storage::disk(config('filesystems.default'));
             foreach ($removeDocs as $i) {
                 if ($docs->has($i)) {
-                    $disk->delete($docs[$i]['path'] ?? '');
+                    PrivateFiles::delete($docs[$i]['path'] ?? null);
                     $docs->forget($i);
                 }
             }
             $docs = $docs->values();
             foreach ($files as $f) {
-                $path = $f->store('monitoring/logbooks/'.$schedule->id, config('filesystems.default'));
+                $path = PrivateFiles::store($f, 'monitoring/logbooks/'.$schedule->id);
                 $docs->push(['path' => $path, 'name' => $f->getClientOriginalName(), 'mime' => $f->getClientMimeType(), 'size' => $f->getSize()]);
             }
             $attrs = [
