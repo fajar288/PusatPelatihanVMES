@@ -32,6 +32,7 @@ export default async function PortalLayout({ children }: LayoutProps<"/portal">)
         <PortalNav
           name={user.name}
           memberNumber={user.member?.memberNumber}
+          photoVersion={user.member?.photoVersion}
           isTrainer={user.roles.some((r) => r === "trainer" || r === "assessor")}
           hasCorporate={(user.corporate?.length ?? 0) > 0}
           unread={user.unreadNotifications ?? 0}

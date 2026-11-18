@@ -80,6 +80,7 @@
 .pnav{position:sticky;top:90px;background:#fff;border:1px solid var(--ln);border-radius:24px;padding:18px;box-shadow:0 6px 24px rgba(0,75,35,.08)}
 .pnav-user{display:flex;gap:12px;align-items:center;padding:4px 6px 16px;border-bottom:1px solid var(--ln)}
 .pnav-user .av{width:42px;height:42px;border-radius:50%;flex:none;display:grid;place-items:center;background:linear-gradient(135deg,var(--p),var(--l));color:#fff;font-weight:800}
+.pnav-user .av img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block}
 .pnav-user b{display:block;font-size:14px;line-height:1.3}.pnav-user small{display:block;font-size:12px;color:var(--mut)}
 .pnav nav{display:grid;gap:4px;margin-top:12px}
 .pnav nav a{display:flex;align-items:center;gap:10px;min-width:0;overflow-wrap:anywhere;padding:10px 12px;border-radius:12px;font-weight:700;font-size:14px;color:var(--ink)}
@@ -331,3 +332,11 @@
 .rpt-f{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr));gap:12px;align-items:end}
 .rpt{min-width:900px}.att .rpt-kls{min-width:240px}
 @media(max-width:640px){.rpt{min-width:0}.att .rpt-kls{min-width:0}.rpt td[data-l]::before{content:attr(data-l);display:block;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);margin-bottom:2px}}
+/* Foto profil member (portal /portal/profil) */
+.pphoto-row{display:flex;gap:18px;align-items:center}
+.pphoto-av{width:88px;height:88px;border-radius:50%;flex:none;display:grid;place-items:center;overflow:hidden;background:linear-gradient(135deg,var(--p),var(--l));color:#fff;font-size:32px;font-weight:800;border:3px solid #fff;box-shadow:0 0 0 2px var(--l)}
+.pphoto-av img{width:100%;height:100%;object-fit:cover;display:block}
+.pphoto-body{flex:1 1 auto;min-width:0;display:grid;gap:6px}
+.pphoto-act{display:flex;flex-wrap:wrap;gap:10px;margin-top:4px}
+.pphoto-act .kb1,.pphoto-act .kb2{width:auto;flex:0 0 auto;padding:11px 20px;cursor:pointer;font-family:inherit}
+@media(max-width:480px){.pphoto-row{flex-direction:column;align-items:flex-start}.pphoto-act .kb1,.pphoto-act .kb2{flex:1 1 auto}}
