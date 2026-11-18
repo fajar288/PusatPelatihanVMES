@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Lessons\RelationManagers;
 
 use App\Models\AssignmentSubmission;
 use App\Services\LmsService;
+use App\Support\PrivateFiles;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -13,7 +14,6 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Storage;
 
 /** Pengumpulan tugas peserta (lesson bertipe tugas): lihat berkas, beri nilai/umpan balik atau kembalikan. */
 class SubmissionsRelationManager extends RelationManager
@@ -46,7 +46,7 @@ class SubmissionsRelationManager extends RelationManager
             ->filters([SelectFilter::make('status')->options(AssignmentSubmission::STATUSES)])
             ->recordActions([
                 Action::make('download')->label('Unduh')->icon('heroicon-o-arrow-down-tray')->visible(fn ($record) => (bool) $record->file_path)
-                    ->action(fn ($record) => Storage::disk(config('filesystems.default'))->download($record->file_path, $record->file_name ?: basename($record->file_path))),
+                    ->action(fn ($record) => PrivateFiles::locate($record->file_path)?->download($record->file_path, $record->file_name ?: basename($record->file_path))),
                 Action::make('grade')->label('Nilai')->icon('heroicon-o-pencil-square')->modalHeading('Penilaian tugas')
                     ->schema(fn ($record) => [
                         Textarea::make('text')->label('Jawaban teks')->default($record->text)->disabled()->rows(4)->visible((bool) $record->text),

@@ -23,6 +23,19 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
+        // Header keamanan dasar semua halaman. CSP penuh belum dipasang karena situs memuat embed YouTube/Maps dan
+        // foto hotlink; yang dibatasi: dibingkai situs lain (clickjacking), base URI, dan plugin.
+        source: "/:path*",
+        headers: [
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), payment=()" },
+          { key: "Content-Security-Policy", value: "frame-ancestors 'self'; base-uri 'self'; object-src 'none'" },
+          ...(process.env.NODE_ENV === "production" ? [{ key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains" }] : []),
+        ],
+      },
+      {
         // Service worker selalu diambil ulang (tanpa cache HTTP) agar pembaruan segera terdeteksi
         source: "/sw.js",
         headers: [

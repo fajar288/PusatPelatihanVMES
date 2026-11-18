@@ -14,10 +14,10 @@ use App\Models\Trainer;
 use App\Services\LmsService;
 use App\Support\IdDate;
 use App\Support\LmsPresenter;
+use App\Support\PrivateFiles;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -213,8 +213,8 @@ class LearningController extends Controller
         abort_unless($resource->type === 'file' && $resource->file_path, 404);
         $inline = $request->boolean('inline');
         abort_unless($inline || $resource->allow_download, 403, 'Berkas ini hanya dapat dibaca di aplikasi, tidak untuk diunduh.');
-        $disk = Storage::disk(config('filesystems.default'));
-        abort_unless($disk->exists($resource->file_path), 404);
+        $disk = PrivateFiles::locate($resource->file_path);
+        abort_unless($disk !== null, 404);
         $name = $resource->file_name ?: basename($resource->file_path);
 
         return $disk->response($resource->file_path, $name, ['Content-Type' => $resource->mime ?: 'application/octet-stream'], $inline ? 'inline' : 'attachment');
@@ -225,8 +225,8 @@ class LearningController extends Controller
     {
         $e = Enrollment::query()->ownedBy($request->user())->whereKey($submission->enrollment_id)->exists();
         abort_unless($e, 403);
-        $disk = Storage::disk(config('filesystems.default'));
-        abort_unless($submission->file_path && $disk->exists($submission->file_path), 404);
+        $disk = PrivateFiles::locate($submission->file_path);
+        abort_unless($disk !== null, 404);
 
         return $disk->download($submission->file_path, $submission->file_name ?: basename($submission->file_path));
     }

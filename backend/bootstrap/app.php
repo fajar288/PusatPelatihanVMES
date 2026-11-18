@@ -4,6 +4,8 @@ use App\Http\Middleware\AuthenticateApiClient;
 use App\Http\Middleware\EnforceIdempotency;
 use App\Http\Middleware\EnsureOrganizationClient;
 use App\Http\Middleware\RequireApiScope;
+use App\Http\Middleware\SecurityHeaders;
+use App\Http\Middleware\TrustFrontendClientIp;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -26,6 +28,10 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         // Sanctum SPA: request dari FRONTEND_URL (SANCTUM_STATEFUL_DOMAINS) memakai cookie session
         $middleware->statefulApi();
+        // IP pengunjung asli dari server frontend (lihat TrustFrontendClientIp) sebelum pembatas laju dihitung
+        $middleware->prependToGroup('api', TrustFrontendClientIp::class);
+        // Header keamanan dasar untuk semua respons (API, panel admin, halaman verifikasi)
+        $middleware->append(SecurityHeaders::class);
         // Route web non-panel (mis. ekspor laporan) → tamu diarahkan ke login panel admin
         $middleware->redirectGuestsTo('/admin/login');
         $middleware->alias([
