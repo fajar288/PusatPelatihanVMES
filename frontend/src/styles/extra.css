@@ -340,3 +340,14 @@
 .pphoto-act{display:flex;flex-wrap:wrap;gap:10px;margin-top:4px}
 .pphoto-act .kb1,.pphoto-act .kb2{width:auto;flex:0 0 auto;padding:11px 20px;cursor:pointer;font-family:inherit}
 @media(max-width:480px){.pphoto-row{flex-direction:column;align-items:flex-start}.pphoto-act .kb1,.pphoto-act .kb2{flex:1 1 auto}}
+/* Halaman /mitra: kartu logo .lc dalam grid (bukan scroll seperti beranda) */
+.mgr{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin:32px 0 0;padding:0}
+.mgr .lc{flex-direction:column;gap:12px;min-height:120px;text-align:center}
+.mgr-logo{display:flex;align-items:center;justify-content:center;height:56px;width:100%}
+.mgr-logo img{max-height:56px}
+.mgr .lc.mgr-d{justify-content:flex-start}
+.mgr-tx{display:grid;gap:6px;font-size:13px;color:var(--mut);line-height:1.5}
+.mgr-tx b{font-size:15px;color:var(--ink)}
+.mgr-tx a{color:var(--p);font-weight:700}
+.mgr-cta{max-width:520px;margin:28px auto 0;grid-template-columns:1fr 1fr}
+@media(max-width:480px){.mgr{grid-template-columns:repeat(2,minmax(0,1fr))}.mgr-cta{grid-template-columns:minmax(0,1fr)}}
