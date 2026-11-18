@@ -15,6 +15,9 @@ return [
 
     'default' => env('FILESYSTEM_DISK', 'local'),
 
+    // Disk untuk berkas pribadi/berbayar (bukti transfer, tugas, logbook, materi LMS): tanpa URL publik, lihat App\Support\PrivateFiles.
+    'private_disk' => env('FILESYSTEM_PRIVATE_DISK', 'local'),
+
     /*
     |--------------------------------------------------------------------------
     | Filesystem Disks

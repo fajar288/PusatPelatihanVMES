@@ -12,10 +12,10 @@ use App\Models\TrainingSchedule;
 use App\Services\AiEarlyWarningService;
 use App\Services\MonitoringService;
 use App\Support\IdDate;
+use App\Support\PrivateFiles;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -99,8 +99,8 @@ class TrainerMonitoringController extends Controller
     {
         $l = $this->logbookOf($request, $id);
         $doc = collect($l->documentation ?? [])->values()->get($index);
-        $disk = Storage::disk(config('filesystems.default'));
-        abort_unless($doc && ! empty($doc['path']) && $disk->exists($doc['path']), 404);
+        $disk = PrivateFiles::locate($doc['path'] ?? null);
+        abort_unless($doc && $disk !== null, 404);
 
         return $disk->download($doc['path'], $doc['name'] ?? basename($doc['path']));
     }

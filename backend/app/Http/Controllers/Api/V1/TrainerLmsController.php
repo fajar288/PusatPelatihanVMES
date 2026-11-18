@@ -10,9 +10,9 @@ use App\Models\Lesson;
 use App\Models\QuizAttempt;
 use App\Services\LmsService;
 use App\Support\LmsPresenter;
+use App\Support\PrivateFiles;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -88,8 +88,8 @@ class TrainerLmsController extends Controller
     public function submissionFile(Request $request, int $id): StreamedResponse
     {
         $sub = $this->submissionOf($request, $id);
-        $disk = Storage::disk(config('filesystems.default'));
-        abort_unless($sub->file_path && $disk->exists($sub->file_path), 404);
+        $disk = PrivateFiles::locate($sub->file_path);
+        abort_unless($disk !== null, 404);
 
         return $disk->download($sub->file_path, $sub->file_name ?: basename($sub->file_path));
     }

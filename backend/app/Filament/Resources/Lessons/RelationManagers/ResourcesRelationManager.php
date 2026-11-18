@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Lessons\RelationManagers;
 
+use App\Support\PrivateFiles;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
@@ -15,7 +16,6 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Support\Facades\Storage;
 
 /** Berkas materi (PDF/PPT/DOC/XLS/video/gambar) & tautan per lesson dengan izin unduh (PRD §5.8). */
 class ResourcesRelationManager extends RelationManager
@@ -30,7 +30,7 @@ class ResourcesRelationManager extends RelationManager
             Select::make('type')->label('Jenis')->options(['file' => 'Berkas', 'link' => 'Tautan'])->default('file')->required()->native(false)->live(),
             TextInput::make('title')->label('Judul')->required()->maxLength(255),
             FileUpload::make('file_path')->label('Berkas')->visible(fn (Get $get) => $get('type') === 'file')->required(fn (Get $get) => $get('type') === 'file')
-                ->disk(config('filesystems.default'))->directory('lms/resources')->visibility('public')->storeFileNamesIn('file_name')->maxSize(102400)
+                ->disk(PrivateFiles::diskName())->directory('lms/resources')->visibility('private')->storeFileNamesIn('file_name')->maxSize(102400)
                 ->acceptedFileTypes(['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'image/*', 'video/mp4', 'video/webm', 'audio/*', 'application/zip', 'text/plain'])
                 ->helperText('PDF, Office, gambar, MP4/WebM, ZIP; maks. 100 MB.')->columnSpanFull(),
             TextInput::make('url')->label('URL')->url()->visible(fn (Get $get) => $get('type') === 'link')->required(fn (Get $get) => $get('type') === 'link')->columnSpanFull(),
@@ -43,9 +43,9 @@ class ResourcesRelationManager extends RelationManager
     {
         $meta = function (array $data): array {
             if (($data['type'] ?? 'file') === 'file' && ! empty($data['file_path'])) {
-                $disk = Storage::disk(config('filesystems.default'));
-                $data['mime'] = $disk->exists($data['file_path']) ? $disk->mimeType($data['file_path']) : null;
-                $data['size'] = $disk->exists($data['file_path']) ? $disk->size($data['file_path']) : null;
+                $disk = PrivateFiles::locate($data['file_path']);
+                $data['mime'] = $disk?->mimeType($data['file_path']) ?: null;
+                $data['size'] = $disk?->size($data['file_path']);
             }
 
             return $data;

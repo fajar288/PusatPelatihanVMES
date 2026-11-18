@@ -9,7 +9,7 @@ use App\Filament\Support\EnterpriseFields;
 use App\Filament\Support\FinanceFields;
 use App\Models\PaymentTransaction;
 use App\Services\PaymentService;
-use App\Support\Media;
+use App\Support\PrivateFiles;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Textarea;
@@ -99,7 +99,7 @@ class PaymentTransactionResource extends Resource
             TextColumn::make('status')->label('Status')->badge()->formatStateUsing(fn ($state) => PaymentTransaction::STATUSES[$state] ?? $state)
                 ->color(fn ($state) => FinanceFields::transactionColor($state)),
             TextColumn::make('proof_path')->label('Bukti')->formatStateUsing(fn ($state) => $state ? 'Lihat bukti' : '-')
-                ->url(fn (PaymentTransaction $record) => Media::url($record->proof_path), shouldOpenInNewTab: true),
+                ->url(fn (PaymentTransaction $record) => PrivateFiles::url($record->proof_path), shouldOpenInNewTab: true),
             TextColumn::make('submitted_at')->label('Diunggah')->dateTime('d M Y H:i')
                 ->description(fn (PaymentTransaction $record) => $record->submitter?->name),
             TextColumn::make('verifier.name')->label('Diverifikasi')->placeholder('-')->toggleable()
