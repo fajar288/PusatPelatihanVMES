@@ -79,16 +79,17 @@ class CertificateTemplateResource extends Resource
                 TextInput::make('issuer_city')->label('Kota penerbitan')->default('Batam')->maxLength(80),
                 TextInput::make('signatory_name')->label('Penandatangan')->maxLength(255),
                 TextInput::make('signatory_title')->label('Jabatan')->maxLength(255),
-                Fields::image('signature_image', 'certificates/signatures', 800)->label('Tanda tangan (gambar)'),
+                // Gambar sertifikat hanya dipakai PDF (dompdf): disimpan dalam format asli, tidak dikonversi ke WebP.
+                Fields::image('signature_image', 'certificates/signatures', 800, webp: false)->label('Tanda tangan (gambar)'),
                 TextInput::make('second_signatory_name')->label('Penandatangan kedua')->maxLength(255),
                 TextInput::make('second_signatory_title')->label('Jabatan kedua')->maxLength(255),
-                Fields::image('second_signature_image', 'certificates/signatures', 800)->label('Tanda tangan kedua'),
+                Fields::image('second_signature_image', 'certificates/signatures', 800, webp: false)->label('Tanda tangan kedua'),
             ]),
             Section::make('Tampilan')->columns(Layout::cols(3))->components([
                 Select::make('orientation')->label('Orientasi')->options(['landscape' => 'Landscape', 'portrait' => 'Portrait'])->default('landscape')->required()->native(false),
                 ColorPicker::make('accent_color')->label('Warna aksen')->default('#004B23'),
-                Fields::image('logo_image', 'certificates/assets', 800)->label('Logo (opsional)'),
-                Fields::image('background_image', 'certificates/assets', 2400)->label('Latar belakang (A4, opsional)')->columnSpanFull()
+                Fields::image('logo_image', 'certificates/assets', 800, webp: false)->label('Logo (opsional)'),
+                Fields::image('background_image', 'certificates/assets', 2400, webp: false)->label('Latar belakang (A4, opsional)')->columnSpanFull()
                     ->helperText('Bila diisi, bingkai bawaan tidak digambar; gunakan desain penuh A4 (3508×2480 px landscape).'),
             ]),
         ]);
