@@ -7,12 +7,8 @@ import { cacheLife, cacheTag } from "next/cache";
 import type { PostSummary } from "@/data/articles";
 import type { Course } from "@/data/courses";
 import type { Schedule } from "@/data/schedules";
-<<<<<<< HEAD
 import type { Testimonial } from "@/data/testimonials";
-import type { CmsPage, CompanyProfile, HomeData, MenuData, Package, Post, PublicPartner, ScheduleDetail, SearchResult, SiteSettings } from "./cms-types";
-=======
-import type { CatalogMonth, CmsPage, CompanyProfile, HomeData, MenuData, Package, Post, ScheduleDetail, SearchResult, SiteSettings } from "./cms-types";
->>>>>>> origin/main
+import type { CatalogMonth, CmsPage, CompanyProfile, HomeData, MenuData, Package, Post, PublicPartner, ScheduleDetail, SearchResult, SiteSettings } from "./cms-types";
 import { fallback } from "./fallback";
 
 const BASE = (process.env.API_URL_INTERNAL ?? process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1").replace(/\/$/, "");
