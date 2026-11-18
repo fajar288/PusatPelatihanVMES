@@ -2,11 +2,15 @@
 
 namespace Tests\Feature;
 
+use App\Filament\Resources\Registrations\Pages\EditRegistration;
 use App\Models\Registration;
 use App\Models\TrainingPackage;
 use App\Models\TrainingSchedule;
 use App\Models\User;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class AdminPanelTest extends TestCase
@@ -78,5 +82,36 @@ class AdminPanelTest extends TestCase
             ->assertSee('.ppti-lp { display: grid; grid-template-columns: minmax(0, 1fr);', false)
             ->assertSee('class="ppti-lp-tablewrap" tabindex="0" role="region" aria-label="Pratinjau Pendaftaran, geser ke samping untuk kolom lainnya"', false)
             ->assertSee('REG-TEST-LBR');
+    }
+
+    public function test_registration_documents_open_through_signed_private_urls(): void
+    {
+        // disk lokal sungguhan (bukan Storage::fake) agar URL sementara & rute penyajian berkas yang asli ikut diuji
+        $root = storage_path('framework/testing/disks/local-signed');
+        config(['filesystems.disks.local.root' => $root, 'filesystems.disks.local.serve' => true]);
+        Storage::forgetDisk('local');
+        $this->beforeApplicationDestroyed(fn () => (new Filesystem)->deleteDirectory($root));
+        $admin = User::factory()->create(['role' => User::ROLE_SUPER_ADMIN]);
+        $package = TrainingPackage::query()->create(['slug' => 'uji-dok', 'title' => 'Uji Dokumen', 'status' => 'published']);
+        $schedule = TrainingSchedule::query()->create(['package_id' => $package->id, 'code' => 'UJI-DOK', 'start_date' => '2026-12-01', 'end_date' => '2026-12-03', 'status' => 'open', 'quota' => 20]);
+        $path = 'registrations/REG-TEST-DOK/abc123.pdf';
+        Storage::disk('local')->put($path, '%PDF-1.4 uji');
+        $reg = Registration::query()->create([
+            'registration_number' => 'REG-TEST-DOK', 'schedule_id' => $schedule->id, 'package_id' => $package->id, 'type' => 'individual',
+            'status' => 'pending', 'name' => 'Peserta Dok', 'email' => 'dok@example.com', 'phone' => '0812', 'participants_count' => 1, 'consent' => true,
+            'documents' => [$path], 'document_names' => [$path => 'KTP Peserta.pdf'],
+        ]);
+
+        $this->actingAs($admin)->get("/admin/registrations/{$reg->registration_number}/edit")->assertOk()
+            ->assertSee('Dokumen pendukung')
+            ->assertSee('KTP Peserta.pdf');
+
+        $component = Livewire::actingAs($admin)->test(EditRegistration::class, ['record' => $reg->registration_number]);
+        $files = $component->instance()->form->getComponent('documents')->getUploadedFiles();
+        $url = collect($files)->first()['url'];
+        $this->assertStringContainsString('signature=', $url, 'berkas privat harus dibuka lewat URL bertanda tangan');
+        $this->get($url)->assertOk();
+        // tanpa tanda tangan berkas tidak bisa diambil
+        $this->get('/storage/'.$path)->assertForbidden();
     }
 }

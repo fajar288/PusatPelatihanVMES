@@ -14,6 +14,11 @@ const nextConfig: NextConfig = {
   experimental: {
     // PWA (Phase 5): deteksi offline + navigasi/aksi server yang gagal ditahan lalu diulang saat online (hook useOffline)
     useOffline: true,
+    serverActions: {
+      // Bawaan Next 1 MB terlalu kecil untuk unggahan lewat server action: tugas LMS maks. 20 MB, dokumentasi logbook
+      // maks. 10 MB per berkas, dokumen pendaftaran 5 x 4 MB, bukti bayar 4 MB. Ditambah ruang untuk overhead multipart.
+      bodySizeLimit: "25mb",
+    },
   },
   async headers() {
     return [

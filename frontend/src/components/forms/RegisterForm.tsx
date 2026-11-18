@@ -163,6 +163,23 @@ export default function RegisterForm({ schedules, selectedId, prefill }: Props) 
         </label>
         <textarea id="r-catatan" name="notes" style={{ minHeight: 90 }} />
       </div>
+      <div>
+        <label htmlFor="r-dokumen">
+          Dokumen pendukung <small>(opsional, mis. surat tugas atau identitas; bisa ditambahkan nanti dari portal member)</small>
+        </label>
+        <input
+          id="r-dokumen"
+          name="documents"
+          type="file"
+          multiple
+          accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,application/pdf,image/jpeg,image/png,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+          aria-describedby="r-dokumen-h"
+        />
+        <small id="r-dokumen-h" className="fh">
+          PDF, JPG, PNG, DOC, atau DOCX. Maksimal 5 berkas, masing-masing 4 MB.
+        </small>
+        <FieldError errors={state.errors} name="documents" />
+      </div>
       <label className="fc">
         <input type="checkbox" name="consent" required />
         <span>

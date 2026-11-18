@@ -10,7 +10,9 @@ use App\Models\TrainingSchedule;
 use App\Models\User;
 use App\Notifications\RegistrationReceived;
 use App\Notifications\RegistrationStatusChanged;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 /** Alur pendaftaran (PRD §5.5): buat pendaftaran, ubah status dengan validasi transisi, catat audit, kirim notifikasi. */
@@ -28,46 +30,108 @@ class RegistrationService
         $type = $data['type'] ?? Registration::TYPE_INDIVIDUAL;
         $count = $type === Registration::TYPE_CORPORATE ? max(1, (int) ($data['participants_count'] ?? count($participants) ?: 1)) : 1;
         $price = $schedule->effectivePrice();
+        $files = array_values(array_filter((array) ($data['documents'] ?? []), fn ($f) => $f instanceof UploadedFile));
+        $stored = [];
 
-        return DB::transaction(function () use ($data, $schedule, $user, $participants, $source, $type, $count, $price, $attributes) {
-            // satu akun = satu member: pengguna login yang belum punya profil member dibuatkan otomatis
-            $member = $user ? ($user->member ?? $this->members->createForUser($user)) : null;
+        try {
+            return DB::transaction(function () use ($data, $schedule, $user, $participants, $source, $type, $count, $price, $attributes, $files, &$stored) {
+                // satu akun = satu member: pengguna login yang belum punya profil member dibuatkan otomatis
+                $member = $user ? ($user->member ?? $this->members->createForUser($user)) : null;
 
-            $registration = Registration::query()->create([
-                'registration_number' => Registration::nextNumber(),
-                'schedule_id' => $schedule->id,
-                'package_id' => $schedule->package_id,
-                'member_id' => $member?->id,
-                'user_id' => $user?->id,
-                'type' => $type,
-                'status' => RegistrationStatus::Pending,
-                'name' => $data['name'],
-                'email' => $data['email'],
-                'phone' => $data['phone'],
-                'company' => $data['company'] ?? null,
-                'position' => $data['position'] ?? null,
-                'participants_count' => $count,
-                'notes' => $data['notes'] ?? null,
-                'documents' => $data['documents'] ?? null,
-                'consent' => (bool) ($data['consent'] ?? false),
-                'price_quoted' => $price,
-                'discount' => 0,
-                'total' => $price !== null ? $price * $count : null,
-                'source' => $source,
-            ] + $attributes);
+                $registration = Registration::query()->create([
+                    'registration_number' => Registration::nextNumber(),
+                    'schedule_id' => $schedule->id,
+                    'package_id' => $schedule->package_id,
+                    'member_id' => $member?->id,
+                    'user_id' => $user?->id,
+                    'type' => $type,
+                    'status' => RegistrationStatus::Pending,
+                    'name' => $data['name'],
+                    'email' => $data['email'],
+                    'phone' => $data['phone'],
+                    'company' => $data['company'] ?? null,
+                    'position' => $data['position'] ?? null,
+                    'participants_count' => $count,
+                    'notes' => $data['notes'] ?? null,
+                    'consent' => (bool) ($data['consent'] ?? false),
+                    'price_quoted' => $price,
+                    'discount' => 0,
+                    'total' => $price !== null ? $price * $count : null,
+                    'source' => $source,
+                ] + $attributes);
 
-            foreach ($participants as $p) {
-                $registration->participants()->create([
-                    'name' => $p['name'], 'email' => $p['email'] ?? null, 'phone' => $p['phone'] ?? null, 'position' => $p['position'] ?? null,
-                ]);
+                foreach ($participants as $p) {
+                    $registration->participants()->create([
+                        'name' => $p['name'], 'email' => $p['email'] ?? null, 'phone' => $p['phone'] ?? null, 'position' => $p['position'] ?? null,
+                    ]);
+                }
+
+                if ($files) {
+                    $this->storeDocuments($registration, $files, $stored);
+                }
+
+                AuditLog::record('registration.created', $registration, null, ['status' => 'pending', 'number' => $registration->registration_number, 'documents' => count($files)], $user);
+                $registration->notify(new RegistrationReceived($registration));
+                app(NotificationEvents::class)->registrationReceived($registration);
+
+                return $registration;
+            });
+        } catch (\Throwable $e) {
+            // transaksi dibatalkan: berkas yang sudah tersimpan tidak boleh tertinggal tanpa pemilik
+            $stored && Storage::disk(Registration::DOCUMENT_DISK)->delete($stored);
+            throw $e;
+        }
+    }
+
+    /**
+     * Pendaftar menambah dokumen pendukung dari portal selama pendaftaran belum terkonfirmasi/final.
+     *
+     * @param  list<UploadedFile>  $files
+     */
+    public function addDocuments(Registration $registration, array $files, User $actor): Registration
+    {
+        if (! $registration->status->acceptsDocuments()) {
+            throw ValidationException::withMessages(['documents' => 'Dokumen tidak bisa ditambahkan pada status '.$registration->status->label().'.']);
+        }
+        $existing = count($registration->documentList());
+        if ($existing + count($files) > Registration::MAX_DOCUMENTS) {
+            throw ValidationException::withMessages(['documents' => 'Maksimal '.Registration::MAX_DOCUMENTS.' dokumen per pendaftaran (sudah ada '.$existing.').']);
+        }
+
+        $stored = [];
+        try {
+            DB::transaction(function () use ($registration, $files, $actor, &$stored) {
+                $this->storeDocuments($registration, $files, $stored);
+                AuditLog::record('registration.documents_added', $registration, null, ['documents' => array_map(fn (UploadedFile $f) => $f->getClientOriginalName(), $files)], $actor);
+            });
+        } catch (\Throwable $e) {
+            $stored && Storage::disk(Registration::DOCUMENT_DISK)->delete($stored);
+            throw $e;
+        }
+
+        return $registration->refresh();
+    }
+
+    /**
+     * Simpan berkas ke disk privat `registrations/{nomor}` dengan nama acak; nama asli dicatat di `document_names`.
+     *
+     * @param  list<UploadedFile>  $files
+     * @param  list<string>  $stored  diisi path yang berhasil disimpan (untuk dibersihkan bila transaksi gagal)
+     */
+    private function storeDocuments(Registration $registration, array $files, array &$stored): void
+    {
+        $paths = array_values(array_filter((array) ($registration->documents ?? []), 'is_string'));
+        $names = (array) ($registration->document_names ?? []);
+        foreach ($files as $file) {
+            $path = $file->store('registrations/'.$registration->registration_number, Registration::DOCUMENT_DISK);
+            if ($path === false) {
+                throw new \RuntimeException('Dokumen pendukung gagal disimpan.');
             }
-
-            AuditLog::record('registration.created', $registration, null, ['status' => 'pending', 'number' => $registration->registration_number], $user);
-            $registration->notify(new RegistrationReceived($registration));
-            app(NotificationEvents::class)->registrationReceived($registration);
-
-            return $registration;
-        });
+            $stored[] = $path;
+            $paths[] = $path;
+            $names[$path] = mb_substr($file->getClientOriginalName(), 0, 200);
+        }
+        $registration->forceFill(['documents' => $paths, 'document_names' => $names])->save();
     }
 
     /** Ubah status dengan validasi transisi; buat tagihan saat masuk "menunggu pembayaran". */

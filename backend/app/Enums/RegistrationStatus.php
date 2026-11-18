@@ -55,6 +55,12 @@ enum RegistrationStatus: string
         return ! $this->isFinal() && $this !== self::Confirmed;
     }
 
+    /** Pendaftar masih boleh menambah dokumen pendukung selama pendaftaran belum terkonfirmasi/final. */
+    public function acceptsDocuments(): bool
+    {
+        return $this->cancellableByOwner();
+    }
+
     /** @return array<string, string> */
     public static function options(): array
     {

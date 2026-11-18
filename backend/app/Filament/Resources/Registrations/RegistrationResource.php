@@ -10,6 +10,7 @@ use App\Filament\Support\Layout;
 use App\Models\Registration;
 use BackedEnum;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -61,6 +62,22 @@ class RegistrationResource extends Resource
                 Textarea::make('notes')->label('Catatan pendaftar')->rows(3)->columnSpanFull(),
                 Textarea::make('status_note')->label('Catatan status (internal/ke pendaftar)')->rows(2)->columnSpanFull(),
             ]),
+            // Disk privat: berkas dibuka lewat tautan bertanda tangan yang berlaku sementara, tidak pernah lewat URL publik.
+            Section::make('Dokumen pendukung')
+                ->description('Diunggah pendaftar saat mendaftar atau dari portal member. Admin juga bisa menambah atau menghapus berkas.')
+                ->components([
+                    FileUpload::make('documents')->hiddenLabel()
+                        ->disk(Registration::DOCUMENT_DISK)->visibility('private')
+                        ->directory(fn (?Registration $record) => 'registrations/'.($record?->registration_number ?? 'admin'))
+                        ->multiple()->maxFiles(Registration::MAX_DOCUMENTS)->maxSize(Registration::DOCUMENT_MAX_KB)
+                        ->acceptedFileTypes([
+                            'application/pdf', 'image/jpeg', 'image/png', 'application/msword',
+                            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                        ])
+                        ->storeFileNamesIn('document_names')
+                        ->downloadable()->openable()->previewable(false)
+                        ->helperText('PDF, JPG, PNG, DOC, atau DOCX, maks. 4 MB per berkas, maks. '.Registration::MAX_DOCUMENTS.' berkas.'),
+                ]),
         ]);
     }
 
@@ -74,6 +91,8 @@ class RegistrationResource extends Resource
                 TextColumn::make('schedule.code')->label('Kelas')->searchable(),
                 TextColumn::make('type')->label('Jenis')->formatStateUsing(fn ($state) => $state === 'corporate' ? 'Kolektif' : 'Individu'),
                 TextColumn::make('participants_count')->label('Peserta')->alignCenter(),
+                TextColumn::make('documents')->label('Dokumen')->alignCenter()->toggleable()
+                    ->state(fn (Registration $record) => count($record->documentList()) ?: '-'),
                 TextColumn::make('status')->label('Status')->badge()
                     ->formatStateUsing(fn ($state) => $state instanceof RegistrationStatus ? $state->label() : $state)
                     ->color(fn ($state) => match ($state) {

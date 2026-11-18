@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import RegistrationActions from "@/components/portal/RegistrationActions";
+import RegistrationDocuments from "@/components/portal/RegistrationDocuments";
 import { BackLink, InvoicePill, MetaList, PortalCard, StatusPill } from "@/components/portal/ui";
 import { api, ApiRequestError, requireUser } from "@/lib/auth";
 import { getPaymentAccounts } from "@/lib/payment-accounts";
@@ -119,6 +120,8 @@ export default async function PortalRegistrationDetail({ params }: PageProps<"/p
           </>
         )}
       </PortalCard>
+
+      <RegistrationDocuments r={r} />
 
       {r.invoices && r.invoices.length > 0 && (
         <PortalCard title="Invoice & Pembayaran">

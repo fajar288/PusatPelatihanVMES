@@ -92,6 +92,19 @@ class MeController extends Controller
         return new RegistrationResource($registration->load('schedule.package', 'invoices'));
     }
 
+    /** POST /me/registrations/{registration}/documents (multipart: documents[]): tambah dokumen pendukung sebelum konfirmasi. */
+    public function documents(Request $request, Registration $registration, RegistrationService $service): RegistrationResource
+    {
+        Gate::authorize('view', $registration);
+        $data = $request->validate([
+            'documents' => ['required', 'array', 'min:1', 'max:'.Registration::MAX_DOCUMENTS],
+            'documents.*' => ['file', 'mimes:'.implode(',', Registration::DOCUMENT_MIMES), 'max:'.Registration::DOCUMENT_MAX_KB],
+        ], [], ['documents' => 'dokumen pendukung', 'documents.*' => 'dokumen pendukung']);
+        $service->addDocuments($registration, $data['documents'], $request->user());
+
+        return new RegistrationResource($registration->load('schedule.package', 'invoices.items', 'invoices.transactions', 'participants'));
+    }
+
     /**
      * POST /me/registrations/{registration}/payment-proof (multipart: proof, amount?, transfer_date?, payment_account_id?, note?)
      * Bukti untuk invoice terbuka pertama pendaftaran ini (kompatibel dengan alur lama).

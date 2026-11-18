@@ -25,13 +25,39 @@ class Registration extends Model
 
     public const TYPE_CORPORATE = 'corporate';
 
+    /** Dokumen pendukung disimpan di disk privat (tidak punya URL publik); admin membukanya lewat Filament. */
+    public const DOCUMENT_DISK = 'local';
+
+    public const MAX_DOCUMENTS = 5;
+
+    /** Ukuran maksimum per berkas dalam KB (aturan validasi `max`). */
+    public const DOCUMENT_MAX_KB = 4096;
+
+    public const DOCUMENT_MIMES = ['pdf', 'jpg', 'jpeg', 'png', 'doc', 'docx'];
+
     protected $guarded = [];
+
+    /**
+     * Daftar dokumen pendukung beserta nama asli (fallback: nama berkas di path).
+     *
+     * @return list<array{path: string, name: string}>
+     */
+    public function documentList(): array
+    {
+        $names = (array) ($this->document_names ?? []);
+
+        return array_values(array_map(
+            fn (string $path) => ['path' => $path, 'name' => (string) ($names[$path] ?? basename($path))],
+            array_filter((array) ($this->documents ?? []), 'is_string'),
+        ));
+    }
 
     protected function casts(): array
     {
         return [
             'status' => RegistrationStatus::class,
             'documents' => 'array',
+            'document_names' => 'array',
             'consent' => 'boolean',
             'price_quoted' => 'decimal:2',
             'discount' => 'decimal:2',

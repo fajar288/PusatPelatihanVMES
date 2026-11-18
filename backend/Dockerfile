@@ -7,6 +7,9 @@ RUN apk add --no-cache bash git unzip icu-dev libzip-dev libpng-dev libjpeg-turb
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
+# Batas unggahan sama dengan public/.user.ini (bawaan PHP 2 MB terlalu kecil untuk tugas LMS/dokumen)
+RUN printf "upload_max_filesize=25M\npost_max_size=30M\nmax_file_uploads=20\n" > /usr/local/etc/php/conf.d/uploads.ini
+
 WORKDIR /var/www/html
 
 COPY composer.json composer.lock ./

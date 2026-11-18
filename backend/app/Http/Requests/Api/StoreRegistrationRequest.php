@@ -28,14 +28,15 @@ class StoreRegistrationRequest extends FormRequest
             'participants.*.phone' => ['nullable', 'string', 'max:30'],
             'participants.*.position' => ['nullable', 'string', 'max:255'],
             'notes' => ['nullable', 'string', 'max:2000'],
-            'documents' => ['nullable', 'array', 'max:5'],
-            'documents.*' => ['string', 'max:255'],
+            // Dokumen pendukung (multipart `documents[]`): disimpan di disk privat, hanya berkas, bukan path dari klien.
+            'documents' => ['nullable', 'array', 'max:'.Registration::MAX_DOCUMENTS],
+            'documents.*' => ['file', 'mimes:'.implode(',', Registration::DOCUMENT_MIMES), 'max:'.Registration::DOCUMENT_MAX_KB],
             'consent' => ['accepted'],
         ];
     }
 
     public function attributes(): array
     {
-        return ['schedule' => 'jadwal', 'name' => 'nama', 'phone' => 'nomor WhatsApp', 'company' => 'perusahaan', 'consent' => 'persetujuan'];
+        return ['schedule' => 'jadwal', 'name' => 'nama', 'phone' => 'nomor WhatsApp', 'company' => 'perusahaan', 'consent' => 'persetujuan', 'documents' => 'dokumen pendukung', 'documents.*' => 'dokumen pendukung'];
     }
 }
