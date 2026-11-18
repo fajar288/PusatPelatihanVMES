@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Schedule } from "@/data/schedules";
+import { MetaList } from "@/components/portal/ui";
 import WaAnchor from "@/components/site/WaAnchor";
 import { formatRupiah, waRegisterText } from "@/lib/utils";
 
@@ -11,9 +12,14 @@ export default function ScheduleRow({ s, hidden }: { s: Schedule; hidden?: boole
         <Link href={`/kursus/${s.courseSlug}`}>
           <h3>{s.title}</h3>
         </Link>
-        <p>
-          {s.city} • {s.mode}
-        </p>
+        {/* kota & metode berikon, pola sama dengan katalog jadwal (ScheduleCatalog) */}
+        <MetaList
+          compact
+          items={[
+            { icon: "pin", value: s.city },
+            { icon: "monitor", value: s.mode },
+          ]}
+        />
       </div>
       <div className="j2">
         <b>{s.dateLabel}</b>
