@@ -123,6 +123,14 @@ export default async function TentangPage() {
       </section>
 
       <Partners partners={h.partners} />
+      <div className="wrap" style={{ textAlign: "center", marginTop: -24, paddingBottom: 40 }}>
+        <Link className="btn" href="/mitra">
+          Lihat semua mitra & principal →
+        </Link>{" "}
+        <Link className="btn" href="/testimoni">
+          Testimoni peserta →
+        </Link>
+      </div>
 
       <section className="sec alt" id="kerja-sama">
         <div className="wrap">

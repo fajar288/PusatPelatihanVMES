@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Api;
 
+use App\Models\Partner;
 use Carbon\Carbon;
 use Database\Seeders\CmsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -109,6 +110,11 @@ class PublicApiTest extends TestCase
     {
         $this->getJson('/api/v1/partners')->assertOk()->assertJsonCount(20, 'data');
         $this->getJson('/api/v1/partners?official=1')->assertOk()->assertJsonCount(4, 'data')->assertJsonPath('data.0.name', 'Cisco');
+        // halaman /mitra mengelompokkan per jenis dan menampilkan deskripsi dari CMS
+        Partner::query()->where('name', 'Cisco')->update(['description' => 'Cisco Networking Academy']);
+        $this->getJson('/api/v1/partners?type=principal')->assertOk()->assertJsonCount(4, 'data')
+            ->assertJsonPath('data.0.type', 'principal')->assertJsonPath('data.0.description', 'Cisco Networking Academy');
+        $this->getJson('/api/v1/partners?type=client')->assertOk()->assertJsonCount(16, 'data');
         $this->getJson('/api/v1/testimonials')->assertOk()->assertJsonCount(5, 'data')
             ->assertJsonPath('data.0.role', 'Automation Technician • PT. Batam Industrial Automation • Batam');
         $this->getJson('/api/v1/galleries?limit=4')->assertOk()->assertJsonCount(4, 'data');

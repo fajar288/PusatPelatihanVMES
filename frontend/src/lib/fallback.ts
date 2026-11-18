@@ -9,13 +9,20 @@ import { getUpcomingSchedules, SCHEDULES, scheduleBatchTitle, type Schedule } fr
 import { FOOTER_COLUMNS, NAV, SITE, SOCIALS } from "@/data/site";
 import { TESTIMONIALS } from "@/data/testimonials";
 import { blocksToHtml } from "./blocks";
-import type { CmsPage, CompanyProfile, HomeData, MenuData, Package, Post, ScheduleDetail, SearchResult, SiteSettings } from "./cms-types";
+import type { CmsPage, CompanyProfile, HomeData, MenuData, Package, Post, PublicPartner, ScheduleDetail, SearchResult, SiteSettings } from "./cms-types";
 
 /** API memakai kode kelas sebagai id publik; data statis memakai "sch-n" → samakan. */
 const sched = (s: Schedule): Schedule => ({ ...s, id: s.code });
 const summary = (a: Article) => ({ slug: a.slug, title: a.title, excerpt: a.excerpt, category: a.category, dateLabel: a.dateLabel, publishedAt: a.publishedAt, image: a.image });
 
 export const fallback = {
+  partners: (): PublicPartner[] => [
+    ...HERO.officialPartners.map((p) => ({ ...p, type: "principal", official: true })),
+    ...PARTNERS.map((p) => ({ ...p, type: "client" })),
+  ],
+
+  testimonials: () => TESTIMONIALS,
+
   site: (): SiteSettings => ({ ...SITE, socials: SOCIALS }),
 
   home: (): HomeData => {

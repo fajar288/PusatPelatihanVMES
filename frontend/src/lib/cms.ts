@@ -7,7 +7,8 @@ import { cacheLife, cacheTag } from "next/cache";
 import type { PostSummary } from "@/data/articles";
 import type { Course } from "@/data/courses";
 import type { Schedule } from "@/data/schedules";
-import type { CmsPage, CompanyProfile, HomeData, MenuData, Package, Post, ScheduleDetail, SearchResult, SiteSettings } from "./cms-types";
+import type { Testimonial } from "@/data/testimonials";
+import type { CmsPage, CompanyProfile, HomeData, MenuData, Package, Post, PublicPartner, ScheduleDetail, SearchResult, SiteSettings } from "./cms-types";
 import { fallback } from "./fallback";
 
 const BASE = (process.env.API_URL_INTERNAL ?? process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1").replace(/\/$/, "");
@@ -130,6 +131,24 @@ export async function getPage(slug: string): Promise<CmsPage | null> {
   return r.status === 404 ? null : fallback.page(slug);
 }
 
+
+/** Semua mitra aktif (client, principal, partner sertifikasi) untuk halaman /mitra. */
+export async function getPartners(): Promise<PublicPartner[]> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("cms", "partners");
+  const r = await api<{ data: PublicPartner[] }>("/partners");
+  return r.ok ? r.data.data : fallback.partners();
+}
+
+/** Semua testimoni yang disetujui untuk halaman /testimoni. */
+export async function getTestimonials(): Promise<Testimonial[]> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("cms", "testimonials");
+  const r = await api<{ data: (Testimonial & { image?: string | null; program?: string | null })[] }>("/testimonials");
+  return r.ok ? r.data.data.map((t) => ({ ...t, image: t.image ?? undefined, program: t.program ?? undefined })) : fallback.testimonials();
+}
 export async function getCompanyProfile(): Promise<CompanyProfile> {
   "use cache";
   cacheLife("hours");

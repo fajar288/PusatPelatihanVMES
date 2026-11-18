@@ -43,6 +43,8 @@ class CmsObserver
             $m instanceof TrainingCategory => ['home', 'packages', 'schedules'],
             $m instanceof Post => ['home', 'posts', 'post:'.$m->slug],
             $m instanceof Page => ['pages', 'page:'.$m->slug],
+            $m instanceof Partner => ['home', 'partners'],
+            $m instanceof Testimonial => ['home', 'testimonials'],
             $m instanceof Menu => ['menus'],
             $m instanceof SiteSetting => ['settings', 'home'],
             default => ['home'],
