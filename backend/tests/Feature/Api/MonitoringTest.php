@@ -207,7 +207,9 @@ class MonitoringTest extends TestCase
 
         $this->actingAs($member, 'sanctum')->getJson('/api/v1/me/progress')->assertOk()
             ->assertJsonPath('data.0.competency.status', 'validated')->assertJsonPath('data.0.competency.percent', 100)->assertJsonCount(6, 'data.0.competency.criteria')
-            ->assertJsonCount(1, 'data.0.notes')->assertJsonPath('data.0.notes.0.practiceLabel', 'Praktik selesai')->assertJsonPath('data.0.practice.logged', 1);
+            ->assertJsonCount(1, 'data.0.notes')->assertJsonPath('data.0.notes.0.practiceLabel', 'Praktik selesai')->assertJsonPath('data.0.practice.logged', 1)
+            // AC-09: indikator disertai waktu pembaruan yang jelas
+            ->assertJsonPath('data.0.updatedAt', fn ($v) => is_string($v) && strtotime($v) !== false);
     }
 
     public function test_admin_panel_monitoring_pages(): void

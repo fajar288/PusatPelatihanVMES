@@ -9,6 +9,13 @@ import type { EnrollmentInfo } from "@/lib/portal-types";
 export const instant = false;
 
 /** /portal/progres - My Progress: kehadiran per kelas, progres per course & modul, nilai kuis/tugas, praktik & kompetensi, catatan trainer (yang sudah disahkan). */
+/** "18 Nov 2026, 14.05 WIB" (zona Jakarta agar sama di server mana pun). */
+function updatedLabel(iso?: string | null): string {
+  if (!iso) return "belum ada aktivitas";
+  const d = new Date(iso);
+  return `${d.toLocaleString("id-ID", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", timeZone: "Asia/Jakarta" })} WIB`;
+}
+
 export default async function PortalProgressPage() {
   const { token } = await requireUser("/portal/progres");
   const [enrollments, courses, results, overview] = await Promise.all([
@@ -156,6 +163,7 @@ export default async function PortalProgressPage() {
                 value: [`${o.practice.completed} selesai`, o.practice.partial ? `${o.practice.partial} sebagian` : "", o.practice.notDone ? `${o.practice.notDone} belum` : ""].filter(Boolean).join(", "),
               },
               { icon: "brief", label: "Logbook", value: `${o.practice.logged} pertemuan` },
+              { icon: "clock", label: "Diperbarui", value: updatedLabel(o.updatedAt) },
             ]}
           />
           {o.competency && (

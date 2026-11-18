@@ -109,6 +109,8 @@ export type OverviewRow = ClassProgressRow & {
 export type ClassOverview = { class: ClassInfo; participants: OverviewRow[]; earlyWarning?: EarlyWarningStatus };
 
 export type ParticipantOverview = {
+  /** Waktu data progres terakhir berubah (ISO), null bila belum ada aktivitas. */
+  updatedAt?: string | null;
   enrollment: { id: number; name: string; email: string | null; status: string; finalScore: number | null };
   class: ClassInfo;
   attendance: { percent: number | null; present: number; held: number; total: number };

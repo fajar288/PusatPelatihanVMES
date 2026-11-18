@@ -272,7 +272,20 @@ class MonitoringService
             $assessment = null;
         }
 
+        // Waktu data progres terakhir berubah (kehadiran, belajar, kuis, tugas, logbook/penilaian yang tampil): ditampilkan
+        // ke peserta sebagai "Diperbarui ..." agar jelas seberapa baru indikatornya (PRD kriteria AC-09).
+        $updatedAt = collect([
+            $e->updated_at,
+            $e->attendances->max('updated_at'),
+            $e->lessonProgress->max('updated_at'),
+            $e->quizAttempts->max('updated_at'),
+            $e->submissions->max('updated_at'),
+            $logbooks->max('updated_at'),
+            $assessment?->updated_at,
+        ])->filter()->max();
+
         return [
+            'updatedAt' => $updatedAt?->toIso8601String(),
             'enrollment' => ['id' => $e->id, 'name' => $e->participant_name, 'email' => $e->participant_email, 'status' => $e->status, 'finalScore' => $e->final_score !== null ? (float) $e->final_score : null],
             'class' => ['code' => $s->code, 'title' => $s->title ?? $s->package?->title, 'dateLabel' => IdDate::long($s->start_date), 'endLabel' => IdDate::long($s->end_date), 'status' => $s->status],
             'attendance' => ['percent' => $e->attendancePercent(), 'present' => $present, 'held' => $held->count(), 'total' => $s->sessions->count()],
