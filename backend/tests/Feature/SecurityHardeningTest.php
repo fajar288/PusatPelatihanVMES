@@ -2,12 +2,12 @@
 
 namespace Tests\Feature;
 
+use App\Enums\RegistrationStatus;
 use App\Models\Invoice;
 use App\Models\PaymentTransaction;
 use App\Models\Registration;
 use App\Models\User;
 use App\Services\RegistrationService;
-use App\Enums\RegistrationStatus;
 use App\Support\PrivateFiles;
 use Carbon\Carbon;
 use Database\Seeders\CmsSeeder;

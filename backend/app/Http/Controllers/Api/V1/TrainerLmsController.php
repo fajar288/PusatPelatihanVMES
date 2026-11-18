@@ -10,11 +10,11 @@ use App\Models\Lesson;
 use App\Models\QuizAttempt;
 use App\Services\LmsService;
 use App\Support\LmsPresenter;
+use App\Support\PrivateFiles;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use App\Support\PrivateFiles;
 
 /** Portal trainer: Materials, Assignments (penilaian), Quiz Results, Progress LMS per kelas (PRD §5.7, §5.8). */
 class TrainerLmsController extends Controller

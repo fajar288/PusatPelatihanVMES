@@ -12,6 +12,7 @@ use App\Models\ClassSession;
 use App\Models\Trainer;
 use App\Models\TrainingLogbook;
 use App\Models\TrainingSchedule;
+use App\Support\PrivateFiles;
 use BackedEnum;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
@@ -31,7 +32,6 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\HtmlString;
 use UnitEnum;
-use App\Support\PrivateFiles;
 
 /** Monitoring: logbook per pertemuan (PRD §5.9). Dokumentasi diunggah trainer lewat portal; admin memvalidasi/membuka kunci. */
 class TrainingLogbookResource extends Resource

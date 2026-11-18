@@ -11,10 +11,10 @@ use App\Models\LessonProgress;
 use App\Models\QuizAttempt;
 use App\Models\TrainingSchedule;
 use App\Models\User;
+use App\Support\PrivateFiles;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\ValidationException;
-use App\Support\PrivateFiles;
 
 /**
  * Logika LMS (PRD §5.8): akses materi berdasarkan enrollment & periode kelas, learning progress,
