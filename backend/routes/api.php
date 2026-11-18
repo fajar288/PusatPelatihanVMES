@@ -100,6 +100,7 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
         Route::get('/user', fn (Request $request) => $request->user())->name('user');
         Route::get('/me', [MeController::class, 'show'])->name('me.show');
         Route::patch('/me', [MeController::class, 'update'])->name('me.update');
+        Route::get('/me/data-export', [MeController::class, 'dataExport'])->middleware('throttle:data-export')->name('me.data_export');
         Route::get('/me/photo', [MeController::class, 'photo'])->name('me.photo');
         Route::post('/me/photo', [MeController::class, 'uploadPhoto'])->middleware('throttle:member-photo')->name('me.photo.upload');
         Route::delete('/me/photo', [MeController::class, 'deletePhoto'])->name('me.photo.delete');

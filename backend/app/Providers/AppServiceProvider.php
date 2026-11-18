@@ -97,6 +97,7 @@ class AppServiceProvider extends ServiceProvider
             Limit::perDay(max(1, (int) config('chatbot.per_ip_per_day')))->by('chat-d:'.$request->ip()),
         ]);
         RateLimiter::for('verify-resend', fn (Request $request) => Limit::perMinute(3)->by('verify-resend:'.($request->user()?->id ?: $request->ip())));
+        RateLimiter::for('data-export', fn (Request $request) => Limit::perMinute(6)->by('data-export:'.($request->user()?->id ?: $request->ip())));
         RateLimiter::for('payment-proof', fn (Request $request) => Limit::perMinute(10)->by('payment-proof:'.($request->user()?->id ?: $request->ip())));
         RateLimiter::for('registration-documents', fn (Request $request) => Limit::perMinute(10)->by('reg-docs:'.($request->user()?->id ?: $request->ip())));
         RateLimiter::for('member-photo', fn (Request $request) => Limit::perMinute(6)->by('member-photo:'.($request->user()?->id ?: $request->ip())));
