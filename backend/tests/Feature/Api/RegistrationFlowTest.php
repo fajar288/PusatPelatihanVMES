@@ -142,6 +142,74 @@ class RegistrationFlowTest extends TestCase
         $this->actingAs($member, 'sanctum')->postJson("/api/v1/me/registrations/$number/cancel", ['reason' => 'Jadwal bentrok'])->assertOk()->assertJsonPath('data.status', 'cancelled');
     }
 
+    public function test_registration_form_stores_documents_privately_with_original_names(): void
+    {
+        Storage::fake('local');
+        Storage::fake('public');
+        $res = $this->post('/api/v1/registrations', $this->payload([
+            'documents' => [UploadedFile::fake()->create('KTP Rizky.pdf', 300, 'application/pdf'), UploadedFile::fake()->image('ijazah.jpg')],
+        ]), ['Accept' => 'application/json'])->assertCreated()
+            ->assertJsonPath('data.documents.0.name', 'KTP Rizky.pdf')
+            ->assertJsonPath('data.documents.1.name', 'ijazah.jpg')
+            ->assertJsonPath('data.documentsAccepted', true);
+        // respons tidak membocorkan path penyimpanan
+        $this->assertStringNotContainsString('registrations/', $res->getContent());
+
+        $reg = Registration::query()->first();
+        $this->assertCount(2, $reg->documents);
+        foreach ($reg->documents as $path) {
+            $this->assertStringStartsWith('registrations/'.$reg->registration_number.'/', $path);
+            Storage::disk('local')->assertExists($path);
+        }
+        $this->assertSame([], Storage::disk('public')->allFiles());
+        $this->assertSame('KTP Rizky.pdf', $reg->documentList()[0]['name']);
+    }
+
+    public function test_registration_documents_are_validated_and_paths_from_client_are_refused(): void
+    {
+        Storage::fake('local');
+        $this->post('/api/v1/registrations', $this->payload(['documents' => [UploadedFile::fake()->create('skrip.exe', 10)]]), ['Accept' => 'application/json'])
+            ->assertUnprocessable()->assertJsonValidationErrors('documents.0');
+        $this->post('/api/v1/registrations', $this->payload(['documents' => [UploadedFile::fake()->create('besar.pdf', 5000, 'application/pdf')]]), ['Accept' => 'application/json'])
+            ->assertUnprocessable()->assertJsonValidationErrors('documents.0');
+        $six = array_map(fn ($i) => UploadedFile::fake()->create("d$i.pdf", 10, 'application/pdf'), range(1, 6));
+        $this->post('/api/v1/registrations', $this->payload(['documents' => $six]), ['Accept' => 'application/json'])
+            ->assertUnprocessable()->assertJsonValidationErrors('documents');
+        // path berkas dari klien (cara lama) tidak lagi diterima
+        $this->postJson('/api/v1/registrations', $this->payload(['documents' => ['../../.env']]))->assertUnprocessable()->assertJsonValidationErrors('documents.0');
+        $this->assertDatabaseCount('registrations', 0);
+    }
+
+    public function test_owner_adds_documents_from_portal_until_confirmation(): void
+    {
+        Storage::fake('local');
+        $member = User::factory()->create(['email' => 'dok@example.com']);
+        $this->actingAs($member, 'sanctum')->postJson('/api/v1/registrations', $this->payload(['email' => 'dok@example.com']))->assertCreated();
+        $reg = Registration::query()->first();
+        $url = "/api/v1/me/registrations/{$reg->registration_number}/documents";
+
+        $this->actingAs($member, 'sanctum')->post($url, ['documents' => [UploadedFile::fake()->create('surat-tugas.pdf', 100, 'application/pdf')]], ['Accept' => 'application/json'])
+            ->assertOk()->assertJsonPath('data.documents.0.name', 'surat-tugas.pdf');
+        $this->assertDatabaseHas('audit_logs', ['action' => 'registration.documents_added', 'auditable_id' => $reg->id]);
+
+        // orang lain tidak boleh menambah
+        $other = User::factory()->create();
+        $this->actingAs($other, 'sanctum')->post($url, ['documents' => [UploadedFile::fake()->create('x.pdf', 10, 'application/pdf')]], ['Accept' => 'application/json'])->assertForbidden();
+
+        // batas total 5 berkas termasuk yang sudah ada
+        $five = array_map(fn ($i) => UploadedFile::fake()->create("d$i.pdf", 10, 'application/pdf'), range(1, 5));
+        $this->actingAs($member, 'sanctum')->post($url, ['documents' => $five], ['Accept' => 'application/json'])
+            ->assertUnprocessable()->assertJsonValidationErrors('documents');
+        $this->assertCount(1, $reg->refresh()->documents);
+        $this->assertCount(1, Storage::disk('local')->allFiles());
+
+        // setelah terkonfirmasi tidak bisa menambah lagi
+        $reg->forceFill(['status' => RegistrationStatus::Confirmed])->save();
+        $this->actingAs($member, 'sanctum')->post($url, ['documents' => [UploadedFile::fake()->create('y.pdf', 10, 'application/pdf')]], ['Accept' => 'application/json'])
+            ->assertUnprocessable()->assertJsonValidationErrors('documents');
+        $this->actingAs($member, 'sanctum')->getJson("/api/v1/me/registrations/{$reg->registration_number}")->assertJsonPath('data.documentsAccepted', false);
+    }
+
     public function test_roles_seeded_and_permissions_resolve(): void
     {
         $this->assertDatabaseCount('roles', 10);

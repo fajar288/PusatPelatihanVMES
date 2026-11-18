@@ -103,6 +103,7 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
         Route::get('/me/registrations', [MeController::class, 'registrations'])->name('me.registrations');
         Route::get('/me/registrations/{registration}', [MeController::class, 'registration'])->name('me.registration');
         Route::post('/me/registrations/{registration}/cancel', [MeController::class, 'cancel'])->name('me.registration.cancel');
+        Route::post('/me/registrations/{registration}/documents', [MeController::class, 'documents'])->middleware('throttle:registration-documents')->name('me.registration.documents');
         Route::post('/me/registrations/{registration}/payment-proof', [MeController::class, 'paymentProof'])->middleware('throttle:payment-proof')->name('me.registration.proof');
         Route::get('/me/invoices/{invoice}', [MeController::class, 'invoice'])->name('me.invoice');
         Route::post('/me/invoices/{invoice}/proof', [MeController::class, 'invoiceProof'])->middleware('throttle:payment-proof')->name('me.invoice.proof');

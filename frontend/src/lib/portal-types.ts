@@ -119,6 +119,10 @@ export type RegistrationInfo = {
   discount: number;
   total: number | null;
   statusNote: string | null;
+  /** Dokumen pendukung (nama saja; berkas disimpan privat dan dibuka admin). */
+  documents?: { name: string }[];
+  documentsAccepted?: boolean;
+  documentsMax?: number;
   createdAt: string | null;
   createdLabel: string | null;
   confirmedAt: string | null;

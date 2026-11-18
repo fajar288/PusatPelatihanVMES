@@ -32,6 +32,10 @@ class RegistrationResource extends JsonResource
             'discount' => (float) $this->discount,
             'total' => $this->total !== null ? (float) $this->total : null,
             'statusNote' => $this->status_note,
+            // nama dokumen saja; berkas disimpan privat dan hanya dibuka admin
+            'documents' => array_map(fn (array $d) => ['name' => $d['name']], $this->documentList()),
+            'documentsAccepted' => $this->status->acceptsDocuments(),
+            'documentsMax' => Registration::MAX_DOCUMENTS,
             'createdAt' => $this->created_at?->toIso8601String(),
             'createdLabel' => IdDate::long($this->created_at),
             'confirmedAt' => $this->confirmed_at?->toIso8601String(),

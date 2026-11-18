@@ -98,6 +98,7 @@ class AppServiceProvider extends ServiceProvider
         ]);
         RateLimiter::for('verify-resend', fn (Request $request) => Limit::perMinute(3)->by('verify-resend:'.($request->user()?->id ?: $request->ip())));
         RateLimiter::for('payment-proof', fn (Request $request) => Limit::perMinute(10)->by('payment-proof:'.($request->user()?->id ?: $request->ip())));
+        RateLimiter::for('registration-documents', fn (Request $request) => Limit::perMinute(10)->by('reg-docs:'.($request->user()?->id ?: $request->ip())));
         RateLimiter::for('ai-feedback', fn (Request $request) => Limit::perMinute(30)->by('ai-fb:'.($request->user()?->id ?: $request->ip())));
         // Asisten Belajar: tiap pertanyaan memanggil model (beberapa detik), jadi dibatasi per menit di samping kuota harian.
         RateLimiter::for('ai-assistant', fn (Request $request) => Limit::perMinute(6)->by('ai-assist:'.($request->user()?->id ?: $request->ip())));
