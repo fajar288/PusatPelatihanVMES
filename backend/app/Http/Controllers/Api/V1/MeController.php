@@ -17,6 +17,7 @@ use App\Services\InvoiceService;
 use App\Services\MemberService;
 use App\Services\MonitoringService;
 use App\Services\PaymentService;
+use App\Services\PrivacyService;
 use App\Services\RegistrationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -102,6 +103,18 @@ class MeController extends Controller
         }
 
         return new UserResource($user->refresh()->load('member'));
+    }
+
+    /** GET /me/data-export: salinan data pribadi milik akun (JSON, diunduh sebagai berkas). */
+    public function dataExport(Request $request, PrivacyService $privacy): JsonResponse
+    {
+        $data = $privacy->export($request->user());
+        $name = 'data-pribadi-'.($request->user()->member?->member_number ?? 'akun-'.$request->user()->id).'-'.now()->format('Ymd').'.json';
+
+        return response()->json($data, 200, [
+            'Content-Disposition' => 'attachment; filename="'.$name.'"',
+            'Cache-Control' => 'no-store, private',
+        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     }
 
     /** GET /me/registrations */
