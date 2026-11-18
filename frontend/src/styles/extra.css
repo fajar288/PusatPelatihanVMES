@@ -351,12 +351,18 @@
 .mgr-tx a{color:var(--p);font-weight:700}
 .mgr-cta{max-width:520px;margin:28px auto 0;grid-template-columns:1fr 1fr}
 @media(max-width:480px){.mgr{grid-template-columns:repeat(2,minmax(0,1fr))}.mgr-cta{grid-template-columns:minmax(0,1fr)}}
-/* Aksesibilitas (kontras WCAG AA 4.5:1) di area portal member/trainer/perusahaan: tombol .btn oranye tema (#FA5000,
-   3.4:1 dengan teks putih) digelapkan. Halaman publik clone tidak diubah (keputusan stakeholder). Tombol WhatsApp
-   melayang (.waf, komponen baru) memakai hijau #1a7f37 (5.1:1). */
-.pgrid .btn:not(.bl),.pwa-inst .btn:not(.bl){background:#c23e00}
-.pgrid .btn:not(.bl):hover,.pwa-inst .btn:not(.bl):hover{background:#a33400}
-/* Beranda, baris jadwal .jr: kota & metode berikon (MetaList compact) rapat di bawah judul, ukuran setara kolom
+/* Tombol utama .btn di area portal member/trainer (+ kartu "Pasang aplikasi"): gradasi oranye bercahaya seperti
+   tombol tema .b-o/.jb, tetapi dengan titik warna yang lebih gelap agar kontras teks putih tetap WCAG AA di setiap
+   titik (oranye tema #FA5000 hanya 3,4:1). Gradasi 200% lebar digeser saat hover sehingga transisinya halus:
+     normal  #C23E00 (5,27:1) -> #D24300 (4,62:1)
+     hover   #A33400 (6,89:1) -> #C23E00 (5,27:1)  (lebih gelap, bukan lebih terang, agar kontras tidak turun)
+   Varian .bl/.sec/.w/.o tetap memakai warnanya sendiri. Halaman publik clone tidak diubah (keputusan stakeholder).
+   Tombol WhatsApp melayang (.waf, komponen baru) memakai hijau #1a7f37 (5,1:1). */
+.pgrid .btn:not(.bl):not(.sec):not(.w):not(.o),.pwa-inst .btn:not(.bl):not(.sec):not(.w):not(.o){
+  background:linear-gradient(90deg,#A33400 0%,#C23E00 50%,#D24300 100%);background-size:200% 100%;background-position:100% 0;
+  color:#fff;box-shadow:0 6px 14px rgba(250,80,0,.22);transition:background-position .25s ease,box-shadow .25s ease}
+.pgrid .btn:not(.bl):not(.sec):not(.w):not(.o):hover,.pwa-inst .btn:not(.bl):not(.sec):not(.w):not(.o):hover{
+  background-position:0 0;box-shadow:0 8px 20px rgba(250,80,0,.28)}/* Beranda, baris jadwal .jr: kota & metode berikon (MetaList compact) rapat di bawah judul, ukuran setara kolom
    tanggal .j2 (13px, abu); kolom judul boleh menyempit agar teks panjang membungkus, tidak mendorong kolom lain. */
 .jr .j1{min-width:0}
 .j1 .pmeta.sm{margin-top:4px;gap:2px 14px}
