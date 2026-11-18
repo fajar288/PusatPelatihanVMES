@@ -23,7 +23,9 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /** Endpoint portal member (/portal): profil, pendaftaran, pembayaran, notifikasi. */
 class MeController extends Controller
@@ -65,6 +67,39 @@ class MeController extends Controller
         }
         $member->update($data);
         AuditLog::record('member.profile_updated', $member, $before, $data, $user);
+
+        return new UserResource($user->refresh()->load('member'));
+    }
+
+    /** GET /me/photo: foto profil pemilik akun (disk privat). */
+    public function photo(Request $request): StreamedResponse
+    {
+        $path = $request->user()->member?->photo;
+        $disk = Storage::disk(MemberService::PHOTO_DISK);
+        abort_unless($path && $disk->exists($path), 404, 'Foto profil belum ada.');
+
+        return $disk->response($path, null, ['Cache-Control' => 'private, max-age=86400']);
+    }
+
+    /** POST /me/photo (multipart: photo): unggah/ganti foto profil; dipotong persegi dan dikompresi ke WebP. */
+    public function uploadPhoto(Request $request, MemberService $members): UserResource
+    {
+        $request->validate([
+            'photo' => ['required', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096', 'dimensions:min_width=100,min_height=100,max_width=8000,max_height=8000'],
+        ], [], ['photo' => 'foto profil']);
+        $user = $request->user();
+        $members->updatePhoto($user->member ?? $members->createForUser($user), $request->file('photo'), $user);
+
+        return new UserResource($user->refresh()->load('member'));
+    }
+
+    /** DELETE /me/photo */
+    public function deletePhoto(Request $request, MemberService $members): UserResource
+    {
+        $user = $request->user();
+        if ($user->member) {
+            $members->removePhoto($user->member, $user);
+        }
 
         return new UserResource($user->refresh()->load('member'));
     }

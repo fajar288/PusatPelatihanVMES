@@ -12,7 +12,8 @@ export type MemberProfile = {
   education: string | null;
   address: string | null;
   city: string | null;
-  photo: string | null;
+  /** Ada foto profil bila tidak null; dimuat lewat /portal/foto?v=..., nilai berubah tiap foto diganti. */
+  photoVersion: string | null;
   communicationPref: { email: boolean; whatsapp: boolean };
   since: string | null;
 };

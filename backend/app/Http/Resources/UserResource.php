@@ -4,7 +4,6 @@ namespace App\Http\Resources;
 
 use App\Models\CorporateUser;
 use App\Models\User;
-use App\Support\Media;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -37,7 +36,8 @@ class UserResource extends JsonResource
                 'education' => $m->education,
                 'address' => $m->address,
                 'city' => $m->city,
-                'photo' => Media::url($m->photo),
+                // foto disimpan privat: frontend memuatnya lewat GET /me/photo; versi berubah tiap foto diganti (cache-busting)
+                'photoVersion' => $m->photo ? substr(hash('sha256', $m->photo), 0, 12) : null,
                 'communicationPref' => $m->communication_pref ?? ['email' => true, 'whatsapp' => true],
                 'since' => $m->created_at?->toDateString(),
             ] : null,
