@@ -5,12 +5,20 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PackageResource;
 use App\Models\TrainingPackage;
+use App\Models\TrainingSchedule;
+use App\Support\IdDate;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class PackageController extends Controller
 {
-    /** GET /api/v1/packages?q=&kategori=&mode=&urut=new|pop|lo|hi|az */
+    /** Urutan tampil level di filter katalog; level lain menyusul berdasar abjad. */
+    private const LEVEL_ORDER = ['Fundamental', 'Beginner', 'Dasar', 'Intermediate', 'Menengah', 'Advanced', 'Lanjutan', 'Expert', 'Professional'];
+
+    /** GET /api/v1/packages?q=&kategori=&mode=&level=&bulan=YYYY-MM&urut=new|pop|lo|hi|az */
     public function index(Request $request): AnonymousResourceCollection
     {
         $q = TrainingPackage::query()->published()->with('category')->search($request->string('q'));
@@ -21,6 +29,15 @@ class PackageController extends Controller
         if ($mode = $request->string('mode')->toString()) {
             $q->where('mode', array_search($mode, TrainingPackage::MODE_LABELS, true) ?: $mode);
         }
+        if ($level = $request->string('level')->toString()) {
+            $q->where('level', $level);
+        }
+        // bulan = jadwal yang mulai pada bulan tersebut (hanya jadwal mendatang yang tampil di publik)
+        $month = $request->string('bulan')->toString();
+        if (preg_match('/^\d{4}-(0[1-9]|1[0-2])$/', $month)) {
+            $q->whereHas('schedules', fn ($s) => $this->upcomingStarts($s)
+                ->whereBetween('start_date', [Carbon::parse($month.'-01')->startOfMonth()->toDateString(), Carbon::parse($month.'-01')->endOfMonth()->toDateString()]));
+        }
 
         match ($request->string('urut')->toString()) {
             'az' => $q->orderBy('title'),
@@ -30,12 +47,32 @@ class PackageController extends Controller
             default => $q->orderByDesc('published_at'),
         };
 
-        return PackageResource::collection($q->get())->additional([
+        $packages = $q->get();
+        // bulan mulai jadwal mendatang per paket (satu kueri), dipakai filter "Jadwal" di katalog
+        $months = $this->upcomingStarts(TrainingSchedule::query())->whereIn('package_id', $packages->modelKeys())
+            ->get(['package_id', 'start_date'])->groupBy('package_id')
+            ->map(fn ($rows) => $rows->map(fn ($s) => $s->start_date->format('Y-m'))->unique()->sort()->values()->all());
+        $packages->each(fn (TrainingPackage $p) => $p->setAttribute('schedule_months', $months[$p->id] ?? []));
+
+        $published = TrainingPackage::query()->published();
+        $allMonths = $this->upcomingStarts(TrainingSchedule::query())->whereIn('package_id', (clone $published)->select('id'))
+            ->pluck('start_date')->map(fn ($d) => $d->format('Y-m'))->unique()->sort()->values();
+
+        return PackageResource::collection($packages)->additional([
             'meta' => [
-                'categories' => TrainingPackage::query()->published()->with('category')->get()->pluck('category.name')->filter()->unique()->sort()->values(),
-                'modes' => TrainingPackage::query()->published()->pluck('mode')->unique()->map(fn ($m) => TrainingPackage::MODE_LABELS[$m] ?? $m)->sort()->values(),
+                'categories' => (clone $published)->with('category')->get()->pluck('category.name')->filter()->unique()->sort()->values(),
+                'modes' => (clone $published)->pluck('mode')->unique()->map(fn ($m) => TrainingPackage::MODE_LABELS[$m] ?? $m)->sort()->values(),
+                'levels' => (clone $published)->whereNotNull('level')->where('level', '!=', '')->pluck('level')->unique()
+                    ->sortBy(fn ($l) => [($i = array_search($l, self::LEVEL_ORDER, true)) === false ? 99 : $i, $l])->values(),
+                'months' => $allMonths->map(fn (string $m) => ['value' => $m, 'label' => IdDate::monthYear(Carbon::parse($m.'-01'))])->values(),
             ],
         ]);
+    }
+
+    /** Jadwal publik yang belum dimulai (atau mulai hari ini). */
+    private function upcomingStarts(Builder|HasMany $q): Builder|HasMany
+    {
+        return $q->published()->whereDate('start_date', '>=', today());
     }
 
     /** GET /api/v1/packages/{slug}: detail + jadwal mendatang + kurikulum + terkait */

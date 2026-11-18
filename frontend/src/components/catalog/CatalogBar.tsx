@@ -4,6 +4,9 @@ export type CatalogFilter = {
   q: string;
   category: string;
   mode: string;
+  /** Hanya katalog kursus: level program & bulan mulai jadwal (YYYY-MM). */
+  level?: string;
+  month?: string;
   sort: SortKey;
 };
 
@@ -12,6 +15,9 @@ type Props = {
   onChange: (next: CatalogFilter) => void;
   categories: string[];
   modes?: string[]; // kosong/undefined → select Mode disembunyikan (seperti halaman jadwal/artikel)
+  /** Kosong/undefined → select tidak ditampilkan (halaman jadwal/artikel tetap seperti tema asli). */
+  levels?: string[];
+  months?: { value: string; label: string }[];
   sortOptions: { value: SortKey; label: string }[];
   count: number;
   label: string; // "training" | "postingan"
@@ -21,7 +27,7 @@ type Props = {
  * div.catb: bar pencarian + filter + urutan katalog.
  * Port dari markup `#cat-bar` dan logika `draw()` di theme.main.js (state di komponen induk).
  */
-export default function CatalogBar({ value, onChange, categories, modes, sortOptions, count, label }: Props) {
+export default function CatalogBar({ value, onChange, categories, modes, levels, months, sortOptions, count, label }: Props) {
   const set = (patch: Partial<CatalogFilter>) => onChange({ ...value, ...patch });
   return (
     <div className="catb" id="cat-bar" data-kur={modes && modes.length ? "1" : "0"}>
@@ -63,6 +69,26 @@ export default function CatalogBar({ value, onChange, categories, modes, sortOpt
             </option>
           ))}
         </select>
+        {levels && levels.length > 0 && (
+          <select aria-label="Level" id="cat-l" value={value.level ?? ""} onChange={(e) => set({ level: e.target.value })}>
+            <option value="">Level: Semua</option>
+            {levels.map((l) => (
+              <option key={l} value={l}>
+                {l}
+              </option>
+            ))}
+          </select>
+        )}
+        {months && months.length > 0 && (
+          <select aria-label="Jadwal" id="cat-j" value={value.month ?? ""} onChange={(e) => set({ month: e.target.value })}>
+            <option value="">Jadwal: Semua</option>
+            {months.map((m) => (
+              <option key={m.value} value={m.value}>
+                {m.label}
+              </option>
+            ))}
+          </select>
+        )}
         <select aria-label="Urutkan" id="cat-o" value={value.sort} onChange={(e) => set({ sort: e.target.value as SortKey })}>
           {sortOptions.map((o) => (
             <option key={o.value} value={o.value}>

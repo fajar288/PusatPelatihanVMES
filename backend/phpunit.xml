@@ -32,6 +32,8 @@
         <env name="PULSE_ENABLED" value="false"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="NIGHTWATCH_ENABLED" value="false"/>
+        <!-- Tes tidak boleh memicu webhook revalidasi ke dev server frontend yang sedang berjalan (tes yang perlu menyetelnya sendiri). -->
+        <env name="REVALIDATE_SECRET" value="" force="true"/>
         <!-- Fitur AI selalu mati di tes (tidak bergantung .env lokal); tes yang butuh menyalakannya lewat config(). -->
         <env name="AI_ENABLED" value="false" force="true"/>
         <env name="AI_EARLY_WARNING_ENABLED" value="false" force="true"/>
