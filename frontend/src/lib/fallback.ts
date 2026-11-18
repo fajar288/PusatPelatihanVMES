@@ -5,7 +5,7 @@ import { ARTICLES, getCategoryBySlug, getCategorySlug, getPost, getPostsByCatego
 import { COURSE_CATEGORIES, COURSE_MODES, COURSES, getCourse, getRelatedCourses } from "@/data/courses";
 import { ABOUT, CATEGORIES, CTA, GALLERY, HERO, HERO_SLIDES, PARTNERS, STATS, WHY } from "@/data/home";
 import { STATIC_PAGES } from "@/data/pages";
-import { getUpcomingSchedules, SCHEDULES, scheduleBatchTitle, type Schedule } from "@/data/schedules";
+import { getUpcomingSchedules, MONTHS_ID, SCHEDULES, scheduleBatchTitle, type Schedule } from "@/data/schedules";
 import { FOOTER_COLUMNS, NAV, SITE, SOCIALS } from "@/data/site";
 import { TESTIMONIALS } from "@/data/testimonials";
 import { blocksToHtml } from "./blocks";
@@ -37,7 +37,16 @@ export const fallback = {
     };
   },
 
-  packages: () => ({ items: COURSES as Package[], categories: COURSE_CATEGORIES, modes: COURSE_MODES }),
+  packages: () => {
+    // bulan mulai jadwal per kursus dari data statis (bentuk sama dengan meta API /packages)
+    const monthsOf = (slug: string) => [...new Set(SCHEDULES.filter((s) => s.courseSlug === slug).map((s) => s.startDate.slice(0, 7)))].sort();
+    const items: Package[] = COURSES.map((c) => ({ ...c, scheduleMonths: monthsOf(c.slug) }));
+    const months = [...new Set(items.flatMap((c) => c.scheduleMonths ?? []))].sort().map((value) => {
+      const [y, m] = value.split("-").map(Number);
+      return { value, label: `${MONTHS_ID[m - 1]} ${y}` };
+    });
+    return { items, categories: COURSE_CATEGORIES, modes: COURSE_MODES, levels: [...new Set(COURSES.map((c) => c.level).filter(Boolean))].sort(), months };
+  },
 
   package: (slug: string): Package | null => {
     const c = getCourse(slug);

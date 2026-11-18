@@ -32,6 +32,8 @@ class PackageResource extends JsonResource
             'image' => Media::url($this->image),
             'publishedAt' => $this->published_at?->timestamp,
             'level' => $this->level,
+            // hanya di daftar katalog: bulan (YYYY-MM) mulai jadwal mendatang, untuk filter "Jadwal"
+            'scheduleMonths' => $this->whenHas('schedule_months'),
             'certificate' => $this->certificate,
             'programType' => $this->program_type,
             'programTypeLabel' => TrainingPackage::PROGRAM_TYPES[$this->program_type] ?? $this->program_type,

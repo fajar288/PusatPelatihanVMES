@@ -55,6 +55,30 @@ class PublicApiTest extends TestCase
         $this->getJson('/api/v1/packages?mode=online')->assertOk()->assertJsonCount(2, 'data');
     }
 
+    public function test_packages_filter_by_level_and_schedule_month(): void
+    {
+        $res = $this->getJson('/api/v1/packages')->assertOk()
+            ->assertJsonPath('meta.levels', ['Fundamental', 'Intermediate'])
+            ->assertJsonPath('meta.months', [
+                ['value' => '2026-11', 'label' => 'November 2026'],
+                ['value' => '2026-12', 'label' => 'Desember 2026'],
+                ['value' => '2027-01', 'label' => 'Januari 2027'],
+            ]);
+        $ccna = collect($res->json('data'))->firstWhere('slug', 'cisco-ccna');
+        $this->assertSame(['2026-11', '2027-01'], $ccna['scheduleMonths']);
+
+        $this->getJson('/api/v1/packages?level=Intermediate')->assertOk()->assertJsonCount(1, 'data')->assertJsonPath('data.0.slug', 'devops-engineering');
+        $slugs = fn (string $qs) => collect($this->getJson('/api/v1/packages?'.$qs.'&urut=az')->assertOk()->json('data'))->pluck('slug')->all();
+        $this->assertSame(['aws-cloud-practitioner', 'cisco-ccna'], $slugs('bulan=2027-01'));
+        $this->assertSame(['aws-cloud-practitioner'], $slugs('bulan=2027-01&level=Fundamental&kategori=Cloud%20Computing'));
+        // format bulan tidak sah diabaikan, bukan galat
+        $this->getJson('/api/v1/packages?bulan=2027-13')->assertOk()->assertJsonCount(6, 'data');
+
+        // jadwal yang sudah dimulai tidak lagi dihitung untuk filter bulan
+        Carbon::setTestNow('2026-11-20 09:00:00');
+        $this->assertSame(['mikrotik-mtcna'], $slugs('bulan=2026-11'));
+    }
+
     public function test_package_detail_with_schedules_and_related(): void
     {
         $this->getJson('/api/v1/packages/cisco-ccna')->assertOk()

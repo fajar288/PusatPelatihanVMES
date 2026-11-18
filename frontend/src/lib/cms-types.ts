@@ -54,7 +54,12 @@ export type Post = PostSummary & {
 
 export type CmsPage = { slug: string; title: string; description?: string | null; updatedLabel?: string | null; body: string };
 
+/** Pilihan filter "Jadwal" katalog: value YYYY-MM, label "Desember 2026". */
+export type CatalogMonth = { value: string; label: string };
+
 export type Package = Course & {
+  /** Bulan (YYYY-MM) mulai jadwal mendatang; hanya di daftar katalog. */
+  scheduleMonths?: string[];
   categorySlug?: string | null;
   schedules?: Schedule[];
   related?: Course[];
