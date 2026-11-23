@@ -24,6 +24,7 @@ use App\Models\User;
 use App\Models\Waitlist;
 use App\Support\Notify\Recipient;
 use App\Support\PrivateFiles;
+use App\Support\Sql;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -290,10 +291,9 @@ class PrivacyService
     private function whereContains($q, array $columns, array $needles): void
     {
         $q->whereRaw('1 = 0');
-        $text = DB::getDriverName() === 'mysql' || DB::getDriverName() === 'mariadb' ? 'CHAR' : 'TEXT';
         foreach ($columns as $col) {
             foreach ($needles as $n) {
-                $q->orWhereRaw("LOWER(CAST($col AS $text)) LIKE ?", ['%'.mb_strtolower($n).'%']);
+                Sql::orWhereContains($q, Sql::asText($col), $n);
             }
         }
     }

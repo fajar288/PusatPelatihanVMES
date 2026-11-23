@@ -188,7 +188,7 @@ final class CmsSettings
         if ($key === 'post_categories' && $before !== []) {
             $value = self::lockCategories($value, $before);
         }
-        if ($value === $before) {
+        if (JsonValue::same($value, $before)) {
             return false;
         }
         SiteSetting::set($key, $value, self::GROUP);

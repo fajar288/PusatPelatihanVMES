@@ -6,6 +6,7 @@ use App\Filament\NavigationGroup;
 use App\Filament\Resources\SiteSettings\SiteSettingResource;
 use App\Filament\Support\Layout;
 use App\Models\AuditLog;
+use App\Support\JsonValue;
 use App\Support\SiteIdentity;
 use BackedEnum;
 use Filament\Forms\Components\Repeater;
@@ -107,7 +108,7 @@ class SiteIdentitySettings extends Page
     {
         $before = SiteIdentity::current();
         $value = SiteIdentity::save($this->form->getState());
-        $changed = array_keys(array_filter($value, fn ($v, $k) => ($before[$k] ?? null) !== $v, ARRAY_FILTER_USE_BOTH));
+        $changed = array_keys(array_filter($value, fn ($v, $k) => ! JsonValue::same($before[$k] ?? null, $v), ARRAY_FILTER_USE_BOTH));
         if ($changed) {
             AuditLog::record('settings.site_updated', null, array_intersect_key($before, array_flip($changed)), array_intersect_key($value, array_flip($changed)));
         }

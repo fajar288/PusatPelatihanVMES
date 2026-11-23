@@ -7,6 +7,7 @@ use App\Filament\Resources\SiteSettings\Schemas\SiteSettingForm;
 use App\Filament\Resources\SiteSettings\SiteSettingResource;
 use App\Models\AuditLog;
 use App\Support\CmsSettings;
+use App\Support\JsonValue;
 use App\Support\SiteIdentity;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
@@ -65,7 +66,7 @@ class EditSiteSetting extends EditRecord
     protected function afterSave(): void
     {
         $record = $this->getRecord();
-        if ($record->value !== $this->valueBefore) {
+        if (! JsonValue::same($record->value, $this->valueBefore)) {
             AuditLog::record("settings.{$record->key}_updated", null, ['value' => $this->valueBefore, 'mode' => 'json'], ['value' => $record->value, 'mode' => 'json']);
         }
     }

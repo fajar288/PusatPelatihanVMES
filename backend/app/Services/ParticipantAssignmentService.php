@@ -14,6 +14,7 @@ use App\Models\TrainingRequest;
 use App\Models\User;
 use App\Notifications\ParticipantInvited;
 use App\Support\Enterprise\IdentityMatch;
+use App\Support\Sql;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -254,7 +255,7 @@ class ParticipantAssignmentService
                 continue;
             }
             if (! empty($row['departemen'])) {
-                $person['unit_id'] = OrganizationUnit::query()->where('organization_id', $r->organization_id)->whereRaw('LOWER(name) = ?', [strtolower(trim($row['departemen']))])->value('id');
+                $person['unit_id'] = Sql::whereEqualsCi(OrganizationUnit::query()->where('organization_id', $r->organization_id), 'name', $row['departemen'])->value('id');
             }
             $seat = $r->requestSeats()->where('status', 'reserved')->orderBy('seat_no')->first();
             if (! $seat) {
@@ -341,7 +342,7 @@ class ParticipantAssignmentService
         if ($member && (clone $q)->where('member_id', $member->id)->exists()) {
             throw ValidationException::withMessages(['member' => 'Peserta ini sudah ada di permintaan yang sama.']);
         }
-        if ($email && (clone $q)->whereRaw('LOWER(participant_email) = ?', [strtolower($email)])->exists()) {
+        if ($email && Sql::whereEqualsCi(clone $q, 'participant_email', $email)->exists()) {
             throw ValidationException::withMessages(['email' => 'Email ini sudah ada di permintaan yang sama.']);
         }
     }

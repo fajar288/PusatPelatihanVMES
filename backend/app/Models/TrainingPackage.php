@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\Sql;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -108,13 +109,13 @@ class TrainingPackage extends Model
         if ($term === '') {
             return $q;
         }
-        $like = '%'.mb_strtolower($term).'%';
 
-        return $q->where(fn (Builder $w) => $w
-            ->whereRaw('LOWER(title) LIKE ?', [$like])
-            ->orWhereRaw('LOWER(COALESCE(vendor, \'\')) LIKE ?', [$like])
-            ->orWhereRaw('LOWER(COALESCE(excerpt, \'\')) LIKE ?', [$like])
-            ->orWhereHas('category', fn (Builder $c) => $c->whereRaw('LOWER(name) LIKE ?', [$like])));
+        return $q->where(function (Builder $w) use ($term) {
+            Sql::whereContains($w, 'title', $term);
+            Sql::orWhereContains($w, 'vendor', $term);
+            Sql::orWhereContains($w, 'excerpt', $term);
+            $w->orWhereHas('category', fn (Builder $c) => Sql::whereContains($c, 'name', $term));
+        });
     }
 
     public function modeLabel(): string
