@@ -3,6 +3,7 @@
 namespace App\Filament\Support;
 
 use App\Support\ImageProcessor;
+use App\Support\ThemeIcons;
 use Filament\Forms\Components\BaseFileUpload;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
@@ -98,11 +99,68 @@ final class Fields
             ->native(false);
     }
 
-    /** Ikon sprite tema (39 simbol lucide-style). */
+    /** Ikon sprite tema website: hanya nama yang ada di frontend (lihat ThemeIcons), dengan label yang mudah dibaca. */
     public static function icon(string $name = 'icon'): Select
     {
-        $icons = ['users', 'shield', 'cloud', 'laptop', 'award', 'grad', 'trophy', 'spark', 'msg', 'arr', 'network', 'server', 'db', 'code', 'brief', 'boxes', 'cpu', 'bot', 'factory', 'chart', 'wrench', 'zap', 'rocket', 'cal', 'globe', 'arrl', 'clock', 'monitor', 'star', 'quote', 'check', 'pin', 'phone', 'mail'];
+        return Select::make($name)->label('Ikon')->options(ThemeIcons::options())
+            ->searchable()->native(false)->helperText('Ikon yang tampil di website.');
+    }
 
-        return Select::make($name)->options(array_combine($icons, $icons))->searchable()->native(false)->helperText('Nama ikon sprite tema website.');
+    /**
+     * Gambar CMS yang bisa diunggah (dikompresi ke WebP) atau diisi URL. Menghasilkan dua field: `{$name}_upload`
+     * dan `{$name}_url`; gabungkan dengan {@see self::imageSource()} saat menyimpan.
+     *
+     * @return array{0: FileUpload, 1: TextInput}
+     */
+    public static function imageWithUrl(string $name, string $dir, int $maxWidth, string $label): array
+    {
+        return [
+            self::image($name.'_upload', $dir, $maxWidth)->label($label.' (unggah)'),
+            TextInput::make($name.'_url')->label('atau URL gambar')->maxLength(500)
+                ->rule(fn () => function (string $attribute, mixed $value, \Closure $fail) {
+                    if (filled($value) && ! self::isImageUrl((string) $value)) {
+                        $fail('Isi dengan URL https:// atau path situs yang diawali "/".');
+                    }
+                })
+                ->helperText('Dipakai bila tidak ada unggahan, mis. foto hotlink yang sudah ada atau logo /images/... di situs.'),
+        ];
+    }
+
+    /** URL eksternal (http/https) atau path situs ("/images/..."): disimpan apa adanya, bukan berkas di disk. */
+    public static function isImageUrl(string $value): bool
+    {
+        return (bool) preg_match('#^(https?://\S+|/\S*)$#i', trim($value));
+    }
+
+    /**
+     * Pisahkan nilai gambar tersimpan ke state form imageWithUrl().
+     *
+     * @return array<string, string|null>
+     */
+    public static function imageState(string $name, ?string $value): array
+    {
+        $value = (string) $value;
+        $isUrl = $value !== '' && self::isImageUrl($value);
+
+        return [$name.'_upload' => $isUrl || $value === '' ? null : $value, $name.'_url' => $isUrl ? $value : null];
+    }
+
+    /**
+     * Nilai gambar yang disimpan dari state form imageWithUrl(): unggahan menang atas URL.
+     *
+     * @param  array<string, mixed>  $state
+     */
+    public static function imageSource(array $state, string $name): ?string
+    {
+        $upload = $state[$name.'_upload'] ?? null;
+        if (is_array($upload)) {
+            $upload = array_values(array_filter($upload))[0] ?? null;
+        }
+        if (filled($upload)) {
+            return (string) $upload;
+        }
+        $url = trim((string) ($state[$name.'_url'] ?? ''));
+
+        return $url !== '' ? $url : null;
     }
 }

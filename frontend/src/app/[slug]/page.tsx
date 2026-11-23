@@ -4,9 +4,9 @@ import { Suspense } from "react";
 import CatalogHero from "@/components/catalog/CatalogHero";
 import type { SortKey } from "@/components/catalog/CatalogBar";
 import PostCatalog from "@/components/catalog/PostCatalog";
-import { getCategoryBySlug, POST_CATEGORIES } from "@/data/articles";
+import { POST_CATEGORIES } from "@/data/articles";
 import { STATIC_PAGES } from "@/data/pages";
-import { getPage, getPosts, getSiteSettings } from "@/lib/cms";
+import { getPage, getPostCategory, getPosts, getSiteSettings } from "@/lib/cms";
 import { scrollableHtml } from "@/lib/scrollable-html";
 import { fillSitePlaceholders } from "@/lib/site-placeholders";
 
@@ -23,7 +23,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps<"/[slug]">): Promise<Metadata> {
   const { slug } = await params;
-  const cat = getCategoryBySlug(slug);
+  const cat = await getPostCategory(slug);
   if (cat) return { title: `${cat.title}`, description: cat.desc, alternates: { canonical: `/${cat.slug}` } };
   const page = await getPage(slug);
   if (page) return { title: `${page.title}`, description: page.description ?? undefined, alternates: { canonical: `/${page.slug}` } };
@@ -33,13 +33,13 @@ export async function generateMetadata({ params }: PageProps<"/[slug]">): Promis
 const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v) ?? "";
 
 async function CategoryFromParams({ category, searchParams }: { category: string; searchParams: PageProps<"/[slug]">["searchParams"] }) {
-  const cat = getCategoryBySlug(category)!;
+  const cat = (await getPostCategory(category))!;
   const [sp, posts] = await Promise.all([searchParams, getPosts(cat.slug)]);
   return <PostCatalog posts={posts} categories={[cat.category]} initial={{ q: first(sp.q), sort: first(sp.urut) as SortKey }} />;
 }
 
 async function CategoryStatic({ category }: { category: string }) {
-  const cat = getCategoryBySlug(category)!;
+  const cat = (await getPostCategory(category))!;
   const posts = await getPosts(cat.slug);
   return <PostCatalog posts={posts} categories={[cat.category]} />;
 }
@@ -47,7 +47,7 @@ async function CategoryStatic({ category }: { category: string }) {
 export default async function SlugPage({ params, searchParams }: PageProps<"/[slug]">) {
   const { slug } = await params;
 
-  const cat = getCategoryBySlug(slug);
+  const cat = await getPostCategory(slug);
   if (cat) {
     return (
       <div className="g-artikel">

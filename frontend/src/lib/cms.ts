@@ -4,7 +4,7 @@
 // Cache: cacheLife("hours") + cacheTag("cms", <bagian>). Backend memanggil POST /api/revalidate saat konten
 // dipublikasikan (lihat app/api/revalidate/route.ts) sehingga halaman statis diperbarui tanpa build ulang.
 import { cacheLife, cacheTag } from "next/cache";
-import type { PostSummary } from "@/data/articles";
+import { POST_CATEGORIES, type PostSummary } from "@/data/articles";
 import type { Course } from "@/data/courses";
 import type { Schedule } from "@/data/schedules";
 import type { Testimonial } from "@/data/testimonials";
@@ -55,7 +55,9 @@ export async function getMenus(): Promise<MenuData> {
 export async function getHome(): Promise<HomeData> {
   "use cache";
   cacheLife("hours");
-  cacheTag("cms", "home");
+  // "settings": beranda memuat hero, statistik, tentang, dll. dari pengaturan CMS; tag ini kedaluwarsa segera saat
+  // pengaturan disimpan (lihat app/api/revalidate), jadi perubahan dari admin langsung tampil.
+  cacheTag("cms", "home", "settings");
   const r = await api<{ data: HomeData }>("/home");
   if (!r.ok) return fallback.home();
   const d = r.data.data;
@@ -158,6 +160,25 @@ export async function getCompanyProfile(): Promise<CompanyProfile> {
   cacheTag("cms", "settings");
   const r = await api<{ value: CompanyProfile | null }>("/settings?key=company");
   return r.ok && r.data.value ? { ...fallback.company(), ...r.data.value } : fallback.company();
+}
+
+export type PostCategoryInfo = (typeof POST_CATEGORIES)[number];
+
+/**
+ * Kategori artikel (/tutorial, /berita, ...): slug & kategori tetap dari src/data (alamat halaman), judul & deskripsi
+ * dari pengaturan CMS post_categories bila ada (menu admin Kategori artikel).
+ */
+export async function getPostCategories(): Promise<PostCategoryInfo[]> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("cms", "settings");
+  const r = await api<{ value: { slug: string; title?: string | null; desc?: string | null }[] | null }>("/settings?key=post_categories");
+  const saved = new Map((r.ok && Array.isArray(r.data.value) ? r.data.value : []).map((c) => [c.slug, c]));
+  return POST_CATEGORIES.map((c) => ({ ...c, title: saved.get(c.slug)?.title || c.title, desc: saved.get(c.slug)?.desc || c.desc }));
+}
+
+export async function getPostCategory(slug: string): Promise<PostCategoryInfo | undefined> {
+  return (await getPostCategories()).find((c) => c.slug === slug);
 }
 
 /** Pencarian: tidak di-cache (bergantung query), dipanggil di dalam <Suspense>. */
