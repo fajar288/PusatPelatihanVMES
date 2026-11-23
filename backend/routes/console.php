@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\HealthCheckController;
 use App\Models\AiInsight;
 use App\Models\ApiIdempotencyKey;
 use App\Models\ApiRequestLog;
@@ -351,6 +352,9 @@ Artisan::command('privacy:prune {--dry-run : hanya hitung data yang akan diprose
     }
 })->purpose('Jalankan aturan retensi data pribadi yang diaktifkan');
 Schedule::command('privacy:prune')->dailyAt('02:30');
+
+// Detak scheduler untuk /api/v1/health/ready: bila cron schedule:run berhenti, pemeriksaan kesiapan gagal (503).
+Schedule::call(fn () => HealthCheckController::beat())->everyMinute()->name('health-heartbeat');
 
 // Backup database terkompresi + rotasi (config/backup.php, docs/deploy-cpanel.md). Terjadwal bila BACKUP_ENABLED=true.
 Artisan::command('backup:database {--files : ikut arsipkan berkas privat (storage/app/private)} {--list : tampilkan backup yang tersimpan}', function (DatabaseBackupService $backup) {
