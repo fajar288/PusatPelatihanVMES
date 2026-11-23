@@ -1,0 +1,2 @@
+# Skrip shell dijalankan di server Linux (cPanel): wajib LF walau checkout Windows memakai CRLF.
+*.sh text eol=lf
