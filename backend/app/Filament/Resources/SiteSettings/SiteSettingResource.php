@@ -32,6 +32,12 @@ class SiteSettingResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Pengaturan situs';
 
+    /** Izin konten website (cms.manage); super admin selalu boleh. Berlaku juga untuk editor terstruktur pengaturan. */
+    public static function canViewAny(): bool
+    {
+        return (bool) auth()->user()?->hasPermission('cms.manage');
+    }
+
     public static function form(Schema $schema): Schema
     {
         return SiteSettingForm::configure($schema);
