@@ -50,6 +50,8 @@ export type VerificationResult = {
   type: CertificateType;
   typeLabel: string;
   recipientName: string | null;
+  /** Pemilik menghapus data pribadi: nama tidak ditampilkan, hanya bisa dicocokkan. */
+  nameHidden?: boolean;
   programTitle: string;
   classCode: string | null;
   periodLabel: string | null;

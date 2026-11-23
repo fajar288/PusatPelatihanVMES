@@ -28,6 +28,11 @@ class NotificationTemplate extends Model
         'operations' => ['Operasional admin', 'Untuk staf VMES: pendaftaran baru, pembayaran, peserta berisiko, kelulusan & sertifikat, device WhatsApp terputus.'],
     ];
 
+    /** Kategori sistem: tidak tampil di preferensi peserta karena pesannya wajib (mis. status permintaan hapus data). */
+    public const SYSTEM_CATEGORIES = [
+        'account' => ['Akun & privasi', 'Verifikasi email, keamanan akun, dan status permintaan penghapusan data.'],
+    ];
+
     public const CHANNELS = ['database' => 'Aplikasi (portal)', 'mail' => 'Email', 'webpush' => 'Push (perangkat)', 'whatsapp' => 'WhatsApp'];
 
     public const AUDIENCES = ['participant' => 'Peserta', 'corporate' => 'Admin perusahaan', 'trainer' => 'Trainer', 'admin' => 'Admin VMES'];
@@ -306,6 +311,32 @@ class NotificationTemplate extends Model
             $a('whatsapp.device_disconnected', 'Device WhatsApp terputus (admin)', [
                 'title' => 'Device WhatsApp {device} terputus', 'body' => 'Notifikasi WA tertunda sampai device tersambung lagi. Alasan: {reason}. Scan ulang QR di dashboard penyedia WA.',
                 'placeholders' => ['device', 'reason', 'provider']]),
+
+            // ---------------------------------------------------------------- Privasi: permintaan hapus data
+            // Kategori sistem `account` (tidak ada di preferensi): pesan ini selalu dikirim lewat aplikasi + email.
+            $p('privacy.deletion_received', 'account', 'Permintaan hapus data diterima', ['database', 'mail'], [
+                'title' => 'Permintaan penghapusan data diterima', 'body' => 'Permintaan Anda akan diproses paling lambat {due}. Anda masih bisa membatalkannya di portal selama belum diproses.',
+                'mail_subject' => 'Permintaan penghapusan data Anda kami terima',
+                'mail_body' => "Kami menerima permintaan penghapusan data pribadi untuk akun Anda.\n\nPermintaan akan diproses paling lambat **{due}**. Selama belum diproses, Anda dapat membatalkannya di menu Privasi pada portal.\n\nBila Anda tidak merasa mengajukan permintaan ini, segera ganti kata sandi dan hubungi kami.",
+                'placeholders' => ['name', 'due', 'link']]),
+            $p('privacy.deletion_approved', 'account', 'Permintaan hapus data disetujui', ['database', 'mail'], [
+                'title' => 'Permintaan penghapusan data disetujui', 'body' => 'Data pribadi Anda sedang dihapus. {note}',
+                'mail_subject' => 'Permintaan penghapusan data Anda disetujui',
+                'mail_body' => "Permintaan penghapusan data pribadi Anda telah disetujui dan sedang kami proses. {note}\n\nSetelah selesai, Anda akan menerima email konfirmasi terakhir dan akun tidak dapat digunakan lagi.",
+                'placeholders' => ['name', 'note']]),
+            $p('privacy.deletion_rejected', 'account', 'Permintaan hapus data ditolak', ['database', 'mail'], [
+                'title' => 'Permintaan penghapusan data belum dapat diproses', 'body' => 'Alasan: {reason}',
+                'mail_subject' => 'Permintaan penghapusan data Anda belum dapat diproses',
+                'mail_body' => "Permintaan penghapusan data pribadi Anda belum dapat kami proses.\n\nAlasan: {reason}\n\nSetelah hal tersebut selesai, Anda dapat mengajukan permintaan baru di menu Privasi pada portal.",
+                'placeholders' => ['name', 'reason', 'link']]),
+            $p('privacy.deletion_completed', 'account', 'Penghapusan data selesai', ['mail'], [
+                'title' => 'Penghapusan data selesai', 'body' => 'Data pribadi Anda telah dihapus.',
+                'mail_subject' => 'Data pribadi Anda telah dihapus',
+                'mail_body' => "Penghapusan data pribadi untuk akun Anda telah selesai. Ini adalah email terakhir dari kami ke alamat ini.\n\nAkun tidak dapat digunakan lagi. Data yang wajib kami simpan (invoice dan bukti pembayaran) tetap tersimpan tanpa tautan ke akun, dan sertifikat yang sudah terbit tetap sah dengan nama yang disamarkan pada halaman verifikasi publik.",
+                'placeholders' => ['name']]),
+            $a('privacy.deletion_requested', 'Permintaan hapus data baru (admin)', [
+                'title' => 'Permintaan penghapusan data {account}', 'body' => 'Tenggat proses {due}. {blockers}',
+                'placeholders' => ['account', 'due', 'blockers']]),
         ];
     }
 }

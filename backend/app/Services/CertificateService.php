@@ -257,6 +257,7 @@ class CertificateService
     /** Ganti sertifikat terbit (mis. salah nama): yang lama → replaced, draf baru dengan nomor baru mewarisi data. */
     public function replace(Certificate $old, User $actor, string $reason, array $overrides = []): Certificate
     {
+        $this->assertRecipientVisible($old);
         if (! in_array($old->status, ['issued', 'revoked'], true)) {
             throw ValidationException::withMessages(['status' => ['Hanya sertifikat terbit/dicabut yang dapat diganti.']]);
         }
@@ -302,6 +303,7 @@ class CertificateService
     /** Simpan PDF ke storage (certificates/YYYY/NOMOR.pdf) dan catat di sertifikat. */
     public function storePdf(Certificate $c, ?User $actor = null): Certificate
     {
+        $this->assertRecipientVisible($c);
         $disk = config('filesystems.default');
         $path = 'certificates/'.($c->issued_at?->format('Y') ?? now()->format('Y')).'/'.preg_replace('/[^A-Za-z0-9_-]/', '_', $c->number).'.pdf';
         Storage::disk($disk)->put($path, $this->renderPdf($c), ['visibility' => 'private']);
@@ -316,12 +318,21 @@ class CertificateService
     /** Isi PDF: tersimpan bila ada & terbit, selain itu dirender ulang. */
     public function pdfContents(Certificate $c): string
     {
+        $this->assertRecipientVisible($c);
         $disk = Storage::disk(config('filesystems.default'));
         if ($c->isIssued() && $c->pdf_path && $disk->exists($c->pdf_path)) {
             return (string) $disk->get($c->pdf_path);
         }
 
         return $this->renderPdf($c);
+    }
+
+    /** Sertifikat dengan nama tersamar (pemilik menghapus data) tidak dibuat ulang, diganti, atau diunduh dari server. */
+    private function assertRecipientVisible(Certificate $c): void
+    {
+        if ($c->isRecipientHidden()) {
+            throw ValidationException::withMessages(['certificate' => ['Pemilik sertifikat ini telah menghapus data pribadinya. Sertifikat tetap sah, tetapi PDF tidak dapat dibuat ulang atau diganti.']]);
+        }
     }
 
     public function fileName(Certificate $c): string
@@ -416,7 +427,9 @@ class CertificateService
             'codeMatches' => $code === null ? null : hash_equals($c->verification_code, strtoupper($code)),
             'type' => $c->type,
             'typeLabel' => $c->typeLabel(),
-            'recipientName' => $pending ? null : $c->recipient_name,
+            // pemilik menghapus data pribadi: sertifikat tetap sah, nama hanya bisa dicocokkan (POST /verify/{nomor}/nama)
+            'recipientName' => $pending || $c->isRecipientHidden() ? null : $c->recipient_name,
+            'nameHidden' => $c->isRecipientHidden(),
             'programTitle' => $c->program_title,
             'classCode' => $c->class_code,
             'periodLabel' => $c->start_date && $c->end_date ? IdDate::long($c->start_date).' - '.IdDate::long($c->end_date) : null,

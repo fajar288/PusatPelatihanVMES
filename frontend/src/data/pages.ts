@@ -27,7 +27,7 @@ export const STATIC_PAGES: StaticPage[] = [
       { type: "h2", text: "4. Penyimpanan dan Keamanan" },
       { type: "p", text: "Data disimpan di server yang dilindungi enkripsi, kontrol akses berbasis peran, dan pencadangan terjadwal. Data pendaftaran dan sertifikat disimpan selama diperlukan untuk verifikasi sertifikat; data pemasaran disimpan hingga Anda meminta penghapusan." },
       { type: "h2", text: "5. Hak Anda" },
-      { type: "p", text: "Anda berhak mengakses, memperbaiki, atau meminta penghapusan data pribadi Anda, serta menarik persetujuan pemasaran. Ajukan permintaan melalui WhatsApp resmi atau email yang tercantum di halaman Kontak." },
+      { type: "p", text: "Anda berhak mengakses, memperbaiki, atau meminta penghapusan data pribadi Anda, serta menarik persetujuan pemasaran. Salinan data dapat diunduh dan penghapusan data dapat diajukan sendiri di portal member, menu Privasi & Data. Permintaan lain dapat diajukan melalui WhatsApp resmi atau email yang tercantum di halaman Kontak." },
       { type: "h2", text: "6. Cookie" },
       { type: "p", text: "Situs ini menggunakan cookie fungsional dan analitik untuk meningkatkan pengalaman pengguna. Anda dapat menonaktifkan cookie melalui pengaturan peramban." },
       // DRAF: bagian 7 (pemrosesan AI) ditambahkan 17 November 2026 dan wajib ditinjau legal sebelum go-live.

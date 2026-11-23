@@ -26,6 +26,21 @@ class CertificateController extends Controller
         return response()->json(['data' => $this->certificates->verify($c, $request->query('k'))]);
     }
 
+    /**
+     * POST /verify/{number}/nama {name}: cocokkan nama yang tertera di sertifikat dengan penerima. Dipakai pemberi kerja
+     * untuk sertifikat yang nama penerimanya disamarkan (pemilik menghapus data pribadi). Tidak mengembalikan nama.
+     */
+    public function nameCheck(Request $request, string $number): JsonResponse
+    {
+        $data = $request->validate(['name' => ['required', 'string', 'min:2', 'max:160']], [], ['name' => 'nama']);
+        $c = Certificate::query()->where('number', $number)->orWhere('number', str_replace('/', '-', $number))->first();
+        if (! $c || in_array($c->status, ['draft', 'pending_validation'], true)) {
+            return response()->json(['data' => null, 'message' => 'Nomor sertifikat tidak ditemukan.'], 404);
+        }
+
+        return response()->json(['data' => ['matches' => $c->nameMatches($data['name'])]]);
+    }
+
     /** GET /me/certificates: semua sertifikat milik akun (terbit, dicabut, diganti; draf tidak ditampilkan). */
     public function index(Request $request): JsonResponse
     {

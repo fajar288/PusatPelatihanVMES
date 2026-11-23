@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import CatalogHero from "@/components/catalog/CatalogHero";
+import NameCheckForm from "@/components/certificates/NameCheckForm";
 import VerifyForm from "@/components/certificates/VerifyForm";
 import Icon from "@/components/ui/Icon";
 import { api, ApiRequestError } from "@/lib/auth";
@@ -95,6 +96,12 @@ export default async function VerifikasiHasilPage({ params, searchParams }: Page
                   <b>{r.recipientName}</b>
                 </li>
               )}
+              {r.nameHidden && (
+                <li>
+                  <span>Nama penerima</span>
+                  <b>Disamarkan atas permintaan pemilik sertifikat</b>
+                </li>
+              )}
               <li>
                 <span>Program</span>
                 <b>
@@ -152,6 +159,8 @@ export default async function VerifikasiHasilPage({ params, searchParams }: Page
               )}
             </ul>
           )}
+
+          {r && r.nameHidden && r.status !== "pending" && <NameCheckForm number={r.number} />}
 
           {r && r.competencies.length > 0 && (
             <>
