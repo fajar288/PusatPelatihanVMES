@@ -100,7 +100,7 @@ class SiteIdentitySettingsTest extends TestCase
         $this->assertJsonKeys(SiteIdentity::KEYS, $stored);
         $this->assertJsonKeys(array_keys($this->siteSeed), $stored);
         $this->assertSame($this->siteSeed['logo'], $stored['logo']);
-        $this->assertSame(['w' => 1600, 'h' => 769], $stored['logoSize']);
+        $this->assertJsonColumn(['w' => 1600, 'h' => 769], $stored['logoSize']);
         $this->assertSame('6281234567890', $stored['waNumber']);
         $this->assertJsonColumn([['icon' => 'ig', 'href' => 'https://instagram.com/ppti', 'label' => 'Instagram PPTI'], ['icon' => 'yt', 'href' => 'https://youtube.com/@ppti', 'label' => '']], $stored['socials']);
         foreach ($stored as $key => $value) {
