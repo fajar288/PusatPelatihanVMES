@@ -51,10 +51,31 @@ return new class extends Migration
     {
         foreach (self::INDEXES as $table => $indexes) {
             foreach ($indexes as $columns) {
-                if (Schema::hasIndex($table, $this->name($table, $columns))) {
-                    Schema::table($table, fn (Blueprint $t) => $t->dropIndex($this->name($table, $columns)));
+                $name = $this->name($table, $columns);
+                if (! Schema::hasIndex($table, $name)) {
+                    continue;
                 }
+                $this->keepForeignKeyIndex($table, $columns[0], $name);
+                Schema::table($table, fn (Blueprint $t) => $t->dropIndex($name));
             }
+        }
+    }
+
+    /**
+     * MySQL/MariaDB (InnoDB) mewajibkan indeks yang diawali kolom foreign key. Saat indeks gabungan ini dibuat, InnoDB
+     * melepas indeks otomatis foreign key-nya, sehingga indeks gabungan tidak bisa dihapus ("needed in a foreign key
+     * constraint"). Sebelum menghapus, buat lagi indeks satu kolom bila tidak ada indeks lain yang diawali kolom itu.
+     */
+    private function keepForeignKeyIndex(string $table, string $column, string $dropping): void
+    {
+        if (! in_array(Schema::getConnection()->getDriverName(), ['mysql', 'mariadb'], true)) {
+            return;
+        }
+        $isForeignKey = collect(Schema::getForeignKeys($table))->contains(fn (array $fk) => ($fk['columns'][0] ?? null) === $column);
+        $covered = collect(Schema::getIndexes($table))
+            ->contains(fn (array $i) => $i['name'] !== $dropping && ($i['columns'][0] ?? null) === $column);
+        if ($isForeignKey && ! $covered) {
+            Schema::table($table, fn (Blueprint $t) => $t->index([$column], $table.'_'.$column.'_index'));
         }
     }
 

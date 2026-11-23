@@ -7,6 +7,7 @@ use App\Models\ApiIdempotencyKey;
 use Closure;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
@@ -66,10 +67,12 @@ class EnforceIdempotency
     {
         for ($i = 0; $i < 2; $i++) {
             try {
-                return ApiIdempotencyKey::query()->create([
+                // Savepoint: di PostgreSQL insert yang gagal karena unique membatalkan seluruh transaksi yang sedang
+                // berjalan (mis. transaksi pembungkus); dengan savepoint hanya insert ini yang di-rollback.
+                return DB::transaction(fn () => ApiIdempotencyKey::query()->create([
                     'api_client_id' => $client->id, 'key' => $key, 'method' => $request->method(), 'route' => $request->route()?->getName(),
                     'request_hash' => $hash, 'status' => 'processing', 'expires_at' => now()->addHours(ApiIdempotencyKey::TTL_HOURS),
-                ]);
+                ]));
             } catch (UniqueConstraintViolationException) {
                 $existing = ApiIdempotencyKey::query()->where('api_client_id', $client->id)->where('key', $key)->first();
                 if (! $existing) {
