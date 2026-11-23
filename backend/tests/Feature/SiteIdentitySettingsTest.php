@@ -12,12 +12,13 @@ use App\Support\SiteIdentity;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Livewire\Livewire;
+use Tests\Concerns\AssertsJsonColumns;
 use Tests\TestCase;
 
 /** Editor terstruktur pengaturan `site` (identitas & kontak): validasi, struktur JSON tetap, API, revalidasi frontend. */
 class SiteIdentitySettingsTest extends TestCase
 {
-    use RefreshDatabase;
+    use AssertsJsonColumns, RefreshDatabase;
 
     /** @var array<string, mixed> */
     private array $siteSeed;
@@ -96,12 +97,12 @@ class SiteIdentitySettingsTest extends TestCase
 
         $stored = SiteSetting::query()->where('key', 'site')->value('value');
         // Kunci & urutan sama dengan tipe SiteSettings frontend; logo dan logoSize (tidak ada di form) dipertahankan.
-        $this->assertSame(SiteIdentity::KEYS, array_keys($stored));
-        $this->assertSame(array_keys($this->siteSeed), array_keys($stored));
+        $this->assertJsonKeys(SiteIdentity::KEYS, $stored);
+        $this->assertJsonKeys(array_keys($this->siteSeed), $stored);
         $this->assertSame($this->siteSeed['logo'], $stored['logo']);
-        $this->assertSame(['w' => 1600, 'h' => 769], $stored['logoSize']);
+        $this->assertJsonColumn(['w' => 1600, 'h' => 769], $stored['logoSize']);
         $this->assertSame('6281234567890', $stored['waNumber']);
-        $this->assertSame([['icon' => 'ig', 'href' => 'https://instagram.com/ppti', 'label' => 'Instagram PPTI'], ['icon' => 'yt', 'href' => 'https://youtube.com/@ppti', 'label' => '']], $stored['socials']);
+        $this->assertJsonColumn([['icon' => 'ig', 'href' => 'https://instagram.com/ppti', 'label' => 'Instagram PPTI'], ['icon' => 'yt', 'href' => 'https://youtube.com/@ppti', 'label' => '']], $stored['socials']);
         foreach ($stored as $key => $value) {
             $this->assertSame(gettype($this->siteSeed[$key]), gettype($value), "tipe $key berubah");
         }

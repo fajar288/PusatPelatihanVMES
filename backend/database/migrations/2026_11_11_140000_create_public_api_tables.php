@@ -75,9 +75,10 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('registrations', function (Blueprint $table): void {
+            // foreign key dulu: di MySQL/MariaDB indeks unik (api_client_id, external_ref) menjadi indeks foreign key
+            $table->dropForeign(['api_client_id']);
             $table->dropUnique(['api_client_id', 'external_ref']);
-            $table->dropConstrainedForeignId('api_client_id');
-            $table->dropColumn('external_ref');
+            $table->dropColumn(['api_client_id', 'external_ref']);
         });
         Schema::dropIfExists('webhook_deliveries');
         Schema::dropIfExists('api_request_logs');

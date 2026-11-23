@@ -103,3 +103,87 @@ jobs:
           cp -n .env.example .env || true
           php artisan key:generate --force
           php artisan test
+
+  # Hosting produksi (cPanel) umumnya hanya menyediakan MySQL/MariaDB, pengembangan lokal memakai PostgreSQL, dan job
+  # di atas memakai SQLite. Matrix ini menjalankan migrasi + seed dan seluruh tes di ketiga server database agar
+  # migrasi, query, dan angka KPI tetap sama di semuanya.
+  backend-db:
+    name: Backend (${{ matrix.name }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: MySQL 8.0
+            image: mysql:8.0
+            connection: mysql
+            port: 3306
+            health: mysqladmin ping -h 127.0.0.1 -uroot -proot
+          - name: MariaDB 10.11
+            image: mariadb:10.11
+            connection: mariadb
+            port: 3306
+            health: healthcheck.sh --connect --innodb_initialized
+          - name: PostgreSQL 16
+            image: postgres:16
+            connection: pgsql
+            port: 5432
+            health: pg_isready -U ppti -d ppti_test
+    services:
+      db:
+        image: ${{ matrix.image }}
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: ppti_test
+          MARIADB_ROOT_PASSWORD: root
+          MARIADB_DATABASE: ppti_test
+          POSTGRES_USER: ppti
+          POSTGRES_PASSWORD: secret
+          POSTGRES_DB: ppti_test
+        ports:
+          - ${{ matrix.port }}:${{ matrix.port }}
+        options: >-
+          --health-cmd="${{ matrix.health }}"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=30
+    env:
+      DB_CONNECTION: ${{ matrix.connection }}
+      DB_HOST: 127.0.0.1
+      DB_PORT: ${{ matrix.port }}
+      DB_DATABASE: ppti_test
+      DB_USERNAME: ${{ matrix.connection == 'pgsql' && 'ppti' || 'root' }}
+      DB_PASSWORD: ${{ matrix.connection == 'pgsql' && 'secret' || 'root' }}
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: mbstring, pdo_mysql, pdo_pgsql, intl, zip, gd, exif
+          coverage: none
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Versi server database
+        run: |
+          cp -n .env.example .env || true
+          php artisan key:generate --force
+          php artisan db:show | head -12
+
+      - name: Migrasi + seed dari kosong
+        run: php artisan migrate:fresh --seed --force
+
+      - name: Rollback seluruh migrasi lalu migrasi ulang
+        run: |
+          php artisan migrate:reset --force
+          php artisan migrate --force
+
+      - name: Tests
+        run: php artisan test

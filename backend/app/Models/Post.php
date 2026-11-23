@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\Sql;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -59,13 +60,14 @@ class Post extends Model
         if ($term === '') {
             return $q;
         }
-        $like = '%'.mb_strtolower($term).'%';
 
-        return $q->where(fn (Builder $w) => $w
-            ->whereRaw('LOWER(title) LIKE ?', [$like])
-            ->orWhereRaw('LOWER(COALESCE(excerpt, \'\')) LIKE ?', [$like])
-            ->orWhereRaw('LOWER(COALESCE(body, \'\')) LIKE ?', [$like])
-            ->orWhereRaw('LOWER(COALESCE(CAST(tags AS TEXT), \'\')) LIKE ?', [$like]));
+        // tags (JSON) dicari sebagai teks: CAST AS TEXT tidak dikenal MySQL/MariaDB, lihat Sql::asText()
+        return $q->where(function (Builder $w) use ($term) {
+            Sql::whereContains($w, 'title', $term);
+            Sql::orWhereContains($w, 'excerpt', $term);
+            Sql::orWhereContains($w, 'body', $term);
+            Sql::orWhereContains($w, Sql::asText('tags'), $term);
+        });
     }
 
     public function typeLabel(): string

@@ -18,6 +18,7 @@ use Database\Seeders\RolesSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Livewire\Livewire;
+use Tests\Concerns\AssertsJsonColumns;
 use Tests\TestCase;
 
 /**
@@ -26,7 +27,7 @@ use Tests\TestCase;
  */
 class CmsSettingsEditorTest extends TestCase
 {
-    use RefreshDatabase;
+    use AssertsJsonColumns, RefreshDatabase;
 
     /** @var array<string, mixed> */
     private array $settingsSeed;
@@ -94,11 +95,7 @@ class CmsSettingsEditorTest extends TestCase
         Livewire::test(PostCategorySettings::class)->call('save')->assertHasNoFormErrors();
 
         foreach (array_keys(CmsSettings::SHAPES) as $key) {
-            $this->assertSame(
-                json_encode($this->settingsSeed[$key], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
-                json_encode($this->stored($key), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
-                "round-trip $key tidak identik",
-            );
+            $this->assertJsonColumn($this->settingsSeed[$key], $this->stored($key), "round-trip $key tidak identik");
         }
         $this->assertSame($banners, Banner::query()->orderBy('id')->get()->toArray());
         $this->assertSame($partners, Partner::query()->orderBy('id')->get()->toArray());
@@ -120,13 +117,13 @@ class CmsSettingsEditorTest extends TestCase
             ->assertNotified('Tersimpan. Situs diperbarui dalam beberapa detik.');
 
         $hero = $this->stored('hero');
-        $this->assertSame(array_keys($this->settingsSeed['hero']), array_keys($hero));
+        $this->assertJsonKeys(array_keys($this->settingsSeed['hero']), $hero);
         $this->assertSame('Pusat Pelatihan Baru', $hero['pill']);
-        $this->assertSame($this->settingsSeed['hero']['features'], $hero['features']);
+        $this->assertJsonColumn($this->settingsSeed['hero']['features'], $hero['features']);
         $this->assertSame(15000, $this->stored('stats')[0]['n']);
-        $this->assertSame(['icon', 'n', 'suffix', 'label'], array_keys($this->stored('stats')[0]));
+        $this->assertJsonKeys(['icon', 'n', 'suffix', 'label'], $this->stored('stats')[0]);
         $this->assertSame(['Paragraf satu.', 'Paragraf dua.'], $this->stored('about')['paragraphs']);
-        $this->assertSame($this->settingsSeed['why'], $this->stored('why'));
+        $this->assertJsonColumn($this->settingsSeed['why'], $this->stored('why'));
 
         $this->getJson('/api/v1/home')->assertOk()
             ->assertJsonPath('data.hero.pill', 'Pusat Pelatihan Baru')
@@ -217,10 +214,10 @@ class CmsSettingsEditorTest extends TestCase
             ->call('save')->assertHasNoFormErrors();
 
         $company = $this->stored('company');
-        $this->assertSame(array_keys($this->settingsSeed['company']), array_keys($company));
+        $this->assertJsonKeys(array_keys($this->settingsSeed['company']), $company);
         $this->assertSame('/kontak', $company['services'][0]['href']);
         $this->assertSame(['Misi baru satu', 'Misi baru dua'], $company['missions']);
-        $this->assertSame($this->settingsSeed['company']['trainers'], $company['trainers']);
+        $this->assertJsonColumn($this->settingsSeed['company']['trainers'], $company['trainers']);
         $this->getJson('/api/v1/settings?key=company')->assertJsonPath('value.missions.1', 'Misi baru dua');
         $this->assertTrue(AuditLog::query()->where('action', 'settings.company_updated')->exists());
     }
@@ -240,7 +237,7 @@ class CmsSettingsEditorTest extends TestCase
         $this->assertSame(array_column($this->settingsSeed['post_categories'], 'slug'), array_column($stored, 'slug'));
         $this->assertSame('Berita', $stored[1]['category']);
         $this->assertSame('Berita Terbaru', $stored[1]['title']);
-        $this->assertSame($this->settingsSeed['post_categories'][3], $stored[3]);
+        $this->assertJsonColumn($this->settingsSeed['post_categories'][3], $stored[3]);
     }
 
     public function test_json_editor_is_read_only_for_structured_keys_except_super_admin(): void
@@ -255,7 +252,7 @@ class CmsSettingsEditorTest extends TestCase
             ->assertActionVisible('openEditor')
             ->assertFormFieldIsDisabled('value')
             ->call('save')->assertForbidden();
-        $this->assertSame($this->settingsSeed['hero'], $this->stored('hero'));
+        $this->assertJsonColumn($this->settingsSeed['hero'], $this->stored('hero'));
         Livewire::test(CreateSiteSetting::class)
             ->fillForm(['key' => 'company', 'group' => 'site', 'value' => '{"vision":"x"}'])
             ->call('create')->assertHasFormErrors(['key' => 'not_in']);

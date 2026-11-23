@@ -16,6 +16,7 @@ use App\Services\CorporateReporting;
 use App\Services\OrganizationService;
 use App\Support\IdDate;
 use App\Support\Media;
+use App\Support\Sql;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -187,7 +188,7 @@ class CorporateController extends Controller
         $cu = $this->member($request, $organization);
         abort_unless($cu->allows('manage_users'), 403);
         $data = $request->validate(['email' => ['required', 'email'], 'role' => ['required', Rule::in(array_keys(CorporateUser::ROLES))], 'unit_id' => ['nullable', 'integer']]);
-        $user = User::query()->whereRaw('LOWER(email) = ?', [strtolower($data['email'])])->first();
+        $user = Sql::whereEqualsCi(User::query(), 'email', $data['email'])->first();
         if (! $user) {
             throw ValidationException::withMessages(['email' => 'Belum ada akun dengan email ini. Minta yang bersangkutan mendaftar di website lalu tambahkan lagi.']);
         }

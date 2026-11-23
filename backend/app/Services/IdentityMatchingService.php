@@ -13,6 +13,7 @@ use App\Models\RequestSeat;
 use App\Models\TrainingSchedule;
 use App\Models\User;
 use App\Support\Enterprise\IdentityMatch;
+use App\Support\Sql;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -55,7 +56,7 @@ class IdentityMatchingService
         }
 
         if ($in['email'] !== null) {
-            $u = User::query()->whereRaw('LOWER(email) = ?', [$in['email']])->first();
+            $u = Sql::whereEqualsCi(User::query(), 'email', $in['email'])->first();
             if ($u) {
                 $m = $u->member;
                 if ($u->email_verified_at !== null) {
@@ -211,7 +212,7 @@ class IdentityMatchingService
             if (! $email) {
                 throw ValidationException::withMessages(['email' => 'Email peserta wajib ada untuk membuat akun baru. Lengkapi data atau tautkan ke member yang ada.']);
             }
-            if (User::query()->whereRaw('LOWER(email) = ?', [strtolower($email)])->exists()) {
+            if (Sql::whereEqualsCi(User::query(), 'email', $email)->exists()) {
                 throw ValidationException::withMessages(['email' => 'Email ini sudah dipakai akun lain. Tautkan ke member yang ada.']);
             }
             $user = User::query()->create([

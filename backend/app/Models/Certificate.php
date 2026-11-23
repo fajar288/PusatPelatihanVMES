@@ -29,6 +29,7 @@ class Certificate extends Model
             'start_date' => 'date', 'end_date' => 'date', 'issued_at' => 'date', 'valid_until' => 'date',
             'score' => 'decimal:2', 'competencies' => 'array', 'hours' => 'integer',
             'pdf_generated_at' => 'datetime', 'submitted_at' => 'datetime', 'issued_on' => 'datetime', 'revoked_at' => 'datetime',
+            'recipient_anonymized_at' => 'datetime',
         ];
     }
 
@@ -110,6 +111,42 @@ class Certificate extends Model
     public function isIssued(): bool
     {
         return $this->status === 'issued';
+    }
+
+    /**
+     * Nama penerima disamarkan karena pemiliknya menghapus data pribadi: sertifikat tetap sah, nama tidak tampil di
+     * verifikasi publik, dan hanya bisa dicocokkan lewat sidik nama (lihat nameMatches()).
+     */
+    public function isRecipientHidden(): bool
+    {
+        return $this->recipient_anonymized_at !== null;
+    }
+
+    /** Sidik nama: HMAC-SHA256 (kunci aplikasi) dari nama yang dinormalkan, agar nama tidak bisa dibaca dari database. */
+    public static function nameHash(string $name): string
+    {
+        return hash_hmac('sha256', self::normalizeName($name), (string) config('app.key'));
+    }
+
+    /** Huruf kecil, tanda baca dan spasi ganda diabaikan: "Budi  Santoso, S.Kom" = "budi santoso s kom". */
+    public static function normalizeName(string $name): string
+    {
+        $n = mb_strtolower(trim($name));
+        $n = (string) preg_replace('/[^\p{L}\p{N}]+/u', ' ', $n);
+
+        return trim((string) preg_replace('/\s+/u', ' ', $n));
+    }
+
+    /** Cocokkan nama yang diketik pemberi kerja dengan nama penerima (tersamar atau tidak). */
+    public function nameMatches(string $name): bool
+    {
+        if (self::normalizeName($name) === '') {
+            return false;
+        }
+
+        return $this->isRecipientHidden()
+            ? $this->recipient_name_hash !== null && hash_equals($this->recipient_name_hash, self::nameHash($name))
+            : self::normalizeName($name) === self::normalizeName((string) $this->recipient_name);
     }
 
     /** Masih berlaku: terbit dan belum lewat masa berlaku. */

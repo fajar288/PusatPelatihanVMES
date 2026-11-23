@@ -32,6 +32,7 @@ class RolesSeeder extends Seeder
         'training.manage' => ['Kelola paket & jadwal', 'training', ['administrator', 'management', 'training_coordinator']],
         'users.manage' => ['Kelola pengguna & peran', 'users', ['administrator']],
         'members.view' => ['Lihat, ubah profil dasar & ekspor data peserta dan alumni (data pribadi)', 'members', ['administrator']],
+        'privacy.manage' => ['Proses permintaan penghapusan data pribadi (setujui/tolak)', 'members', ['administrator']],
         'reports.view' => ['Lihat laporan', 'reports', ['administrator', 'management', 'finance']],
         'lms.manage' => ['Kelola materi LMS (course, modul, lesson, kuis, tugas)', 'lms', ['administrator', 'management', 'training_coordinator']],
         'monitoring.manage' => ['Kelola logbook, rubrik & penilaian kompetensi (termasuk buka kunci)', 'monitoring', ['administrator', 'management', 'training_coordinator']],

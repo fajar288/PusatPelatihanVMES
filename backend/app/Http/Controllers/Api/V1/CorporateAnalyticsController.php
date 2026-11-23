@@ -55,7 +55,8 @@ class CorporateAnalyticsController extends Controller
                 ->orderBy('position')->get()
                 ->map(fn (CompetencyTarget $t) => ['id' => $t->id, 'position' => $t->position, 'competency' => $t->competency?->code, 'competencyName' => $t->competency?->name, 'requiredLevel' => $t->required_level])->values(),
             'positions' => $names || $cu->allows('manage_participants')
-                ? $reporting->employeesQuery($cu)->whereNotNull('position')->distinct()->orderBy('position')->pluck('position')->values()
+                // diurutkan di PHP (biner): ORDER BY teks bergantung collation (huruf besar/kecil, spasi) per database
+                ? $reporting->employeesQuery($cu)->whereNotNull('position')->distinct()->pluck('position')->unique()->sort(SORT_STRING)->values()
                 : [],
             'employees' => $matrix['employees'],
             'employeesWithTargets' => $matrix['employees_with_targets'],

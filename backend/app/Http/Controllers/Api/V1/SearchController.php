@@ -9,6 +9,7 @@ use App\Http\Resources\ScheduleResource;
 use App\Models\Post;
 use App\Models\TrainingPackage;
 use App\Models\TrainingSchedule;
+use App\Support\Sql;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -21,13 +22,10 @@ class SearchController extends Controller
         if ($term === '') {
             return response()->json(['data' => ['q' => '', 'total' => 0, 'courses' => [], 'schedules' => [], 'posts' => []]]);
         }
-        $like = '%'.mb_strtolower($term).'%';
-
         $courses = TrainingPackage::query()->published()->with('category')->search($term)->orderByDesc('published_at')->get();
         $schedules = TrainingSchedule::query()->upcoming()->with('package.category')
-            ->where(fn ($w) => $w->whereRaw('LOWER(code) LIKE ?', [$like])
-                ->orWhereRaw('LOWER(COALESCE(city, \'\')) LIKE ?', [$like])
-                ->orWhereHas('package', fn ($p) => $p->whereRaw('LOWER(title) LIKE ?', [$like])->orWhereHas('category', fn ($c) => $c->whereRaw('LOWER(name) LIKE ?', [$like]))))
+            ->where(fn ($w) => Sql::orWhereContains(Sql::whereContains($w, 'code', $term), 'city', $term)
+                ->orWhereHas('package', fn ($p) => Sql::whereContains($p, 'title', $term)->orWhereHas('category', fn ($c) => Sql::whereContains($c, 'name', $term))))
             ->get();
         $posts = Post::query()->published()->search($term)->get();
 

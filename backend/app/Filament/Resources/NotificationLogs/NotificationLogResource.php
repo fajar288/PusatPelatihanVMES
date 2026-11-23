@@ -52,7 +52,7 @@ class NotificationLogResource extends Resource
             ->columns([
                 TextColumn::make('created_at')->label('Waktu')->dateTime('d M Y H:i:s')->sortable(),
                 TextColumn::make('notification')->label('Notifikasi')->searchable()->description(fn (NotificationLog $record) => $record->subject),
-                TextColumn::make('category')->label('Kategori')->formatStateUsing(fn ($state) => NotificationTemplate::CATEGORIES[$state][0] ?? ucfirst((string) $state))->toggleable(),
+                TextColumn::make('category')->label('Kategori')->formatStateUsing(fn ($state) => (NotificationTemplate::CATEGORIES + NotificationTemplate::SYSTEM_CATEGORIES)[$state][0] ?? ucfirst((string) $state))->toggleable(),
                 TextColumn::make('attempt')->label('Percobaan')->placeholder('-')->alignCenter()->toggleable(),
                 TextColumn::make('channel')->label('Kanal')->badge()->color('gray')->formatStateUsing(fn ($state) => NotificationTemplate::CHANNELS[$state] ?? $state),
                 TextColumn::make('recipient')->label('Penerima')->searchable()->placeholder('-'),
@@ -65,7 +65,7 @@ class NotificationLogResource extends Resource
             ->filters([
                 SelectFilter::make('status')->options(NotificationLog::STATUSES),
                 SelectFilter::make('channel')->label('Kanal')->options(NotificationTemplate::CHANNELS),
-                SelectFilter::make('category')->label('Kategori')->options(collect(NotificationTemplate::CATEGORIES)->map(fn ($c) => $c[0])->all() + ['account' => 'Akun']),
+                SelectFilter::make('category')->label('Kategori')->options(collect(NotificationTemplate::CATEGORIES + NotificationTemplate::SYSTEM_CATEGORIES)->map(fn ($c) => $c[0])->all()),
                 Filter::make('today')->label('Hari ini')->query(fn (Builder $query) => $query->whereDate('created_at', today())),
             ]);
     }

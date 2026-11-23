@@ -38,10 +38,12 @@ return new class extends Migration
         $this->dropSponsorConstraint();
         Schema::table('registrations', fn (Blueprint $table) => $table->dropConstrainedForeignId('organization_id'));
         Schema::table('enrollments', function (Blueprint $table): void {
+            // Urutan: foreign key dulu, baru indeks. Di MySQL/MariaDB (InnoDB) indeks (sponsor_organization_id, status)
+            // menjadi indeks foreign key sponsor sehingga tidak bisa dihapus selama foreign key masih ada.
+            $table->dropForeign(['sponsor_unit_id']);
+            $table->dropForeign(['sponsor_organization_id']);
             $table->dropIndex(['sponsor_organization_id', 'status']);
-            $table->dropConstrainedForeignId('sponsor_unit_id');
-            $table->dropConstrainedForeignId('sponsor_organization_id');
-            $table->dropColumn('type');
+            $table->dropColumn(['sponsor_unit_id', 'sponsor_organization_id', 'type']);
         });
     }
 
@@ -63,7 +65,11 @@ return new class extends Migration
     {
         match (DB::getDriverName()) {
             'sqlite' => collect(['insert', 'update'])->each(fn (string $op) => DB::unprepared("DROP TRIGGER IF EXISTS enrollments_sponsor_rule_{$op}")),
-            'mysql', 'mariadb' => DB::statement('ALTER TABLE enrollments DROP CHECK enrollments_sponsor_rule'),
+            // MySQL 8.0.16+: DROP CHECK. MariaDB (termasuk server MariaDB yang diakses dengan DB_CONNECTION=mysql,
+            // umum di cPanel) dan PostgreSQL: DROP CONSTRAINT.
+            'mysql', 'mariadb' => DB::connection()->isMaria()
+                ? DB::statement('ALTER TABLE enrollments DROP CONSTRAINT IF EXISTS enrollments_sponsor_rule')
+                : DB::statement('ALTER TABLE enrollments DROP CHECK enrollments_sponsor_rule'),
             default => DB::statement('ALTER TABLE enrollments DROP CONSTRAINT IF EXISTS enrollments_sponsor_rule'),
         };
     }
