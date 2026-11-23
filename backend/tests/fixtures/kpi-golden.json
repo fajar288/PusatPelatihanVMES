@@ -1,0 +1,711 @@
+{
+    "dashboard": {
+        "cohorts": [
+            {
+                "aov": 6333333.33,
+                "avg_days_to_repeat": 40,
+                "cohort": "2026-10",
+                "cohort_label": "Okt 26",
+                "customers": 2,
+                "key": "corporate-2026-10",
+                "orders": 3,
+                "repeat": 1,
+                "repeat_rate": 50,
+                "segment": "corporate",
+                "segment_label": "Corporate (disponsori)"
+            },
+            {
+                "aov": 3000000,
+                "avg_days_to_repeat": null,
+                "cohort": "2026-10",
+                "cohort_label": "Okt 26",
+                "customers": 1,
+                "key": "self-2026-10",
+                "orders": 1,
+                "repeat": 0,
+                "repeat_rate": 0,
+                "segment": "self",
+                "segment_label": "Mandiri (self-funded)"
+            }
+        ],
+        "funnel": {
+            "cancelled": 0,
+            "organizations": 2,
+            "seats_paid": 5,
+            "stages": [
+                {
+                    "count": 4,
+                    "from_lead": 100,
+                    "from_previous": null,
+                    "key": "lead",
+                    "label": "Lead (request dibuat)"
+                },
+                {
+                    "count": 3,
+                    "from_lead": 75,
+                    "from_previous": 75,
+                    "key": "request",
+                    "label": "Request dikirim"
+                },
+                {
+                    "count": 3,
+                    "from_lead": 75,
+                    "from_previous": 100,
+                    "key": "quotation",
+                    "label": "Penawaran"
+                },
+                {
+                    "count": 3,
+                    "from_lead": 75,
+                    "from_previous": 100,
+                    "key": "approval",
+                    "label": "Disetujui"
+                },
+                {
+                    "count": 3,
+                    "from_lead": 75,
+                    "from_previous": 100,
+                    "key": "paid",
+                    "label": "Lunas"
+                },
+                {
+                    "count": 2,
+                    "from_lead": 50,
+                    "from_previous": 66.7,
+                    "key": "completed",
+                    "label": "Selesai"
+                },
+                {
+                    "count": 1,
+                    "from_lead": 25,
+                    "from_previous": null,
+                    "key": "repeat",
+                    "label": "Repeat order"
+                }
+            ]
+        },
+        "kpi": {
+            "all": {
+                "at_risk_rate": {
+                    "denominator": 4,
+                    "flagged": [
+                        {
+                            "attendance": 0,
+                            "class": "PLC-OKT",
+                            "email": "dodi@example.com",
+                            "lms": null,
+                            "name": "Dodi",
+                            "program": "PLC Dasar",
+                            "quiz": null,
+                            "reasons": [
+                                "Kehadiran 0% (< 80%)"
+                            ],
+                            "severity": 1,
+                            "status": "attending"
+                        },
+                        {
+                            "attendance": 0,
+                            "class": "PLC-NOV",
+                            "email": "hadi@example.com",
+                            "lms": null,
+                            "name": "Hadi",
+                            "program": "PLC Dasar",
+                            "quiz": null,
+                            "reasons": [
+                                "Kehadiran 0% (< 80%)"
+                            ],
+                            "severity": 1,
+                            "status": "enrolled"
+                        },
+                        {
+                            "attendance": 33,
+                            "class": "PLC-NOV",
+                            "email": "gita@example.com",
+                            "lms": null,
+                            "name": "Gita",
+                            "program": "PLC Dasar",
+                            "quiz": null,
+                            "reasons": [
+                                "Kehadiran 33% (< 80%)"
+                            ],
+                            "severity": 1,
+                            "status": "attending"
+                        }
+                    ],
+                    "numerator": 3,
+                    "value": 75
+                },
+                "attendance_rate": {
+                    "denominator": 19,
+                    "numerator": 11,
+                    "value": 57.9
+                },
+                "average_order_value": {
+                    "denominator": 4,
+                    "numerator": 22000000,
+                    "value": 5500000
+                },
+                "completion_rate": {
+                    "denominator": 5,
+                    "failed": 1,
+                    "numerator": 3,
+                    "pending_evaluation": 1,
+                    "value": 60
+                },
+                "repeat_order_rate": {
+                    "denominator": 2,
+                    "numerator": 1,
+                    "value": 50
+                },
+                "training_conversion": {
+                    "denominator": 7,
+                    "numerator": 5,
+                    "registrations": 2,
+                    "requests": 3,
+                    "value": 71.4
+                }
+            },
+            "corporate": {
+                "at_risk_rate": {
+                    "denominator": 1,
+                    "flagged": [
+                        {
+                            "attendance": 33,
+                            "class": "PLC-NOV",
+                            "email": "gita@example.com",
+                            "lms": null,
+                            "name": "Gita",
+                            "program": "PLC Dasar",
+                            "quiz": null,
+                            "reasons": [
+                                "Kehadiran 33% (< 80%)"
+                            ],
+                            "severity": 1,
+                            "status": "attending"
+                        }
+                    ],
+                    "numerator": 1,
+                    "value": 100
+                },
+                "attendance_rate": {
+                    "denominator": 9,
+                    "numerator": 6,
+                    "value": 66.7
+                },
+                "average_order_value": {
+                    "denominator": 3,
+                    "numerator": 19000000,
+                    "value": 6333333.33
+                },
+                "completion_rate": {
+                    "denominator": 3,
+                    "failed": 1,
+                    "numerator": 2,
+                    "pending_evaluation": 0,
+                    "value": 66.7
+                },
+                "repeat_order_rate": {
+                    "denominator": 2,
+                    "numerator": 1,
+                    "value": 50
+                },
+                "training_conversion": {
+                    "denominator": 5,
+                    "numerator": 4,
+                    "registrations": 0,
+                    "requests": 3,
+                    "value": 80
+                }
+            },
+            "self": {
+                "at_risk_rate": {
+                    "denominator": 3,
+                    "flagged": [
+                        {
+                            "attendance": 0,
+                            "class": "PLC-OKT",
+                            "email": "dodi@example.com",
+                            "lms": null,
+                            "name": "Dodi",
+                            "program": "PLC Dasar",
+                            "quiz": null,
+                            "reasons": [
+                                "Kehadiran 0% (< 80%)"
+                            ],
+                            "severity": 1,
+                            "status": "attending"
+                        },
+                        {
+                            "attendance": 0,
+                            "class": "PLC-NOV",
+                            "email": "hadi@example.com",
+                            "lms": null,
+                            "name": "Hadi",
+                            "program": "PLC Dasar",
+                            "quiz": null,
+                            "reasons": [
+                                "Kehadiran 0% (< 80%)"
+                            ],
+                            "severity": 1,
+                            "status": "enrolled"
+                        }
+                    ],
+                    "numerator": 2,
+                    "value": 66.7
+                },
+                "attendance_rate": {
+                    "denominator": 10,
+                    "numerator": 5,
+                    "value": 50
+                },
+                "average_order_value": {
+                    "denominator": 1,
+                    "numerator": 3000000,
+                    "value": 3000000
+                },
+                "completion_rate": {
+                    "denominator": 2,
+                    "failed": 0,
+                    "numerator": 1,
+                    "pending_evaluation": 1,
+                    "value": 50
+                },
+                "repeat_order_rate": {
+                    "denominator": 0,
+                    "not_applicable": true,
+                    "numerator": 0,
+                    "value": null
+                },
+                "training_conversion": {
+                    "denominator": 2,
+                    "numerator": 1,
+                    "registrations": 2,
+                    "requests": 0,
+                    "value": 50
+                }
+            }
+        },
+        "kpi_table": [
+            {
+                "all": "60%",
+                "all_detail": "3 / 5",
+                "all_value": 60,
+                "corporate": "66,7%",
+                "corporate_detail": "2 / 3",
+                "corporate_value": 66.7,
+                "definition": "Enrollment lulus (completed) / enrollment yang eligible: bukan dropped, kelas tidak dibatalkan, tanggal selesai kelas dalam periode dan kelas sudah berakhir (atau hasil akhirnya sudah ditetapkan).",
+                "key": "completion_rate",
+                "label": "Completion Rate",
+                "self": "50%",
+                "self_detail": "1 / 2",
+                "self_value": 50
+            },
+            {
+                "all": "57,9%",
+                "all_detail": "11 / 19",
+                "all_value": 57.9,
+                "corporate": "66,7%",
+                "corporate_detail": "6 / 9",
+                "corporate_value": 66.7,
+                "definition": "Kehadiran (hadir/terlambat) / sesi terjadwal yang sudah berlangsung dalam periode, dijumlahkan untuk setiap enrollment bukan dropped di kelas yang tidak dibatalkan.",
+                "key": "attendance_rate",
+                "label": "Attendance Rate",
+                "self": "50%",
+                "self_detail": "5 / 10",
+                "self_value": 50
+            },
+            {
+                "all": "50%",
+                "all_detail": "1 / 2",
+                "all_value": 50,
+                "corporate": "50%",
+                "corporate_detail": "1 / 2",
+                "corporate_value": 50,
+                "definition": "Organisasi dengan ≥ 2 order lunas / organisasi dengan ≥ 1 order lunas, sampai akhir periode. Order = invoice tidak batal yang lunas dan nilai bersihnya > 0.",
+                "key": "repeat_order_rate",
+                "label": "Repeat Order Rate",
+                "self": "n/a",
+                "self_detail": null,
+                "self_value": null
+            },
+            {
+                "all": "Rp 5.500.000",
+                "all_detail": "4 order",
+                "all_value": 5500000,
+                "corporate": "Rp 6.333.333",
+                "corporate_detail": "3 order",
+                "corporate_value": 6333333.33,
+                "definition": "Nilai transaksi terverifikasi dikurangi refund selesai / jumlah order yang lunas dalam periode.",
+                "key": "average_order_value",
+                "label": "Average Order Value",
+                "self": "Rp 3.000.000",
+                "self_detail": "1 order",
+                "self_value": 3000000
+            },
+            {
+                "all": "71,4%",
+                "all_detail": "5 / 7",
+                "all_value": 71.4,
+                "corporate": "80%",
+                "corporate_detail": "4 / 5",
+                "corporate_value": 80,
+                "definition": "Enrollment dari order lunas / peluang terkualifikasi dalam periode (peserta pada pendaftaran yang tidak ditolak + kursi pada Corporate Training Request yang sudah dikirim).",
+                "key": "training_conversion",
+                "label": "Training Conversion",
+                "self": "50%",
+                "self_detail": "1 / 2",
+                "self_value": 50
+            },
+            {
+                "all": "75%",
+                "all_detail": "3 / 4",
+                "all_value": 75,
+                "corporate": "100%",
+                "corporate_detail": "1 / 1",
+                "corporate_value": 100,
+                "definition": "Peserta aktif yang memenuhi ≥ 1 aturan risiko Dashboard Eksekutif / peserta aktif (enrolled/attending di kelas yang sudah mulai dan beririsan dengan periode).",
+                "key": "at_risk_rate",
+                "label": "At-Risk Rate",
+                "self": "66,7%",
+                "self_detail": "2 / 3",
+                "self_value": 66.7
+            }
+        ],
+        "segments": {
+            "corporate": {
+                "active": 1,
+                "completed": 2,
+                "enrollments": 4,
+                "label": "Corporate (disponsori)",
+                "order_value": 19000000,
+                "orders": 3,
+                "organizations": 2,
+                "participants": 4,
+                "share": 50
+            },
+            "self": {
+                "active": 3,
+                "completed": 1,
+                "enrollments": 4,
+                "label": "Mandiri (self-funded)",
+                "order_value": 3000000,
+                "orders": 1,
+                "organizations": null,
+                "participants": 4,
+                "share": 50
+            }
+        }
+    },
+    "kpi": {
+        "all": {
+            "at_risk_rate": {
+                "denominator": 4,
+                "flagged": [
+                    {
+                        "attendance": 0,
+                        "class": "PLC-OKT",
+                        "email": "dodi@example.com",
+                        "lms": null,
+                        "name": "Dodi",
+                        "program": "PLC Dasar",
+                        "quiz": null,
+                        "reasons": [
+                            "Kehadiran 0% (< 80%)"
+                        ],
+                        "severity": 1,
+                        "status": "attending"
+                    },
+                    {
+                        "attendance": 0,
+                        "class": "PLC-NOV",
+                        "email": "hadi@example.com",
+                        "lms": null,
+                        "name": "Hadi",
+                        "program": "PLC Dasar",
+                        "quiz": null,
+                        "reasons": [
+                            "Kehadiran 0% (< 80%)"
+                        ],
+                        "severity": 1,
+                        "status": "enrolled"
+                    },
+                    {
+                        "attendance": 33,
+                        "class": "PLC-NOV",
+                        "email": "gita@example.com",
+                        "lms": null,
+                        "name": "Gita",
+                        "program": "PLC Dasar",
+                        "quiz": null,
+                        "reasons": [
+                            "Kehadiran 33% (< 80%)"
+                        ],
+                        "severity": 1,
+                        "status": "attending"
+                    }
+                ],
+                "numerator": 3,
+                "value": 75
+            },
+            "attendance_rate": {
+                "denominator": 19,
+                "numerator": 11,
+                "value": 57.9
+            },
+            "average_order_value": {
+                "denominator": 4,
+                "numerator": 22000000,
+                "value": 5500000
+            },
+            "completion_rate": {
+                "denominator": 5,
+                "failed": 1,
+                "numerator": 3,
+                "pending_evaluation": 1,
+                "value": 60
+            },
+            "repeat_order_rate": {
+                "denominator": 2,
+                "numerator": 1,
+                "value": 50
+            },
+            "training_conversion": {
+                "denominator": 7,
+                "numerator": 5,
+                "registrations": 2,
+                "requests": 3,
+                "value": 71.4
+            }
+        },
+        "corporate": {
+            "at_risk_rate": {
+                "denominator": 1,
+                "flagged": [
+                    {
+                        "attendance": 33,
+                        "class": "PLC-NOV",
+                        "email": "gita@example.com",
+                        "lms": null,
+                        "name": "Gita",
+                        "program": "PLC Dasar",
+                        "quiz": null,
+                        "reasons": [
+                            "Kehadiran 33% (< 80%)"
+                        ],
+                        "severity": 1,
+                        "status": "attending"
+                    }
+                ],
+                "numerator": 1,
+                "value": 100
+            },
+            "attendance_rate": {
+                "denominator": 9,
+                "numerator": 6,
+                "value": 66.7
+            },
+            "average_order_value": {
+                "denominator": 3,
+                "numerator": 19000000,
+                "value": 6333333.33
+            },
+            "completion_rate": {
+                "denominator": 3,
+                "failed": 1,
+                "numerator": 2,
+                "pending_evaluation": 0,
+                "value": 66.7
+            },
+            "repeat_order_rate": {
+                "denominator": 2,
+                "numerator": 1,
+                "value": 50
+            },
+            "training_conversion": {
+                "denominator": 5,
+                "numerator": 4,
+                "registrations": 0,
+                "requests": 3,
+                "value": 80
+            }
+        },
+        "self": {
+            "at_risk_rate": {
+                "denominator": 3,
+                "flagged": [
+                    {
+                        "attendance": 0,
+                        "class": "PLC-OKT",
+                        "email": "dodi@example.com",
+                        "lms": null,
+                        "name": "Dodi",
+                        "program": "PLC Dasar",
+                        "quiz": null,
+                        "reasons": [
+                            "Kehadiran 0% (< 80%)"
+                        ],
+                        "severity": 1,
+                        "status": "attending"
+                    },
+                    {
+                        "attendance": 0,
+                        "class": "PLC-NOV",
+                        "email": "hadi@example.com",
+                        "lms": null,
+                        "name": "Hadi",
+                        "program": "PLC Dasar",
+                        "quiz": null,
+                        "reasons": [
+                            "Kehadiran 0% (< 80%)"
+                        ],
+                        "severity": 1,
+                        "status": "enrolled"
+                    }
+                ],
+                "numerator": 2,
+                "value": 66.7
+            },
+            "attendance_rate": {
+                "denominator": 10,
+                "numerator": 5,
+                "value": 50
+            },
+            "average_order_value": {
+                "denominator": 1,
+                "numerator": 3000000,
+                "value": 3000000
+            },
+            "completion_rate": {
+                "denominator": 2,
+                "failed": 0,
+                "numerator": 1,
+                "pending_evaluation": 1,
+                "value": 50
+            },
+            "repeat_order_rate": {
+                "denominator": 0,
+                "not_applicable": true,
+                "numerator": 0,
+                "value": null
+            },
+            "training_conversion": {
+                "denominator": 2,
+                "numerator": 1,
+                "registrations": 2,
+                "requests": 0,
+                "value": 50
+            }
+        }
+    },
+    "kpi_corporate_user": {
+        "at_risk_rate": {
+            "denominator": 1,
+            "flagged": [
+                {
+                    "attendance": 33,
+                    "class": "PLC-NOV",
+                    "email": "gita@example.com",
+                    "lms": null,
+                    "name": "Gita",
+                    "program": "PLC Dasar",
+                    "quiz": null,
+                    "reasons": [
+                        "Kehadiran 33% (< 80%)"
+                    ],
+                    "severity": 1,
+                    "status": "attending"
+                }
+            ],
+            "numerator": 1,
+            "value": 100
+        },
+        "attendance_rate": {
+            "denominator": 7,
+            "numerator": 4,
+            "value": 57.1
+        },
+        "average_order_value": {
+            "denominator": 2,
+            "numerator": 15000000,
+            "value": 7500000
+        },
+        "completion_rate": {
+            "denominator": 2,
+            "failed": 1,
+            "numerator": 1,
+            "pending_evaluation": 0,
+            "value": 50
+        },
+        "repeat_order_rate": {
+            "denominator": 1,
+            "numerator": 1,
+            "value": 100
+        },
+        "training_conversion": {
+            "denominator": 3,
+            "numerator": 3,
+            "registrations": 0,
+            "requests": 2,
+            "value": 100
+        }
+    },
+    "learning": {
+        "assessments": 0,
+        "assessments_validated": 0,
+        "at_risk": [
+            {
+                "attendance": 0,
+                "class": "PLC-OKT",
+                "email": "dodi@example.com",
+                "lms": null,
+                "name": "Dodi",
+                "program": "PLC Dasar",
+                "quiz": null,
+                "reasons": [
+                    "Kehadiran 0% (< 80%)"
+                ],
+                "severity": 1,
+                "status": "attending"
+            },
+            {
+                "attendance": 0,
+                "class": "PLC-NOV",
+                "email": "hadi@example.com",
+                "lms": null,
+                "name": "Hadi",
+                "program": "PLC Dasar",
+                "quiz": null,
+                "reasons": [
+                    "Kehadiran 0% (< 80%)"
+                ],
+                "severity": 1,
+                "status": "enrolled"
+            },
+            {
+                "attendance": 33,
+                "class": "PLC-NOV",
+                "email": "gita@example.com",
+                "lms": null,
+                "name": "Gita",
+                "program": "PLC Dasar",
+                "quiz": null,
+                "reasons": [
+                    "Kehadiran 33% (< 80%)"
+                ],
+                "severity": 1,
+                "status": "attending"
+            }
+        ],
+        "avg_attendance": 64.8,
+        "avg_competency": null,
+        "avg_final_score": null,
+        "avg_lms_progress": null,
+        "avg_quiz": null,
+        "competent": 0,
+        "competent_rate": null,
+        "completed": 4,
+        "completion_rate": 60,
+        "dropped": 1,
+        "failed": 1
+    }
+}

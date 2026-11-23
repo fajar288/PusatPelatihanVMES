@@ -11,6 +11,7 @@ use App\Models\ApiClient;
 use App\Models\TrainingCategory;
 use App\Models\TrainingPackage;
 use App\Models\TrainingSchedule;
+use App\Support\Sql;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -129,7 +130,7 @@ class CatalogController extends Controller
             $q->whereDate('start_date', '<=', Carbon::parse($to)->toDateString());
         }
         if ($city = $request->string('city')->toString()) {
-            $q->whereRaw('LOWER(city) = ?', [mb_strtolower($city)]);
+            Sql::whereEqualsCi($q, 'city', $city);
         }
         if ($mode = $request->string('mode')->toString()) {
             $q->where('mode', $mode);

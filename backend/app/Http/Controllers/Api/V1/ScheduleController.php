@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ScheduleResource;
 use App\Models\TrainingSchedule;
+use App\Support\Sql;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
@@ -23,10 +24,8 @@ class ScheduleController extends Controller
             $q->whereHas('package', fn ($p) => $p->where('slug', $pkg));
         }
         if ($term = trim($request->string('q')->toString())) {
-            $like = '%'.mb_strtolower($term).'%';
-            $q->where(fn ($w) => $w->whereRaw('LOWER(code) LIKE ?', [$like])
-                ->orWhereRaw('LOWER(COALESCE(city, \'\')) LIKE ?', [$like])
-                ->orWhereHas('package', fn ($p) => $p->whereRaw('LOWER(title) LIKE ?', [$like])));
+            $q->where(fn ($w) => Sql::orWhereContains(Sql::whereContains($w, 'code', $term), 'city', $term)
+                ->orWhereHas('package', fn ($p) => Sql::whereContains($p, 'title', $term)));
         }
 
         return ScheduleResource::collection($q->get());

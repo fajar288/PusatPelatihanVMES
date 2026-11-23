@@ -51,7 +51,8 @@ return new class extends Migration
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
-            $table->unique(['organization_id', 'position_key', 'competency_id']);
+            // nama eksplisit: nama otomatis 68 karakter melebihi batas 64 karakter MySQL/MariaDB (PostgreSQL memotongnya di 63)
+            $table->unique(['organization_id', 'position_key', 'competency_id'], 'competency_targets_org_position_competency_unique');
         });
     }
 
