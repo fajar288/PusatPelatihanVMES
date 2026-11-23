@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\V1\CorporateAnalyticsController;
 use App\Http\Controllers\Api\V1\CorporateController;
 use App\Http\Controllers\Api\V1\CorporateFinanceController;
 use App\Http\Controllers\Api\V1\CorporateRequestController;
+use App\Http\Controllers\Api\V1\DataDeletionController;
 use App\Http\Controllers\Api\V1\HomeController;
 use App\Http\Controllers\Api\V1\InvitationController;
 use App\Http\Controllers\Api\V1\LearningAssistantController;
@@ -74,6 +75,7 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
     Route::get('/pages/{slug}', [ContentController::class, 'page'])->name('pages.show');
 
     // Verifikasi sertifikat publik (PRD §5.10, AC-10)
+    Route::post('/verify/{number}/nama', [CertificateController::class, 'nameCheck'])->middleware('throttle:certificate-name-check')->where('number', '.+')->name('certificates.name_check');
     Route::get('/verify/{number}', [CertificateController::class, 'verify'])->middleware('throttle:60,1')->where('number', '.+')->name('certificates.verify');
 
     // Chatbot informasi publik (Phase 5 - Claude). Nonaktif bawaan: CHATBOT_ENABLED + ANTHROPIC_API_KEY.
@@ -101,6 +103,9 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
         Route::get('/me', [MeController::class, 'show'])->name('me.show');
         Route::patch('/me', [MeController::class, 'update'])->name('me.update');
         Route::get('/me/data-export', [MeController::class, 'dataExport'])->middleware('throttle:data-export')->name('me.data_export');
+        Route::get('/me/data-deletion', [DataDeletionController::class, 'show'])->name('me.data_deletion');
+        Route::post('/me/data-deletion', [DataDeletionController::class, 'store'])->middleware('throttle:data-deletion')->name('me.data_deletion.store');
+        Route::post('/me/data-deletion/cancel', [DataDeletionController::class, 'cancel'])->middleware('throttle:data-deletion')->name('me.data_deletion.cancel');
         Route::get('/me/photo', [MeController::class, 'photo'])->name('me.photo');
         Route::post('/me/photo', [MeController::class, 'uploadPhoto'])->middleware('throttle:member-photo')->name('me.photo.upload');
         Route::delete('/me/photo', [MeController::class, 'deletePhoto'])->name('me.photo.delete');

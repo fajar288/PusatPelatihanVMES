@@ -16,4 +16,9 @@ return [
 
     // Hapus entri daftar tunggu setelah N hari sejak jadwalnya selesai.
     'waitlist_days' => env('PRIVACY_WAITLIST_DAYS'),
+
+    // Permintaan penghapusan data dari peserta (portal Privasi): tenggat proses admin sejak diajukan, dan berapa hari
+    // sebelum tenggat permintaan ditandai "mendekati tenggat" di admin.
+    'deletion_deadline_days' => (int) env('PRIVACY_DELETION_DEADLINE_DAYS', 14),
+    'deletion_warning_days' => (int) env('PRIVACY_DELETION_WARNING_DAYS', 3),
 ];

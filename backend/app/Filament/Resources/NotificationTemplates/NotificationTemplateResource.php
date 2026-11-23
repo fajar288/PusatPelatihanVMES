@@ -67,7 +67,7 @@ class NotificationTemplateResource extends Resource
                 TextEntry::make('key')->label('Kunci')->fontFamily('mono'),
                 TextEntry::make('audience')->label('Audiens')->badge()->formatStateUsing(fn ($state) => NotificationTemplate::AUDIENCES[$state] ?? $state),
                 TextEntry::make('version')->label('Versi')->formatStateUsing(fn ($state, ?NotificationTemplate $record) => 'v'.$state.($record?->editor ? ' - diubah '.$record->editor->name : '')),
-                TextEntry::make('category')->label('Kategori')->formatStateUsing(fn ($state) => NotificationTemplate::CATEGORIES[$state][0] ?? $state),
+                TextEntry::make('category')->label('Kategori')->formatStateUsing(fn ($state) => (NotificationTemplate::CATEGORIES + NotificationTemplate::SYSTEM_CATEGORIES)[$state][0] ?? $state),
                 TextEntry::make('placeholders')->label('Placeholder tersedia')
                     ->state(fn (?NotificationTemplate $record) => collect($record?->placeholders ?? [])->map(fn ($p) => '{'.$p.'}')->implode(' ')),
             ]),
@@ -100,7 +100,7 @@ class NotificationTemplateResource extends Resource
             ->columns([
                 TextColumn::make('name')->label('Template')->searchable()->description(fn (NotificationTemplate $record) => $record->key),
                 TextColumn::make('audience')->label('Audiens')->badge()->color('gray')->formatStateUsing(fn ($state) => NotificationTemplate::AUDIENCES[$state] ?? $state),
-                TextColumn::make('category')->label('Kategori')->badge()->formatStateUsing(fn ($state) => NotificationTemplate::CATEGORIES[$state][0] ?? $state),
+                TextColumn::make('category')->label('Kategori')->badge()->formatStateUsing(fn ($state) => (NotificationTemplate::CATEGORIES + NotificationTemplate::SYSTEM_CATEGORIES)[$state][0] ?? $state),
                 TextColumn::make('title')->label('Judul')->limit(50),
                 TextColumn::make('channels')->label('Kanal')->badge()->formatStateUsing(fn ($state) => NotificationTemplate::CHANNELS[$state] ?? $state),
                 TextColumn::make('version')->label('Versi')->formatStateUsing(fn ($state) => 'v'.$state),
@@ -108,7 +108,7 @@ class NotificationTemplateResource extends Resource
             ])
             ->filters([
                 SelectFilter::make('audience')->label('Audiens')->options(NotificationTemplate::AUDIENCES),
-                SelectFilter::make('category')->label('Kategori')->options(collect(NotificationTemplate::CATEGORIES)->map(fn ($c) => $c[0])->all()),
+                SelectFilter::make('category')->label('Kategori')->options(collect(NotificationTemplate::CATEGORIES + NotificationTemplate::SYSTEM_CATEGORIES)->map(fn ($c) => $c[0])->all()),
             ])
             ->paginated(false)
             ->recordActions([EditAction::make()]);
