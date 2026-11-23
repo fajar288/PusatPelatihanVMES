@@ -64,12 +64,30 @@ extract_artifact() {
   fi
 }
 
+# Periksa di awal rilis (sebelum migrate): current harus symlink, tidak ada, atau folder tanpa berkas.
+check_current_replaceable() {
+  local app_dir="$1"
+  [[ "$NO_SYMLINK" == "1" ]] && return 0
+  if [[ -d "$app_dir/current" && ! -L "$app_dir/current" && -n "$(find "$app_dir/current" -type f -print -quit)" ]]; then
+    die "$app_dir/current adalah folder berisi berkas (bukan symlink). Pindahkan isinya lalu ulangi, atau pakai PPTI_NO_SYMLINK=1."
+  fi
+}
+
 # Arahkan current ke releases/<versi> secara atomik (symlink baru lalu rename).
 switch_current() {
   local app_dir="$1" version="$2"
   if [[ "$NO_SYMLINK" == "1" ]]; then
     switch_current_copy "$app_dir" "$version"
     return
+  fi
+  # cPanel membuat folder document root (current/public) saat subdomain dibuat: folder kosong itu diganti symlink.
+  # Folder current yang berisi berkas tidak pernah dihapus otomatis.
+  if [[ -d "$app_dir/current" && ! -L "$app_dir/current" ]]; then
+    if [[ -n "$(find "$app_dir/current" -type f -print -quit)" ]]; then
+      die "$app_dir/current adalah folder berisi berkas (bukan symlink). Pindahkan isinya lalu ulangi, atau pakai PPTI_NO_SYMLINK=1."
+    fi
+    log "ganti folder kosong $app_dir/current (dibuat cPanel) dengan symlink"
+    rm -rf "${app_dir:?}/current"
   fi
   ln -sfn "releases/$version" "$app_dir/current.next"
   mv -Tf "$app_dir/current.next" "$app_dir/current"

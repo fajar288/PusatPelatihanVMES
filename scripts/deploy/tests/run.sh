@@ -60,9 +60,10 @@ echo "Backend"
 A1="$(backend_artifact v1.0.0)"
 if bash "$DEPLOY/release-backend.sh" "$A1" >/dev/null 2>&1; then fail "tanpa shared/.env harus berhenti"; else ok "berhenti bila shared/.env belum ada"; fi
 mkdir -p "$B/shared" && echo "APP_KEY=base64:uji" >"$B/shared/.env"
+mkdir -p "$B/current/public"   # folder document root kosong yang dibuat cPanel saat subdomain dibuat
 
 bash "$DEPLOY/release-backend.sh" "$A1" >/dev/null
-assert '[[ "$(readlink "$B/current")" == "releases/v1.0.0" ]]' "current -> releases/v1.0.0"
+assert '[[ "$(readlink "$B/current")" == "releases/v1.0.0" ]]' "current -> releases/v1.0.0 (folder kosong buatan cPanel diganti symlink)"
 assert '[[ -L "$B/releases/v1.0.0/.env" && "$(readlink "$B/releases/v1.0.0/.env")" == "../../shared/.env" ]]' ".env ditautkan ke shared"
 assert '[[ -L "$B/releases/v1.0.0/storage" && -d "$B/shared/storage/framework/views" && -d "$B/shared/storage/app/private" ]]' "storage bersama + struktur folder"
 assert '[[ -f "$B/current/artisan" && -f "$B/releases/v1.0.0/.ppti-complete" ]]' "rilis lengkap"
@@ -95,6 +96,11 @@ sleep 1; bash "$DEPLOY/release-backend.sh" "$(backend_artifact v1.3.0)" >/dev/nu
 assert '[[ ! -d "$B/releases/v1.0.0" && -d "$B/releases/v1.2.0" && -d "$B/releases/v1.3.0" ]]' "rotasi KEEP_RELEASES=2 (rilis aktif & sebelumnya disimpan)"
 if bash "$DEPLOY/release-backend.sh" "$WORK/tidak-ada.tar.gz" x1 >/dev/null 2>&1; then fail "artefak tidak ada harus gagal"; else ok "artefak tidak ada ditolak"; fi
 if bash "$DEPLOY/release-backend.sh" "$A1" "../jahat" >/dev/null 2>&1; then fail "versi dengan ../ harus ditolak"; else ok "versi tidak valid (../) ditolak"; fi
+
+mkdir -p "$WORK/server3/ppti/backend/shared" "$WORK/server3/ppti/backend/current" && echo "APP_KEY=x" >"$WORK/server3/ppti/backend/shared/.env"
+echo "situs lama" >"$WORK/server3/ppti/backend/current/index.html"
+if PPTI_BASE="$WORK/server3/ppti" bash "$DEPLOY/release-backend.sh" "$A1" >/dev/null 2>&1; then fail "current berisi berkas tidak boleh ditimpa"; else ok "folder current berisi berkas tidak ditimpa"; fi
+assert '[[ -f "$WORK/server3/ppti/backend/current/index.html" ]]' "berkas di current tetap utuh"
 
 echo "Frontend"
 mkdir -p "$F/shared" && echo "REVALIDATE_SECRET=uji" >"$F/shared/.env.production"

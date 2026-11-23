@@ -27,6 +27,7 @@ if [[ "$(current_version "$APP_DIR")" == "$VERSION" && -f "$RELEASE/.ppti-comple
   exit 0
 fi
 
+check_current_replaceable "$APP_DIR"
 [[ -f "$SHARED/.env" ]] || die "$SHARED/.env belum ada. Salin backend/.env.production.example ke sana, isi nilainya, lalu jalankan: $PHP_BIN artisan key:generate (lihat docs/deploy-cpanel.md)"
 
 # --- 1. ekstrak (folder sementara lalu rename agar tidak pernah ada rilis setengah jadi)

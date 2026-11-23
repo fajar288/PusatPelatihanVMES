@@ -26,6 +26,7 @@ if [[ "$(current_version "$APP_DIR")" == "$VERSION" && -f "$RELEASE/.ppti-comple
   exit 0
 fi
 
+check_current_replaceable "$APP_DIR"
 rm -rf "$RELEASE" "$RELEASE.tmp"
 log "ekstrak $ARTIFACT -> releases/$VERSION"
 extract_artifact "$ARTIFACT" "$RELEASE.tmp"
