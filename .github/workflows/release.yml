@@ -1,0 +1,195 @@
+name: Rilis (artefak cPanel)
+
+# Membuat artefak siap unggah untuk hosting cPanel (docs/deploy-cpanel.md):
+#   ppti-frontend-<versi>.tar.gz  Next.js output standalone + .next/static + public (server tidak perlu npm/next build)
+#   ppti-backend-<versi>.tar.gz   Laravel dengan vendor --no-dev (server tidak perlu composer)
+# Build dilakukan di GitHub Actions karena build Next.js butuh RAM besar yang biasanya tidak ada di paket cPanel.
+# Deploy otomatis ke server MATI bawaan: job "deploy" hanya jalan bila variabel repo CPANEL_DEPLOY_ENABLED=true dan
+# secrets CPANEL_SSH_* terisi.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Versi rilis (huruf, angka, titik, -, _). Kosong = tanggal-jam-commit"
+        required: false
+        default: ""
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  NEXT_TELEMETRY_DISABLED: "1"
+
+jobs:
+  version:
+    name: Tentukan versi
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.v.outputs.version }}
+    steps:
+      - id: v
+        env:
+          INPUT_VERSION: ${{ github.event.inputs.version }}
+        run: |
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then v="${GITHUB_REF_NAME}";
+          elif [ -n "${INPUT_VERSION}" ]; then v="${INPUT_VERSION}";
+          else v="$(date -u +%Y%m%d-%H%M)-${GITHUB_SHA::7}"; fi
+          if ! printf '%s' "$v" | grep -Eq '^[A-Za-z0-9._-]+$'; then echo "::error::versi tidak valid: $v"; exit 1; fi
+          echo "version=$v" >> "$GITHUB_OUTPUT"
+          echo "Versi rilis: $v"
+
+  frontend:
+    name: Build frontend (standalone)
+    needs: version
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    env:
+      VERSION: ${{ needs.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      # Samakan versi mayor Node dengan pilihan di "Setup Node.js App" cPanel (variabel repo CPANEL_NODE_VERSION, bawaan 20).
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ vars.CPANEL_NODE_VERSION || '20' }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - run: npm ci
+
+      # NEXT_PUBLIC_* ditanam ke JavaScript saat build, jadi diisi di sini (variabel repo), bukan di server.
+      - name: Build
+        env:
+          NEXT_PUBLIC_SITE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL || 'https://pusatpelatihan.id' }}
+          NEXT_PUBLIC_API_URL: ${{ vars.NEXT_PUBLIC_API_URL || 'https://api.pusatpelatihan.id/api/v1' }}
+        run: npm run build
+
+      - name: Rakit artefak
+        run: |
+          out="$RUNNER_TEMP/ppti-frontend-$VERSION"
+          mkdir -p "$out"
+          cp -a .next/standalone/. "$out/"
+          mkdir -p "$out/.next"
+          cp -a .next/static "$out/.next/static"
+          cp -a public "$out/public"
+          rm -f "$out"/.env "$out"/.env.* || true
+          test -f "$out/server.js"
+          printf 'version=%s\ncommit=%s\nbuilt=%s\nnode=%s\n' "$VERSION" "$GITHUB_SHA" "$(date -u +%FT%TZ)" "$(node -v)" > "$out/RELEASE"
+          tar -czf "$RUNNER_TEMP/ppti-frontend-$VERSION.tar.gz" -C "$RUNNER_TEMP" "ppti-frontend-$VERSION"
+          ls -lh "$RUNNER_TEMP/ppti-frontend-$VERSION.tar.gz"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ppti-frontend-${{ env.VERSION }}
+          path: ${{ runner.temp }}/ppti-frontend-${{ env.VERSION }}.tar.gz
+          compression-level: 0
+          retention-days: 90
+
+  backend:
+    name: Paket backend
+    needs: version
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      VERSION: ${{ needs.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ vars.CPANEL_PHP_VERSION || '8.3' }}
+          extensions: mbstring, pdo_mysql, pdo_pgsql, intl, zip, gd, exif, bcmath
+          coverage: none
+
+      # post-autoload-dump ikut menerbitkan aset Filament (public/css|js|fonts/filament)
+      - name: composer install --no-dev
+        run: composer install --no-dev --optimize-autoloader --classmap-authoritative --no-interaction --prefer-dist --no-progress
+
+      - name: Rakit artefak
+        run: |
+          out="$RUNNER_TEMP/ppti-backend-$VERSION"
+          mkdir -p "$out"
+          tar -cf - \
+            --exclude='./tests' --exclude='./node_modules' --exclude='./.env' --exclude='./.env.*' \
+            --exclude='./storage' --exclude='./public/storage' --exclude='./public/hot' --exclude='./database/database.sqlite' \
+            --exclude='./phpunit.xml' --exclude='./.phpunit*' --exclude='./Dockerfile' \
+            --exclude='./CLAUDE.md' --exclude='./AGENTS.md' \
+            . | tar -xf - -C "$out"
+          cp .env.production.example "$out/.env.production.example"
+          test -f "$out/artisan" && test -f "$out/vendor/autoload.php" && test -d "$out/public/js/filament"
+          printf 'version=%s\ncommit=%s\nbuilt=%s\nphp=%s\n' "$VERSION" "$GITHUB_SHA" "$(date -u +%FT%TZ)" "$(php -r 'echo PHP_VERSION;')" > "$out/RELEASE"
+          tar -czf "$RUNNER_TEMP/ppti-backend-$VERSION.tar.gz" -C "$RUNNER_TEMP" "ppti-backend-$VERSION"
+          ls -lh "$RUNNER_TEMP/ppti-backend-$VERSION.tar.gz"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ppti-backend-${{ env.VERSION }}
+          path: ${{ runner.temp }}/ppti-backend-${{ env.VERSION }}.tar.gz
+          compression-level: 0
+          retention-days: 90
+
+  # Rilis bertag: artefak juga dilampirkan ke GitHub Release agar bisa diunduh langsung (tanpa zip artefak Actions).
+  github-release:
+    name: Lampirkan ke GitHub Release
+    if: github.ref_type == 'tag'
+    needs: [version, frontend, backend]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: ppti-*-${{ needs.version.outputs.version }}
+          merge-multiple: true
+          path: dist
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ needs.version.outputs.version }}
+        run: gh release create "$VERSION" dist/*.tar.gz --repo "$GITHUB_REPOSITORY" --title "$VERSION" --generate-notes --verify-tag
+
+  # Tempat langkah deploy otomatis via SSH. MATI bawaan; nyalakan dengan variabel repo CPANEL_DEPLOY_ENABLED=true
+  # setelah server ada, lalu isi secrets: CPANEL_SSH_HOST, CPANEL_SSH_PORT, CPANEL_SSH_USER, CPANEL_SSH_KEY,
+  # CPANEL_SSH_KNOWN_HOSTS. Skrip rilis harus sudah ada di server (~/ppti/scripts/deploy, lihat docs/deploy-cpanel.md).
+  deploy:
+    name: Deploy ke cPanel (SSH)
+    if: vars.CPANEL_DEPLOY_ENABLED == 'true'
+    needs: [version, frontend, backend]
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      VERSION: ${{ needs.version.outputs.version }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: ppti-*-${{ needs.version.outputs.version }}
+          merge-multiple: true
+          path: dist
+      - name: Siapkan kunci SSH
+        env:
+          SSH_KEY: ${{ secrets.CPANEL_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.CPANEL_SSH_KNOWN_HOSTS }}
+        run: |
+          test -n "$SSH_KEY" && test -n "$KNOWN_HOSTS" || { echo "::error::secrets CPANEL_SSH_KEY / CPANEL_SSH_KNOWN_HOSTS belum diisi"; exit 1; }
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_deploy && chmod 600 ~/.ssh/id_deploy
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+      - name: Unggah artefak dan jalankan skrip rilis
+        env:
+          HOST: ${{ secrets.CPANEL_SSH_HOST }}
+          PORT: ${{ secrets.CPANEL_SSH_PORT || '22' }}
+          USER: ${{ secrets.CPANEL_SSH_USER }}
+        run: |
+          ssh_opts="-i $HOME/.ssh/id_deploy -p $PORT -o StrictHostKeyChecking=yes"
+          scp -P "$PORT" -i "$HOME/.ssh/id_deploy" dist/ppti-backend-$VERSION.tar.gz dist/ppti-frontend-$VERSION.tar.gz "$USER@$HOST:ppti/incoming/"
+          ssh $ssh_opts "$USER@$HOST" "bash ppti/scripts/deploy/release-backend.sh ppti/incoming/ppti-backend-$VERSION.tar.gz && bash ppti/scripts/deploy/release-frontend.sh ppti/incoming/ppti-frontend-$VERSION.tar.gz"

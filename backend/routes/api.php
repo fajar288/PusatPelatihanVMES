@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\V1\CorporateController;
 use App\Http\Controllers\Api\V1\CorporateFinanceController;
 use App\Http\Controllers\Api\V1\CorporateRequestController;
 use App\Http\Controllers\Api\V1\DataDeletionController;
+use App\Http\Controllers\Api\V1\HealthCheckController;
 use App\Http\Controllers\Api\V1\HomeController;
 use App\Http\Controllers\Api\V1\InvitationController;
 use App\Http\Controllers\Api\V1\LearningAssistantController;
@@ -51,6 +52,8 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
             'time' => now()->toIso8601String(),
         ]);
     })->name('health');
+    // Kesiapan untuk pemantau ketersediaan: database, storage, scheduler (cron), antrean; 503 bila gagal, tanpa data sensitif
+    Route::get('/health/ready', HealthCheckController::class)->middleware('throttle:60,1')->name('health.ready');
 
     // ---- Publik (CMS) ----
     Route::get('/home', HomeController::class)->name('home');
