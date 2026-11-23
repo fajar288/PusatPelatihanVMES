@@ -341,6 +341,53 @@ class AdvancedAnalyticsTest extends TestCase
         $this->assertSame(60.0, app(AnalyticsService::class)->dashboard(self::PERIOD)['learning']['completion_rate']);
     }
 
+    /**
+     * Angka KPI & dashboard dari data yang sama harus identik di SQLite, MySQL, MariaDB, dan PostgreSQL. Snapshot
+     * dibandingkan setelah dinormalkan (urutan kunci objek, angka dibulatkan 6 desimal, angka sebagai float) agar
+     * perbedaan representasi driver (mis. "12.50" vs 12.5) tidak menyamarkan perbedaan nilai. CI menjalankan tes ini
+     * di keempat database (job "Backend (MySQL 8.0)" dst.). Buat ulang snapshot: KPI_SNAPSHOT_UPDATE=1 php artisan test --filter=golden.
+     */
+    public function test_kpi_numbers_match_golden_snapshot_on_every_database(): void
+    {
+        $actual = self::normalizeNumbers([
+            'kpi' => app(KpiService::class)->bySegment(self::PERIOD),
+            'kpi_corporate_user' => $this->kpi('all', CorporateUser::query()->where('user_id', $this->owner->id)->firstOrFail()),
+            'dashboard' => array_diff_key(app(SalesAnalyticsService::class)->dashboard(self::PERIOD), ['filters' => true]),
+            'learning' => app(AnalyticsService::class)->dashboard(self::PERIOD)['learning'],
+        ]);
+        $file = base_path('tests/fixtures/kpi-golden.json');
+        if (getenv('KPI_SNAPSHOT_UPDATE')) {
+            file_put_contents($file, json_encode($actual, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)."\n");
+        }
+        $this->assertFileExists($file);
+        $expected = json_decode((string) file_get_contents($file), true);
+        $this->assertSame(json_encode(self::normalizeNumbers($expected), JSON_PRETTY_PRINT), json_encode($actual, JSON_PRETTY_PRINT), 'Angka KPI berbeda dari snapshot untuk driver '.config('database.default'));
+    }
+
+    /**
+     * Kunci objek diurutkan, angka (termasuk string numerik dari driver) jadi float 6 desimal. Kunci id/*_id dibuang:
+     * nilai auto-increment berbeda antar database (MySQL/PostgreSQL tidak mengembalikan sequence saat rollback tes).
+     */
+    private static function normalizeNumbers(mixed $v): mixed
+    {
+        if (is_array($v)) {
+            if (! array_is_list($v)) {
+                $v = array_filter($v, fn ($k) => ! preg_match('/(^|_)ids?$/', (string) $k), ARRAY_FILTER_USE_KEY);
+            }
+            $out = array_map(fn ($x) => self::normalizeNumbers($x), $v);
+            if (! array_is_list($out)) {
+                ksort($out);
+            }
+
+            return $out;
+        }
+        if (is_int($v) || is_float($v) || (is_string($v) && is_numeric($v) && ! preg_match('/^0\d/', $v))) {
+            return round((float) $v, 6);
+        }
+
+        return $v;
+    }
+
     public function test_executive_widgets_render_and_export_includes_kpi_rows(): void
     {
         $this->actingAs($this->admin);
