@@ -21,6 +21,7 @@ const ITEMS: { href: string; label: string; icon: IconName }[] = [
   { href: "/portal/pendaftaran", label: "Riwayat Pendaftaran", icon: "brief" },
   { href: "/portal/pembayaran", label: "Invoice & Pembayaran", icon: "award" },
   { href: "/portal/notifikasi", label: "Notifikasi", icon: "msg" },
+  { href: "/portal/privasi", label: "Privasi & Data", icon: "shield" },
   { href: "/portal/bantuan", label: "Bantuan", icon: "phone" },
 ];
 
