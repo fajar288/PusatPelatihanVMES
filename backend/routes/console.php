@@ -16,6 +16,7 @@ use App\Services\AiEvaluationService;
 use App\Services\AiFeedbackService;
 use App\Services\AiInsightService;
 use App\Services\AiReadiness;
+use App\Services\DatabaseBackupService;
 use App\Services\IdentityMatchingService;
 use App\Services\InvoiceService;
 use App\Services\NotificationDispatcher;
@@ -29,6 +30,7 @@ use App\Support\Enterprise\IdentityMatch;
 use App\Support\PrivateFiles;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schedule;
 use Illuminate\Support\Facades\Storage;
 use Minishlink\WebPush\VAPID;
@@ -349,3 +351,39 @@ Artisan::command('privacy:prune {--dry-run : hanya hitung data yang akan diprose
     }
 })->purpose('Jalankan aturan retensi data pribadi yang diaktifkan');
 Schedule::command('privacy:prune')->dailyAt('02:30');
+
+// Backup database terkompresi + rotasi (config/backup.php, docs/deploy-cpanel.md). Terjadwal bila BACKUP_ENABLED=true.
+Artisan::command('backup:database {--files : ikut arsipkan berkas privat (storage/app/private)} {--list : tampilkan backup yang tersimpan}', function (DatabaseBackupService $backup) {
+    if ($this->option('list')) {
+        foreach ($backup->list() as $kind => $files) {
+            $this->line(strtoupper($kind).' ('.count($files).')');
+            foreach ($files as $f) {
+                $this->line(sprintf('  %-48s %10s KB', basename($f), number_format(filesize($f) / 1024, 0, ',', '.')));
+            }
+        }
+
+        return 0;
+    }
+    try {
+        $r = $backup->run(withFiles: (bool) $this->option('files') || (bool) config('backup.include_private_files'));
+    } catch (Throwable $e) {
+        $this->error('Backup gagal: '.$e->getMessage());
+        report($e);
+
+        return 1;
+    }
+    $this->info('Backup tersimpan: '.$r['path'].' ('.number_format($r['size'] / 1024, 0, ',', '.').' KB)');
+    if ($r['files']) {
+        $this->line('Berkas privat: '.$r['files']);
+    }
+    if ($r['weekly']) {
+        $this->line('Salinan mingguan: '.$r['weekly']);
+    }
+    $this->line(count($r['pruned']).' backup lama dihapus (rotasi).');
+
+    return 0;
+})->purpose('Dump database terkompresi ke folder backup dengan rotasi harian & mingguan');
+if (config('backup.enabled')) {
+    Schedule::command('backup:database')->dailyAt((string) config('backup.time', '01:30'))->withoutOverlapping(60)
+        ->onFailure(fn () => Log::error('backup:database gagal, periksa log aplikasi.'));
+}
